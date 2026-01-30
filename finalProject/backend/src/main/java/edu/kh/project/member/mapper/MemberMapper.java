@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import edu.kh.project.member.dto.MemberDTO;
-//import edu.kh.project.member.dto.SignupRequestDTO;
+import edu.kh.project.member.dto.SignupRequestDTO;
 
 /**
  * 회원 Mapper 인터페이스
@@ -46,7 +46,7 @@ public interface MemberMapper {
      * @param signupRequest 회원가입 정보
      * @return 삽입된 행 수
      */
-    //int insertMember(SignupRequestDTO signupRequest);
+    int insertMember(SignupRequestDTO signupRequest);
     
     /**
      * 회원 정보 수정
@@ -68,4 +68,31 @@ public interface MemberMapper {
      * @return 수정된 행 수
      */
     int updateEmailVerified(@Param("memberEmail") String memberEmail);
+    
+    /**
+     * 아이디 찾기 (이름 + 이메일)
+     * @param memberName 회원 이름
+     * @param memberEmail 회원 이메일
+     * @return 회원 정보 (이메일, 가입일)
+     */
+    MemberDTO findId(@Param("memberName") String memberName, 
+                     @Param("memberEmail") String memberEmail);
+    
+    /**
+     * 비밀번호 찾기 (이메일 + 이름)
+     * @param memberEmail 회원 이메일
+     * @param memberName 회원 이름
+     * @return 회원 정보
+     */
+    MemberDTO findPw(@Param("memberEmail") String memberEmail, 
+                     @Param("memberName") String memberName);
+    
+    /**
+     * 비밀번호 재설정
+     * @param memberEmail 회원 이메일
+     * @param memberPw 새 비밀번호 (암호화된)
+     * @return 수정된 행 수
+     */
+    int resetPw(@Param("memberEmail") String memberEmail, 
+                @Param("memberPw") String memberPw);
 }

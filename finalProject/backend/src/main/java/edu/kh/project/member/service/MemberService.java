@@ -1,9 +1,12 @@
 package edu.kh.project.member.service;
 
-//import edu.kh.project.member.dto.LoginRequestDTO;
-//import edu.kh.project.member.dto.LoginResponseDTO;
+import edu.kh.project.member.dto.LoginRequestDTO;
+import edu.kh.project.member.dto.LoginResponseDTO;
+import edu.kh.project.member.dto.LoginRequestDTO;
+import edu.kh.project.member.dto.LoginResponseDTO;
 import edu.kh.project.member.dto.MemberDTO;
-//import edu.kh.project.member.dto.SignupRequestDTO;
+import edu.kh.project.member.dto.SignupRequestDTO;
+import edu.kh.project.member.dto.SignupRequestDTO;
 
 /**
  * 회원 Service 인터페이스
@@ -29,14 +32,14 @@ public interface MemberService {
      * @param signupRequest
      * @return 성공한 행의 개수
      */
-    //int signup(SignupRequestDTO signupRequest);
+    int signup(SignupRequestDTO signupRequest);
     
     /**
      * 로그인
      * @param loginRequest
      * @return LoginResponseDTO (JWT 토큰 + 회원 정보) / 실패 시 null
      */
-    //LoginResponseDTO login(LoginRequestDTO loginRequest);
+    LoginResponseDTO login(LoginRequestDTO loginRequest);
     
     /**
      * 회원 번호로 회원 조회
