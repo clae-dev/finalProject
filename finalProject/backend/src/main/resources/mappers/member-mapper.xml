@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="edu.kh.project.member.mapper.MemberMapper">
 
-    <!-- ResultMap: MEMBER 테이블 → MemberDTO 매핑 -->
+    <!-- ResultMap: MEMBER 테이블 -> MemberDTO 매핑 -->
     <resultMap id="memberResultMap" type="edu.kh.project.member.dto.MemberDTO">
         <id property="memberNo" column="MEMBER_NO" />
         <result property="memberEmail" column="MEMBER_EMAIL" />
@@ -129,6 +129,38 @@
     <update id="updateEmailVerified">
         UPDATE MEMBER
         SET EMAIL_VERIFIED = 'Y'
+        WHERE MEMBER_EMAIL = #{memberEmail}
+    </update>
+
+    <!-- 아이디 찾기 (이름 + 이메일) -->
+    <select id="findId" resultMap="memberResultMap">
+        SELECT 
+            MEMBER_EMAIL,
+            CREATED_AT
+        FROM MEMBER
+        WHERE MEMBER_NAME = #{memberName}
+          AND MEMBER_EMAIL = #{memberEmail}
+          AND MEMBER_STATUS = 'ACTIVE'
+    </select>
+
+    <!-- 비밀번호 찾기 (이메일 + 이름) -->
+    <select id="findPw" resultMap="memberResultMap">
+        SELECT 
+            MEMBER_NO,
+            MEMBER_EMAIL,
+            MEMBER_NAME
+        FROM MEMBER
+        WHERE MEMBER_EMAIL = #{memberEmail}
+          AND MEMBER_NAME = #{memberName}
+          AND MEMBER_STATUS = 'ACTIVE'
+    </select>
+
+    <!-- 비밀번호 재설정 -->
+    <update id="resetPw">
+        UPDATE MEMBER
+        SET 
+            MEMBER_PW = #{memberPw},
+            UPDATED_AT = SYSDATE
         WHERE MEMBER_EMAIL = #{memberEmail}
     </update>
 
