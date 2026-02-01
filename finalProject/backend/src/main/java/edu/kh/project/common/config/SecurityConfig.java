@@ -1,5 +1,6 @@
 package edu.kh.project.common.config;
 
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -55,6 +56,8 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/member/signup",           // 회원가입
                     "/api/member/login",            // 로그인
+                    "/api/member/check-email",      // 이메일 중복 체크
+                    "/api/member/check-nickname",   // 닉네임 중복 체크
                     "/api/member/find-id",          // 아이디 찾기
                     "/api/member/find-password",    // 비밀번호 찾기
                     "/api/accommodation/**",        // 숙소 정보 조회 (공개)
@@ -80,11 +83,13 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // React 개발 서버 주소 허용
+        // React 개발 서버 주소 허용 - Vite 포트 5173 추가!
         configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:3000",           // React 개발 서버
+            "http://localhost:3000",           // React (CRA)
+            "http://localhost:5173",           // Vite 개발 서버 ⭐
             "http://localhost:80",             // 배포시 프론트엔드 주소
-            "http://127.0.0.1:3000"
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:5173"            // Vite (로컬 IP) ⭐
         ));
         
         // 허용할 HTTP 메서드
