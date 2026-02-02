@@ -1,10 +1,9 @@
 import { useContext } from 'react';
 import { AuthContext, AuthProvider } from './components/AuthContext';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import Main from './components/Main';
-import './css/App.css';
 
 /**
  * App 컴포넌트 (학원 패턴)
@@ -35,14 +34,14 @@ function AppComponent() {
     <>
       {user ? (
         // 로그인 상태: Main 화면 (DashBoard)
-        <div className="body-container">
+        <div className="min-h-screen bg-gray-50">
           <BrowserRouter>
             <Main />
           </BrowserRouter>
         </div>
       ) : (
-        // 비로그인 상태: Login/Signup 선택 화면
-        <div className="auth-section">
+        // 비로그인 상태: Login/Signup 선택 화면 (jeju 토큰 적용)
+        <div className="min-h-screen bg-gradient-to-br from-jeju-50 to-emerald-50">
           <AuthSelection />
         </div>
       )}
@@ -54,8 +53,10 @@ function AppComponent() {
 function AuthSelection() {
   return (
     <BrowserRouter>
-      <Login />
-      {/* TODO: 회원가입 링크 추가 */}
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
     </BrowserRouter>
   );
 }

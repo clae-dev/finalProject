@@ -13,9 +13,16 @@ export const AuthContext = createContext();
 // 전역 상태 제공자(Provider) 정의
 export const AuthProvider = ({ children }) => {
   // 로그인한 회원 정보를 기억할 상태
+  // TODO: 테스트 완료 후 아래 testUser를 null로 변경
+  const testUser = {
+    memberNo: 1,
+    memberName: "테스트",
+    memberNickname: "혼행러",
+    memberEmail: "test@example.com"
+  };
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("userData");
-    return storedUser ? JSON.parse(storedUser) : null;
+    return storedUser ? JSON.parse(storedUser) : testUser; // 테스트용
   });
 
   const [email, setEmail] = useState("");
@@ -95,6 +102,8 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setEmail("");
     setPassword("");
+    // 로그인 페이지로 이동
+    window.location.href = "/";
   };
 
   // 자식 컴포넌트에게 전달할 데이터를 하나로 묶기
