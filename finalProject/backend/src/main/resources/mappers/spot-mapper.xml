@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.kh.project.spot.mapper.SpotMapper">
+
+    <!-- ResultMap: SPOT 테이블 -> SpotDTO 매핑 -->
+    <resultMap id="spotResultMap" type="edu.kh.project.spot.dto.SpotDTO">
+        <id property="spotNo" column="SPOT_NO" />
+        <result property="spotTitle" column="SPOT_TITLE" />
+        <result property="spotDesc" column="SPOT_DESC" />
+        <result property="spotLocation" column="SPOT_LOCATION" />
+        <result property="spotImage" column="SPOT_IMAGE" />
+        <result property="spotTag" column="SPOT_TAG" />
+        <result property="spotOrder" column="SPOT_ORDER" />
+        <result property="spotSize" column="SPOT_SIZE" />
+        <result property="spotStatus" column="SPOT_STATUS" />
+        <result property="createdAt" column="CREATED_AT" />
+        <result property="updatedAt" column="UPDATED_AT" />
+    </resultMap>
+
+    <!-- 활성화된 명소 목록 조회 (메인페이지용) -->
+    <select id="selectActiveSpots" resultMap="spotResultMap">
+        SELECT
+            SPOT_NO,
+            SPOT_TITLE,
+            SPOT_DESC,
+            SPOT_LOCATION,
+            SPOT_IMAGE,
+            SPOT_TAG,
+            SPOT_ORDER,
+            SPOT_SIZE,
+            SPOT_STATUS,
+            CREATED_AT
+        FROM SPOT
+        WHERE SPOT_STATUS = 'ACTIVE'
+        ORDER BY SPOT_ORDER ASC
+    </select>
+
+    <!-- 전체 명소 목록 조회 (관리자용) -->
+    <select id="selectAllSpots" resultMap="spotResultMap">
+        SELECT
+            SPOT_NO,
+            SPOT_TITLE,
+            SPOT_DESC,
+            SPOT_LOCATION,
+            SPOT_IMAGE,
+            SPOT_TAG,
+            SPOT_ORDER,
+            SPOT_SIZE,
+            SPOT_STATUS,
+            CREATED_AT,
+            UPDATED_AT
+        FROM SPOT
+        ORDER BY SPOT_ORDER ASC, CREATED_AT DESC
+    </select>
+
+    <!-- 명소 상세 조회 -->
+    <select id="selectSpotByNo" resultMap="spotResultMap">
+        SELECT
+            SPOT_NO,
+            SPOT_TITLE,
+            SPOT_DESC,
+            SPOT_LOCATION,
+            SPOT_IMAGE,
+            SPOT_TAG,
+            SPOT_ORDER,
+            SPOT_SIZE,
+            SPOT_STATUS,
+            CREATED_AT,
+            UPDATED_AT
+        FROM SPOT
+        WHERE SPOT_NO = #{spotNo}
+    </select>
+
+    <!-- 명소 등록 -->
+    <insert id="insertSpot">
+        INSERT INTO SPOT (
+            SPOT_NO,
+            SPOT_TITLE,
+            SPOT_DESC,
+            SPOT_LOCATION,
+            SPOT_IMAGE,
+            SPOT_TAG,
+            SPOT_ORDER,
+            SPOT_SIZE,
+            SPOT_STATUS,
+            CREATED_AT
+        ) VALUES (
+            SEQ_SPOT_NO.NEXTVAL,
+            #{spotTitle},
+            #{spotDesc},
+            #{spotLocation},
+            #{spotImage},
+            #{spotTag},
+            #{spotOrder},
+            #{spotSize},
+            'ACTIVE',
+            SYSDATE
+        )
+    </insert>
+
+    <!-- 명소 수정 -->
+    <update id="updateSpot">
+        UPDATE SPOT
+        SET
+            SPOT_TITLE = #{spotTitle},
+            SPOT_DESC = #{spotDesc},
+            SPOT_LOCATION = #{spotLocation},
+            SPOT_IMAGE = #{spotImage},
+            SPOT_TAG = #{spotTag},
+            SPOT_ORDER = #{spotOrder},
+            SPOT_SIZE = #{spotSize},
+            UPDATED_AT = SYSDATE
+        WHERE SPOT_NO = #{spotNo}
+    </update>
+
+    <!-- 명소 삭제 -->
+    <delete id="deleteSpot">
+        DELETE FROM SPOT
+        WHERE SPOT_NO = #{spotNo}
+    </delete>
+
+    <!-- 명소 상태 변경 -->
+    <update id="updateSpotStatus">
+        UPDATE SPOT
+        SET
+            SPOT_STATUS = #{status},
+            UPDATED_AT = SYSDATE
+        WHERE SPOT_NO = #{spotNo}
+    </update>
+
+</mapper>

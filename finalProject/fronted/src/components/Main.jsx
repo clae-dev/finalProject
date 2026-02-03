@@ -1,13 +1,16 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import MyPage from './Mypage';
+import AdminSpot from './AdminSpot';
 import {
   FiHome, FiEdit3, FiUsers, FiMapPin, FiStar, FiHeart,
   FiSearch, FiCalendar, FiUser, FiChevronRight, FiMenu,
   FiX, FiBell, FiBookmark, FiGrid, FiCoffee, FiSunrise,
-  FiArrowRight
+  FiArrowRight, FiSettings
 } from 'react-icons/fi';
+
+const API_BASE = 'http://localhost:8080/api';
 
 /**
  * 메인 컴포넌트 - UI/UX 개선 버전
@@ -81,6 +84,15 @@ function Main() {
                   {user.memberNickname?.charAt(0)}
                 </div>
                 <span className="text-sm font-medium text-gray-700">{user.memberNickname}</span>
+                {user.memberRole === 'ADMIN' && (
+                  <Link
+                    to="/admin/spot"
+                    className="ml-2 px-3 py-1.5 text-sm text-amber-600 hover:text-amber-700 font-medium rounded-lg hover:bg-amber-50 transition-colors flex items-center gap-1"
+                  >
+                    <FiSettings className="w-4 h-4" />
+                    관리자
+                  </Link>
+                )}
                 <Link
                   to="/mypage"
                   className="ml-2 px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 font-medium rounded-lg hover:bg-gray-100 transition-colors"
@@ -137,6 +149,7 @@ function Main() {
         <Routes>
           <Route path="/" element={<HomePage user={user} />} />
           <Route path="/mypage" element={<MyPage />} />
+          <Route path="/admin/spot" element={<AdminSpot />} />
         </Routes>
       </main>
 
@@ -194,6 +207,27 @@ function Main() {
 
 // 홈 페이지 - UI/UX 개선
 function HomePage({ user }) {
+  const [spots, setSpots] = useState([]);
+  const [spotsLoading, setSpotsLoading] = useState(true);
+
+  // 명소 데이터 불러오기
+  useEffect(() => {
+    const fetchSpots = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/spot`);
+        const data = await res.json();
+        if (data.success) {
+          setSpots(data.data || []);
+        }
+      } catch (error) {
+        console.error('명소 불러오기 실패:', error);
+      } finally {
+        setSpotsLoading(false);
+      }
+    };
+    fetchSpots();
+  }, []);
+
   const categories = [
     { icon: FiHome, label: '게스트하우스' },
     { icon: FiUsers, label: '동행찾기' },
@@ -201,13 +235,6 @@ function HomePage({ user }) {
     { icon: FiCoffee, label: '맛집/카페' },
     { icon: FiSunrise, label: '액티비티' },
     { icon: FiGrid, label: '전체보기' },
-  ];
-
-  const popularAccom = [
-    { name: '제주 올레 게스트하우스', location: '제주시 연동', rating: 4.9, reviews: 328, price: '35,000', tag: '인기' },
-    { name: '서귀포 바다뷰 하우스', location: '서귀포시 중문', rating: 4.8, reviews: 256, price: '42,000', tag: null },
-    { name: '한라산 힐링 스테이', location: '제주시 애월읍', rating: 4.9, reviews: 189, price: '55,000', tag: '추천' },
-    { name: '협재 선셋 게하', location: '제주시 한림읍', rating: 4.7, reviews: 412, price: '38,000', tag: null },
   ];
 
   const companions = [
@@ -358,54 +385,78 @@ function HomePage({ user }) {
         </div>
       </section>
 
-      {/* Popular Accommodations - 카드 개선 */}
+      {/* 제주 명소 갤러리 섹션 */}
       <section className="py-10 md:py-14 bg-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
-          <div className="flex justify-between items-end mb-8">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900">인기 숙소</h3>
-              <p className="text-gray-500 text-sm mt-1">혼행러들이 선택한 베스트 숙소</p>
-            </div>
-            <a href="#" className="text-gray-500 hover:text-jeju-600 font-medium flex items-center gap-1 text-sm transition-colors">
-              전체보기 <FiChevronRight className="w-4 h-4" />
-            </a>
+          <div className="text-center mb-10">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">제주 인기 명소</h3>
+            <p className="text-gray-500 max-w-lg mx-auto">혼자여도 괜찮아요. 제주의 자연이 당신을 반겨줄 거예요.</p>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            {popularAccom.map((item, index) => (
-              <div
-                key={index}
-                className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl hover:shadow-gray-200/50 transition-all cursor-pointer hover:-translate-y-1"
-              >
-                {/* 이미지 영역 */}
-                <div className="aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-jeju-100/50 to-emerald-100/50"></div>
-                  {item.tag && (
-                    <span className="absolute top-3 left-3 px-2 py-1 bg-white/90 backdrop-blur text-xs font-semibold text-jeju-600 rounded-lg">
-                      {item.tag}
-                    </span>
-                  )}
-                  <button className="absolute top-3 right-3 w-8 h-8 bg-white/80 backdrop-blur rounded-full flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors">
-                    <FiHeart className="w-4 h-4" />
-                  </button>
-                </div>
-                <div className="p-4">
-                  <h4 className="font-semibold text-gray-900 mb-1 group-hover:text-jeju-600 transition-colors line-clamp-1 text-sm md:text-base">
-                    {item.name}
-                  </h4>
-                  <p className="text-xs text-gray-400 mb-2">{item.location}</p>
-                  <div className="flex items-center gap-1 mb-3">
-                    <FiStar className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                    <span className="font-semibold text-gray-900 text-sm">{item.rating}</span>
-                    <span className="text-gray-400 text-xs">({item.reviews})</span>
+          {/* 벤토 그리드 갤러리 */}
+          {spotsLoading ? (
+            <div className="text-center py-12 text-gray-400">불러오는 중...</div>
+          ) : spots.length === 0 ? (
+            <div className="text-center py-12 text-gray-400">등록된 명소가 없습니다.</div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+              {spots.map((spot) => (
+                <div
+                  key={spot.spotNo}
+                  className={`group relative rounded-2xl overflow-hidden cursor-pointer ${
+                    spot.spotSize === 'large' ? 'col-span-2 row-span-2' : ''
+                  }`}
+                >
+                  <img
+                    src={spot.spotImage}
+                    alt={spot.spotTitle}
+                    className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${
+                      spot.spotSize === 'large' ? 'aspect-square md:aspect-auto md:h-full' : 'aspect-square'
+                    }`}
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/400x400?text=No+Image';
+                    }}
+                  />
+                  <div className={`absolute inset-0 ${
+                    spot.spotSize === 'large'
+                      ? 'bg-gradient-to-t from-black/60 via-transparent to-transparent'
+                      : 'bg-gradient-to-t from-black/50 to-transparent'
+                  }`}></div>
+                  <div className={`absolute bottom-0 left-0 right-0 ${spot.spotSize === 'large' ? 'p-5 md:p-6' : 'p-4'}`}>
+                    {spot.spotTag && (
+                      <span className="inline-block px-2.5 py-1 bg-white/20 backdrop-blur-sm rounded-lg text-xs font-medium text-white mb-2">
+                        {spot.spotTag}
+                      </span>
+                    )}
+                    <h4 className={`font-bold text-white mb-1 ${spot.spotSize === 'large' ? 'text-xl md:text-2xl' : 'text-sm md:text-base font-semibold'}`}>
+                      {spot.spotTitle}
+                    </h4>
+                    <p className={`text-white/80 ${spot.spotSize === 'large' ? 'text-sm' : 'text-xs text-white/70'}`}>
+                      {spot.spotDesc || spot.spotLocation}
+                    </p>
                   </div>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-bold text-gray-900">{item.price}</span>
-                    <span className="text-xs text-gray-400">원/박</span>
+                  <div className="absolute top-4 right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                    <FiHeart className="w-5 h-5" />
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          )}
+
+          {/* 하단 통계 */}
+          <div className="mt-10 grid grid-cols-3 gap-4">
+            <div className="text-center p-4 bg-gray-50 rounded-2xl">
+              <div className="text-2xl md:text-3xl font-bold text-jeju-600 mb-1">1,847</div>
+              <div className="text-xs md:text-sm text-gray-500">혼행러 여행 완료</div>
+            </div>
+            <div className="text-center p-4 bg-gray-50 rounded-2xl">
+              <div className="text-2xl md:text-3xl font-bold text-emerald-500 mb-1">892</div>
+              <div className="text-xs md:text-sm text-gray-500">동행 매칭 성공</div>
+            </div>
+            <div className="text-center p-4 bg-gray-50 rounded-2xl">
+              <div className="text-2xl md:text-3xl font-bold text-amber-500 mb-1">4.9</div>
+              <div className="text-xs md:text-sm text-gray-500">평균 만족도</div>
+            </div>
           </div>
         </div>
       </section>
