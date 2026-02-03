@@ -3,6 +3,7 @@ package edu.kh.project.spot.mapper;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import edu.kh.project.spot.dto.SpotDTO;
 
@@ -19,7 +20,7 @@ public interface SpotMapper {
     List<SpotDTO> selectAllSpots();
 
     // 명소 상세 조회
-    SpotDTO selectSpotByNo(int spotNo);
+    SpotDTO selectSpotByNo(@Param("spotNo") int spotNo);
 
     // 명소 등록
     int insertSpot(SpotDTO spot);
@@ -28,8 +29,8 @@ public interface SpotMapper {
     int updateSpot(SpotDTO spot);
 
     // 명소 삭제
-    int deleteSpot(int spotNo);
+    int deleteSpot(@Param("spotNo") int spotNo);
 
     // 명소 상태 변경
-    int updateSpotStatus(int spotNo, String status);
+    int updateSpotStatus(@Param("spotNo") int spotNo, @Param("status") String status);
 }
