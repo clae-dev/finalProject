@@ -1,4 +1,5 @@
 import React from 'react';
+import logo from '@/assets/images/혼디.png';
 
 export default function Header() {
   return (
@@ -6,10 +7,8 @@ export default function Header() {
       <div className="bg-white/70 backdrop-blur-xl border-b border-sky-100">
         <div className="max-w-6xl mx-auto px-5">
           <div className="flex items-center justify-between h-16">
-            <h1 className="text-2xl font-bold cursor-pointer flex items-center gap-1">
-              <span className="text-sky-500">혼</span>
-              <span className="text-cyan-400">디</span>
-              <span className="text-2xl">🌊</span>
+            <h1 className="cursor-pointer">
+              <img src={logo} alt="혼디" className="h-12" />
             </h1>
             <nav className="hidden md:flex items-center gap-8">
               {['홈', '숙소', '동행', '후기', '맛집'].map((item, idx) => (
