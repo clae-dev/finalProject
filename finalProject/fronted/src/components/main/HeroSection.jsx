@@ -26,11 +26,11 @@ export default function HeroSection() {
       <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-5">
         <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-md rounded-full mb-8 border border-white/30">
           <span className="text-lg">🏝️</span>
-          <span className="text-white/90 text-sm font-medium">제주 바다가 당신을 기다려요</span>
+          <span className="text-white/90 text-sm font-medium">자연이 당신을 기다려요</span>
         </div>
         
-        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
-          파도 소리와 함께<br />
+        <h1 className="text-4xl md:text-6xl font-gmarket font-bold text-white mb-6 leading-snug drop-shadow-lg">
+          파도 소리와 함께,<br />
           <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-300 bg-clip-text text-transparent">나만의 시간</span>
         </h1>
         
