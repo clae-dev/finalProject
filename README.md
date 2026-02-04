@@ -43,28 +43,6 @@ Version Control: Git/GitHub
 Deployment: (예정)
 
 
-📂 프로젝트 구조
-finalProject/
-├── backend/                # Spring Boot 프로젝트
-│   ├── src/main/java/
-│   │   └── com/app/
-│   │       ├── controller/     # REST API 엔드포인트
-│   │       ├── service/        # 비즈니스 로직
-│   │       ├── dto/            # 데이터 전송 객체
-│   │       ├── mapper/         # MyBatis 인터페이스
-│   │       ├── security/       # JWT 인증/인가
-│   │       └── config/         # 설정 파일
-│   └── src/main/resources/
-│       ├── mapper/             # MyBatis XML
-│       └── application.yml
-│
-└── frontend/               # React 프로젝트
-    ├── src/
-    │   ├── components/         # 재사용 컴포넌트
-    │   ├── pages/              # 페이지 컴포넌트
-    │   ├── context/            # Context API
-    │   └── api/                # Axios 설정
-    └── public/
 
 💾 데이터베이스 설계
 핵심 테이블 구조
