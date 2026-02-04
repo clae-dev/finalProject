@@ -7,8 +7,12 @@ export default function Header() {
       <div className="bg-white/70 backdrop-blur-xl border-b border-sky-100">
         <div className="max-w-6xl mx-auto px-5">
           <div className="flex items-center justify-between h-16">
-            <h1 className="cursor-pointer">
-              <img src={logo} alt="혼디" className="h-12" />
+            <h1 className="cursor-pointer flex items-center gap-2">
+              <img src={logo} alt="혼디" className="h-16" />
+              <div className="flex flex-col leading-tight">
+                <span className="text-xl font-bold bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent tracking-wide">HONDI</span>
+                <span className="text-xs font-medium text-slate-400">혼디</span>
+              </div>
             </h1>
             <nav className="hidden md:flex items-center gap-8">
               {['홈', '숙소', '동행', '후기', '맛집'].map((item, idx) => (
