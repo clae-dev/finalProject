@@ -20,7 +20,7 @@ function Login() {
         <div className="text-center mb-6 sm:mb-8">
           <h1 className="text-3xl sm:text-4xl mb-2 cursor-pointer">
             <span className="logo-jeju">혼</span>
-            <span className="logo-emerald">행</span>
+            <span className="logo-emerald">디</span>
           </h1>
           <p className="text-gray-500 text-sm sm:text-base">
             제주도 혼자 여행하는 사람들의 커뮤니티

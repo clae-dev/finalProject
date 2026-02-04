@@ -148,7 +148,7 @@ function Signup() {
         <div className="text-center mb-5 sm:mb-6">
           <h1 className="text-3xl sm:text-4xl mb-2">
             <span className="logo-jeju">혼</span>
-            <span className="logo-emerald">행</span>
+            <span className="logo-emerald">디</span>
           </h1>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-800">회원가입</h2>
         </div>

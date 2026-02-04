@@ -8,7 +8,7 @@ export default function Header() {
           <div className="flex items-center justify-between h-16">
             <h1 className="text-2xl font-bold cursor-pointer flex items-center gap-1">
               <span className="text-sky-500">혼</span>
-              <span className="text-cyan-400">행</span>
+              <span className="text-cyan-400">디</span>
               <span className="text-2xl">🌊</span>
             </h1>
             <nav className="hidden md:flex items-center gap-8">
