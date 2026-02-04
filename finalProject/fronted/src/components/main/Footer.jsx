@@ -8,7 +8,7 @@ export default function Footer() {
           <div>
             <h3 className="text-2xl font-bold mb-3 flex items-center gap-2">
               <span className="text-sky-400">혼</span>
-              <span className="text-cyan-300">행</span>
+              <span className="text-cyan-300">디</span>
               <span>🌊</span>
             </h3>
             <p className="text-sm leading-relaxed">제주 바다처럼 자유로운<br />혼자 여행자들의 커뮤니티</p>
@@ -32,7 +32,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-        <div className="border-t border-slate-700 pt-8 text-sm text-center text-slate-500">© 2025 혼행. All rights reserved.</div>
+        <div className="border-t border-slate-700 pt-8 text-sm text-center text-slate-500">© 2025 혼디. All rights reserved.</div>
       </div>
     </footer>
   );
