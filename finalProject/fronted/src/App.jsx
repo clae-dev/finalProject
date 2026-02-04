@@ -5,13 +5,6 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Main from './components/Main';
 
-/**
- * App 컴포넌트 (학원 패턴)
- * - AuthProvider로 전체 감싸기
- * - 로그인 상태에 따라 화면 분기
- * - BrowserRouter는 로그인 후에만 적용
- */
-
 function App() {
   return (
     <AuthProvider>
@@ -20,44 +13,33 @@ function App() {
   );
 }
 
-// 컴포넌트를 분리하여 하위 컴포넌트에서 useContext 사용하기
 function AppComponent() {
   const { user } = useContext(AuthContext);
-  // 로그인을 했다면 Main 렌더링
-  // 로그인을 안했다면 Login/Signup 선택 화면 렌더링
-  // -> 조건: 로그인 여부
-  // -> user에는 로그인한 사람의 정보가 세팅
-  // -> user는 AuthContext 안에 작성!
-  // -> ContextAPI를 이용하여 렌더링 조건 처리
 
   return (
     <>
       {user ? (
-        // 로그인 상태: Main 화면 (DashBoard)
-        <div className="min-h-screen bg-gray-50">
+        // 로그인 상태: base44 UI 적용된 Main
+        <div className="min-h-screen bg-gradient-to-b from-sky-50 to-cyan-50">
           <BrowserRouter>
-            <Main />
+            <Routes>
+              <Route path="/" element={<Main />} />
+              {/* 추가 라우트 */}
+            </Routes>
           </BrowserRouter>
         </div>
       ) : (
-        // 비로그인 상태: Login/Signup 선택 화면 (jeju 토큰 적용)
+        // 비로그인: 기존 Login/Signup
         <div className="min-h-screen bg-gradient-to-br from-jeju-50 to-emerald-50">
-          <AuthSelection />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+            </Routes>
+          </BrowserRouter>
         </div>
       )}
     </>
-  );
-}
-
-// 로그인/회원가입 선택 화면
-function AuthSelection() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-      </Routes>
-    </BrowserRouter>
   );
 }
 
