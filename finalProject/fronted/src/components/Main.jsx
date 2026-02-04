@@ -1,5 +1,5 @@
 import React from 'react';
-import Header from './main/Header';
+import Header from './common/Header';
 import HeroSection from './main/HeroSection';
 import SpotsSection from './main/SpotsSection';
 import WaveDivider from './main/WaveDivider';
