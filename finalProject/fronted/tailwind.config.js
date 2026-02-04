@@ -6,6 +6,12 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        'pretendard': ['Pretendard', 'sans-serif'],
+        'gmarket': ['"GmarketSans"', 'sans-serif'],
+        'noto': ['"Noto Sans KR"', 'sans-serif'],
+        'gothic': ['"Gothic A1"', 'sans-serif'],
+      },
       colors: {
         // base44 스타일 토큰 추가
         jeju: {

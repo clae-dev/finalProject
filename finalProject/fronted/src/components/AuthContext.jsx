@@ -13,16 +13,9 @@ export const AuthContext = createContext();
 // 전역 상태 제공자(Provider) 정의
 export const AuthProvider = ({ children }) => {
   // 로그인한 회원 정보를 기억할 상태
-  // TODO: 테스트 완료 후 아래 testUser를 null로 변경
-  const testUser = {
-    memberNo: 1,
-    memberName: "테스트",
-    memberNickname: "혼행러",
-    memberEmail: "test@example.com"
-  };
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("userData");
-    return storedUser ? JSON.parse(storedUser) : testUser; // 테스트용
+    return storedUser ? JSON.parse(storedUser) : null;
   });
 
   const [email, setEmail] = useState("");
