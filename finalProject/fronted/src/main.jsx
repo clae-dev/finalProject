@@ -1,13 +1,13 @@
 import React from 'react';
-import Header from './main/Header';
-import HeroSection from './main/HeroSection';
-import SpotsSection from './main/SpotsSection';
-import WaveDivider from './main/WaveDivider';
-import CompanionsSection from './main/CompanionsSection';
-import AccommodationsSection from './main/AccommodationsSection';
-import ReviewsSection from './main/ReviewsSection';
-import CTASection from './main/CTASection';
-import Footer from './main/Footer';
+import Header from './components/main/Header';
+import HeroSection from './components/main/HeroSection';
+import SpotsSection from './components/main/SpotsSection';
+import WaveDivider from './components/main/WaveDivider';
+import CompanionsSection from './components/main/CompanionsSection';
+import AccommodationsSection from './components/main/AccommodationsSection';
+import ReviewsSection from './components/main/ReviewsSection';
+import CTASection from './components/main/CTASection';
+import Footer from './components/main/Footer';
 
 export default function Main() {
   return (
