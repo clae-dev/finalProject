@@ -60,6 +60,7 @@ public class SecurityConfig {
                     "/api/member/check-nickname",   // 닉네임 중복 체크
                     "/api/member/find-id",          // 아이디 찾기
                     "/api/member/find-password",    // 비밀번호 찾기
+                    "/api/email/**",                // 이메일 인증 API
                     "/api/accommodation/**",        // 숙소 정보 조회 (공개)
                     "/api/board/notice/**",         // 공지사항 조회 (공개)
                     "/api/faq/**",                  // FAQ 조회 (공개)
