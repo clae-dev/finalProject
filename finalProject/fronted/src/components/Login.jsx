@@ -65,6 +65,7 @@ function Login() {
                   placeholder="your@email.com"
                   value={globalState.email}
                   onChange={globalState.changeInputEmail}
+                  autoComplete="off"
                   className="h-12 pl-12 bg-slate-50 border-slate-200 focus:border-sky-400 focus:ring-sky-400 rounded-xl"
                   required
                 />
@@ -80,6 +81,7 @@ function Login() {
                   placeholder="••••••••"
                   value={globalState.password}
                   onChange={globalState.changeInputPw}
+                  autoComplete="new-password"
                   className="h-12 pl-12 pr-12 bg-slate-50 border-slate-200 focus:border-sky-400 focus:ring-sky-400 rounded-xl"
                   required
                 />
