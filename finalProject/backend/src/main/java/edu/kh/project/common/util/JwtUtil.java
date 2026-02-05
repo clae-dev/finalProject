@@ -2,8 +2,6 @@ package edu.kh.project.common.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
@@ -14,22 +12,22 @@ import java.util.Date;
  * - Access Token: 30분
  * - Refresh Token: 7일
  */
-@Component
 public class JwtUtil {
 
     private final SecretKey secretKey;
-    
-    @Value("${jwt.access-token-validity}")
-    private long accessTokenValidity;  // 1800000ms = 30분
-    
-    @Value("${jwt.refresh-token-validity}")
-    private long refreshTokenValidity; // 604800000ms = 7일
+    private final long accessTokenValidity;   // 1800000ms = 30분
+    private final long refreshTokenValidity;  // 604800000ms = 7일
 
     /**
-     * JWT Secret Key 초기화
+     * JWT 설정값으로 초기화 (JwtConfig에서 호출)
+     * @param secret JWT 비밀키
+     * @param accessTokenValidity Access Token 유효시간 (밀리초)
+     * @param refreshTokenValidity Refresh Token 유효시간 (밀리초)
      */
-    public JwtUtil(@Value("${jwt.secret}") String secret) {
+    public JwtUtil(String secret, long accessTokenValidity, long refreshTokenValidity) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.accessTokenValidity = accessTokenValidity;
+        this.refreshTokenValidity = refreshTokenValidity;
     }
 
     /**

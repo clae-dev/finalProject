@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import logo from '@/assets/images/혼디.png';
+import bgImage from '@/assets/images/협재.png';
 
 function Login() {
   const globalState = useContext(AuthContext);
@@ -17,8 +18,8 @@ function Login() {
       {/* 제주 바다 배경 이미지 */}
       <div className="absolute inset-0">
         <img
-          src="https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=1600"
-          alt="제주 바다"
+          src={bgImage}
+          alt="협재 해변"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-sky-400/70 via-cyan-500/60 to-blue-500/70" />
