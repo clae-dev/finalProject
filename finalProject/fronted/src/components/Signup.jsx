@@ -252,6 +252,7 @@ export default function Register() {
                   placeholder="your@email.com"
                   value={formData.email}
                   onChange={(e) => handleChange('email', e.target.value)}
+                  autoComplete="off"
                   className={`h-12 pl-12 bg-slate-50 border-slate-200 focus:border-sky-400 focus:ring-sky-400 rounded-xl ${errors.email ? 'border-red-500' : ''}`}
                 />
               </div>
@@ -268,6 +269,7 @@ export default function Register() {
                   placeholder="특수문자 포함 8~20자"
                   value={formData.password}
                   onChange={(e) => handleChange('password', e.target.value)}
+                  autoComplete="new-password"
                   className={`h-12 pl-12 pr-12 bg-slate-50 border-slate-200 focus:border-sky-400 focus:ring-sky-400 rounded-xl ${errors.password ? 'border-red-500' : ''}`}
                 />
                 <button
@@ -291,6 +293,7 @@ export default function Register() {
                   placeholder="••••••••"
                   value={formData.confirmPassword}
                   onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                  autoComplete="new-password"
                   className={`h-12 pl-12 pr-12 bg-slate-50 border-slate-200 focus:border-sky-400 focus:ring-sky-400 rounded-xl ${errors.confirmPassword ? 'border-red-500' : ''}`}
                 />
                 <button
