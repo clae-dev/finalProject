@@ -25,7 +25,8 @@ public class AccommodationServiceImpl implements AccommodationService {
     
     /**
      * API 데이터 동기화
-     * - 제주 데이터만 필터링하여 저장
+     * - 제주 데이터만 필터링
+     * - 폐업 상태 제외
      */
     @Override
     public int syncAccommodationsFromApi() {
@@ -33,9 +34,10 @@ public class AccommodationServiceImpl implements AccommodationService {
         int syncCount = 0;
         int pageNo = 1;
         int numOfRows = 100;
-        int maxPages = 1000; // 테스트용: 10페이지(1000건)만 처리
+        int maxPages = 600; // 제주 데이터 찾기 위해 충분히 검색
         
         log.info("===== 숙소 정보 동기화 시작 =====");
+        log.info("필터 조건: 제주 지역 + 폐업 제외");
         
         try {
             while (pageNo <= maxPages) {
@@ -60,12 +62,19 @@ public class AccommodationServiceImpl implements AccommodationService {
                 // 각 항목 처리
                 for (RuralApiResponse.Item item : items) {
                     
-                    // 제주 데이터만 처리
+                    // 1. 제주 데이터 필터
                     if (!isJejuData(item)) {
                         continue;
                     }
                     
-                    // 중복 체크
+                    // 2. 폐업 상태 제외
+                    if (!isActiveStatus(item)) {
+                        log.debug("⏭️ 폐업 상태 제외: {} ({})", 
+                                 item.getBPLC_NM(), item.getSALS_STTS_NM());
+                        continue;
+                    }
+                    
+                    // 3. 중복 체크
                     if (accommodationMapper.existsByTourApiId(item.getMNG_NO()) > 0) {
                         log.debug("이미 존재하는 숙소: {}", item.getBPLC_NM());
                         continue;
@@ -77,15 +86,21 @@ public class AccommodationServiceImpl implements AccommodationService {
                         accommodationMapper.insertAccommodation(dto);
                         syncCount++;
                         
-                        log.info("숙소 저장 성공: {} ({})", dto.getName(), dto.getRegion());
+                        log.info("✅ 숙소 저장 성공: {} ({})", dto.getName(), dto.getRegion());
                         
                     } catch (Exception e) {
-                        log.error("숙소 저장 실패: {}", item.getBPLC_NM(), e);
+                        log.error("❌ 숙소 저장 실패: {}", item.getBPLC_NM(), e);
                     }
                 }
                 
                 log.info("{}페이지 처리 완료 - 현재 동기화 수: {}", pageNo, syncCount);
                 pageNo++;
+                
+                // 100페이지마다 진행 상황 출력
+                if (pageNo % 100 == 0) {
+                    log.info("🔍 진행 상황: {}/{}페이지 처리 완료, 총 {}건 저장", 
+                             pageNo, maxPages, syncCount);
+                }
             }
             
             log.info("===== 동기화 완료: {}건 =====", syncCount);
@@ -102,18 +117,44 @@ public class AccommodationServiceImpl implements AccommodationService {
      * 제주 데이터인지 확인
      */
     private boolean isJejuData(RuralApiResponse.Item item) {
+        String name = item.getBPLC_NM();
         String roadAddr = item.getROAD_NM_ADDR();
         String lotnoAddr = item.getLOTNO_ADDR();
         
+        // 1. 사업장명에 "제주" 포함
+        if (name != null && name.contains("제주")) {
+            return true;
+        }
+        
+        // 2. 도로명주소에 "제주" 포함
         if (roadAddr != null && roadAddr.contains("제주")) {
             return true;
         }
         
+        // 3. 지번주소에 "제주" 포함
         if (lotnoAddr != null && lotnoAddr.contains("제주")) {
             return true;
         }
         
         return false;
+    }
+    
+    /**
+     * 영업 중인 상태인지 확인 (폐업 제외)
+     */
+    private boolean isActiveStatus(RuralApiResponse.Item item) {
+        String status = item.getSALS_STTS_NM();
+        
+        // NULL이면 포함 (상태 정보 없음)
+        if (status == null) {
+            return true;
+        }
+        
+        // 폐업/휴업/폐쇄가 아니면 OK
+        return !status.contains("폐업") && 
+               !status.contains("폐쇄") && 
+               !status.contains("휴업") &&
+               !status.contains("중단");
     }
     
     /**
@@ -126,19 +167,20 @@ public class AccommodationServiceImpl implements AccommodationService {
         // 기본 정보
         dto.setTourApiId(item.getMNG_NO());
         dto.setName(item.getBPLC_NM());
-        dto.setAddress(item.getROAD_NM_ADDR());
+        dto.setAddress(item.getROAD_NM_ADDR() != null ? 
+                      item.getROAD_NM_ADDR() : item.getLOTNO_ADDR());
         dto.setPhone(item.getTELNO());
         
         // 지역 추출
-        dto.setRegion(extractRegion(item.getROAD_NM_ADDR()));
+        dto.setRegion(extractRegion(item));
         
-        // 숙소 유형 (일단 기본값)
-        dto.setAccommodationType("게스트하우스");
+        // 숙소 유형
+        dto.setAccommodationType(extractAccommodationType(item.getBPLC_NM()));
         
-        // 상태 변환
-        dto.setStatus(convertStatus(item.getSALS_STTS_NM()));
+        // 상태 (영업 중)
+        dto.setStatus("A"); // 이미 필터링했으므로 무조건 Active
         
-        // 좌표는 일단 NULL (TM좌표 변환 필요)
+        // 좌표 (나중에 추가)
         dto.setLatitude(null);
         dto.setLongitude(null);
         
@@ -148,26 +190,35 @@ public class AccommodationServiceImpl implements AccommodationService {
     /**
      * 주소에서 지역 추출
      */
-    private String extractRegion(String roadAddr) {
-        if (roadAddr == null) return null;
+    private String extractRegion(RuralApiResponse.Item item) {
+        String roadAddr = item.getROAD_NM_ADDR();
+        String lotnoAddr = item.getLOTNO_ADDR();
+        String name = item.getBPLC_NM();
         
-        if (roadAddr.contains("제주시")) return "제주시";
-        if (roadAddr.contains("서귀포시")) return "서귀포시";
+        String[] sources = {roadAddr, lotnoAddr, name};
         
-        return null;
+        for (String source : sources) {
+            if (source != null) {
+                if (source.contains("제주시")) return "제주시";
+                if (source.contains("서귀포시")) return "서귀포시";
+            }
+        }
+        
+        return "제주시"; // 기본값
     }
     
     /**
-     * API 상태 → DB 상태 변환
+     * 사업장명에서 숙소 유형 추출
      */
-    private String convertStatus(String apiStatus) {
-        if (apiStatus == null) return "A";
+    private String extractAccommodationType(String name) {
+        if (name == null) return "게스트하우스";
         
-        if (apiStatus.contains("영업") || apiStatus.contains("정상")) {
-            return "A"; // 활성
-        }
+        if (name.contains("펜션")) return "펜션";
+        if (name.contains("민박")) return "민박";
+        if (name.contains("게스트하우스") || name.contains("guesthouse")) return "게스트하우스";
+        if (name.contains("호스텔") || name.contains("hostel")) return "호스텔";
         
-        return "C"; // 폐업
+        return "게스트하우스";
     }
     
     /**
