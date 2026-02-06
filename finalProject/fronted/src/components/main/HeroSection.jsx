@@ -32,7 +32,7 @@ export default function HeroSection() {
           <span className="text-white/90 text-xs font-medium">자연이 당신을 기다려요</span>
         </div>
         
-        <h1 className="text-4xl md:text-6xl font-gmarket font-bold text-white mb-6 leading-snug drop-shadow-lg">
+        <h1 className="text-3xl md:text-5xl font-gmarket font-bold text-white mb-6 leading-snug drop-shadow-lg">
           파도 소리와 함께,<br />
           <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-blue-300 bg-clip-text text-transparent">나만의 시간</span>
         </h1>

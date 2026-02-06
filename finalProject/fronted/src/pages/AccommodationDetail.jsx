@@ -90,7 +90,9 @@ export default function AccommodationDetail() {
     );
   }
 
-  const images = [accommodation.thumbnailUrl || defaultImage];
+  const images = accommodation.imageUrls?.length > 0
+    ? accommodation.imageUrls
+    : [accommodation.thumbnailUrl || defaultImage];
   const facilities = parseFacilities(accommodation.facilities);
   const amenities = facilities.map(f => ({ icon: getFacilityIcon(f), label: f }));
 
@@ -106,10 +108,10 @@ export default function AccommodationDetail() {
     <div className="min-h-screen bg-gradient-to-b from-sky-100 via-cyan-100 to-blue-100">
       <Header />
 
-      <div className="pt-16 max-w-6xl mx-auto px-5 py-8">
+      <div className="pt-24 max-w-6xl mx-auto px-5 py-8">
         {/* 이미지 갤러리 */}
         <div className="mb-8">
-          <div className="relative h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
+          <div className="relative h-[320px] md:h-[420px] rounded-2xl overflow-hidden shadow-2xl">
             <img
               src={images[currentImageIndex]}
               alt={accommodation.name}
@@ -119,22 +121,23 @@ export default function AccommodationDetail() {
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent" />
 
             {/* 이미지 네비게이션 */}
-            {images.length > 1 && (
-              <>
-                <button
-                  onClick={prevImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all"
-                >
-                  <ChevronLeft className="w-5 h-5 text-slate-700" />
-                </button>
-                <button
-                  onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all"
-                >
-                  <ChevronRight className="w-5 h-5 text-slate-700" />
-                </button>
-              </>
-            )}
+            <button
+              onClick={prevImage}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all"
+            >
+              <ChevronLeft className="w-5 h-5 text-slate-700" />
+            </button>
+            <button
+              onClick={nextImage}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-lg transition-all"
+            >
+              <ChevronRight className="w-5 h-5 text-slate-700" />
+            </button>
+
+            {/* 이미지 카운터 */}
+            <div className="absolute bottom-4 right-4 px-3 py-1 bg-black/50 rounded-full text-white text-xs">
+              {currentImageIndex + 1} / {images.length}
+            </div>
 
             {/* 이미지 인디케이터 */}
             {images.length > 1 && (
@@ -159,7 +162,7 @@ export default function AccommodationDetail() {
                 <button
                   key={idx}
                   onClick={() => setCurrentImageIndex(idx)}
-                  className={`h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                  className={`h-16 rounded-lg overflow-hidden border-2 transition-all ${
                     idx === currentImageIndex ? 'border-sky-400 shadow-lg' : 'border-transparent'
                   }`}
                 >
