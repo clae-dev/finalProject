@@ -87,6 +87,49 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // 소셜 로그인 처리 함수
+  const handleSocialLogin = async (provider, code) => {
+    try {
+      const redirectUri = `${import.meta.env.VITE_REDIRECT_URI}/oauth/${provider}/callback`;
+
+      const response = await axiosApi.post(`/api/member/oauth/${provider}`, {
+        code,
+        redirectUri
+      });
+
+      if (!response.data.success) {
+        throw new Error(response.data.message || "소셜 로그인에 실패했습니다.");
+      }
+
+      const loginData = response.data.data;
+
+      // JWT 토큰 저장
+      localStorage.setItem("accessToken", loginData.accessToken);
+      localStorage.setItem("refreshToken", loginData.refreshToken);
+
+      // 사용자 정보 저장
+      const userData = {
+        memberNo: loginData.memberNo,
+        memberName: loginData.memberName,
+        memberNickname: loginData.memberNickname,
+        memberEmail: loginData.memberEmail
+      };
+
+      setUser(userData);
+      localStorage.setItem("userData", JSON.stringify(userData));
+
+      // 1시간 후 자동 로그아웃 타이머 설정
+      setTimeout(() => {
+        handleLogout();
+        alert("로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
+      }, 60 * 60 * 1000);
+
+    } catch (error) {
+      console.error("소셜 로그인 실패:", error);
+      throw error;
+    }
+  };
+
   // 로그아웃 처리 함수
   const handleLogout = () => {
     localStorage.removeItem("userData");
@@ -107,6 +150,7 @@ export const AuthProvider = ({ children }) => {
     changeInputEmail,
     changeInputPw,
     handleLogin,
+    handleSocialLogin,
     handleLogout
   };
 

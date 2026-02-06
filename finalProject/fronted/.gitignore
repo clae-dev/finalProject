@@ -23,5 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment variables
+.env
+
 # Images
 src/assets/images/
