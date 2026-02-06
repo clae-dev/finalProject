@@ -59,6 +59,11 @@ public class AccommodationServiceImpl implements AccommodationService {
                     break;
                 }
                 
+                // ✅ 첫 페이지 첫 데이터로 API 응답 구조 로깅
+                if (pageNo == 1 && !items.isEmpty()) {
+                    logApiResponseStructure(items.get(0));
+                }
+                
                 // 각 항목 처리
                 for (RuralApiResponse.Item item : items) {
                     
@@ -86,7 +91,8 @@ public class AccommodationServiceImpl implements AccommodationService {
                         accommodationMapper.insertAccommodation(dto);
                         syncCount++;
                         
-                        log.info("✅ 숙소 저장 성공: {} ({})", dto.getName(), dto.getRegion());
+                        log.info("✅ 숙소 저장 성공: {} ({}) - 타입: {}", 
+                                dto.getName(), dto.getRegion(), dto.getAccommodationType());
                         
                     } catch (Exception e) {
                         log.error("❌ 숙소 저장 실패: {}", item.getBPLC_NM(), e);
@@ -111,6 +117,26 @@ public class AccommodationServiceImpl implements AccommodationService {
         }
         
         return syncCount;
+    }
+    
+    /**
+     * ✅ API 응답 구조 로깅 (디버깅용)
+     */
+    private void logApiResponseStructure(RuralApiResponse.Item item) {
+        log.info("========== API 응답 샘플 데이터 ==========");
+        log.info("사업장명(BPLC_NM): {}", item.getBPLC_NM());
+        log.info("관리번호(MNG_NO): {}", item.getMNG_NO());
+        log.info("도로명주소(ROAD_NM_ADDR): {}", item.getROAD_NM_ADDR());
+        log.info("지번주소(LOTNO_ADDR): {}", item.getLOTNO_ADDR());
+        log.info("전화번호(TELNO): {}", item.getTELNO());
+        log.info("영업상태명(SALS_STTS_NM): {}", item.getSALS_STTS_NM());
+        
+        // ✅ 업종 관련 필드들 (이게 핵심!)
+        log.info("--- 업종 분류 필드 ---");
+        log.info("업종구분명(INDUTY_NM): {}", item.getINDUTY_NM());
+        log.info("업태구분명(BSN_STATE_NM): {}", item.getBSN_STATE_NM());
+        log.info("상세영업상태명(DTL_STTS_NM): {}", item.getDTL_STTS_NM());
+        log.info("========================================");
     }
     
     /**
@@ -174,8 +200,8 @@ public class AccommodationServiceImpl implements AccommodationService {
         // 지역 추출
         dto.setRegion(extractRegion(item));
         
-        // 숙소 유형
-        dto.setAccommodationType(extractAccommodationType(item.getBPLC_NM()));
+        // ✅ 숙소 유형 (업종 필드 우선 사용)
+        dto.setAccommodationType(extractAccommodationType(item));
         
         // 상태 (영업 중)
         dto.setStatus("A"); // 이미 필터링했으므로 무조건 Active
@@ -208,24 +234,109 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
     
     /**
-     * 사업장명에서 숙소 유형 추출
+     * ✅ 숙소 유형 추출 (우선순위: API 업종 필드 > 사업장명 키워드)
      */
-    private String extractAccommodationType(String name) {
-        if (name == null) return "민박";
-
-        String lower = name.toLowerCase();
-
-        if (lower.contains("호텔") || lower.contains("hotel")) return "호텔";
-        if (lower.contains("리조트") || lower.contains("resort")) return "리조트";
-        if (lower.contains("펜션") || lower.contains("pension")) return "펜션";
-        if (lower.contains("풀빌라") || lower.contains("pool villa")) return "풀빌라";
-        if (lower.contains("게스트하우스") || lower.contains("guesthouse") || lower.contains("guest house")) return "게스트하우스";
-        if (lower.contains("호스텔") || lower.contains("hostel")) return "호스텔";
-        if (lower.contains("한옥")) return "한옥";
-        if (lower.contains("모텔")) return "모텔";
-        if (lower.contains("민박")) return "민박";
-
+    private String extractAccommodationType(RuralApiResponse.Item item) {
+        
+        String industryName = item.getINDUTY_NM();      // 업종구분명
+        String businessState = item.getBSN_STATE_NM();  // 업태구분명
+        String detailStatus = item.getDTL_STTS_NM();    // 상세영업상태명
+        String businessName = item.getBPLC_NM();        // 사업장명
+        
+        // ✅ 1순위: 업종구분명 (INDUTY_NM)
+        if (industryName != null && !industryName.trim().isEmpty()) {
+            String normalized = normalizeAccommodationType(industryName);
+            if (normalized != null) {
+                log.debug("업종구분명으로 분류: {} -> {}", industryName, normalized);
+                return normalized;
+            }
+        }
+        
+        // ✅ 2순위: 업태구분명 (BSN_STATE_NM)
+        if (businessState != null && !businessState.trim().isEmpty()) {
+            String normalized = normalizeAccommodationType(businessState);
+            if (normalized != null) {
+                log.debug("업태구분명으로 분류: {} -> {}", businessState, normalized);
+                return normalized;
+            }
+        }
+        
+        // ✅ 3순위: 상세영업상태명 (DTL_STTS_NM)
+        if (detailStatus != null && !detailStatus.trim().isEmpty()) {
+            String normalized = normalizeAccommodationType(detailStatus);
+            if (normalized != null) {
+                log.debug("상세영업상태명으로 분류: {} -> {}", detailStatus, normalized);
+                return normalized;
+            }
+        }
+        
+        // ✅ 4순위: 사업장명 키워드 매칭 (기존 로직)
+        if (businessName != null) {
+            String normalized = normalizeAccommodationType(businessName);
+            if (normalized != null) {
+                log.debug("사업장명으로 분류: {} -> {}", businessName, normalized);
+                return normalized;
+            }
+        }
+        
+        // ✅ 기본값
+        log.warn("⚠️ 숙소 타입을 결정할 수 없음. 기본값 '민박' 적용: {}", businessName);
         return "민박";
+    }
+    
+    /**
+     * ✅ 문자열을 정규화된 숙소 타입으로 변환
+     * @param input 업종명, 업태명, 사업장명 등
+     * @return 정규화된 숙소 타입 (없으면 null)
+     */
+    private String normalizeAccommodationType(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return null;
+        }
+        
+        String lower = input.toLowerCase().trim();
+        
+        // 호텔
+        if (lower.contains("호텔") || lower.contains("hotel")) {
+            return "호텔";
+        }
+        // 리조트
+        if (lower.contains("리조트") || lower.contains("resort")) {
+            return "리조트";
+        }
+        // 펜션
+        if (lower.contains("펜션") || lower.contains("pension")) {
+            return "펜션";
+        }
+        // 풀빌라
+        if (lower.contains("풀빌라") || lower.contains("pool villa") || lower.contains("풀 빌라")) {
+            return "풀빌라";
+        }
+        // 게스트하우스
+        if (lower.contains("게스트하우스") || lower.contains("guesthouse") || 
+            lower.contains("guest house") || lower.contains("게하")) {
+            return "게스트하우스";
+        }
+        // 호스텔
+        if (lower.contains("호스텔") || lower.contains("hostel")) {
+            return "호스텔";
+        }
+        // 한옥
+        if (lower.contains("한옥")) {
+            return "한옥";
+        }
+        // 모텔
+        if (lower.contains("모텔") || lower.contains("motel")) {
+            return "모텔";
+        }
+        // 민박
+        if (lower.contains("민박") || lower.contains("home stay") || 
+            lower.contains("homestay") || lower.contains("농어촌민박")) {
+            return "민박";
+        }
+        
+        // 매칭 안되면 null 반환
+        return null;
     }
     
     /**
