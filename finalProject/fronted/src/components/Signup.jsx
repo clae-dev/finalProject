@@ -123,38 +123,69 @@ export default function Register() {
     }
   }, [timer]);
 
-  const handleSubmit = (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
     // 유효성 검사
     if (!formData.name) newErrors.name = '이름을 입력해주세요';
-    
+
     const nicknameError = validateNickname(formData.nickname);
     if (nicknameError) newErrors.nickname = nicknameError;
-    
+
     const emailError = validateEmail(formData.email);
     if (emailError) newErrors.email = emailError;
-    
+
     const passwordError = validatePassword(formData.password);
     if (passwordError) newErrors.password = passwordError;
-    
+
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = '비밀번호가 일치하지 않습니다';
     }
-    
+
     if (!isVerified) newErrors.verificationCode = '이메일 인증을 완료해주세요';
     if (!formData.gender) newErrors.gender = '성별을 선택해주세요';
     if (!formData.age_group) newErrors.age_group = '연령대를 선택해주세요';
-    
+
     if (!agreements.terms) newErrors.terms = '이용약관에 동의해주세요';
     if (!agreements.privacy) newErrors.privacy = '개인정보 처리방침에 동의해주세요';
 
     setErrors(newErrors);
-    
+
     if (Object.keys(newErrors).length === 0) {
-      // 회원가입 처리
-      console.log('회원가입 데이터:', formData);
+      // 회원가입 API 호출
+      setIsSubmitting(true);
+
+      try {
+        // 백엔드 DTO 형식에 맞게 데이터 변환
+        const signupData = {
+          memberEmail: formData.email,
+          memberPw: formData.password,
+          memberNickname: formData.nickname,
+          memberName: formData.name,
+          memberPhone: '',  // 전화번호는 선택사항
+          memberGender: formData.gender === 'male' ? 'M' : formData.gender === 'female' ? 'F' : 'O',
+          memberAgeGroup: formData.age_group
+        };
+
+        const response = await axiosApi.post('/api/member/signup', signupData);
+
+        if (response.data.success) {
+          alert('회원가입이 완료되었습니다! 로그인 페이지로 이동합니다.');
+          window.location.href = '/login';
+        } else {
+          alert(response.data.message || '회원가입에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('회원가입 실패:', error);
+        console.error('에러 응답:', error.response?.data);
+        const errorMessage = error.response?.data?.message || '회원가입 중 오류가 발생했습니다.';
+        alert(errorMessage);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -446,7 +477,8 @@ export default function Register() {
 
             <Button
               type="submit"
-              className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-semibold text-base rounded-xl shadow-lg shadow-sky-200 hover:shadow-xl hover:shadow-sky-300 transition-all mt-4"
+              disabled={isSubmitting}
+              className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-semibold text-base rounded-xl shadow-lg shadow-sky-200 hover:shadow-xl hover:shadow-sky-300 transition-all mt-4 disabled:opacity-70"
             >
               회원가입
             </Button>

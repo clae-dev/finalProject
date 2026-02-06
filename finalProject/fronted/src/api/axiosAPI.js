@@ -6,7 +6,7 @@ import axios from "axios";
  * - Spring Boot 서버와 통신
  */
 export const axiosApi = axios.create({
-  baseURL: "http://localhost:80"
+  baseURL: ""
 });
 
 // Request 인터셉터: JWT 토큰 자동 추가
