@@ -13,6 +13,20 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
+  const handleGoogleLogin = () => {
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const redirectUri = `${import.meta.env.VITE_REDIRECT_URI}/oauth/google/callback`;
+    const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent('email profile')}`;
+    window.location.href = url;
+  };
+
+  const handleKakaoLogin = () => {
+    const clientId = import.meta.env.VITE_KAKAO_CLIENT_ID;
+    const redirectUri = `${import.meta.env.VITE_REDIRECT_URI}/oauth/kakao/callback`;
+    const url = `https://kauth.kakao.com/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`;
+    window.location.href = url;
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-5 relative overflow-hidden">
       {/* 제주 바다 배경 이미지 */}
@@ -129,7 +143,7 @@ function Login() {
 
           {/* 소셜 로그인 */}
           <div className="space-y-3">
-            <button className="w-full h-12 flex items-center justify-center gap-3 bg-white border-2 border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all font-medium text-slate-700">
+            <button onClick={handleGoogleLogin} className="w-full h-12 flex items-center justify-center gap-3 bg-white border-2 border-slate-200 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all font-medium text-slate-700">
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -139,7 +153,7 @@ function Login() {
               Google로 계속하기
             </button>
 
-            <button className="w-full h-12 flex items-center justify-center gap-3 bg-[#FEE500] hover:bg-[#FDD835] rounded-xl transition-all font-medium text-slate-800 shadow-md hover:shadow-lg">
+            <button onClick={handleKakaoLogin} className="w-full h-12 flex items-center justify-center gap-3 bg-[#FEE500] hover:bg-[#FDD835] rounded-xl transition-all font-medium text-slate-800 shadow-md hover:shadow-lg">
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#3C1E1E" d="M12 3C6.48 3 2 6.58 2 11c0 2.83 1.89 5.31 4.73 6.73-.21.78-.77 2.83-.88 3.27-.14.55.2.54.42.4.18-.12 2.85-1.94 4-2.71.56.09 1.14.13 1.73.13 5.52 0 10-3.58 10-8s-4.48-8-10-8z"/>
               </svg>

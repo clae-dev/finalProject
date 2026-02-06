@@ -5,6 +5,7 @@ import Signup from './components/Signup';
 import Main from './components/Main';
 import Accommodations from './pages/Accommodations';
 import AccommodationDetail from './pages/AccommodationDetail';
+import OAuthCallback from './components/OAuthCallback';
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
             <Route path="/" element={<Main />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/oauth/kakao/callback" element={<OAuthCallback />} />
+            <Route path="/oauth/google/callback" element={<OAuthCallback />} />
             <Route path="/accommodations" element={<Accommodations />} />
             <Route path="/accommodations/:accommodationNo" element={<AccommodationDetail />} />
           </Routes>
