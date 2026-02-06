@@ -3,10 +3,13 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Search, MapPin, Heart, Phone, Clock, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
 import { getAccommodationList } from '../api/accommodationAPI';
+import heroImg from '../assets/images/월정리.png';
 
 export default function Accommodations() {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     region: 'all',
@@ -124,12 +127,11 @@ export default function Accommodations() {
       <div className="relative h-[450px] overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1600"
+            src={heroImg}
             alt="제주 숙소"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-[center_40%]"
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-sky-900/70 via-cyan-900/50 to-blue-900/60" />
-          <div className="absolute inset-0 backdrop-blur-[2px]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-sky-900/50 via-cyan-900/30 to-blue-900/40" />
         </div>
 
         {/* 배경 장식 */}
@@ -256,7 +258,7 @@ export default function Accommodations() {
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAccommodations.map(acc => (
-                <div key={acc.accommodationNo} className="group cursor-pointer">
+                <div key={acc.accommodationNo} className="group cursor-pointer" onClick={() => navigate(`/accommodations/${acc.accommodationNo}`)}>
                   <div className="relative rounded-2xl overflow-hidden mb-4 shadow-md hover:shadow-xl transition-all">
                     <div className="aspect-[4/3]">
                       <img

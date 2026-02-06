@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import slideNoeul from '../../assets/images/main/노을.png';
+import slideSseolmae from '../../assets/images/main/썰매.png';
+import slideChingu from '../../assets/images/main/친구.png';
 
 const heroSlides = [
-  { image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400', location: '협재해수욕장' },
-  { image: 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=1400', location: '우도' },
-  { image: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=1400', location: '성산일출봉' },
+  { image: slideNoeul, location: '협재해수욕장' },
+  { image: slideSseolmae, location: '우도' },
+  { image: slideChingu, location: '성산일출봉' },
 ];
 
 export default function HeroSection() {
@@ -15,18 +18,18 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section className="relative h-[92vh] min-h-[650px] pt-16">
+    <section className="relative h-[70vh] min-h-[500px] pt-16">
       {heroSlides.map((slide, idx) => (
         <div key={idx} className={`absolute inset-0 transition-opacity duration-1000 ${currentSlide === idx ? 'opacity-100' : 'opacity-0'}`}>
           <img src={slide.image} alt="" className="w-full h-full object-cover" />
         </div>
       ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-sky-900/70 via-sky-900/20 to-sky-900/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-sky-900/60 via-sky-900/10 to-sky-900/15" />
       
-      <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-5">
-        <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-md rounded-full mb-8 border border-white/30">
-          <span className="text-lg">🏝️</span>
-          <span className="text-white/90 text-sm font-medium">자연이 당신을 기다려요</span>
+      <div className="relative z-10 h-full flex flex-col justify-center items-center text-center px-5 pb-40">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-white/20 backdrop-blur-md rounded-full mb-5 border border-white/30">
+          <span className="text-sm">🏝️</span>
+          <span className="text-white/90 text-xs font-medium">자연이 당신을 기다려요</span>
         </div>
         
         <h1 className="text-4xl md:text-6xl font-gmarket font-bold text-white mb-6 leading-snug drop-shadow-lg">

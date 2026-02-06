@@ -59,12 +59,25 @@ public class RuralApiResponse {
         private String GSRM_CNT;        // 객실수
         
         @JsonProperty("SALS_STTS_NM")
-        private String SALS_STTS_NM;    // 영업상태
+        private String SALS_STTS_NM;    // 영업상태명
         
         @JsonProperty("CRD_INFO_X")
         private String CRD_INFO_X;      // X좌표
         
         @JsonProperty("CRD_INFO_Y")
         private String CRD_INFO_Y;      // Y좌표
+        
+        // ✅ 업종 분류 관련 필드 추가
+        @JsonProperty("INDUTY_NM")
+        private String INDUTY_NM;       // 업종명
+        
+        @JsonProperty("BSN_STATE_NM")
+        private String BSN_STATE_NM;    // 업태구분명
+        
+        @JsonProperty("DTL_STTS_NM")
+        private String DTL_STTS_NM;     // 상세영업상태명
+        
+        @JsonProperty("SANITAR_INDUTY_TYPE_NM")
+        private String SANITAR_INDUTY_TYPE_NM;  // 위생업종명
     }
 }
