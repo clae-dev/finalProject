@@ -9,6 +9,7 @@ export default function Header() {
 
   const navItems = [
     { name: '홈', path: '/' },
+    { name: '자유', path: '/freeboard' },
     { name: '숙소', path: '/accommodations' },
     { name: '동행', path: '/companions' },
     { name: '후기', path: '/reviews' },
@@ -31,17 +32,23 @@ export default function Header() {
 
             {/* 네비게이션 - 중앙 */}
             <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`text-sm font-medium transition-colors ${
-                    location.pathname === item.path ? 'text-sky-600' : 'text-slate-500 hover:text-sky-500'
-                  }`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                const isActive = item.path === '/' ? location.pathname === '/' : location.pathname.startsWith(item.path);
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.path}
+                    className={`relative text-sm font-medium py-1 transition-all ${
+                      isActive ? 'text-sky-600' : 'text-slate-500 hover:text-sky-500'
+                    }`}
+                  >
+                    {item.name}
+                    <span className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-400 rounded-full transition-all duration-300 ${
+                      isActive ? 'w-full' : 'w-0'
+                    }`} />
+                  </Link>
+                );
+              })}
             </nav>
 
             {/* 오른쪽 - 로그인/로그아웃 */}

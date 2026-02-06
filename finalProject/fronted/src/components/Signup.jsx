@@ -166,7 +166,7 @@ export default function Register() {
           memberNickname: formData.nickname,
           memberName: formData.name,
           memberPhone: '',  // 전화번호는 선택사항
-          memberGender: formData.gender === 'male' ? 'M' : formData.gender === 'female' ? 'F' : 'O',
+          memberGender: formData.gender === 'male' ? 'M' : 'F',
           memberAgeGroup: formData.age_group
         };
 
@@ -422,7 +422,6 @@ export default function Register() {
                   <SelectContent>
                     <SelectItem value="male">남성</SelectItem>
                     <SelectItem value="female">여성</SelectItem>
-                    <SelectItem value="other">기타</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.gender && <p className="text-red-500 text-xs mt-1">{errors.gender}</p>}

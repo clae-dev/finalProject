@@ -5,54 +5,53 @@
     <!-- ResultMap: MEMBER 테이블 -> MemberDTO 매핑 -->
     <resultMap id="memberResultMap" type="edu.kh.project.member.dto.MemberDTO">
         <id property="memberNo" column="MEMBER_NO" />
-        <result property="memberEmail" column="MEMBER_EMAIL" />
-        <result property="memberPw" column="MEMBER_PW" />
-        <result property="memberNickname" column="MEMBER_NICKNAME" />
-        <result property="memberName" column="MEMBER_NAME" />
-        <result property="memberPhone" column="MEMBER_PHONE" />
-        <result property="memberGender" column="MEMBER_GENDER" />
-        <result property="memberAgeGroup" column="MEMBER_AGE_GROUP" />
-        <result property="memberProfileImg" column="MEMBER_PROFILE_IMG" />
-        <result property="memberIntro" column="MEMBER_INTRO" />
-        <result property="memberRole" column="MEMBER_ROLE" />
-        <result property="memberStatus" column="MEMBER_STATUS" />
+        <result property="memberEmail" column="EMAIL" />
+        <result property="memberPw" column="PASSWORD" />
+        <result property="memberNickname" column="NICKNAME" />
+        <result property="memberName" column="NAME" />
+        <result property="memberPhone" column="PHONE" />
+        <result property="memberGender" column="GENDER" />
+        <result property="memberAgeGroup" column="AGE_RANGE" />
+        <result property="memberProfileImg" column="PROFILE_IMAGE" />
+        <result property="memberIntro" column="INTRO" />
+        <result property="memberRole" column="MEMBER_TYPE" />
+        <result property="memberStatus" column="STATUS" />
         <result property="emailVerified" column="EMAIL_VERIFIED" />
         <result property="createdAt" column="CREATED_AT" />
         <result property="updatedAt" column="UPDATED_AT" />
-        <result property="withdrawnAt" column="WITHDRAWN_AT" />
     </resultMap>
 
     <!-- 이메일로 회원 조회 (로그인용 - 비밀번호 포함) -->
     <select id="selectMemberByEmail" resultMap="memberResultMap">
-        SELECT 
+        SELECT
             MEMBER_NO,
-            MEMBER_EMAIL,
-            MEMBER_PW,
-            MEMBER_NICKNAME,
-            MEMBER_NAME,
-            MEMBER_PROFILE_IMG,
-            MEMBER_ROLE,
-            MEMBER_STATUS,
+            EMAIL,
+            PASSWORD,
+            NICKNAME,
+            NAME,
+            PROFILE_IMAGE,
+            MEMBER_TYPE,
+            STATUS,
             EMAIL_VERIFIED
         FROM MEMBER
-        WHERE MEMBER_EMAIL = #{memberEmail}
-          AND MEMBER_STATUS = 'ACTIVE'
+        WHERE EMAIL = #{memberEmail}
+          AND STATUS = 'A'
     </select>
 
     <!-- 회원 번호로 회원 조회 -->
     <select id="selectMemberByNo" resultMap="memberResultMap">
-        SELECT 
+        SELECT
             MEMBER_NO,
-            MEMBER_EMAIL,
-            MEMBER_NICKNAME,
-            MEMBER_NAME,
-            MEMBER_PHONE,
-            MEMBER_GENDER,
-            MEMBER_AGE_GROUP,
-            MEMBER_PROFILE_IMG,
-            MEMBER_INTRO,
-            MEMBER_ROLE,
-            MEMBER_STATUS,
+            EMAIL,
+            NICKNAME,
+            NAME,
+            PHONE,
+            GENDER,
+            AGE_RANGE,
+            PROFILE_IMAGE,
+            INTRO,
+            MEMBER_TYPE,
+            STATUS,
             EMAIL_VERIFIED,
             CREATED_AT
         FROM MEMBER
@@ -63,31 +62,31 @@
     <select id="checkEmailDuplicate" resultType="int">
         SELECT COUNT(*)
         FROM MEMBER
-        WHERE MEMBER_EMAIL = #{memberEmail}
-          AND MEMBER_STATUS != 'WITHDRAWN'
+        WHERE EMAIL = #{memberEmail}
+          AND STATUS != 'W'
     </select>
 
     <!-- 닉네임 중복 확인 -->
     <select id="checkNicknameDuplicate" resultType="int">
         SELECT COUNT(*)
         FROM MEMBER
-        WHERE MEMBER_NICKNAME = #{memberNickname}
-          AND MEMBER_STATUS != 'WITHDRAWN'
+        WHERE NICKNAME = #{memberNickname}
+          AND STATUS != 'W'
     </select>
 
     <!-- 회원가입 -->
     <insert id="insertMember">
         INSERT INTO MEMBER (
             MEMBER_NO,
-            MEMBER_EMAIL,
-            MEMBER_PW,
-            MEMBER_NICKNAME,
-            MEMBER_NAME,
-            MEMBER_PHONE,
-            MEMBER_GENDER,
-            MEMBER_AGE_GROUP,
-            MEMBER_ROLE,
-            MEMBER_STATUS,
+            EMAIL,
+            PASSWORD,
+            NICKNAME,
+            NAME,
+            PHONE,
+            GENDER,
+            AGE_RANGE,
+            MEMBER_TYPE,
+            STATUS,
             EMAIL_VERIFIED
         ) VALUES (
             SEQ_MEMBER_NO.NEXTVAL,
@@ -98,8 +97,8 @@
             #{memberPhone},
             #{memberGender},
             #{memberAgeGroup},
-            'USER',
-            'ACTIVE',
+            'U',
+            'A',
             'Y'
         )
     </insert>
@@ -108,10 +107,10 @@
     <update id="updateMember">
         UPDATE MEMBER
         SET
-            MEMBER_NICKNAME = #{memberNickname},
-            MEMBER_PHONE = #{memberPhone},
-            MEMBER_PROFILE_IMG = #{memberProfileImg},
-            MEMBER_INTRO = #{memberIntro},
+            NICKNAME = #{memberNickname},
+            PHONE = #{memberPhone},
+            PROFILE_IMAGE = #{memberProfileImg},
+            INTRO = #{memberIntro},
             UPDATED_AT = SYSDATE
         WHERE MEMBER_NO = #{memberNo}
     </update>
@@ -120,8 +119,8 @@
     <update id="withdrawMember">
         UPDATE MEMBER
         SET
-            MEMBER_STATUS = 'WITHDRAWN',
-            WITHDRAWN_AT = SYSDATE
+            STATUS = 'W',
+            UPDATED_AT = SYSDATE
         WHERE MEMBER_NO = #{memberNo}
     </update>
 
@@ -129,39 +128,39 @@
     <update id="updateEmailVerified">
         UPDATE MEMBER
         SET EMAIL_VERIFIED = 'Y'
-        WHERE MEMBER_EMAIL = #{memberEmail}
+        WHERE EMAIL = #{memberEmail}
     </update>
 
     <!-- 아이디 찾기 (이름 + 이메일) -->
     <select id="findId" resultMap="memberResultMap">
-        SELECT 
-            MEMBER_EMAIL,
+        SELECT
+            EMAIL,
             CREATED_AT
         FROM MEMBER
-        WHERE MEMBER_NAME = #{memberName}
-          AND MEMBER_EMAIL = #{memberEmail}
-          AND MEMBER_STATUS = 'ACTIVE'
+        WHERE NAME = #{memberName}
+          AND EMAIL = #{memberEmail}
+          AND STATUS = 'A'
     </select>
 
     <!-- 비밀번호 찾기 (이메일 + 이름) -->
     <select id="findPw" resultMap="memberResultMap">
-        SELECT 
+        SELECT
             MEMBER_NO,
-            MEMBER_EMAIL,
-            MEMBER_NAME
+            EMAIL,
+            NAME
         FROM MEMBER
-        WHERE MEMBER_EMAIL = #{memberEmail}
-          AND MEMBER_NAME = #{memberName}
-          AND MEMBER_STATUS = 'ACTIVE'
+        WHERE EMAIL = #{memberEmail}
+          AND NAME = #{memberName}
+          AND STATUS = 'A'
     </select>
 
     <!-- 비밀번호 재설정 -->
     <update id="resetPw">
         UPDATE MEMBER
-        SET 
-            MEMBER_PW = #{memberPw},
+        SET
+            PASSWORD = #{memberPw},
             UPDATED_AT = SYSDATE
-        WHERE MEMBER_EMAIL = #{memberEmail}
+        WHERE EMAIL = #{memberEmail}
     </update>
 
 </mapper>

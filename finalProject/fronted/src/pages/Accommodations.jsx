@@ -144,12 +144,12 @@ export default function Accommodations() {
             <span className="bg-gradient-to-r from-white to-cyan-100 bg-clip-text text-transparent">혼행 추천 숙소</span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 text-center leading-tight">
+          <h1 className="text-3xl md:text-5xl font-bold mb-5 text-center leading-tight">
             <span className="bg-gradient-to-r from-white via-cyan-50 to-sky-100 bg-clip-text text-transparent drop-shadow-2xl">
               제주, 나를 찾는 여행
             </span>
           </h1>
-          <p className="text-lg md:text-2xl text-cyan-50/90 text-center max-w-2xl leading-relaxed">
+          <p className="text-base md:text-lg text-cyan-50/90 text-center max-w-2xl leading-relaxed">
             바다 소리에 귀 기울이고, 바람에 마음을 맡기는<br className="hidden md:block" />
             <span className="text-white font-semibold">당신만의 특별한 시간</span>
           </p>
