@@ -96,4 +96,22 @@
         </if>
     </select>
 
+    <!-- 기존 데이터 숙소 유형 재분류 -->
+    <update id="reclassifyAccommodationTypes">
+        UPDATE ACCOMMODATION SET ACCOMMODATION_TYPE =
+            CASE
+                WHEN LOWER(NAME) LIKE '%호텔%' OR LOWER(NAME) LIKE '%hotel%' THEN '호텔'
+                WHEN LOWER(NAME) LIKE '%리조트%' OR LOWER(NAME) LIKE '%resort%' THEN '리조트'
+                WHEN LOWER(NAME) LIKE '%펜션%' OR LOWER(NAME) LIKE '%pension%' THEN '펜션'
+                WHEN LOWER(NAME) LIKE '%풀빌라%' OR LOWER(NAME) LIKE '%pool villa%' THEN '풀빌라'
+                WHEN LOWER(NAME) LIKE '%게스트하우스%' OR LOWER(NAME) LIKE '%guesthouse%' OR LOWER(NAME) LIKE '%guest house%' THEN '게스트하우스'
+                WHEN LOWER(NAME) LIKE '%호스텔%' OR LOWER(NAME) LIKE '%hostel%' THEN '호스텔'
+                WHEN LOWER(NAME) LIKE '%한옥%' THEN '한옥'
+                WHEN LOWER(NAME) LIKE '%모텔%' THEN '모텔'
+                WHEN LOWER(NAME) LIKE '%민박%' THEN '민박'
+                ELSE '민박'
+            END
+        WHERE STATUS = 'A'
+    </update>
+
 </mapper>

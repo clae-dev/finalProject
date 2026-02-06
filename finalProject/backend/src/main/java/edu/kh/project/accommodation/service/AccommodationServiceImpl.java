@@ -211,14 +211,21 @@ public class AccommodationServiceImpl implements AccommodationService {
      * 사업장명에서 숙소 유형 추출
      */
     private String extractAccommodationType(String name) {
-        if (name == null) return "게스트하우스";
-        
-        if (name.contains("펜션")) return "펜션";
-        if (name.contains("민박")) return "민박";
-        if (name.contains("게스트하우스") || name.contains("guesthouse")) return "게스트하우스";
-        if (name.contains("호스텔") || name.contains("hostel")) return "호스텔";
-        
-        return "게스트하우스";
+        if (name == null) return "민박";
+
+        String lower = name.toLowerCase();
+
+        if (lower.contains("호텔") || lower.contains("hotel")) return "호텔";
+        if (lower.contains("리조트") || lower.contains("resort")) return "리조트";
+        if (lower.contains("펜션") || lower.contains("pension")) return "펜션";
+        if (lower.contains("풀빌라") || lower.contains("pool villa")) return "풀빌라";
+        if (lower.contains("게스트하우스") || lower.contains("guesthouse") || lower.contains("guest house")) return "게스트하우스";
+        if (lower.contains("호스텔") || lower.contains("hostel")) return "호스텔";
+        if (lower.contains("한옥")) return "한옥";
+        if (lower.contains("모텔")) return "모텔";
+        if (lower.contains("민박")) return "민박";
+
+        return "민박";
     }
     
     /**
@@ -247,5 +254,15 @@ public class AccommodationServiceImpl implements AccommodationService {
     @Transactional(readOnly = true)
     public int getTotalCount(String region) {
         return accommodationMapper.selectTotalCount(region);
+    }
+
+    /**
+     * 기존 데이터 숙소 유형 재분류
+     */
+    @Override
+    public int reclassifyAccommodationTypes() {
+        int updated = accommodationMapper.reclassifyAccommodationTypes();
+        log.info("숙소 유형 재분류 완료: {}건 업데이트", updated);
+        return updated;
     }
 }
