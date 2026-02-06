@@ -66,13 +66,19 @@ export default function Accommodations() {
       acc.recommendationReason?.toLowerCase().includes(searchTerm.toLowerCase());
 
     // 숙소 유형 필터
+    const typeMap = {
+      guesthouse: '게스트하우스',
+      hostel: '호스텔',
+      hotel: '호텔',
+      pension: '펜션',
+      minbak: '민박',
+      resort: '리조트',
+      hanok: '한옥',
+      poolvilla: '풀빌라',
+      motel: '모텔',
+    };
     const matchesType = filters.type === 'all' ||
-      acc.accommodationType?.toLowerCase().includes(
-        filters.type === 'guesthouse' ? '게스트하우스' :
-        filters.type === 'hostel' ? '호스텔' :
-        filters.type === 'hotel' ? '호텔' :
-        filters.type === 'pension' ? '펜션' : ''
-      );
+      acc.accommodationType === typeMap[filters.type];
 
     // 가격대 필터
     let matchesPriceRange = true;
@@ -183,10 +189,15 @@ export default function Accommodations() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">전체 유형</SelectItem>
+                  <SelectItem value="minbak">민박</SelectItem>
                   <SelectItem value="guesthouse">게스트하우스</SelectItem>
-                  <SelectItem value="hostel">호스텔</SelectItem>
-                  <SelectItem value="hotel">호텔</SelectItem>
                   <SelectItem value="pension">펜션</SelectItem>
+                  <SelectItem value="hotel">호텔</SelectItem>
+                  <SelectItem value="hostel">호스텔</SelectItem>
+                  <SelectItem value="resort">리조트</SelectItem>
+                  <SelectItem value="hanok">한옥</SelectItem>
+                  <SelectItem value="poolvilla">풀빌라</SelectItem>
+                  <SelectItem value="motel">모텔</SelectItem>
                 </SelectContent>
               </Select>
 

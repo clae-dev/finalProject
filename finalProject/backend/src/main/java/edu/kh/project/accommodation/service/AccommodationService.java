@@ -36,4 +36,10 @@ public interface AccommodationService {
      * @return 총 개수
      */
     int getTotalCount(String region);
+
+    /**
+     * 기존 데이터 숙소 유형 재분류
+     * @return 업데이트된 행 수
+     */
+    int reclassifyAccommodationTypes();
 }
