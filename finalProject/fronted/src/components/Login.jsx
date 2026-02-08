@@ -121,9 +121,9 @@ function Login() {
                   로그인 유지
                 </label>
               </div>
-              <button type="button" className="text-sm text-sky-600 hover:text-sky-700 font-medium transition-colors">
+              <Link to="/find-password" className="text-sm text-sky-600 hover:text-sky-700 font-medium transition-colors">
                 비밀번호 찾기
-              </button>
+              </Link>
             </div>
 
             <Button

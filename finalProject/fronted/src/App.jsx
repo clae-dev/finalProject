@@ -2,6 +2,7 @@ import { AuthProvider } from './components/AuthContext';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import FindPassword from './components/FindPassword';
 import Main from './components/Main';
 import Accommodations from './pages/Accommodations';
 import AccommodationDetail from './pages/AccommodationDetail';
@@ -16,6 +17,7 @@ function App() {
             <Route path="/" element={<Main />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/find-password" element={<FindPassword />} />
             <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route path="/accommodations" element={<Accommodations />} />
             <Route path="/accommodations/:accommodationNo" element={<AccommodationDetail />} />
