@@ -6,7 +6,7 @@ import {
   FiArrowLeft, FiImage, FiSave, FiX
 } from 'react-icons/fi';
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = 'http://localhost:80/api';
 
 function AdminSpot() {
   const { user } = useContext(AuthContext);

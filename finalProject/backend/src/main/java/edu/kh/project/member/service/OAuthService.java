@@ -73,6 +73,13 @@ public class OAuthService {
         String nickname = (String) profile.get("nickname");
         String profileImage = (String) profile.get("profile_image_url");
 
+        // 이메일이 null인 경우 카카오 ID 기반으로 대체 이메일 생성
+        if (email == null || email.isBlank()) {
+            Object kakaoId = kakaoUser.get("id");
+            email = "kakao_" + kakaoId + "@kakao.user";
+            log.info("카카오 이메일 미제공 - 대체 이메일 생성: {}", email);
+        }
+
         log.info("카카오 로그인 - email: {}, nickname: {}", email, nickname);
 
         // 3. 기존 회원 조회
