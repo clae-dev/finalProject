@@ -3,37 +3,43 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
 function OAuthCallback() {
-  const { handleSocialLogin } = useContext(AuthContext);
+  const { handleOAuthCallback } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const code = params.get('code');
+    const accessToken = params.get('accessToken');
+    const errorMsg = params.get('error');
 
-    // URL 경로에서 provider 추출: /oauth/{provider}/callback
-    const pathParts = location.pathname.split('/');
-    const provider = pathParts[2]; // ['', 'oauth', 'kakao', 'callback']
-
-    if (!code) {
-      setError('인가 코드를 찾을 수 없습니다.');
+    if (errorMsg) {
+      setError(errorMsg);
       setTimeout(() => navigate('/login'), 3000);
       return;
     }
 
-    const processLogin = async () => {
-      try {
-        await handleSocialLogin(provider, code);
-        navigate('/');
-      } catch (err) {
-        console.error('소셜 로그인 처리 실패:', err);
-        setError(err.response?.data?.message || err.message || '소셜 로그인에 실패했습니다.');
-        setTimeout(() => navigate('/login'), 3000);
-      }
-    };
+    if (!accessToken) {
+      setError('로그인 정보를 찾을 수 없습니다.');
+      setTimeout(() => navigate('/login'), 3000);
+      return;
+    }
 
-    processLogin();
+    try {
+      handleOAuthCallback({
+        accessToken,
+        refreshToken: params.get('refreshToken'),
+        memberNo: params.get('memberNo'),
+        memberName: params.get('memberName'),
+        memberNickname: params.get('memberNickname'),
+        memberEmail: params.get('memberEmail')
+      });
+      navigate('/');
+    } catch (err) {
+      console.error('OAuth 콜백 처리 실패:', err);
+      setError('로그인 처리 중 오류가 발생했습니다.');
+      setTimeout(() => navigate('/login'), 3000);
+    }
   }, []);
 
   if (error) {

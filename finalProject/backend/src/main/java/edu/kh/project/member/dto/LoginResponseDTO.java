@@ -23,6 +23,7 @@ public class LoginResponseDTO {
     private String refreshToken;             // Refresh Token (7일)
     private int memberNo;                    // 회원 번호
     private String memberEmail;              // 이메일
+    private String memberName;               // 이름
     private String memberNickname;           // 닉네임
     private String memberProfileImg;         // 프로필 이미지
     private String memberRole;               // 권한 (USER, ADMIN)

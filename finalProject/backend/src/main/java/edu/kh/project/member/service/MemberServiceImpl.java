@@ -96,6 +96,7 @@ public class MemberServiceImpl implements MemberService {
             .refreshToken(refreshToken)
             .memberNo(member.getMemberNo())
             .memberEmail(member.getMemberEmail())
+            .memberName(member.getMemberName())
             .memberNickname(member.getMemberNickname())
             .memberProfileImg(member.getMemberProfileImg())
             .memberRole(member.getMemberRole())

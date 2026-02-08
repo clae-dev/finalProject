@@ -16,8 +16,7 @@ function App() {
             <Route path="/" element={<Main />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/oauth/kakao/callback" element={<OAuthCallback />} />
-            <Route path="/oauth/google/callback" element={<OAuthCallback />} />
+            <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route path="/accommodations" element={<Accommodations />} />
             <Route path="/accommodations/:accommodationNo" element={<AccommodationDetail />} />
           </Routes>
