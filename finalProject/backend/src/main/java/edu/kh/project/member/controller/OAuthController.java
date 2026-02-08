@@ -37,7 +37,8 @@ public class OAuthController {
         String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize"
                 + "?client_id=" + kakaoClientId
                 + "&redirect_uri=" + URLEncoder.encode(kakaoRedirectUri, StandardCharsets.UTF_8)
-                + "&response_type=code";
+                + "&response_type=code"
+                + "&scope=profile_nickname,profile_image,account_email";
 
         log.info("카카오 인증 페이지로 리다이렉트: {}", kakaoAuthUrl);
         return "redirect:" + kakaoAuthUrl;
