@@ -85,6 +85,7 @@
             PHONE,
             GENDER,
             AGE_RANGE,
+            PROFILE_IMAGE,
             MEMBER_TYPE,
             STATUS,
             EMAIL_VERIFIED
@@ -97,6 +98,7 @@
             #{memberPhone},
             #{memberGender},
             #{memberAgeGroup},
+            #{memberProfileImg},
             'U',
             'A',
             'Y'
