@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff, Mail, Lock, ArrowLeft, CheckCircle2, User, KeyRound } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Eye, EyeOff, Mail, Lock, ArrowLeft, CheckCircle2, User, KeyRound, Send, Loader2, ShieldCheck } from 'lucide-react';
 import bgImage from '@/assets/images/협재.png';
+import logo from '@/assets/images/혼디.png';
 
 export default function FindPassword() {
   const navigate = useNavigate();
@@ -96,7 +96,7 @@ export default function FindPassword() {
         setCodeSent(true);
         setTimer(180);
         setErrors({});
-        alert('인증코드가 이메일로 발송되었습니다.');
+        setStep(2);
       } else {
         setErrors({ email: codeData.message || '인증코드 발송에 실패했습니다.' });
       }
@@ -187,203 +187,242 @@ export default function FindPassword() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const stepLabels = ['본인 확인', '이메일 인증', '비밀번호 변경'];
+  const stepIcons = [User, Mail, KeyRound];
+
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-sky-400 via-cyan-400 to-blue-500">
-      {/* 배경 이미지 */}
-      <div className="absolute inset-0">
-        <img
-          src={bgImage}
-          alt="협재 해변"
-          className="w-full h-full object-cover opacity-85"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-sky-400/8 via-cyan-400/5 to-blue-400/8" />
+    <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-sky-50 to-cyan-50">
+      {/* 배경 이미지 - 상단 히어로 영역 */}
+      <div className="absolute top-0 left-0 right-0 h-[380px]">
+        <img src={bgImage} alt="협재 해변" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-sky-900/60 via-sky-800/40 to-sky-50" />
       </div>
 
-      {/* 장식 요소 */}
-      <div className="absolute top-20 left-10 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '3s' }} />
-      <div className="absolute bottom-20 right-10 w-[500px] h-[500px] bg-cyan-300/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
-      <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-blue-300/10 rounded-full blur-2xl animate-pulse" style={{ animationDuration: '2.5s' }} />
+      {/* 상단 장식 블러 원형 */}
+      <div className="absolute top-20 -left-20 w-72 h-72 bg-cyan-300/20 rounded-full blur-3xl" />
+      <div className="absolute top-40 -right-20 w-80 h-80 bg-sky-300/20 rounded-full blur-3xl" />
 
-      {/* 떠다니는 작은 원들 */}
-      <div className="absolute top-1/4 right-1/4 w-20 h-20 bg-white/10 rounded-full blur-xl animate-bounce" style={{ animationDuration: '3s' }} />
-      <div className="absolute bottom-1/3 left-1/4 w-16 h-16 bg-cyan-200/10 rounded-full blur-lg animate-bounce" style={{ animationDuration: '4s', animationDelay: '1s' }} />
-      <div className="absolute top-2/3 right-1/3 w-24 h-24 bg-blue-200/10 rounded-full blur-xl animate-bounce" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }} />
+      {/* 상단 네비게이션 */}
+      <div className="relative z-20 max-w-7xl mx-auto px-6 pt-6">
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 text-sm text-white/80 hover:text-white font-medium transition-colors duration-300 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-full border border-white/20"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            홈으로
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/login')}
+            className="text-sm text-white/80 hover:text-white font-medium transition-colors duration-300 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-full border border-white/20"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            로그인
+          </button>
+        </div>
+      </div>
 
-      {/* Wave SVG */}
-      <div className="absolute bottom-0 left-0 right-0 opacity-20">
-        <svg viewBox="0 0 1440 320" className="w-full">
-          <path
-            fill="white"
-            d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,160C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          />
+      {/* 히어로 타이틀 */}
+      <div className="relative z-10 text-center pt-8 pb-14">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <img src={logo} alt="혼디" className="h-14 drop-shadow-lg" />
+          <div className="flex flex-col leading-tight text-left">
+            <span
+              className="text-3xl font-black text-white tracking-wider drop-shadow-lg"
+              style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            >
+              HONDI
+            </span>
+            <span
+              className="text-[11px] font-semibold text-white/70 tracking-widest"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              혼디
+            </span>
+          </div>
+        </div>
+        <h1
+          className="text-2xl font-bold text-white drop-shadow-md mb-2"
+          style={{ fontFamily: "'GmarketSans', sans-serif" }}
+        >
+          비밀번호 찾기
+        </h1>
+        <p
+          className="text-white/70 text-sm"
+          style={{ fontFamily: "'Pretendard', sans-serif" }}
+        >
+          이메일 인증을 통해 비밀번호를 재설정할 수 있습니다
+        </p>
+      </div>
+
+      {/* 웨이브 디바이더 */}
+      <div className="relative z-10 -mt-4 -mb-1">
+        <svg viewBox="0 0 1200 60" className="w-full h-12" preserveAspectRatio="none">
+          <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="#f0f9ff" fillOpacity="0.6" />
+          <path d="M0,40 C200,60 400,10 600,40 C800,60 1000,10 1200,40 L1200,60 L0,60 Z" fill="#f0f9ff" />
         </svg>
       </div>
 
-      {/* 메인 컨텐츠 */}
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-5">
-        <div className="w-full max-w-md">
-          {/* 로고 및 서비스 이름 */}
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-8"
-          >
-            <motion.div
-              className="inline-flex items-center gap-2 mb-2"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <h1 className="text-4xl font-bold drop-shadow-lg">
-                <span className="text-white">혼</span>
-                <span className="text-cyan-100">디</span>
-              </h1>
-            </motion.div>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-white/90 text-sm font-medium tracking-wider"
-            >
-              HONDI
-            </motion.p>
-          </motion.div>
+      {/* 메인 카드 */}
+      <div className="relative z-10 max-w-lg mx-auto px-6 pb-16">
+        <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl shadow-sky-200/40 border border-white/60 overflow-hidden">
 
-          {/* 카드 */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl shadow-cyan-500/20 p-8 border border-white/40"
-          >
-            {/* 뒤로가기 버튼 */}
-            <Link
-              to="/login"
-              className="inline-flex items-center gap-2 text-sky-600 hover:text-sky-700 text-sm font-medium mb-6 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              로그인으로 돌아가기
-            </Link>
-
-            {/* 진행 단계 표시 */}
-            <div className="flex items-center justify-center mb-8 gap-2">
-              {[1, 2, 3].map((s) => (
-                <React.Fragment key={s}>
-                  <motion.div
-                    initial={{ scale: 0.8 }}
-                    animate={{
-                      scale: step === s ? 1.1 : 1,
-                      backgroundColor: step >= s ? '#0ea5e9' : '#e2e8f0'
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
-                      step >= s ? 'text-white shadow-lg shadow-sky-200' : 'text-slate-400'
-                    }`}
-                  >
-                    {step > s ? <CheckCircle2 className="w-5 h-5" /> : s}
-                  </motion.div>
-                  {s < 3 && (
-                    <div className={`w-12 h-1 rounded-full transition-all duration-500 ${
-                      step > s ? 'bg-sky-400' : 'bg-slate-200'
-                    }`} />
-                  )}
-                </React.Fragment>
-              ))}
+          {/* 진행 단계 표시 바 */}
+          <div className="bg-gradient-to-r from-sky-50 via-cyan-50 to-sky-50 px-8 py-5 border-b border-sky-100/60">
+            <div className="flex items-center justify-center gap-4">
+              {stepLabels.map((label, idx) => {
+                const StepIcon = stepIcons[idx];
+                const stepNum = idx + 1;
+                const isActive = step >= stepNum;
+                const isCurrent = step === stepNum;
+                return (
+                  <React.Fragment key={idx}>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-500 ${
+                        isActive
+                          ? 'bg-gradient-to-r from-sky-400 to-cyan-400 shadow-md shadow-sky-200/50'
+                          : 'bg-slate-200'
+                      }`}>
+                        {step > stepNum ? (
+                          <CheckCircle2 className="w-4 h-4 text-white" />
+                        ) : (
+                          <StepIcon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+                        )}
+                      </div>
+                      <span
+                        className={`text-xs font-semibold hidden sm:block transition-colors duration-300 ${
+                          isCurrent ? 'text-sky-600' : isActive ? 'text-sky-400' : 'text-slate-400'
+                        }`}
+                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      >
+                        {label}
+                      </span>
+                    </div>
+                    {idx < 2 && (
+                      <div className={`w-8 h-[2px] rounded-full transition-all duration-500 ${
+                        step > stepNum ? 'bg-sky-400' : 'bg-slate-200'
+                      }`} />
+                    )}
+                  </React.Fragment>
+                );
+              })}
             </div>
+          </div>
 
-            {/* 헤더 */}
+          {/* 폼 영역 */}
+          <div className="p-8">
+            {/* 스텝 아이콘 + 설명 */}
             <div className="text-center mb-8">
-              <motion.div
-                key={step}
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 200 }}
-                className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-2xl mb-4 shadow-lg shadow-sky-200"
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-sky-100 to-cyan-100 rounded-2xl mb-4 border border-sky-200/60">
+                {step === 1 && <User className="w-8 h-8 text-sky-500" />}
+                {step === 2 && <Mail className="w-8 h-8 text-sky-500" />}
+                {step === 3 && <KeyRound className="w-8 h-8 text-sky-500" />}
+              </div>
+              <h2
+                className="text-xl font-bold text-slate-800 mb-1.5"
+                style={{ fontFamily: "'GmarketSans', sans-serif" }}
               >
-                {step === 1 && <User className="w-8 h-8 text-white" />}
-                {step === 2 && <Mail className="w-8 h-8 text-white" />}
-                {step === 3 && <KeyRound className="w-8 h-8 text-white" />}
-              </motion.div>
-              <h2 className="text-2xl font-bold text-slate-800 mb-2">
-                비밀번호 찾기
+                {step === 1 && '본인 확인'}
+                {step === 2 && '인증코드 입력'}
+                {step === 3 && '새 비밀번호 설정'}
               </h2>
-              <motion.p
-                key={step}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-slate-500 text-sm"
+              <p
+                className="text-slate-400 text-sm"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
               >
-                {step === 1 && '이름과 이메일을 입력해주세요'}
-                {step === 2 && '이메일로 발송된 인증코드를 입력해주세요'}
+                {step === 1 && '가입 시 등록한 이름과 이메일을 입력해주세요'}
+                {step === 2 && '이메일로 발송된 6자리 인증코드를 입력해주세요'}
                 {step === 3 && '새로운 비밀번호를 설정해주세요'}
-              </motion.p>
+              </p>
             </div>
 
             {/* Step 1: 이름/이메일 입력 */}
             {step === 1 && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label
+                    className="block text-sm font-semibold text-slate-600 mb-2"
+                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  >
                     이름
                   </label>
-                  <Input
-                    type="text"
-                    placeholder="홍길동"
-                    value={formData.name}
-                    onChange={(e) => handleChange('name', e.target.value)}
-                    className={`h-12 ${errors.name ? 'border-red-500' : ''}`}
-                  />
-                  {errors.name && (
-                    <p className="text-red-500 text-xs mt-1.5">{errors.name}</p>
-                  )}
+                  <div className="relative group">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-sky-400 transition-colors" />
+                    <Input
+                      type="text"
+                      placeholder="가입 시 등록한 이름"
+                      value={formData.name}
+                      onChange={(e) => handleChange('name', e.target.value)}
+                      className={`h-12 pl-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.name ? 'border-red-400' : ''}`}
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    />
+                  </div>
+                  {errors.name && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.name}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label
+                    className="block text-sm font-semibold text-slate-600 mb-2"
+                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  >
                     이메일
                   </label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <div className="relative group">
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-sky-400 transition-colors" />
                     <Input
                       type="email"
-                      placeholder="example@email.com"
+                      placeholder="your@email.com"
                       value={formData.email}
                       onChange={(e) => handleChange('email', e.target.value)}
-                      className={`pl-11 h-12 ${errors.email ? 'border-red-500' : ''}`}
+                      className={`h-12 pl-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.email ? 'border-red-400' : ''}`}
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
                     />
                   </div>
-                  {errors.email && (
-                    <p className="text-red-500 text-xs mt-1.5">{errors.email}</p>
-                  )}
+                  {errors.email && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.email}</p>}
                 </div>
 
                 <Button
                   onClick={handleSendVerificationCode}
                   disabled={loading}
-                  className="w-full h-12 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-semibold shadow-lg shadow-sky-200"
+                  className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 mt-2"
+                  style={{ fontFamily: "'Pretendard', sans-serif" }}
                 >
-                  {loading ? '확인 중...' : '인증코드 발송'}
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      확인 중...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      인증코드 발송
+                    </>
+                  )}
                 </Button>
-
-                {codeSent && (
-                  <div className="text-center">
-                    <Button
-                      onClick={() => setStep(2)}
-                      variant="ghost"
-                      className="text-sky-600 hover:text-sky-700"
-                    >
-                      인증코드 입력하러 가기 →
-                    </Button>
-                  </div>
-                )}
               </div>
             )}
 
             {/* Step 2: 인증코드 입력 */}
             {step === 2 && (
               <div className="space-y-4">
+                <div className="bg-gradient-to-br from-sky-50 to-cyan-50/50 rounded-2xl p-4 border border-sky-100/60 mb-2">
+                  <p
+                    className="text-xs text-sky-600 font-medium flex items-center gap-1.5"
+                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    <span className="font-bold">{formData.email}</span> 으로 인증코드가 발송되었습니다
+                  </p>
+                </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label
+                    className="block text-sm font-semibold text-slate-600 mb-2"
+                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  >
                     인증코드
                   </label>
                   <div className="flex gap-2">
@@ -394,10 +433,14 @@ export default function FindPassword() {
                         value={formData.verificationCode}
                         onChange={(e) => handleChange('verificationCode', e.target.value)}
                         maxLength={6}
-                        className={`h-12 ${errors.verificationCode ? 'border-red-500' : ''}`}
+                        className={`h-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm text-center tracking-[0.3em] font-semibold ${errors.verificationCode ? 'border-red-400' : ''}`}
+                        style={{ fontFamily: "'Pretendard', sans-serif" }}
                       />
                       {timer > 0 && (
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-medium text-rose-500">
+                        <span
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-red-500 tabular-nums"
+                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        >
                           {formatTime(timer)}
                         </span>
                       )}
@@ -405,33 +448,44 @@ export default function FindPassword() {
                     <Button
                       onClick={handleSendVerificationCode}
                       variant="outline"
-                      className="h-12 px-4 border-slate-300"
-                      disabled={timer > 0}
+                      className="h-12 px-4 border-sky-200 text-sky-500 hover:bg-sky-50 rounded-xl text-sm font-semibold"
+                      disabled={timer > 0 || loading}
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
                     >
                       재발송
                     </Button>
                   </div>
-                  {errors.verificationCode && (
-                    <p className="text-red-500 text-xs mt-1.5">{errors.verificationCode}</p>
-                  )}
+                  {errors.verificationCode && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.verificationCode}</p>}
                 </div>
 
                 <Button
                   onClick={handleVerifyCode}
                   disabled={loading}
-                  className="w-full h-12 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-semibold shadow-lg shadow-sky-200"
+                  className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 mt-2"
+                  style={{ fontFamily: "'Pretendard', sans-serif" }}
                 >
-                  {loading ? '확인 중...' : '인증 확인'}
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      확인 중...
+                    </>
+                  ) : (
+                    <>
+                      <ShieldCheck className="w-4 h-4 mr-2" />
+                      인증 확인
+                    </>
+                  )}
                 </Button>
 
-                <div className="text-center">
-                  <Button
-                    onClick={() => setStep(1)}
-                    variant="ghost"
-                    className="text-slate-500 hover:text-slate-700 text-sm"
+                <div className="text-center pt-1">
+                  <button
+                    type="button"
+                    onClick={() => { setStep(1); setCodeSent(false); setTimer(0); }}
+                    className="text-slate-400 hover:text-sky-500 text-xs font-medium transition-colors"
+                    style={{ fontFamily: "'Pretendard', sans-serif" }}
                   >
                     이름/이메일 다시 입력
-                  </Button>
+                  </button>
                 </div>
               </div>
             )}
@@ -439,83 +493,118 @@ export default function FindPassword() {
             {/* Step 3: 비밀번호 변경 */}
             {step === 3 && (
               <form onSubmit={handleResetPassword} className="space-y-4">
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center gap-2 mb-4">
-                  <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  <p className="text-sm text-green-700">이메일 인증이 완료되었습니다</p>
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/60 rounded-2xl p-4 flex items-center gap-2.5 mb-2">
+                  <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
+                  <p
+                    className="text-sm text-green-700 font-medium"
+                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  >
+                    이메일 인증이 완료되었습니다
+                  </p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label
+                    className="block text-sm font-semibold text-slate-600 mb-2"
+                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  >
                     새 비밀번호
                   </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-sky-400 transition-colors" />
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="8~20자, 특수문자 포함"
                       value={formData.newPassword}
                       onChange={(e) => handleChange('newPassword', e.target.value)}
-                      className={`pl-11 pr-11 h-12 ${errors.newPassword ? 'border-red-500' : ''}`}
+                      className={`h-12 pl-12 pr-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.newPassword ? 'border-red-400' : ''}`}
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-sky-400 transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                  {errors.newPassword && (
-                    <p className="text-red-500 text-xs mt-1.5">{errors.newPassword}</p>
-                  )}
+                  {errors.newPassword && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.newPassword}</p>}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label
+                    className="block text-sm font-semibold text-slate-600 mb-2"
+                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  >
                     비밀번호 확인
                   </label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <div className="relative group">
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-300 group-focus-within:text-sky-400 transition-colors" />
                     <Input
                       type={showConfirmPassword ? "text" : "password"}
                       placeholder="비밀번호 재입력"
                       value={formData.confirmPassword}
                       onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                      className={`pl-11 pr-11 h-12 ${errors.confirmPassword ? 'border-red-500' : ''}`}
+                      className={`h-12 pl-12 pr-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.confirmPassword ? 'border-red-400' : ''}`}
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-sky-400 transition-colors"
                     >
                       {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                  {errors.confirmPassword && (
-                    <p className="text-red-500 text-xs mt-1.5">{errors.confirmPassword}</p>
-                  )}
+                  {errors.confirmPassword && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.confirmPassword}</p>}
                 </div>
 
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-12 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-semibold shadow-lg shadow-sky-200"
+                  className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 mt-2"
+                  style={{ fontFamily: "'GmarketSans', sans-serif" }}
                 >
-                  {loading ? '변경 중...' : '비밀번호 변경'}
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      변경 중...
+                    </>
+                  ) : (
+                    '비밀번호 변경'
+                  )}
                 </Button>
               </form>
             )}
-          </motion.div>
+          </div>
 
-          {/* 추가 텍스트 */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="text-center text-white/80 text-sm mt-6"
+          {/* 로그인 링크 */}
+          <div className="text-center pb-7 px-8">
+            <p
+              className="text-sm text-slate-500"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              비밀번호가 기억나셨나요?{' '}
+              <button
+                type="button"
+                onClick={() => navigate('/login')}
+                className="text-sky-500 hover:text-sky-600 font-bold transition-colors"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+              >
+                로그인
+              </button>
+            </p>
+          </div>
+        </div>
+
+        {/* 하단 브랜드 텍스트 */}
+        <div className="text-center mt-6">
+          <p
+            className="text-xs text-slate-400"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
           >
-            제주 바다처럼 자유로운 여행, <span className="font-bold drop-shadow">혼디</span>와 함께
-          </motion.p>
+            HONDI - 혼자여서 더 자유로운 제주 여행
+          </p>
         </div>
       </div>
     </div>
