@@ -61,7 +61,8 @@ export const AuthProvider = ({ children }) => {
         memberNo: loginData.memberNo,
         memberName: loginData.memberName,
         memberNickname: loginData.memberNickname,
-        memberEmail: email
+        memberEmail: email,
+        memberProfileImg: loginData.memberProfileImg || null
       };
 
       setUser(userData);
@@ -101,6 +102,7 @@ export const AuthProvider = ({ children }) => {
       memberName: loginData.memberName,
       memberNickname: loginData.memberNickname,
       memberEmail: loginData.memberEmail,
+      memberProfileImg: loginData.memberProfileImg || null,
       loginType: loginData.loginType || null
     };
 
