@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -40,6 +41,11 @@ public class OAuthService {
     private final MemberMapper memberMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+
+    // OAuth access token 인메모리 저장 (memberNo → accessToken)
+    private final ConcurrentHashMap<Integer, String> kakaoTokenStore = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, String> naverTokenStore = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Integer, String> googleTokenStore = new ConcurrentHashMap<>();
 
     @Value("${kakao.client.id}")
     private String kakaoClientId;
@@ -125,7 +131,11 @@ public class OAuthService {
             log.info("카카오 신규 회원 가입 완료 - memberNo: {}", member.getMemberNo());
         }
 
-        // 4. JWT 토큰 생성
+        // 4. 카카오 access token 저장 (연동 해제용)
+        kakaoTokenStore.put(member.getMemberNo(), kakaoAccessToken);
+        log.info("카카오 토큰 저장 - memberNo: {}", member.getMemberNo());
+
+        // 5. JWT 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(
                 member.getMemberNo(),
                 member.getMemberEmail(),
@@ -133,7 +143,7 @@ public class OAuthService {
         );
         String refreshToken = jwtUtil.generateRefreshToken(member.getMemberNo());
 
-        // 5. 프로필 이미지 업데이트 (카카오에서 가져온 이미지가 있고, 기존에 없는 경우)
+        // 6. 프로필 이미지 업데이트 (카카오에서 가져온 이미지가 있고, 기존에 없는 경우)
         if (profileImage != null && member.getMemberProfileImg() == null) {
             member.setMemberProfileImg(profileImage);
             memberMapper.updateMember(member);
@@ -148,7 +158,41 @@ public class OAuthService {
                 .memberNickname(member.getMemberNickname())
                 .memberProfileImg(member.getMemberProfileImg())
                 .memberRole(member.getMemberRole())
+                .loginType("kakao")
                 .build();
+    }
+
+    /**
+     * 카카오 로그아웃 (세션 만료)
+     * - 저장된 카카오 access token으로 로그아웃 API 호출
+     * - 다음 로그인 시 다른 계정 선택 가능
+     * - best-effort: 토큰 없거나 만료 시에도 에러 없이 처리
+     */
+    public void kakaoLogout(int memberNo) {
+        String kakaoAccessToken = kakaoTokenStore.remove(memberNo);
+
+        if (kakaoAccessToken == null) {
+            log.warn("카카오 logout 스킵 - 저장된 토큰 없음 (memberNo: {})", memberNo);
+            return;
+        }
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setBearerAuth(kakaoAccessToken);
+
+            HttpEntity<Void> request = new HttpEntity<>(headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    "https://kapi.kakao.com/v1/user/logout",
+                    HttpMethod.POST,
+                    request,
+                    String.class
+            );
+
+            log.info("카카오 로그아웃 성공 - memberNo: {}, response: {}", memberNo, response.getBody());
+        } catch (Exception e) {
+            log.warn("카카오 로그아웃 실패 (best-effort) - memberNo: {}, error: {}", memberNo, e.getMessage());
+        }
     }
 
     /**
@@ -301,7 +345,11 @@ public class OAuthService {
             log.info("네이버 신규 회원 가입 완료 - memberNo: {}", member.getMemberNo());
         }
 
-        // 4. JWT 토큰 생성
+        // 4. 네이버 access token 저장 (로그아웃용)
+        naverTokenStore.put(member.getMemberNo(), naverAccessToken);
+        log.info("네이버 토큰 저장 - memberNo: {}", member.getMemberNo());
+
+        // 5. JWT 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(
                 member.getMemberNo(),
                 member.getMemberEmail(),
@@ -309,7 +357,7 @@ public class OAuthService {
         );
         String refreshToken = jwtUtil.generateRefreshToken(member.getMemberNo());
 
-        // 5. 프로필 이미지 업데이트 (네이버에서 가져온 이미지가 있고, 기존에 없는 경우)
+        // 6. 프로필 이미지 업데이트 (네이버에서 가져온 이미지가 있고, 기존에 없는 경우)
         if (profileImage != null && member.getMemberProfileImg() == null) {
             member.setMemberProfileImg(profileImage);
             memberMapper.updateMember(member);
@@ -324,7 +372,36 @@ public class OAuthService {
                 .memberNickname(member.getMemberNickname())
                 .memberProfileImg(member.getMemberProfileImg())
                 .memberRole(member.getMemberRole())
+                .loginType("naver")
                 .build();
+    }
+
+    /**
+     * 네이버 로그아웃 (토큰 삭제)
+     * - 네이버 토큰 만료 API 호출
+     * - best-effort
+     */
+    public void naverLogout(int memberNo) {
+        String naverAccessToken = naverTokenStore.remove(memberNo);
+
+        if (naverAccessToken == null) {
+            log.warn("네이버 logout 스킵 - 저장된 토큰 없음 (memberNo: {})", memberNo);
+            return;
+        }
+
+        try {
+            String revokeUrl = "https://nid.naver.com/oauth2.0/token"
+                    + "?grant_type=delete"
+                    + "&client_id=" + naverClientId
+                    + "&client_secret=" + naverClientSecret
+                    + "&access_token=" + naverAccessToken
+                    + "&service_provider=NAVER";
+
+            ResponseEntity<String> response = restTemplate.getForEntity(revokeUrl, String.class);
+            log.info("네이버 로그아웃 성공 - memberNo: {}, response: {}", memberNo, response.getBody());
+        } catch (Exception e) {
+            log.warn("네이버 로그아웃 실패 (best-effort) - memberNo: {}, error: {}", memberNo, e.getMessage());
+        }
     }
 
     /**
@@ -473,7 +550,11 @@ public class OAuthService {
             log.info("구글 신규 회원 가입 완료 - memberNo: {}", member.getMemberNo());
         }
 
-        // 4. JWT 토큰 생성
+        // 4. 구글 access token 저장 (로그아웃용)
+        googleTokenStore.put(member.getMemberNo(), googleAccessToken);
+        log.info("구글 토큰 저장 - memberNo: {}", member.getMemberNo());
+
+        // 5. JWT 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(
                 member.getMemberNo(),
                 member.getMemberEmail(),
@@ -481,7 +562,7 @@ public class OAuthService {
         );
         String refreshToken = jwtUtil.generateRefreshToken(member.getMemberNo());
 
-        // 5. 프로필 이미지 업데이트 (구글에서 가져온 이미지가 있고, 기존에 없는 경우)
+        // 6. 프로필 이미지 업데이트 (구글에서 가져온 이미지가 있고, 기존에 없는 경우)
         if (profileImage != null && member.getMemberProfileImg() == null) {
             member.setMemberProfileImg(profileImage);
             memberMapper.updateMember(member);
@@ -496,7 +577,37 @@ public class OAuthService {
                 .memberNickname(member.getMemberNickname())
                 .memberProfileImg(member.getMemberProfileImg())
                 .memberRole(member.getMemberRole())
+                .loginType("google")
                 .build();
+    }
+
+    /**
+     * 구글 로그아웃 (토큰 취소)
+     * - 구글 토큰 revoke API 호출
+     * - best-effort
+     */
+    public void googleLogout(int memberNo) {
+        String googleAccessToken = googleTokenStore.remove(memberNo);
+
+        if (googleAccessToken == null) {
+            log.warn("구글 logout 스킵 - 저장된 토큰 없음 (memberNo: {})", memberNo);
+            return;
+        }
+
+        try {
+            String revokeUrl = "https://oauth2.googleapis.com/revoke?token=" + googleAccessToken;
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/x-www-form-urlencoded");
+            HttpEntity<Void> request = new HttpEntity<>(headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    revokeUrl, HttpMethod.POST, request, String.class
+            );
+            log.info("구글 로그아웃 성공 - memberNo: {}, response: {}", memberNo, response.getBody());
+        } catch (Exception e) {
+            log.warn("구글 로그아웃 실패 (best-effort) - memberNo: {}, error: {}", memberNo, e.getMessage());
+        }
     }
 
     /**

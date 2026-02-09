@@ -27,4 +27,5 @@ public class LoginResponseDTO {
     private String memberNickname;           // 닉네임
     private String memberProfileImg;         // 프로필 이미지
     private String memberRole;               // 권한 (USER, ADMIN)
+    private String loginType;                // 로그인 타입 (kakao, google, naver, normal)
 }

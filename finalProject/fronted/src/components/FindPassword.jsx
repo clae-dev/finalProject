@@ -23,7 +23,7 @@ export default function FindPassword() {
   const [loading, setLoading] = useState(false);
   const [timer, setTimer] = useState(0);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:80'
 
   // 타이머 카운트다운
   useEffect(() => {
