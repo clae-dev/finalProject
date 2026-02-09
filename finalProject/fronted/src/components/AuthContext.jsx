@@ -95,12 +95,13 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("refreshToken", loginData.refreshToken);
     }
 
-    // 사용자 정보 저장
+    // 사용자 정보 저장 (loginType 포함)
     const userData = {
       memberNo: loginData.memberNo,
       memberName: loginData.memberName,
       memberNickname: loginData.memberNickname,
-      memberEmail: loginData.memberEmail
+      memberEmail: loginData.memberEmail,
+      loginType: loginData.loginType || null
     };
 
     setUser(userData);
@@ -114,14 +115,33 @@ export const AuthProvider = ({ children }) => {
   };
 
   // 로그아웃 처리 함수
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    // OAuth 로그인인 경우 해당 플랫폼 로그아웃 API 호출 (best-effort)
+    const storedUser = localStorage.getItem("userData");
+    if (storedUser) {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        const loginType = parsedUser.loginType;
+        if (loginType && ["kakao", "naver", "google"].includes(loginType)) {
+          const accessToken = localStorage.getItem("accessToken");
+          if (accessToken) {
+            await axiosApi.post(`/api/oauth/${loginType}/logout`, null, {
+              headers: { Authorization: `Bearer ${accessToken}` }
+            });
+          }
+        }
+      } catch (e) {
+        console.warn("OAuth 로그아웃 실패 (무시):", e);
+      }
+    }
+
     localStorage.removeItem("userData");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     setUser(null);
     setEmail("");
     setPassword("");
-    // 로그인 페이지로 이동
+    // 홈으로 이동
     window.location.href = "/";
   };
 

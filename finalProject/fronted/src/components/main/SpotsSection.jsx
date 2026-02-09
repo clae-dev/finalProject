@@ -22,7 +22,7 @@ export default function SpotsSection() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {spots.map((spot, idx) => (
             <div key={spot.id} className={`group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg shadow-sky-100 hover:shadow-xl hover:shadow-sky-200 transition-all duration-300 ${idx === 0 ? 'col-span-2 row-span-2' : ''}`}>
-              <div className={`relative ${idx === 0 ? 'aspect-square' : 'aspect-[3/4]'}`}>
+              <div className={`relative ${idx === 0 ? 'h-full' : 'aspect-[3/4]'}`}>
                 <img src={spot.image} alt={spot.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
                 <div className="absolute top-4 left-4">

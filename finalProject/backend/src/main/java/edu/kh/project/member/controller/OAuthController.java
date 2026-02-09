@@ -2,13 +2,20 @@ package edu.kh.project.member.controller;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import edu.kh.project.common.util.JwtUtil;
 import edu.kh.project.member.dto.LoginResponseDTO;
 import edu.kh.project.member.service.OAuthService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OAuthController {
 
     private final OAuthService oAuthService;
+    private final JwtUtil jwtUtil;
 
     @Value("${kakao.client.id}")
     private String kakaoClientId;
@@ -51,7 +59,8 @@ public class OAuthController {
                 + "?client_id=" + kakaoClientId
                 + "&redirect_uri=" + URLEncoder.encode(kakaoRedirectUri, StandardCharsets.UTF_8)
                 + "&response_type=code"
-                + "&scope=profile_nickname,profile_image,account_email";
+                + "&scope=profile_nickname,profile_image,account_email"
+                + "&prompt=login";
 
         log.info("카카오 인증 페이지로 리다이렉트: {}", kakaoAuthUrl);
         return "redirect:" + kakaoAuthUrl;
@@ -77,7 +86,8 @@ public class OAuthController {
                     + "&memberNickname=" + URLEncoder.encode(
                             loginResponse.getMemberNickname() != null ? loginResponse.getMemberNickname() : "", StandardCharsets.UTF_8)
                     + "&memberEmail=" + URLEncoder.encode(
-                            loginResponse.getMemberEmail() != null ? loginResponse.getMemberEmail() : "", StandardCharsets.UTF_8);
+                            loginResponse.getMemberEmail() != null ? loginResponse.getMemberEmail() : "", StandardCharsets.UTF_8)
+                    + "&loginType=kakao";
 
             log.info("카카오 로그인 성공 - memberNo: {}, 프론트엔드로 리다이렉트", loginResponse.getMemberNo());
             return "redirect:" + redirectUrl;
@@ -101,7 +111,8 @@ public class OAuthController {
                 + "?client_id=" + naverClientId
                 + "&redirect_uri=" + URLEncoder.encode(naverRedirectUri, StandardCharsets.UTF_8)
                 + "&response_type=code"
-                + "&state=" + state;
+                + "&state=" + state
+                + "&auth_type=reprompt";
 
         log.info("네이버 인증 페이지로 리다이렉트: {}", naverAuthUrl);
         return "redirect:" + naverAuthUrl;
@@ -128,7 +139,8 @@ public class OAuthController {
                     + "&memberNickname=" + URLEncoder.encode(
                             loginResponse.getMemberNickname() != null ? loginResponse.getMemberNickname() : "", StandardCharsets.UTF_8)
                     + "&memberEmail=" + URLEncoder.encode(
-                            loginResponse.getMemberEmail() != null ? loginResponse.getMemberEmail() : "", StandardCharsets.UTF_8);
+                            loginResponse.getMemberEmail() != null ? loginResponse.getMemberEmail() : "", StandardCharsets.UTF_8)
+                    + "&loginType=naver";
 
             log.info("네이버 로그인 성공 - memberNo: {}, 프론트엔드로 리다이렉트", loginResponse.getMemberNo());
             return "redirect:" + redirectUrl;
@@ -151,7 +163,8 @@ public class OAuthController {
                 + "&redirect_uri=" + URLEncoder.encode(googleRedirectUri, StandardCharsets.UTF_8)
                 + "&response_type=code"
                 + "&scope=" + URLEncoder.encode("openid email profile", StandardCharsets.UTF_8)
-                + "&access_type=offline";
+                + "&access_type=offline"
+                + "&prompt=select_account";
 
         log.info("구글 인증 페이지로 리다이렉트: {}", googleAuthUrl);
         return "redirect:" + googleAuthUrl;
@@ -177,7 +190,8 @@ public class OAuthController {
                     + "&memberNickname=" + URLEncoder.encode(
                             loginResponse.getMemberNickname() != null ? loginResponse.getMemberNickname() : "", StandardCharsets.UTF_8)
                     + "&memberEmail=" + URLEncoder.encode(
-                            loginResponse.getMemberEmail() != null ? loginResponse.getMemberEmail() : "", StandardCharsets.UTF_8);
+                            loginResponse.getMemberEmail() != null ? loginResponse.getMemberEmail() : "", StandardCharsets.UTF_8)
+                    + "&loginType=google";
 
             log.info("구글 로그인 성공 - memberNo: {}, 프론트엔드로 리다이렉트", loginResponse.getMemberNo());
             return "redirect:" + redirectUrl;
@@ -187,6 +201,81 @@ public class OAuthController {
             String errorUrl = frontendUrl + "/oauth/callback?error="
                     + URLEncoder.encode("구글 로그인에 실패했습니다.", StandardCharsets.UTF_8);
             return "redirect:" + errorUrl;
+        }
+    }
+
+    /**
+     * 카카오 로그아웃 (세션 만료)
+     */
+    @PostMapping("/api/oauth/kakao/logout")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> kakaoLogout(
+            @RequestHeader("Authorization") String authHeader) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            int memberNo = jwtUtil.getMemberNo(token);
+            oAuthService.kakaoLogout(memberNo);
+            response.put("success", true);
+            response.put("message", "카카오 로그아웃이 완료되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.warn("카카오 로그아웃 처리 중 오류 (best-effort)", e);
+            response.put("success", true);
+            response.put("message", "카카오 로그아웃 처리 완료 (일부 오류 무시).");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    /**
+     * 네이버 로그아웃 (토큰 삭제)
+     */
+    @PostMapping("/api/oauth/naver/logout")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> naverLogout(
+            @RequestHeader("Authorization") String authHeader) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            int memberNo = jwtUtil.getMemberNo(token);
+            oAuthService.naverLogout(memberNo);
+            response.put("success", true);
+            response.put("message", "네이버 로그아웃이 완료되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.warn("네이버 로그아웃 처리 중 오류 (best-effort)", e);
+            response.put("success", true);
+            response.put("message", "네이버 로그아웃 처리 완료 (일부 오류 무시).");
+            return ResponseEntity.ok(response);
+        }
+    }
+
+    /**
+     * 구글 로그아웃 (토큰 취소)
+     */
+    @PostMapping("/api/oauth/google/logout")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> googleLogout(
+            @RequestHeader("Authorization") String authHeader) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            int memberNo = jwtUtil.getMemberNo(token);
+            oAuthService.googleLogout(memberNo);
+            response.put("success", true);
+            response.put("message", "구글 로그아웃이 완료되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.warn("구글 로그아웃 처리 중 오류 (best-effort)", e);
+            response.put("success", true);
+            response.put("message", "구글 로그아웃 처리 완료 (일부 오류 무시).");
+            return ResponseEntity.ok(response);
         }
     }
 }

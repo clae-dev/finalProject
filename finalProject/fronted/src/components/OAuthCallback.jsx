@@ -32,7 +32,8 @@ function OAuthCallback() {
         memberNo: params.get('memberNo'),
         memberName: params.get('memberName'),
         memberNickname: params.get('memberNickname'),
-        memberEmail: params.get('memberEmail')
+        memberEmail: params.get('memberEmail'),
+        loginType: params.get('loginType')
       });
       navigate('/');
     } catch (err) {
