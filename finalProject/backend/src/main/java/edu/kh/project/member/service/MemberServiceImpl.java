@@ -79,7 +79,7 @@ public class MemberServiceImpl implements MemberService {
         }
         
         // 3. 계정 상태 확인
-        if (!"ACTIVE".equals(member.getMemberStatus())) return null;
+        if (!"A".equals(member.getMemberStatus())) return null;
         
         // 4. JWT 토큰 생성
         String accessToken = jwtUtil.generateAccessToken(

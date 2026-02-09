@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import { axiosApi } from "../api/axiosAPI";
 
 /**
@@ -20,6 +20,37 @@ export const AuthProvider = ({ children }) => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  // 앱 시작 시 토큰 유효성 검증
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    const storedUser = localStorage.getItem("userData");
+
+    if (storedUser && token) {
+      try {
+        // JWT 디코딩하여 만료 시간 확인
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp * 1000 < Date.now()) {
+          // 토큰 만료 → 로그인 상태 초기화
+          localStorage.removeItem("userData");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          setUser(null);
+        }
+      } catch (e) {
+        // 토큰 파싱 실패 → 로그인 상태 초기화
+        localStorage.removeItem("userData");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        setUser(null);
+      }
+    } else if (storedUser && !token) {
+      // 유저 데이터는 있는데 토큰 없음 → 초기화
+      localStorage.removeItem("userData");
+      localStorage.removeItem("refreshToken");
+      setUser(null);
+    }
+  }, []);
 
   // 이메일 입력 핸들러
   const changeInputEmail = (e) => {
@@ -72,11 +103,8 @@ export const AuthProvider = ({ children }) => {
       setEmail("");
       setPassword("");
 
-      // 1시간 후 자동 로그아웃 타이머 설정
-      setTimeout(() => {
-        handleLogout();
-        alert("로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
-      }, 60 * 60 * 1000); // 1시간
+      // 메인 페이지로 이동
+      window.location.href = "/";
 
     } catch (error) {
       console.error("로그인 실패:", error);
