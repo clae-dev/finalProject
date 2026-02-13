@@ -9,22 +9,10 @@ const tabs = [
   { key: 'likes', label: '좋아요', icon: Heart },
 ];
 
-const dummyData = {
-  posts: [
-    { id: 1, title: '제주 한달살기 3주차 후기', date: '2025.01.15', category: '자유게시판' },
-    { id: 2, title: '혼자 가기 좋은 카페 추천', date: '2025.01.10', category: '자유게시판' },
-    { id: 3, title: '서귀포 맛집 리스트 공유합니다', date: '2025.01.05', category: '맛집' },
-  ],
-  reviews: [
-    { id: 1, title: '월정리 게스트하우스 솔직 후기', date: '2025.01.12', category: '숙소 후기' },
-    { id: 2, title: '함덕 해수욕장 근처 맛집 후기', date: '2025.01.08', category: '맛집 후기' },
-  ],
-  scraps: [
-    { id: 1, title: '제주 올레길 완주 코스 총정리', date: '2025.01.14', category: '여행정보' },
-    { id: 2, title: '비 오는 날 제주 실내 관광지', date: '2025.01.11', category: '여행정보' },
-    { id: 3, title: '제주 겨울 여행 패킹 리스트', date: '2025.01.03', category: '여행정보' },
-    { id: 4, title: '애월 한림 드라이브 코스', date: '2025.01.01', category: '여행정보' },
-  ],
+const activityData = {
+  posts: [],
+  reviews: [],
+  scraps: [],
   likes: [],
 };
 
@@ -43,7 +31,7 @@ const tabContentVariants = {
 
 export default function ActivityTabs() {
   const [activeTab, setActiveTab] = useState('posts');
-  const items = dummyData[activeTab];
+  const items = activityData[activeTab];
 
   return (
     <section className="py-12 px-5">
