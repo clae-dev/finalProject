@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
-import { getAccommodationDetail } from '../api/accommodationAPI';
+import { useAccommodationDetail } from '../api/useAccommodation';
 import { Button } from '@/components/ui/button';
 import { Star, Heart, MapPin, Clock, Wifi, Car, Coffee, Waves, ChevronLeft, ChevronRight, Phone, Share2, Loader2, AlertCircle } from 'lucide-react';
 
@@ -10,31 +10,12 @@ export default function AccommodationDetail() {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [accommodation, setAccommodation] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchDetail();
-  }, [accommodationNo]);
+  // TanStack Query로 데이터 페칭
+  const { data, isLoading, isError, error } = useAccommodationDetail(accommodationNo);
 
-  const fetchDetail = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await getAccommodationDetail(accommodationNo);
-      if (response.success) {
-        setAccommodation(response.data);
-      } else {
-        setError(response.message || '숙소 정보를 불러오는데 실패했습니다.');
-      }
-    } catch (err) {
-      console.error('숙소 상세 조회 실패:', err);
-      setError('서버와 연결할 수 없습니다.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const accommodation = data?.success ? data.data : null;
+  const errorMessage = isError ? '서버와 연결할 수 없습니다.' : (data && !data.success ? (data.message || '숙소 정보를 불러오는데 실패했습니다.') : null);
 
   const defaultImage = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800';
 
@@ -63,7 +44,7 @@ export default function AccommodationDetail() {
     return Wifi;
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-sky-100 via-cyan-100 to-blue-100">
         <Header />
@@ -75,13 +56,13 @@ export default function AccommodationDetail() {
     );
   }
 
-  if (error || !accommodation) {
+  if (errorMessage || !accommodation) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-sky-100 via-cyan-100 to-blue-100">
         <Header />
         <div className="flex flex-col items-center justify-center py-40">
           <AlertCircle className="w-12 h-12 text-rose-400 mb-4" />
-          <p className="text-rose-500 text-lg mb-4">{error || '숙소를 찾을 수 없습니다.'}</p>
+          <p className="text-rose-500 text-lg mb-4">{errorMessage || '숙소를 찾을 수 없습니다.'}</p>
           <Button onClick={() => navigate('/accommodations')} variant="outline">
             목록으로 돌아가기
           </Button>

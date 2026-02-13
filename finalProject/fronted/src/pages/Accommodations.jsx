@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Search, MapPin, Heart, Phone, Clock, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
-import { getAccommodationList } from '../api/accommodationAPI';
+import { useAccommodations } from '../api/useAccommodation';
 import heroImg from '../assets/images/월정리.png';
 
 export default function Accommodations() {
@@ -17,42 +17,19 @@ export default function Accommodations() {
     priceRange: 'all'
   });
 
-  // API 데이터 상태
-  const [accommodations, setAccommodations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 9;
 
-  // 숙소 데이터 로드
-  useEffect(() => {
-    fetchAccommodations();
-  }, [currentPage, filters.region]);
+  // 지역 파라미터 변환
+  const regionParam = filters.region === 'all' ? null :
+                      filters.region === 'jeju_city' ? '제주시' : '서귀포시';
 
-  const fetchAccommodations = async () => {
-    setLoading(true);
-    setError(null);
+  // TanStack Query로 데이터 페칭
+  const { data, isLoading, isError, error, refetch } = useAccommodations(currentPage, pageSize, regionParam);
 
-    try {
-      const regionParam = filters.region === 'all' ? null :
-                          filters.region === 'jeju_city' ? '제주시' : '서귀포시';
-
-      const response = await getAccommodationList(currentPage, pageSize, regionParam);
-
-      if (response.success) {
-        setAccommodations(response.list || []);
-        setTotalCount(response.totalCount || 0);
-      } else {
-        setError(response.message || '숙소 목록을 불러오는데 실패했습니다.');
-      }
-    } catch (err) {
-      console.error('숙소 목록 조회 실패:', err);
-      setError('서버와 연결할 수 없습니다.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const accommodations = data?.success ? (data.list || []) : [];
+  const totalCount = data?.success ? (data.totalCount || 0) : 0;
+  const errorMessage = isError ? '서버와 연결할 수 없습니다.' : (data && !data.success ? (data.message || '숙소 목록을 불러오는데 실패했습니다.') : null);
 
   // 지역 필터 변경 시 페이지 초기화
   const handleRegionChange = (value) => {
@@ -233,7 +210,7 @@ export default function Accommodations() {
         </div>
 
         {/* 로딩 상태 */}
-        {loading && (
+        {isLoading && (
           <div className="flex items-center justify-center py-20">
             <Loader2 className="w-8 h-8 text-sky-500 animate-spin" />
             <span className="ml-3 text-slate-500">숙소 정보를 불러오는 중...</span>
@@ -241,11 +218,11 @@ export default function Accommodations() {
         )}
 
         {/* 에러 상태 */}
-        {error && !loading && (
+        {errorMessage && !isLoading && (
           <div className="text-center py-16">
-            <p className="text-rose-500 text-lg mb-2">{error}</p>
+            <p className="text-rose-500 text-lg mb-2">{errorMessage}</p>
             <button
-              onClick={fetchAccommodations}
+              onClick={() => refetch()}
               className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors"
             >
               다시 시도
@@ -254,7 +231,7 @@ export default function Accommodations() {
         )}
 
         {/* 숙소 카드 그리드 */}
-        {!loading && !error && (
+        {!isLoading && !errorMessage && (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredAccommodations.map(acc => (
@@ -384,7 +361,7 @@ export default function Accommodations() {
               </div>
             )}
 
-            {filteredAccommodations.length === 0 && !loading && (
+            {filteredAccommodations.length === 0 && !isLoading && (
               <div className="text-center py-16">
                 <p className="text-slate-400 text-lg">검색 결과가 없습니다</p>
                 <p className="text-slate-400 text-sm mt-2">다른 조건으로 검색해보세요</p>

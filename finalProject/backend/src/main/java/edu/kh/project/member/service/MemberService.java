@@ -87,4 +87,11 @@ public interface MemberService {
      * @return 성공한 행의 개수
      */
     int withdrawMember(int memberNo, String memberPw);
+
+    /**
+     * Refresh Token으로 토큰 갱신
+     * @param refreshToken : 리프레시 토큰
+     * @return LoginResponseDTO (새 JWT 토큰 + 회원 정보) / 실패 시 null
+     */
+    LoginResponseDTO refreshToken(String refreshToken);
 }

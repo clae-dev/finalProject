@@ -24,6 +24,7 @@ export const AuthProvider = ({ children }) => {
   // 앱 시작 시 토큰 유효성 검증
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
     const storedUser = localStorage.getItem("userData");
 
     if (storedUser && token) {
@@ -31,24 +32,28 @@ export const AuthProvider = ({ children }) => {
         // JWT 디코딩하여 만료 시간 확인
         const payload = JSON.parse(atob(token.split('.')[1]));
         if (payload.exp * 1000 < Date.now()) {
-          // 토큰 만료 → 로그인 상태 초기화
-          localStorage.removeItem("userData");
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-          setUser(null);
+          // accessToken 만료 → refreshToken 존재 시 유저 상태 유지
+          // (인터셉터가 첫 API 호출 시 자동 갱신)
+          if (!refreshToken) {
+            localStorage.removeItem("userData");
+            localStorage.removeItem("accessToken");
+            setUser(null);
+          }
         }
       } catch (e) {
-        // 토큰 파싱 실패 → 로그인 상태 초기화
-        localStorage.removeItem("userData");
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        setUser(null);
+        // 토큰 파싱 실패 → refreshToken 있으면 유저 상태 유지
+        if (!refreshToken) {
+          localStorage.removeItem("userData");
+          localStorage.removeItem("accessToken");
+          setUser(null);
+        }
       }
     } else if (storedUser && !token) {
-      // 유저 데이터는 있는데 토큰 없음 → 초기화
-      localStorage.removeItem("userData");
-      localStorage.removeItem("refreshToken");
-      setUser(null);
+      // 유저 데이터는 있는데 토큰 없음 → refreshToken 확인
+      if (!refreshToken) {
+        localStorage.removeItem("userData");
+        setUser(null);
+      }
     }
   }, []);
 
@@ -136,12 +141,6 @@ export const AuthProvider = ({ children }) => {
 
     setUser(userData);
     localStorage.setItem("userData", JSON.stringify(userData));
-
-    // 1시간 후 자동 로그아웃 타이머 설정
-    setTimeout(() => {
-      handleLogout();
-      alert("로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
-    }, 60 * 60 * 1000);
   };
 
   // 로그아웃 처리 함수
