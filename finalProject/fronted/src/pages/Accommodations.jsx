@@ -6,7 +6,7 @@ import { Search, MapPin, Heart, Phone, Clock, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
 import { useAccommodations } from '../api/useAccommodation';
-import heroImg from '../assets/images/월정리.png';
+import heroImg from '../assets/images/accommodation/월정리.png';
 
 export default function Accommodations() {
   const navigate = useNavigate();

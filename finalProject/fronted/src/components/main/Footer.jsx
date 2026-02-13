@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '@/assets/images/혼디.png';
+import logo from '@/assets/images/logo/혼디.png';
 
 const serviceLinks = [
   { name: '숙소', path: '/accommodations' },

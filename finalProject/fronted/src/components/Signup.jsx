@@ -6,8 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Mail, Lock, Eye, EyeOff, User, Send, CheckCircle2, Loader2, RefreshCw, ArrowLeft, Sparkles, Shield, UserPlus, X, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { axiosApi } from '../api/axiosAPI';
-import logo from '@/assets/images/혼디.png';
-import bgImage from '@/assets/images/협재.png';
+import logo from '@/assets/images/logo/혼디.png';
+import bgImage from '@/assets/images/auth/협재.png';
 
 const AVATAR_STYLES = ['adventurer', 'fun-emoji', 'avataaars', 'bottts', 'pixel-art', 'lorelei'];
 

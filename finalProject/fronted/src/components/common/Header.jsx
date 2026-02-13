@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MessageCircle } from 'lucide-react';
-import logo from '@/assets/images/혼디.png';
+import logo from '@/assets/images/logo/혼디.png';
 import { AuthContext } from '../AuthContext';
 import ChatPanel from '../chatting/ChatPanel';
 

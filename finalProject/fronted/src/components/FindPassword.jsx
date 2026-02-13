@@ -3,8 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, CheckCircle2, User, KeyRound, Send, Loader2, ShieldCheck } from 'lucide-react';
-import bgImage from '@/assets/images/협재.png';
-import logo from '@/assets/images/혼디.png';
+import bgImage from '@/assets/images/auth/협재.png';
+import logo from '@/assets/images/logo/혼디.png';
 
 export default function FindPassword() {
   const navigate = useNavigate();
