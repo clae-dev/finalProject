@@ -4,6 +4,7 @@ import edu.kh.project.common.util.JwtUtil;
 import edu.kh.project.companion.dto.CompanionDTO;
 import edu.kh.project.companion.dto.CompanionJoinDTO;
 import edu.kh.project.companion.service.CompanionService;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -108,6 +109,11 @@ public class CompanionController {
 
             return ResponseEntity.ok(response);
 
+        } catch (JwtException e) {
+            log.warn("동행 작성 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
             log.error("동행 작성 실패", e);
             response.put("success", false);
@@ -133,6 +139,11 @@ public class CompanionController {
 
             return ResponseEntity.ok(response);
 
+        } catch (JwtException e) {
+            log.warn("동행 삭제 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
             log.error("동행 삭제 실패", e);
             response.put("success", false);
@@ -164,6 +175,11 @@ public class CompanionController {
 
             return ResponseEntity.ok(response);
 
+        } catch (JwtException e) {
+            log.warn("참여 신청 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
             log.error("참여 신청 실패", e);
             response.put("success", false);
@@ -189,6 +205,11 @@ public class CompanionController {
 
             return ResponseEntity.ok(response);
 
+        } catch (JwtException e) {
+            log.warn("참여 취소 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
             log.error("참여 취소 실패", e);
             response.put("success", false);
@@ -217,6 +238,11 @@ public class CompanionController {
 
             return ResponseEntity.ok(response);
 
+        } catch (JwtException e) {
+            log.warn("참여 상태 변경 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
             log.error("참여 상태 변경 실패", e);
             response.put("success", false);

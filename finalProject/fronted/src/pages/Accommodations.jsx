@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Search, MapPin, Heart, Phone, Clock, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/Header';
+import Footer from '../components/main/Footer';
 import { useAccommodations } from '../api/useAccommodation';
 import heroImg from '../assets/images/accommodation/월정리.png';
 
@@ -370,6 +371,8 @@ export default function Accommodations() {
           </>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }

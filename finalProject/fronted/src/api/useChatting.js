@@ -31,7 +31,7 @@ export const useSearchTarget = (query) => {
 export const useMessages = (chattingRoomNo) => {
   return useQuery({
     queryKey: ['messages', chattingRoomNo],
-    queryFn: () => getMessages(chattingRoomNo),
+  queryFn: () => getMessages(chattingRoomNo),
     enabled: !!chattingRoomNo,
     refetchInterval: 3000,
   });

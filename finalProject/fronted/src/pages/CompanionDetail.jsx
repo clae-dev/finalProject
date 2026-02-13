@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, Users, MapPin, Loader2, Check, X, Trash2 } from 'lucide-react';
 import Header from '../components/common/Header';
+import Footer from '../components/main/Footer';
 import { useCompanionDetail, useJoinCompanion, useCancelJoin, useUpdateJoinStatus, useDeleteCompanion } from '../api/useCompanion';
 import { AuthContext } from '../components/AuthContext';
 
@@ -281,8 +282,7 @@ export default function CompanionDetail() {
         </div>
       </div>
 
-      {/* 하단 여백 */}
-      <div className="h-20" />
+      <Footer />
     </div>
   );
 }

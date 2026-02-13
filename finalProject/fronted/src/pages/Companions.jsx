@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, Plus, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import Header from '../components/common/Header';
+import Footer from '../components/main/Footer';
 import CompanionWriteModal from '../components/companion/CompanionWriteModal';
 import { useCompanions } from '../api/useCompanion';
 import { AuthContext } from '../components/AuthContext';
@@ -71,16 +72,21 @@ export default function Companions() {
 
         {/* 텍스트 */}
         <div className="relative h-full flex flex-col items-center justify-center text-white px-5">
-          <div className="inline-flex items-center gap-2 px-5 py-2 bg-white/15 backdrop-blur-md rounded-full text-sm font-semibold mb-6 border border-white/20">
-            <Users className="w-4 h-4" />
-            <span>제주 동행 찾기</span>
+          <p className="text-white/60 text-sm tracking-[0.3em] uppercase mb-5 drop-shadow"
+             style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            Jeju Companion
+          </p>
+          <div className="inline-flex items-center gap-2 px-5 py-2 bg-cyan-400/20 backdrop-blur-md rounded-full text-sm font-semibold mb-6 border border-cyan-300/30 text-cyan-100 shadow-lg shadow-cyan-500/10">
+            <Users className="w-4 h-4 text-cyan-300" />
+            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>제주 동행 찾기</span>
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold mb-4 text-center drop-shadow-lg"
+          <h1 className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg"
               style={{ fontFamily: "'GmarketSans', sans-serif" }}>
-            함께라서 더 특별한 제주
+            <span className="text-white">함께라서 더 특별한 </span>
+            <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-teal-300 bg-clip-text text-transparent">제주</span>
           </h1>
-          <p className="text-base md:text-lg text-white/90 text-center max-w-xl drop-shadow-md"
-             style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+          <p className="text-lg text-white/80 text-center max-w-md leading-relaxed drop-shadow"
+             style={{ fontFamily: "'Pretendard', sans-serif" }}>
             혼자여도 괜찮아요. 같은 길을 걷는 동행을 만나보세요.
           </p>
         </div>
@@ -261,6 +267,8 @@ export default function Companions() {
         isOpen={showWriteModal}
         onClose={() => setShowWriteModal(false)}
       />
+
+      <Footer />
     </div>
   );
 }
