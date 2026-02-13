@@ -2,11 +2,11 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { FileText, MessageSquare, Bookmark, Users } from 'lucide-react';
 
-const stats = [
-  { label: '작성글', icon: FileText, value: 12, color: 'from-sky-400 to-cyan-400', bg: 'bg-sky-50', text: 'text-sky-600' },
-  { label: '후기', icon: MessageSquare, value: 5, color: 'from-emerald-400 to-teal-400', bg: 'bg-emerald-50', text: 'text-emerald-600' },
-  { label: '스크랩', icon: Bookmark, value: 24, color: 'from-amber-400 to-orange-400', bg: 'bg-amber-50', text: 'text-amber-600' },
-  { label: '동행 참여', icon: Users, value: 3, color: 'from-violet-400 to-purple-400', bg: 'bg-violet-50', text: 'text-violet-600' },
+const getStats = (memberData) => [
+  { label: '작성글', icon: FileText, value: memberData?.postCount || 0, bg: 'bg-sky-50', text: 'text-sky-600' },
+  { label: '후기', icon: MessageSquare, value: memberData?.reviewCount || 0, bg: 'bg-emerald-50', text: 'text-emerald-600' },
+  { label: '스크랩', icon: Bookmark, value: memberData?.scrapCount || 0, bg: 'bg-amber-50', text: 'text-amber-600' },
+  { label: '동행 참여', icon: Users, value: memberData?.companionCount || 0, bg: 'bg-violet-50', text: 'text-violet-600' },
 ];
 
 function CountUp({ target, duration = 1500 }) {
@@ -48,7 +48,9 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 };
 
-export default function StatsGrid() {
+export default function StatsGrid({ memberData }) {
+  const stats = getStats(memberData);
+
   return (
     <section className="py-12 px-5">
       <div className="max-w-4xl mx-auto">

@@ -1,18 +1,22 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MapPin } from 'lucide-react';
+import { Mail, Calendar } from 'lucide-react';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 };
 
-export default function ProfileHero({ user }) {
+export default function ProfileHero({ user, memberData }) {
   const avatarUrl =
     user.memberProfileImg ||
     `https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(
       user.memberNickname || 'user'
     )}&backgroundColor=0ea5e9,06b6d4&shapeColor=ffffff`;
+
+  const joinDate = memberData?.memberEnrollDate
+    ? new Date(memberData.memberEnrollDate).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
+    : null;
 
   return (
     <section className="relative overflow-hidden">
@@ -59,16 +63,25 @@ export default function ProfileHero({ user }) {
             {user.memberNickname}
           </motion.h1>
 
-          {/* Email & Info */}
+          {/* 자기소개 */}
+          {memberData?.memberIntroduce && (
+            <motion.p variants={fadeInUp} className="text-white/80 text-sm max-w-md mb-2">
+              {memberData.memberIntroduce}
+            </motion.p>
+          )}
+
+          {/* Email & 가입일 */}
           <motion.div variants={fadeInUp} className="flex flex-wrap items-center justify-center gap-4 mt-3">
             <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm text-white/90 font-medium">
               <Mail className="w-4 h-4" />
               {user.memberEmail}
             </span>
-            <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm text-white/90 font-medium">
-              <MapPin className="w-4 h-4" />
-              제주 혼행러
-            </span>
+            {joinDate && (
+              <span className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm text-white/90 font-medium">
+                <Calendar className="w-4 h-4" />
+                {joinDate} 가입
+              </span>
+            )}
           </motion.div>
         </motion.div>
       </div>
