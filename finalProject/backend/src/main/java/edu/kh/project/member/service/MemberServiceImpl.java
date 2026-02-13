@@ -156,6 +156,61 @@ public class MemberServiceImpl implements MemberService {
     }
 
     /**
+     * Refresh Token으로 토큰 갱신 (Refresh Token Rotation)
+     */
+    @Override
+    public LoginResponseDTO refreshToken(String refreshToken) {
+
+        // 1. 리프레시 토큰 검증
+        if (!jwtUtil.validateToken(refreshToken)) {
+            log.warn("유효하지 않은 리프레시 토큰");
+            return null;
+        }
+
+        // 2. 토큰에서 회원 번호 추출
+        int memberNo = jwtUtil.getMemberNo(refreshToken);
+
+        // 3. 회원 조회
+        MemberDTO member = memberMapper.selectMemberByNo(memberNo);
+
+        if (member == null) {
+            log.warn("토큰 갱신 실패: 회원을 찾을 수 없음 (memberNo: {})", memberNo);
+            return null;
+        }
+
+        // 4. 계정 상태 확인
+        if (!"A".equals(member.getMemberStatus())) {
+            log.warn("토큰 갱신 실패: 비활성 계정 (memberNo: {})", memberNo);
+            return null;
+        }
+
+        // 5. 새 토큰 쌍 생성 (Refresh Token Rotation)
+        String newAccessToken = jwtUtil.generateAccessToken(
+            member.getMemberNo(),
+            member.getMemberEmail(),
+            member.getMemberRole()
+        );
+
+        String newRefreshToken = jwtUtil.generateRefreshToken(member.getMemberNo());
+
+        // 6. 응답 DTO 생성
+        LoginResponseDTO response = LoginResponseDTO.builder()
+            .accessToken(newAccessToken)
+            .refreshToken(newRefreshToken)
+            .memberNo(member.getMemberNo())
+            .memberEmail(member.getMemberEmail())
+            .memberName(member.getMemberName())
+            .memberNickname(member.getMemberNickname())
+            .memberProfileImg(member.getMemberProfileImg())
+            .memberRole(member.getMemberRole())
+            .build();
+
+        log.info("토큰 갱신 성공: {}", member.getMemberEmail());
+
+        return response;
+    }
+
+    /**
      * 회원 탈퇴
      */
     @Override

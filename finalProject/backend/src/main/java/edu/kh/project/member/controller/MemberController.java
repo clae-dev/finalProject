@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import edu.kh.project.member.dto.LoginRequestDTO;
 import edu.kh.project.member.dto.LoginResponseDTO;
 import edu.kh.project.member.dto.MemberDTO;
+import edu.kh.project.member.dto.RefreshRequestDTO;
 import edu.kh.project.member.dto.SignupRequestDTO;
 import edu.kh.project.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -164,6 +165,39 @@ public class MemberController {
         }
     }
     
+    /**
+     * 토큰 갱신 (Refresh Token → 새 Access Token + Refresh Token)
+     * @param refreshRequest
+     * @return 새 JWT 토큰 + 회원 정보
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, Object>> refresh(
+            @RequestBody RefreshRequestDTO refreshRequest) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            LoginResponseDTO loginResponse = memberService.refreshToken(refreshRequest.getRefreshToken());
+
+            if (loginResponse != null) {
+                response.put("success", true);
+                response.put("message", "토큰이 갱신되었습니다.");
+                response.put("data", loginResponse);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "토큰 갱신에 실패했습니다. 다시 로그인해주세요.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+
+        } catch (Exception e) {
+            log.error("토큰 갱신 실패", e);
+            response.put("success", false);
+            response.put("message", "토큰 갱신 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     /**
      * 회원 정보 조회
      * @param memberNo
