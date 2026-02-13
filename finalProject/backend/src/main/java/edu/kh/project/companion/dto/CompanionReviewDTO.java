@@ -8,24 +8,22 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @ToString
-public class CompanionDTO {
+public class CompanionReviewDTO {
 
-    private int companionNo;
+    private int reviewNo;
+    private Integer companionNo;
+    private int memberNo;
     private String title;
     private String content;
+    private int rating;
     private String imageUrl;
-    private String travelDate;
-    private int maxMembers;
-    private String tags;
+    private String contentImages;
     private String status;
-    private int memberNo;
     private String createdAt;
     private String updatedAt;
-    private String contentImages;
 
     // JOIN 파생 필드
     private String authorNickname;
     private String authorProfile;
-    private String authorAgeRange;
-    private int currentMembers;
+    private String companionTitle;
 }

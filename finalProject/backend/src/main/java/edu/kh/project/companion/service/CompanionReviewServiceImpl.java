@@ -1,8 +1,7 @@
 package edu.kh.project.companion.service;
 
-import edu.kh.project.companion.dto.CompanionDTO;
-import edu.kh.project.companion.dto.CompanionJoinDTO;
-import edu.kh.project.companion.mapper.CompanionMapper;
+import edu.kh.project.companion.dto.CompanionReviewDTO;
+import edu.kh.project.companion.mapper.CompanionReviewMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,39 +17,38 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class CompanionServiceImpl implements CompanionService {
+public class CompanionReviewServiceImpl implements CompanionReviewService {
 
-    private final CompanionMapper companionMapper;
+    private final CompanionReviewMapper reviewMapper;
 
     @Override
     @Transactional(readOnly = true)
-    public List<CompanionDTO> getCompanionList(int page, int size, String tag) {
+    public List<CompanionReviewDTO> getReviewList(int page, int size) {
         int offset = (page - 1) * size;
-        return companionMapper.selectCompanionList(offset, size, tag);
+        return reviewMapper.selectReviewList(offset, size);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public int getCompanionCount(String tag) {
-        return companionMapper.selectCompanionCount(tag);
+    public int getReviewCount() {
+        return reviewMapper.selectReviewCount();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public CompanionDTO getCompanionDetail(int companionNo) {
-        return companionMapper.selectCompanionDetail(companionNo);
+    public CompanionReviewDTO getReviewDetail(int reviewNo) {
+        return reviewMapper.selectReviewDetail(reviewNo);
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<CompanionJoinDTO> getJoinList(int companionNo) {
-        return companionMapper.selectJoinList(companionNo);
-    }
+    public int createReview(CompanionReviewDTO review, MultipartFile thumbnail,
+                            List<MultipartFile> contentImages,
+                            String webPath, String folderPath) {
 
-    @Override
-    public int createCompanion(CompanionDTO companion, MultipartFile thumbnail,
-                               List<MultipartFile> contentImages,
-                               String webPath, String folderPath) {
+        // companionNo가 0이면 null 처리 (FK 위반 방지)
+        if (review.getCompanionNo() != null && review.getCompanionNo() == 0) {
+            review.setCompanionNo(null);
+        }
 
         // 폴더 생성
         File dir = new File(folderPath);
@@ -62,7 +60,7 @@ public class CompanionServiceImpl implements CompanionService {
                 String rename = UUID.randomUUID().toString()
                         + getFileExtension(thumbnail.getOriginalFilename());
                 thumbnail.transferTo(new File(folderPath + rename));
-                companion.setImageUrl(webPath + rename);
+                review.setImageUrl(webPath + rename);
             }
 
             // 본문 이미지 저장 (최대 5장)
@@ -77,16 +75,16 @@ public class CompanionServiceImpl implements CompanionService {
                     }
                 }
                 if (!savedPaths.isEmpty()) {
-                    companion.setContentImages(String.join(",", savedPaths));
+                    review.setContentImages(String.join(",", savedPaths));
                 }
             }
 
         } catch (Exception e) {
-            log.error("동행 이미지 저장 실패", e);
+            log.error("후기 이미지 저장 실패", e);
             throw new RuntimeException("이미지 저장 중 오류가 발생했습니다.", e);
         }
 
-        return companionMapper.insertCompanion(companion);
+        return reviewMapper.insertReview(review);
     }
 
     private String getFileExtension(String fileName) {
@@ -95,27 +93,13 @@ public class CompanionServiceImpl implements CompanionService {
     }
 
     @Override
-    public int deleteCompanion(int companionNo, int memberNo) {
-        return companionMapper.deleteCompanion(companionNo, memberNo);
+    public int deleteReview(int reviewNo, int memberNo) {
+        return reviewMapper.deleteReview(reviewNo, memberNo);
     }
 
     @Override
-    public int joinCompanion(int companionNo, int memberNo) {
-        // 중복 신청 체크
-        int exists = companionMapper.selectJoinCheck(companionNo, memberNo);
-        if (exists > 0) {
-            return -1;
-        }
-        return companionMapper.insertJoin(companionNo, memberNo);
-    }
-
-    @Override
-    public int cancelJoin(int companionNo, int memberNo) {
-        return companionMapper.deleteJoin(companionNo, memberNo);
-    }
-
-    @Override
-    public int updateJoinStatus(int joinNo, String status, int memberNo) {
-        return companionMapper.updateJoinStatus(joinNo, status, memberNo);
+    @Transactional(readOnly = true)
+    public List<CompanionReviewDTO> getRecentReviews(int limit) {
+        return reviewMapper.selectRecentReviews(limit);
     }
 }

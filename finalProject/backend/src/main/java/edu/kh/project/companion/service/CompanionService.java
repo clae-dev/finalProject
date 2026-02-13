@@ -2,6 +2,7 @@ package edu.kh.project.companion.service;
 
 import edu.kh.project.companion.dto.CompanionDTO;
 import edu.kh.project.companion.dto.CompanionJoinDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -15,7 +16,9 @@ public interface CompanionService {
 
     List<CompanionJoinDTO> getJoinList(int companionNo);
 
-    int createCompanion(CompanionDTO companion);
+    int createCompanion(CompanionDTO companion, MultipartFile thumbnail,
+                        List<MultipartFile> contentImages,
+                        String webPath, String folderPath);
 
     int deleteCompanion(int companionNo, int memberNo);
 

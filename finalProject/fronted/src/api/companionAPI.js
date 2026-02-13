@@ -20,9 +20,11 @@ export const getCompanionDetail = async (companionNo) => {
   return response.data;
 };
 
-// 작성
-export const createCompanion = async (data) => {
-  const response = await axiosApi.post("/api/companions", data);
+// 작성 (multipart/form-data)
+export const createCompanion = async (formData) => {
+  const response = await axiosApi.post("/api/companions", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return response.data;
 };
 
