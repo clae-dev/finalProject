@@ -21,6 +21,7 @@ public class CompanionDTO {
     private int memberNo;
     private String createdAt;
     private String updatedAt;
+    private String contentImages;
 
     // JOIN 파생 필드
     private String authorNickname;

@@ -14,7 +14,11 @@ import AccommodationDetail from './pages/AccommodationDetail';
 import OAuthCallback from './components/OAuthCallback';
 import MyPage from './components/Mypage';
 import Companions from './pages/Companions';
+import CompanionWrite from './pages/CompanionWrite';
 import CompanionDetail from './pages/CompanionDetail';
+import Reviews from './pages/Reviews';
+import ReviewWrite from './pages/ReviewWrite';
+import ReviewDetail from './pages/ReviewDetail';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -31,7 +35,11 @@ function AnimatedRoutes() {
         <Route path="/accommodations/:accommodationNo" element={<PageTransition><AccommodationDetail /></PageTransition>} />
         <Route path="/mypage" element={<PageTransition><MyPage /></PageTransition>} />
         <Route path="/companions" element={<PageTransition><Companions /></PageTransition>} />
+        <Route path="/companions/write" element={<PageTransition><CompanionWrite /></PageTransition>} />
         <Route path="/companions/:companionNo" element={<PageTransition><CompanionDetail /></PageTransition>} />
+        <Route path="/reviews" element={<PageTransition><Reviews /></PageTransition>} />
+        <Route path="/reviews/write" element={<PageTransition><ReviewWrite /></PageTransition>} />
+        <Route path="/reviews/:reviewNo" element={<PageTransition><ReviewDetail /></PageTransition>} />
       </Routes>
     </AnimatePresence>
   );

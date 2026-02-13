@@ -7,9 +7,11 @@ import edu.kh.project.companion.service.CompanionService;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +25,12 @@ public class CompanionController {
 
     private final CompanionService companionService;
     private final JwtUtil jwtUtil;
+
+    @Value("${companion.image.web-path}")
+    private String companionWebPath;
+
+    @Value("${companion.image.folder-path}")
+    private String companionFolderPath;
 
     private int extractMemberNo(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
@@ -90,19 +98,34 @@ public class CompanionController {
         }
     }
 
-    // 작성
+    // 작성 (multipart/form-data)
     @PostMapping
     public ResponseEntity<Map<String, Object>> createCompanion(
             @RequestHeader("Authorization") String authHeader,
-            @RequestBody CompanionDTO companion) {
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam(value = "travelDate", required = false) String travelDate,
+            @RequestParam(value = "maxMembers", defaultValue = "4") int maxMembers,
+            @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail,
+            @RequestParam(value = "contentImages", required = false) List<MultipartFile> contentImages) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
             int memberNo = extractMemberNo(authHeader);
+
+            CompanionDTO companion = new CompanionDTO();
+            companion.setTitle(title);
+            companion.setContent(content);
+            companion.setTravelDate(travelDate);
+            companion.setMaxMembers(maxMembers);
+            companion.setTags(tags);
             companion.setMemberNo(memberNo);
 
-            int result = companionService.createCompanion(companion);
+            int result = companionService.createCompanion(
+                    companion, thumbnail, contentImages,
+                    companionWebPath, companionFolderPath);
 
             response.put("success", result > 0);
             response.put("message", result > 0 ? "작성 완료" : "작성 실패");

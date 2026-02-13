@@ -72,10 +72,11 @@ export default function Header() {
                     {/* 채팅 아이콘 */}
                     <button
                       onClick={() => setChatOpen(true)}
-                      className="relative p-2 rounded-full hover:bg-slate-100 transition-colors"
+                      className="relative group w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-cyan-400 flex items-center justify-center shadow-md shadow-sky-200/50 hover:shadow-lg hover:shadow-sky-300/50 hover:scale-110 active:scale-95 transition-all duration-300"
                       title="메시지"
                     >
-                      <MessageCircle className="w-[22px] h-[22px] text-slate-700" />
+                      <MessageCircle className="w-5 h-5 text-white stroke-[2.5] group-hover:rotate-12 transition-transform duration-300" />
+                      <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-white shadow-sm animate-pulse" />
                     </button>
 
                     <Link

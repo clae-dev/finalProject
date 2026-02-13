@@ -42,10 +42,24 @@ public class FileConfig implements WebMvcConfigurer {
 	@Value("${profile.image.folder-path}")
 	private String profileImageFolderPath;
 	
+	// 동행 이미지 경로
+	@Value("${companion.image.web-path}")
+	private String companionImageWebPath;
+
+	@Value("${companion.image.folder-path}")
+	private String companionImageFolderPath;
+
+	// 후기 이미지 경로
+	@Value("${review.image.web-path}")
+	private String reviewImageWebPath;
+
+	@Value("${review.image.folder-path}")
+	private String reviewImageFolderPath;
+
 	// 공통 파일 업로드 경로
 	@Value("${file.upload.path}")
 	private String fileUploadPath;
-	
+
 	@Value("${file.upload.url}")
 	private String fileUploadUrl;
 	
@@ -69,6 +83,14 @@ public class FileConfig implements WebMvcConfigurer {
 		registry.addResourceHandler(profileImageWebPath + "**")
 		        .addResourceLocations("file:///" + profileImageFolderPath);
 		
+		// 동행 이미지 경로 매핑
+		registry.addResourceHandler(companionImageWebPath + "**")
+		        .addResourceLocations("file:///" + companionImageFolderPath);
+
+		// 후기 이미지 경로 매핑
+		registry.addResourceHandler(reviewImageWebPath + "**")
+		        .addResourceLocations("file:///" + reviewImageFolderPath);
+
 		// 공통 파일 업로드 경로 매핑
 		registry.addResourceHandler(fileUploadUrl)
 		        .addResourceLocations("file:///" + fileUploadPath);
