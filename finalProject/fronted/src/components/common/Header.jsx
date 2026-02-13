@@ -65,12 +65,13 @@ export default function Header() {
             <div className="flex items-center gap-4">
               {user ? (
                 <>
-                  <span
-                    className="text-sm text-slate-600 hidden sm:block font-medium"
+                  <Link
+                    to="/mypage"
+                    className="text-sm text-slate-600 hidden sm:block font-medium hover:text-sky-500 transition-colors"
                     style={{ fontFamily: "'Pretendard', sans-serif" }}
                   >
                     {user.memberNickname}님
-                  </span>
+                  </Link>
                   <button
                     onClick={handleLogout}
                     className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-105 transition-all duration-300"

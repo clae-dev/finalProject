@@ -7,6 +7,7 @@ import Main from './components/Main';
 import Accommodations from './pages/Accommodations';
 import AccommodationDetail from './pages/AccommodationDetail';
 import OAuthCallback from './components/OAuthCallback';
+import MyPage from './components/Mypage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/oauth/callback" element={<OAuthCallback />} />
             <Route path="/accommodations" element={<Accommodations />} />
             <Route path="/accommodations/:accommodationNo" element={<AccommodationDetail />} />
+            <Route path="/mypage" element={<MyPage />} />
           </Routes>
         </div>
       </BrowserRouter>
