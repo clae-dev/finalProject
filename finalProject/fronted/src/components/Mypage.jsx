@@ -58,7 +58,7 @@ export default function MyPage() {
       <ProfileHero user={user} memberData={memberData} />
       <StatsGrid memberData={memberData} />
       <ActivityTabs />
-      <BadgeSection />
+      <BadgeSection memberData={memberData} />
       <QuickActions memberData={memberData} memberNo={user.memberNo} />
       <Footer />
     </motion.div>
