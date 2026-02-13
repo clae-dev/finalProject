@@ -18,6 +18,11 @@ export default defineConfig({
         target: 'http://localhost:80',
         changeOrigin: true,
       },
+      '/chattingSock': {
+        target: 'http://localhost:80',
+        changeOrigin: true,
+        ws: true,
+      },
     },
   },
 })

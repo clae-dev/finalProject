@@ -11,6 +11,7 @@ import Accommodations from './pages/Accommodations';
 import AccommodationDetail from './pages/AccommodationDetail';
 import OAuthCallback from './components/OAuthCallback';
 import MyPage from './components/Mypage';
+import Companions from './pages/Companions';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <Route path="/accommodations" element={<Accommodations />} />
               <Route path="/accommodations/:accommodationNo" element={<AccommodationDetail />} />
               <Route path="/mypage" element={<MyPage />} />
+              <Route path="/companions" element={<Companions />} />
             </Routes>
           </div>
         </BrowserRouter>

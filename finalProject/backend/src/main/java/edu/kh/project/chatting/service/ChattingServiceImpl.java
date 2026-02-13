@@ -1,0 +1,72 @@
+package edu.kh.project.chatting.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import edu.kh.project.chatting.dto.ChattingRoomDTO;
+import edu.kh.project.chatting.dto.MessageDTO;
+import edu.kh.project.chatting.mapper.ChattingMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * 채팅 서비스 구현체
+ */
+@Service
+@RequiredArgsConstructor
+@Transactional
+@Slf4j
+public class ChattingServiceImpl implements ChattingService {
+
+    private final ChattingMapper chattingMapper;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ChattingRoomDTO> selectRoomList(int memberNo) {
+        return chattingMapper.selectRoomList(memberNo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> searchTarget(String query, int memberNo) {
+        return chattingMapper.searchTarget(query, memberNo);
+    }
+
+    @Override
+    public int enterChatRoom(int memberNo, int targetNo) {
+
+        // 기존 채팅방 있는지 조회
+        Integer roomNo = chattingMapper.selectExistRoom(memberNo, targetNo);
+
+        if (roomNo != null) {
+            return roomNo;
+        }
+
+        // 없으면 새로 생성
+        ChattingRoomDTO room = new ChattingRoomDTO();
+        // openMember = memberNo, participant = targetNo 를 mapper에서 처리
+        chattingMapper.insertChattingRoom(memberNo, targetNo);
+
+        // 방금 생성된 방 번호 조회
+        return chattingMapper.selectExistRoom(memberNo, targetNo);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MessageDTO> selectMessageList(int chattingRoomNo) {
+        return chattingMapper.selectMessageList(chattingRoomNo);
+    }
+
+    @Override
+    public int insertMessage(MessageDTO msg) {
+        return chattingMapper.insertMessage(msg);
+    }
+
+    @Override
+    public int updateReadFlag(int chattingRoomNo, int memberNo) {
+        return chattingMapper.updateReadFlag(chattingRoomNo, memberNo);
+    }
+}
