@@ -18,6 +18,7 @@ import edu.kh.project.chatting.dto.ChattingRoomDTO;
 import edu.kh.project.chatting.dto.MessageDTO;
 import edu.kh.project.chatting.service.ChattingService;
 import edu.kh.project.common.util.JwtUtil;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,6 +60,11 @@ public class ChattingController {
             response.put("data", roomList);
             return ResponseEntity.ok(response);
 
+        } catch (JwtException e) {
+            log.warn("채팅방 목록 조회 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
             log.error("채팅방 목록 조회 실패", e);
             response.put("success", false);
@@ -86,6 +92,11 @@ public class ChattingController {
             response.put("data", results);
             return ResponseEntity.ok(response);
 
+        } catch (JwtException e) {
+            log.warn("대화 상대 검색 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
             log.error("대화 상대 검색 실패", e);
             response.put("success", false);
@@ -113,6 +124,11 @@ public class ChattingController {
             response.put("chattingRoomNo", chattingRoomNo);
             return ResponseEntity.ok(response);
 
+        } catch (JwtException e) {
+            log.warn("채팅방 입장 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
             log.error("채팅방 입장 실패", e);
             response.put("success", false);
@@ -167,6 +183,11 @@ public class ChattingController {
             response.put("updated", result);
             return ResponseEntity.ok(response);
 
+        } catch (JwtException e) {
+            log.warn("읽음 처리 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
             log.error("읽음 처리 실패", e);
             response.put("success", false);
