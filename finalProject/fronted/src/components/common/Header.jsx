@@ -76,7 +76,6 @@ export default function Header() {
                       title="메시지"
                     >
                       <MessageCircle className="w-5 h-5 text-white stroke-[2.5] group-hover:rotate-12 transition-transform duration-300" />
-                      <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-500 rounded-full border-2 border-white shadow-sm animate-pulse" />
                     </button>
 
                     <Link
