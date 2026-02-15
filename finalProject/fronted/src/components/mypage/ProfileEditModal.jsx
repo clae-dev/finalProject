@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, useMemo, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Loader2, RefreshCw, CheckCircle2, Upload, ImagePlus } from 'lucide-react';
+import { X, Check, Loader2, RefreshCw, RotateCcw, CheckCircle2, Upload, ImagePlus } from 'lucide-react';
 import { AuthContext } from '../AuthContext';
 import { useUpdateMember } from '../../api/useMember';
 import { checkNickname, uploadProfileImage } from '../../api/memberAPI';
@@ -419,23 +419,6 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                   프로필 아바타
                 </label>
 
-                {/* 현재 프로필 미리보기 */}
-                {form.memberProfileImg && (
-                  <div className="flex flex-col items-center mb-3 gap-2">
-                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-sky-100 to-cyan-100 border-2 border-sky-200/60 overflow-hidden shadow-lg shadow-sky-200/30 p-0.5">
-                      <img src={form.memberProfileImg} alt="프로필" className="w-full h-full object-cover rounded-xl bg-white" />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setForm(prev => ({ ...prev, memberProfileImg: '' }))}
-                      className="text-xs text-slate-400 hover:text-red-400 transition-colors font-medium"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
-                    >
-                      기본 이미지로 변경
-                    </button>
-                  </div>
-                )}
-
                 {/* 탭 전환 */}
                 <div className="flex rounded-2xl bg-slate-100/80 p-1 mb-3">
                   {[
@@ -462,7 +445,16 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                 {/* 랜덤 선택 모드 */}
                 {avatarMode === 'random' && (
                   <div>
-                    <div className="flex items-center justify-end mb-2">
+                    <div className="flex items-center justify-end gap-2 mb-2">
+                      <button
+                        type="button"
+                        onClick={() => setForm(prev => ({ ...prev, memberProfileImg: '' }))}
+                        className="flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-500 font-medium transition-colors bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-full"
+                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      >
+                        <RotateCcw className="w-3 h-3" />
+                        초기화
+                      </button>
                       <button
                         type="button"
                         onClick={refreshAvatars}

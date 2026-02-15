@@ -1,13 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Calendar } from 'lucide-react';
+import { Mail, Calendar, Pencil } from 'lucide-react';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 };
 
-export default function ProfileHero({ user, memberData }) {
+export default function ProfileHero({ user, memberData, onEditProfile }) {
   const avatarUrl =
     user.memberProfileImg ||
     `https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(
@@ -43,15 +43,23 @@ export default function ProfileHero({ user, memberData }) {
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.2 }}
-            className="mb-6"
+            className="mb-6 relative group cursor-pointer"
+            onClick={onEditProfile}
           >
-            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full ring-4 ring-white/40 shadow-2xl shadow-sky-900/30 overflow-hidden bg-white/20 backdrop-blur-sm">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full ring-4 ring-white/40 shadow-2xl shadow-sky-900/30 overflow-hidden bg-white">
               <img
                 src={avatarUrl}
                 alt={user.memberNickname}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>
+            <button
+              type="button"
+              className="absolute bottom-0 right-0 w-9 h-9 bg-white rounded-full shadow-lg shadow-sky-900/20 flex items-center justify-center border-2 border-sky-300 hover:bg-sky-50 hover:scale-110 active:scale-95 transition-all duration-200"
+              title="프로필 수정"
+            >
+              <Pencil className="w-4 h-4 text-sky-500" />
+            </button>
           </motion.div>
 
           {/* Nickname */}

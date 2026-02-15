@@ -26,6 +26,9 @@ import AdminPage from './pages/admin/AdminPage';
 import FaqPage from './pages/faq/FaqPage';
 import Notices from './pages/notice/Notices';
 import NoticeDetail from './pages/notice/NoticeDetail';
+import Freeboards from './pages/freeboard/Freeboards';
+import FreeboardDetail from './pages/freeboard/FreeboardDetail';
+import FreeboardWrite from './pages/freeboard/FreeboardWrite';
 import AiChatBubble from './components/ai/AiChatBubble';
 
 function AnimatedRoutes() {
@@ -48,6 +51,9 @@ function AnimatedRoutes() {
         <Route path="/reviews" element={<PageTransition><Reviews /></PageTransition>} />
         <Route path="/reviews/write" element={<PageTransition><ReviewWrite /></PageTransition>} />
         <Route path="/reviews/:reviewNo" element={<PageTransition><ReviewDetail /></PageTransition>} />
+        <Route path="/freeboard" element={<PageTransition><Freeboards /></PageTransition>} />
+        <Route path="/freeboard/write" element={<PageTransition><FreeboardWrite /></PageTransition>} />
+        <Route path="/freeboard/:boardNo" element={<PageTransition><FreeboardDetail /></PageTransition>} />
         <Route path="/faq" element={<PageTransition><FaqPage /></PageTransition>} />
         <Route path="/notices" element={<PageTransition><Notices /></PageTransition>} />
         <Route path="/notices/:boardNo" element={<PageTransition><NoticeDetail /></PageTransition>} />
