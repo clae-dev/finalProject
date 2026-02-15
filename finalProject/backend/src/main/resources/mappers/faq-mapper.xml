@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.kh.project.faq.mapper.FaqMapper">
+
+    <!-- FAQ ResultMap -->
+    <resultMap id="faqResultMap" type="edu.kh.project.faq.dto.FaqDTO">
+        <id property="faqNo"        column="FAQ_NO" />
+        <result property="question"     column="QUESTION" />
+        <result property="answer"       column="ANSWER" />
+        <result property="viewCount"    column="VIEW_COUNT" />
+        <result property="displayOrder" column="DISPLAY_ORDER" />
+        <result property="categoryNo"   column="CATEGORY_NO" />
+        <result property="status"       column="STATUS" />
+        <result property="createdAt"    column="CREATED_AT" />
+        <result property="updatedAt"    column="UPDATED_AT" />
+        <result property="categoryName" column="CATEGORY_NAME" />
+        <result property="categoryCode" column="CATEGORY_CODE" />
+    </resultMap>
+
+    <!-- 카테고리 ResultMap -->
+    <resultMap id="categoryResultMap" type="edu.kh.project.faq.dto.FaqCategoryDTO">
+        <id property="categoryNo"     column="CATEGORY_NO" />
+        <result property="categoryCode"  column="CATEGORY_CODE" />
+        <result property="categoryName"  column="CATEGORY_NAME" />
+    </resultMap>
+
+    <!-- 카테고리 목록 조회 -->
+    <select id="selectCategoryList" resultMap="categoryResultMap">
+        SELECT CATEGORY_NO, CATEGORY_CODE, CATEGORY_NAME
+        FROM FAQ_CATEGORY
+        ORDER BY CATEGORY_NO
+    </select>
+
+    <!-- FAQ 전체 조회 (사용자용, 활성 상태만) -->
+    <select id="selectFaqList" resultMap="faqResultMap">
+        SELECT
+            F.FAQ_NO,
+            F.QUESTION,
+            F.ANSWER,
+            F.VIEW_COUNT,
+            F.DISPLAY_ORDER,
+            F.CATEGORY_NO,
+            F.STATUS,
+            TO_CHAR(F.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
+            C.CATEGORY_NAME,
+            C.CATEGORY_CODE
+        FROM FAQ F
+        JOIN FAQ_CATEGORY C ON F.CATEGORY_NO = C.CATEGORY_NO
+        WHERE F.STATUS = 'A'
+        <if test="categoryCode != null and categoryCode != ''">
+            AND C.CATEGORY_CODE = #{categoryCode}
+        </if>
+        <if test="search != null and search != ''">
+            AND (F.QUESTION LIKE '%' || #{search} || '%'
+                 OR F.ANSWER LIKE '%' || #{search} || '%')
+        </if>
+        ORDER BY F.DISPLAY_ORDER ASC, F.FAQ_NO DESC
+    </select>
+
+    <!-- 조회수 증가 -->
+    <update id="updateViewCount">
+        UPDATE FAQ
+        SET VIEW_COUNT = VIEW_COUNT + 1
+        WHERE FAQ_NO = #{faqNo}
+    </update>
+
+    <!-- FAQ 목록 (관리자용, 페이징 + 검색) -->
+    <select id="selectAdminFaqList" resultMap="faqResultMap">
+        SELECT * FROM (
+            SELECT
+                F.FAQ_NO,
+                F.QUESTION,
+                F.ANSWER,
+                F.VIEW_COUNT,
+                F.DISPLAY_ORDER,
+                F.CATEGORY_NO,
+                F.STATUS,
+                TO_CHAR(F.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
+                TO_CHAR(F.UPDATED_AT, 'YYYY-MM-DD') AS UPDATED_AT,
+                C.CATEGORY_NAME,
+                C.CATEGORY_CODE,
+                ROW_NUMBER() OVER (ORDER BY F.FAQ_NO DESC) AS RN
+            FROM FAQ F
+            JOIN FAQ_CATEGORY C ON F.CATEGORY_NO = C.CATEGORY_NO
+            WHERE F.STATUS = 'A'
+            <if test="search != null and search != ''">
+                AND (F.QUESTION LIKE '%' || #{search} || '%'
+                     OR F.ANSWER LIKE '%' || #{search} || '%')
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- FAQ 총 개수 (관리자용) -->
+    <select id="selectAdminFaqCount" resultType="int">
+        SELECT COUNT(*)
+        FROM FAQ F
+        WHERE F.STATUS = 'A'
+        <if test="search != null and search != ''">
+            AND (F.QUESTION LIKE '%' || #{search} || '%'
+                 OR F.ANSWER LIKE '%' || #{search} || '%')
+        </if>
+    </select>
+
+    <!-- FAQ 등록 -->
+    <insert id="insertFaq">
+        INSERT INTO FAQ (FAQ_NO, QUESTION, ANSWER, CATEGORY_NO, DISPLAY_ORDER)
+        VALUES (SEQ_FAQ_NO.NEXTVAL, #{question}, #{answer}, #{categoryNo}, #{displayOrder})
+    </insert>
+
+    <!-- FAQ 수정 -->
+    <update id="updateFaq">
+        UPDATE FAQ
+        SET QUESTION = #{question},
+            ANSWER = #{answer},
+            CATEGORY_NO = #{categoryNo},
+            DISPLAY_ORDER = #{displayOrder},
+            UPDATED_AT = SYSDATE
+        WHERE FAQ_NO = #{faqNo}
+          AND STATUS = 'A'
+    </update>
+
+    <!-- FAQ 소프트 삭제 -->
+    <update id="softDeleteFaq">
+        UPDATE FAQ
+        SET STATUS = 'D', UPDATED_AT = SYSDATE
+        WHERE FAQ_NO = #{faqNo}
+    </update>
+
+</mapper>

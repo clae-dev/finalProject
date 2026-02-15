@@ -23,6 +23,9 @@ import NotFound from './pages/error/NotFound';
 import ServerError from './pages/error/ServerError';
 import Forbidden from './pages/error/Forbidden';
 import AdminPage from './pages/admin/AdminPage';
+import FaqPage from './pages/faq/FaqPage';
+import Notices from './pages/notice/Notices';
+import NoticeDetail from './pages/notice/NoticeDetail';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -44,6 +47,9 @@ function AnimatedRoutes() {
         <Route path="/reviews" element={<PageTransition><Reviews /></PageTransition>} />
         <Route path="/reviews/write" element={<PageTransition><ReviewWrite /></PageTransition>} />
         <Route path="/reviews/:reviewNo" element={<PageTransition><ReviewDetail /></PageTransition>} />
+        <Route path="/faq" element={<PageTransition><FaqPage /></PageTransition>} />
+        <Route path="/notices" element={<PageTransition><Notices /></PageTransition>} />
+        <Route path="/notices/:boardNo" element={<PageTransition><NoticeDetail /></PageTransition>} />
         <Route path="/admin" element={<PageTransition><AdminPage /></PageTransition>} />
         <Route path="/error/500" element={<PageTransition><ServerError /></PageTransition>} />
         <Route path="/error/403" element={<PageTransition><Forbidden /></PageTransition>} />
