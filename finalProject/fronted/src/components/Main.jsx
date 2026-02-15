@@ -15,10 +15,8 @@ export default function Main() {
       <Header />
       <HeroSection />
       <SpotsSection />
-      <WaveDivider bgColor="bg-white" fillColor="#e0f7fa" />
       <CompanionsSection />
       <AccommodationsSection />
-      <WaveDivider bgColor="bg-white" fillColor="#f0f9ff" />
       <ReviewsSection />
       <CTASection />
       <Footer />
