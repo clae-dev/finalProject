@@ -31,6 +31,8 @@ export default function FaqPage() {
 
   const handleCategoryChange = (code) => {
     setSelectedCategory(code);
+    setSearch('');
+    setSearchInput('');
     setOpenFaqNo(null);
   };
 

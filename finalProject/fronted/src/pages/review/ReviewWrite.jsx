@@ -91,7 +91,8 @@ export default function ReviewWrite() {
     setForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const validateFileSize = (file) => {
+  const validateFile = (file) => {
+    if (!file.type.startsWith('image/')) { alert(`이미지 파일만 업로드 가능합니다. (${file.name})`); return false; }
     if (file.size > MAX_FILE_SIZE) { alert(`파일 크기는 10MB 이하만 가능합니다. (${file.name})`); return false; }
     return true;
   };
@@ -99,7 +100,7 @@ export default function ReviewWrite() {
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (!validateFileSize(file)) return;
+    if (!validateFile(file)) return;
     setThumbnail(file);
     setThumbnailPreview(URL.createObjectURL(file));
   };
@@ -114,7 +115,7 @@ export default function ReviewWrite() {
     const files = Array.from(e.target.files);
     const remaining = MAX_CONTENT_IMAGES - contentImages.length;
     if (remaining <= 0) { alert(`본문 이미지는 최대 ${MAX_CONTENT_IMAGES}장까지 가능합니다.`); return; }
-    const valid = files.slice(0, remaining).filter(validateFileSize);
+    const valid = files.slice(0, remaining).filter(validateFile);
     setContentImages(prev => [...prev, ...valid]);
     setContentPreviews(prev => [...prev, ...valid.map(f => URL.createObjectURL(f))]);
   };
@@ -297,6 +298,7 @@ export default function ReviewWrite() {
                 <div>
                   <label className="block text-sm font-semibold text-slate-600 mb-2">제목 <span className="text-sky-500">*</span></label>
                   <input type="text" name="title" value={form.title} onChange={handleChange}
+                    maxLength={100}
                     placeholder="예: 우도 자전거 동행 너무 좋았어요!"
                     className="w-full px-4 py-3.5 rounded-xl bg-sky-50/50 border border-sky-100 focus:bg-white focus:border-sky-400 focus:ring-2 focus:ring-sky-100 outline-none transition-all text-sm font-medium placeholder-slate-300"
                   />
@@ -308,6 +310,7 @@ export default function ReviewWrite() {
                 <div>
                   <label className="block text-sm font-semibold text-slate-600 mb-2">내용 <span className="text-sky-500">*</span></label>
                   <textarea name="content" value={form.content} onChange={handleChange} rows={6}
+                    maxLength={4000}
                     placeholder="동행 경험에 대한 솔직한 후기를 작성해주세요&#10;&#10;- 어떤 동행이었나요?&#10;- 가장 좋았던 순간은?&#10;- 추천 포인트"
                     className="w-full px-4 py-3.5 rounded-xl bg-sky-50/50 border border-sky-100 focus:bg-white focus:border-sky-400 focus:ring-2 focus:ring-sky-100 outline-none transition-all text-sm font-medium placeholder-slate-300 resize-none leading-relaxed"
                   />

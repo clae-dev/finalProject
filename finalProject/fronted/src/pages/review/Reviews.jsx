@@ -269,7 +269,7 @@ export default function Reviews() {
                     <div className="flex items-center gap-3 mt-4">
                       <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-sky-200/50 overflow-hidden">
                         {review.authorProfile ? (
-                          <img src={review.authorProfile} alt="" className="w-full h-full object-cover" />
+                          <img src={review.authorProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = review.authorNickname?.[0] || '?'; }} />
                         ) : (
                           review.authorNickname?.[0] || '?'
                         )}
