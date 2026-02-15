@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+       "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.kh.project.admin.mapper.AdminMapper">
+
+    <!-- 오늘 가입자 수 -->
+    <select id="selectTodaySignupCount" resultType="int">
+        SELECT COUNT(*)
+        FROM MEMBER
+        WHERE TRUNC(CREATED_AT) = TRUNC(SYSDATE)
+          AND STATUS = 'A'
+    </select>
+
+    <!-- 최근 가입 회원 10명 -->
+    <select id="selectRecentMembers" resultType="map">
+        SELECT * FROM (
+            SELECT
+                MEMBER_NO AS "memberNo",
+                EMAIL AS "memberEmail",
+                NICKNAME AS "memberNickname",
+                NAME AS "memberName",
+                PROFILE_IMAGE AS "memberProfileImg",
+                MEMBER_TYPE AS "memberRole",
+                STATUS AS "memberStatus",
+                TO_CHAR(CREATED_AT, 'YYYY-MM-DD') AS "createdAt"
+            FROM MEMBER
+            WHERE STATUS = 'A'
+            ORDER BY CREATED_AT DESC
+        )
+        WHERE ROWNUM &lt;= 10
+    </select>
+
+    <!-- 회원 목록 (페이징 + 검색) -->
+    <select id="selectMemberList" resultType="map">
+        SELECT * FROM (
+            SELECT
+                MEMBER_NO AS "memberNo",
+                EMAIL AS "memberEmail",
+                NICKNAME AS "memberNickname",
+                NAME AS "memberName",
+                PHONE AS "memberPhone",
+                PROFILE_IMAGE AS "memberProfileImg",
+                MEMBER_TYPE AS "memberRole",
+                STATUS AS "memberStatus",
+                TO_CHAR(CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
+                ROW_NUMBER() OVER (ORDER BY CREATED_AT DESC) AS RN
+            FROM MEMBER
+            WHERE 1=1
+            <if test="search != null and search != ''">
+                <choose>
+                    <when test="searchType == 'nickname'">
+                        AND NICKNAME LIKE '%' || #{search} || '%'
+                    </when>
+                    <when test="searchType == 'email'">
+                        AND EMAIL LIKE '%' || #{search} || '%'
+                    </when>
+                    <when test="searchType == 'name'">
+                        AND NAME LIKE '%' || #{search} || '%'
+                    </when>
+                    <otherwise>
+                        AND (NICKNAME LIKE '%' || #{search} || '%'
+                             OR EMAIL LIKE '%' || #{search} || '%')
+                    </otherwise>
+                </choose>
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 회원 수 -->
+    <select id="selectMemberCount" resultType="int">
+        SELECT COUNT(*)
+        FROM MEMBER
+        WHERE 1=1
+        <if test="search != null and search != ''">
+            <choose>
+                <when test="searchType == 'nickname'">
+                    AND NICKNAME LIKE '%' || #{search} || '%'
+                </when>
+                <when test="searchType == 'email'">
+                    AND EMAIL LIKE '%' || #{search} || '%'
+                </when>
+                <when test="searchType == 'name'">
+                    AND NAME LIKE '%' || #{search} || '%'
+                </when>
+                <otherwise>
+                    AND (NICKNAME LIKE '%' || #{search} || '%'
+                         OR EMAIL LIKE '%' || #{search} || '%')
+                </otherwise>
+            </choose>
+        </if>
+    </select>
+
+    <!-- 회원 상태 변경 -->
+    <update id="updateMemberStatus">
+        UPDATE MEMBER
+        SET STATUS = #{status}, UPDATED_AT = SYSDATE
+        WHERE MEMBER_NO = #{memberNo}
+    </update>
+
+    <!-- 동행 목록 (관리자용) -->
+    <select id="selectAdminCompanionList" resultType="map">
+        SELECT * FROM (
+            SELECT
+                C.COMPANION_NO AS "companionNo",
+                C.TITLE AS "title",
+                C.STATUS AS "status",
+                C.MAX_MEMBERS AS "maxMembers",
+                TO_CHAR(C.TRAVEL_DATE) AS "travelDate",
+                TO_CHAR(C.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
+                M.NICKNAME AS "authorNickname",
+                M.MEMBER_NO AS "memberNo",
+                (SELECT COUNT(*) FROM COMPANION_JOIN J
+                 WHERE J.COMPANION_NO = C.COMPANION_NO AND J.STATUS IN ('W','A')
+                ) AS "currentMembers",
+                ROW_NUMBER() OVER (ORDER BY C.CREATED_AT DESC) AS RN
+            FROM COMPANION_BOARD C
+            JOIN MEMBER M ON C.MEMBER_NO = M.MEMBER_NO
+            WHERE C.STATUS != 'N'
+            <if test="search != null and search != ''">
+                AND (C.TITLE LIKE '%' || #{search} || '%'
+                     OR M.NICKNAME LIKE '%' || #{search} || '%')
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 동행 수 -->
+    <select id="selectCompanionCount" resultType="int">
+        SELECT COUNT(*)
+        FROM COMPANION_BOARD C
+        <if test="search != null and search != ''">
+            JOIN MEMBER M ON C.MEMBER_NO = M.MEMBER_NO
+        </if>
+        WHERE C.STATUS != 'N'
+        <if test="search != null and search != ''">
+            AND (C.TITLE LIKE '%' || #{search} || '%'
+                 OR M.NICKNAME LIKE '%' || #{search} || '%')
+        </if>
+    </select>
+
+    <!-- 동행 삭제 (관리자 - 작성자 제한 없음) -->
+    <update id="deleteCompanion">
+        UPDATE COMPANION_BOARD
+        SET STATUS = 'N', UPDATED_AT = SYSDATE
+        WHERE COMPANION_NO = #{companionNo}
+    </update>
+
+    <!-- 후기 목록 (관리자용) -->
+    <select id="selectAdminReviewList" resultType="map">
+        SELECT * FROM (
+            SELECT
+                R.REVIEW_NO AS "reviewNo",
+                R.TITLE AS "title",
+                R.RATING AS "rating",
+                R.STATUS AS "status",
+                TO_CHAR(R.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
+                M.NICKNAME AS "authorNickname",
+                M.MEMBER_NO AS "memberNo",
+                ROW_NUMBER() OVER (ORDER BY R.CREATED_AT DESC) AS RN
+            FROM COMPANION_REVIEW R
+            JOIN MEMBER M ON R.MEMBER_NO = M.MEMBER_NO
+            WHERE R.STATUS != 'N'
+            <if test="search != null and search != ''">
+                AND (R.TITLE LIKE '%' || #{search} || '%'
+                     OR M.NICKNAME LIKE '%' || #{search} || '%')
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 후기 수 -->
+    <select id="selectReviewCount" resultType="int">
+        SELECT COUNT(*)
+        FROM COMPANION_REVIEW R
+        <if test="search != null and search != ''">
+            JOIN MEMBER M ON R.MEMBER_NO = M.MEMBER_NO
+        </if>
+        WHERE R.STATUS != 'N'
+        <if test="search != null and search != ''">
+            AND (R.TITLE LIKE '%' || #{search} || '%'
+                 OR M.NICKNAME LIKE '%' || #{search} || '%')
+        </if>
+    </select>
+
+    <!-- 후기 삭제 (관리자 - 작성자 제한 없음) -->
+    <update id="deleteReview">
+        UPDATE COMPANION_REVIEW
+        SET STATUS = 'N', UPDATED_AT = SYSDATE
+        WHERE REVIEW_NO = #{reviewNo}
+    </update>
+
+    <!-- 숙소 목록 (관리자용) -->
+    <select id="selectAdminAccommodationList" resultType="map">
+        SELECT * FROM (
+            SELECT
+                A.ACCOMMODATION_NO AS "accommodationNo",
+                A.NAME AS "name",
+                A.REGION AS "region",
+                A.ACCOMMODATION_TYPE AS "accommodationType",
+                A.STATUS AS "status",
+                TO_CHAR(A.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
+                ROW_NUMBER() OVER (ORDER BY A.CREATED_AT DESC) AS RN
+            FROM ACCOMMODATION A
+            WHERE 1=1
+            <if test="search != null and search != ''">
+                AND (A.NAME LIKE '%' || #{search} || '%'
+                     OR A.REGION LIKE '%' || #{search} || '%')
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 숙소 수 -->
+    <select id="selectAccommodationCount" resultType="int">
+        SELECT COUNT(*)
+        FROM ACCOMMODATION
+        WHERE 1=1
+        <if test="search != null and search != ''">
+            AND (NAME LIKE '%' || #{search} || '%'
+                 OR REGION LIKE '%' || #{search} || '%')
+        </if>
+    </select>
+
+    <!-- 숙소 상태 변경 -->
+    <update id="updateAccommodationStatus">
+        UPDATE ACCOMMODATION
+        SET STATUS = #{status}, UPDATED_AT = SYSDATE
+        WHERE ACCOMMODATION_NO = #{accommodationNo}
+    </update>
+
+</mapper>
