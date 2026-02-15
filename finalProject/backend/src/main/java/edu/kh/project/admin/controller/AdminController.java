@@ -356,4 +356,151 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    // 신고 목록 (페이징 + 필터)
+    @GetMapping("/reports")
+    public ResponseEntity<Map<String, Object>> getReports(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String targetType) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            extractAdminMemberNo(authHeader);
+
+            List<Map<String, Object>> list = adminService.getReportList(page, size, status, targetType);
+            int totalCount = adminService.getReportCount(status, targetType);
+
+            response.put("success", true);
+            response.put("list", list);
+            response.put("totalCount", totalCount);
+            response.put("currentPage", page);
+            response.put("pageSize", size);
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("신고 목록 조회 실패", e);
+            response.put("success", false);
+            response.put("message", "신고 목록 조회 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // 신고 상세
+    @GetMapping("/reports/{reportNo}")
+    public ResponseEntity<Map<String, Object>> getReportDetail(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("reportNo") int reportNo) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            extractAdminMemberNo(authHeader);
+
+            Map<String, Object> detail = adminService.getReportDetail(reportNo);
+
+            if (detail == null) {
+                response.put("success", false);
+                response.put("message", "존재하지 않는 신고입니다.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+
+            response.put("success", true);
+            response.put("data", detail);
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("신고 상세 조회 실패", e);
+            response.put("success", false);
+            response.put("message", "신고 상세 조회 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // 신고 상태 변경
+    @PutMapping("/reports/{reportNo}/status")
+    public ResponseEntity<Map<String, Object>> updateReportStatus(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("reportNo") int reportNo,
+            @RequestBody Map<String, String> body) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            extractAdminMemberNo(authHeader);
+            String status = body.get("status");
+            String result = body.get("result");
+
+            int res = adminService.updateReportStatus(reportNo, status, result);
+
+            response.put("success", res > 0);
+            response.put("message", res > 0 ? "상태 변경 완료" : "상태 변경 실패");
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("신고 상태 변경 실패", e);
+            response.put("success", false);
+            response.put("message", "신고 상태 변경 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // 대기중 신고 건수
+    @GetMapping("/reports/count")
+    public ResponseEntity<Map<String, Object>> getPendingReportCount(
+            @RequestHeader("Authorization") String authHeader) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            extractAdminMemberNo(authHeader);
+
+            int count = adminService.getPendingReportCount();
+
+            response.put("success", true);
+            response.put("count", count);
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("대기중 신고 건수 조회 실패", e);
+            response.put("success", false);
+            response.put("message", "신고 건수 조회 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }

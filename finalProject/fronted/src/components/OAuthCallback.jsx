@@ -26,6 +26,10 @@ function OAuthCallback() {
     }
 
     try {
+      // 소셜 로그인 전 저장했던 rememberMe 읽기
+      const rememberMe = sessionStorage.getItem("oauthRememberMe") === "true";
+      sessionStorage.removeItem("oauthRememberMe");
+
       handleOAuthCallback({
         accessToken,
         refreshToken: params.get('refreshToken'),
@@ -33,8 +37,10 @@ function OAuthCallback() {
         memberName: params.get('memberName'),
         memberNickname: params.get('memberNickname'),
         memberEmail: params.get('memberEmail'),
+        memberProfileImg: params.get('memberProfileImg'),
         loginType: params.get('loginType')
-      });
+      }, rememberMe);
+
       navigate('/');
     } catch (err) {
       console.error('OAuth 콜백 처리 실패:', err);

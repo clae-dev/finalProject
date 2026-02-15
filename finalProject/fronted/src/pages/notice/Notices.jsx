@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Megaphone, Search, Eye, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useNoticeList } from '../../api/useNotice';
+import { useNoticeList } from '../../api/notice/useNotice';
 
 export default function Notices() {
   const navigate = useNavigate();

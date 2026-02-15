@@ -1,4 +1,4 @@
-import { axiosApi } from "./axiosAPI";
+import { axiosApi } from "../core/axiosAPI";
 
 /**
  * 동행 게시판 API

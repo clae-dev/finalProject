@@ -1,9 +1,10 @@
 import axios from "axios";
+import { getToken, saveToken, clearAllAuth } from "./tokenStorage";
 
 /**
  * Axios 인스턴스 생성
- * - 학원 패턴 기반
  * - Spring Boot 서버와 통신
+ * - tokenStorage 유틸로 localStorage/sessionStorage 자동 선택
  */
 export const axiosApi = axios.create({
   baseURL: ""
@@ -12,7 +13,7 @@ export const axiosApi = axios.create({
 // Request 인터셉터: JWT 토큰 자동 추가
 axiosApi.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("accessToken");
+    const token = getToken("accessToken");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -39,9 +40,7 @@ const processQueue = (error, token = null) => {
 };
 
 const forceLogout = () => {
-  localStorage.removeItem("userData");
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
+  clearAllAuth();
   alert("로그인이 만료되었습니다. 다시 로그인해주세요.");
   window.location.href = "/";
 };
@@ -65,7 +64,7 @@ axiosApi.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    const refreshToken = localStorage.getItem("refreshToken");
+    const refreshToken = getToken("refreshToken");
     if (!refreshToken) {
       forceLogout();
       return Promise.reject(error);
@@ -94,12 +93,12 @@ axiosApi.interceptors.response.use(
         const { accessToken, refreshToken: newRefreshToken } = response.data.data;
 
         // 새 토큰 저장
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", newRefreshToken);
+        saveToken("accessToken", accessToken);
+        saveToken("refreshToken", newRefreshToken);
 
         // 유저 정보도 갱신
         const userData = response.data.data;
-        const storedUser = localStorage.getItem("userData");
+        const storedUser = getToken("userData");
         if (storedUser) {
           const parsed = JSON.parse(storedUser);
           const updated = {
@@ -108,9 +107,11 @@ axiosApi.interceptors.response.use(
             memberName: userData.memberName,
             memberNickname: userData.memberNickname,
             memberEmail: userData.memberEmail,
-            memberProfileImg: userData.memberProfileImg || parsed.memberProfileImg
+            memberProfileImg: userData.memberProfileImg || parsed.memberProfileImg,
+            memberPhone: userData.memberPhone || parsed.memberPhone || '',
+            memberIntro: userData.memberIntro || parsed.memberIntro || '',
           };
-          localStorage.setItem("userData", JSON.stringify(updated));
+          saveToken("userData", JSON.stringify(updated));
         }
 
         // 대기 중인 요청들 처리

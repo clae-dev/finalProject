@@ -1,10 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Eye, Calendar, User, Heart, MessageCircle, Trash2, Edit3, Loader2, Send, CornerDownRight, X, ImageIcon } from 'lucide-react';
+import { ArrowLeft, Eye, Calendar, User, Heart, MessageCircle, Trash2, Edit3, Loader2, Send, CornerDownRight, X, ImageIcon, Flag } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useFreeBoardDetail, useDeleteFreeBoard, useCommentList, useCreateComment, useDeleteComment, useToggleLike } from '../../api/useFreeboard';
+import { useFreeBoardDetail, useDeleteFreeBoard, useCommentList, useCreateComment, useDeleteComment, useToggleLike } from '../../api/freeboard/useFreeboard';
+import { useCheckReport, useSubmitReport } from '../../api/report/useReport';
 import { AuthContext } from '../../components/AuthContext';
 
 const fadeUp = {
@@ -31,6 +32,14 @@ export default function FreeboardDetail() {
   const [replyTo, setReplyTo] = useState(null);
   const [replyInput, setReplyInput] = useState('');
   const [lightboxImg, setLightboxImg] = useState(null);
+
+  // 신고
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportType, setReportType] = useState('');
+  const [reportReason, setReportReason] = useState('');
+  const { data: reportCheckData } = useCheckReport(user ? 'FREEBOARD' : null, user ? Number(boardNo) : null);
+  const reportMutation = useSubmitReport('FREEBOARD', Number(boardNo));
+  const alreadyReported = reportCheckData?.reported === true;
 
   const board = data?.success ? data.data : null;
   const comments = commentData?.success ? (commentData.list || []) : [];
@@ -73,6 +82,15 @@ export default function FreeboardDetail() {
   const handleDeleteComment = async (commentNo) => {
     if (!window.confirm('댓글을 삭제하시겠습니까?')) return;
     try { await deleteCommentMutation.mutateAsync(commentNo); } catch { alert('댓글 삭제 중 오류가 발생했습니다.'); }
+  };
+
+  const handleReportSubmit = async () => {
+    if (!reportType) { alert('신고 유형을 선택해주세요.'); return; }
+    try {
+      const r = await reportMutation.mutateAsync({ reportType, detailReason: reportReason });
+      if (r.success) { alert('신고가 접수되었습니다.'); setShowReportModal(false); setReportType(''); setReportReason(''); }
+      else alert(r.message);
+    } catch { alert('신고 접수 중 오류가 발생했습니다.'); }
   };
 
   if (isLoading) {
@@ -232,8 +250,8 @@ export default function FreeboardDetail() {
             )}
           </div>
 
-          {/* 좋아요 버튼 */}
-          <div className="px-8 pb-8">
+          {/* 좋아요 + 신고 버튼 */}
+          <div className="px-8 pb-8 flex items-center gap-3">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.9 }}
@@ -247,6 +265,23 @@ export default function FreeboardDetail() {
               <Heart className={`w-5 h-5 ${board.isLiked ? 'fill-current' : ''}`} />
               좋아요 {board.likeCount}
             </motion.button>
+
+            {user && !isAuthor && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => alreadyReported ? null : setShowReportModal(true)}
+                disabled={alreadyReported}
+                className={`inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm transition-all duration-300 shadow-md ${
+                  alreadyReported
+                    ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
+                    : 'bg-white text-slate-500 border border-slate-200 hover:border-orange-300 hover:text-orange-500'
+                }`}
+              >
+                <Flag className="w-4 h-4" />
+                {alreadyReported ? '신고 완료' : '신고'}
+              </motion.button>
+            )}
           </div>
         </motion.div>
 
@@ -431,6 +466,79 @@ export default function FreeboardDetail() {
             <button className="absolute top-6 right-6 w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/20 transition-colors">
               <X className="w-6 h-6" />
             </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 신고 모달 */}
+      <AnimatePresence>
+        {showReportModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-5"
+            onClick={() => setShowReportModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="bg-white rounded-3xl shadow-2xl p-7 w-full max-w-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <Flag className="w-5 h-5 text-orange-500" />
+                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>게시글 신고</h3>
+                </div>
+                <button onClick={() => setShowReportModal(false)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
+                  <X className="w-5 h-5 text-slate-400" />
+                </button>
+              </div>
+
+              <div className="space-y-3 mb-5">
+                {[
+                  { value: 'SPAM', label: '스팸/광고' },
+                  { value: 'ABUSE', label: '욕설/비방' },
+                  { value: 'FALSE_INFO', label: '허위정보' },
+                  { value: 'ADULT', label: '성인콘텐츠' },
+                  { value: 'ETC', label: '기타' },
+                ].map((opt) => (
+                  <label key={opt.value} className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border ${reportType === opt.value ? 'bg-orange-50 border-orange-200' : 'bg-slate-50 border-transparent hover:bg-slate-100'}`}>
+                    <input type="radio" name="reportType" value={opt.value} checked={reportType === opt.value} onChange={(e) => setReportType(e.target.value)} className="accent-orange-500" />
+                    <span className="text-sm font-semibold text-slate-700">{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+
+              <textarea
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                placeholder="상세 사유를 입력해주세요 (선택)"
+                maxLength={500}
+                rows={3}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none mb-5"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+              />
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowReportModal(false)}
+                  className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-colors"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={handleReportSubmit}
+                  disabled={reportMutation.isPending}
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-sm shadow-lg shadow-orange-200/50 hover:shadow-xl transition-all disabled:opacity-50"
+                >
+                  {reportMutation.isPending ? '접수 중...' : '신고 접수'}
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

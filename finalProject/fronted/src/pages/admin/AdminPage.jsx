@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, LayoutDashboard, Users, FileText, Building2, MessageCircleQuestion, Megaphone } from 'lucide-react';
+import { Shield, LayoutDashboard, Users, FileText, Building2, MessageCircleQuestion, Megaphone, Flag } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import AdminDashboard from '../../components/admin/AdminDashboard';
@@ -10,6 +10,7 @@ import AdminPosts from '../../components/admin/AdminPosts';
 import AdminAccommodations from '../../components/admin/AdminAccommodations';
 import AdminFaq from '../../components/admin/AdminFaq';
 import AdminNotices from '../../components/admin/AdminNotices';
+import AdminReports from '../../components/admin/AdminReports';
 import { AuthContext } from '../../components/AuthContext';
 
 const TABS = [
@@ -19,6 +20,7 @@ const TABS = [
   { key: 'accommodations', label: '숙소 관리', icon: Building2 },
   { key: 'faq', label: 'FAQ 관리', icon: MessageCircleQuestion },
   { key: 'notices', label: '공지 관리', icon: Megaphone },
+  { key: 'reports', label: '신고 관리', icon: Flag },
 ];
 
 export default function AdminPage() {
@@ -137,6 +139,7 @@ export default function AdminPage() {
             {activeTab === 'accommodations' && <AdminAccommodations />}
             {activeTab === 'faq' && <AdminFaq />}
             {activeTab === 'notices' && <AdminNotices />}
+            {activeTab === 'reports' && <AdminReports />}
           </motion.div>
         </AnimatePresence>
       </div>

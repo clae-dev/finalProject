@@ -6,7 +6,7 @@ import {
   useCreateNotice,
   useUpdateNotice,
   useDeleteNotice,
-} from '../../api/useNotice';
+} from '../../api/notice/useNotice';
 
 export default function AdminNotices() {
   const [page, setPage] = useState(1);

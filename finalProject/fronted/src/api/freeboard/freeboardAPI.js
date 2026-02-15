@@ -1,4 +1,4 @@
-import { axiosApi } from "./axiosAPI";
+import { axiosApi } from "../core/axiosAPI";
 
 // 게시글 목록 (페이징 + 검색)
 export const getFreeBoardList = async (page = 1, size = 9, search = '') => {

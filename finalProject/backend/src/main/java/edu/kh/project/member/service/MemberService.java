@@ -1,11 +1,11 @@
 package edu.kh.project.member.service;
 
-import edu.kh.project.member.dto.LoginRequestDTO;
-import edu.kh.project.member.dto.LoginResponseDTO;
+import java.util.List;
+import java.util.Map;
+
 import edu.kh.project.member.dto.LoginRequestDTO;
 import edu.kh.project.member.dto.LoginResponseDTO;
 import edu.kh.project.member.dto.MemberDTO;
-import edu.kh.project.member.dto.SignupRequestDTO;
 import edu.kh.project.member.dto.SignupRequestDTO;
 
 /**
@@ -94,4 +94,11 @@ public interface MemberService {
      * @return LoginResponseDTO (새 JWT 토큰 + 회원 정보) / 실패 시 null
      */
     LoginResponseDTO refreshToken(String refreshToken);
+
+    /**
+     * 회원 활동 내역 조회
+     * @param memberNo 회원 번호
+     * @return 내 글, 내 후기, 좋아요 목록
+     */
+    Map<String, Object> getMyActivity(int memberNo);
 }

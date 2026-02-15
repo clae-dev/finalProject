@@ -42,4 +42,6 @@ public class MemberDTO {
     // 추가 필드 (조회 시 필요한 정보)
     private int postCount;                   // 작성 글 수
     private int reviewCount;                 // 작성 후기 수
+    private int companionCount;              // 동행 참여 수
+    private int likeCount;                   // 좋아요한 글 수
 }

@@ -91,4 +91,34 @@ public class AdminServiceImpl implements AdminService {
     public int updateAccommodationStatus(int accommodationNo, String status) {
         return adminMapper.updateAccommodationStatus(accommodationNo, status);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getReportList(int page, int size, String status, String targetType) {
+        int offset = (page - 1) * size;
+        return adminMapper.selectAdminReportList(offset, size, status, targetType);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int getReportCount(String status, String targetType) {
+        return adminMapper.selectAdminReportCount(status, targetType);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getReportDetail(int reportNo) {
+        return adminMapper.selectAdminReportDetail(reportNo);
+    }
+
+    @Override
+    public int updateReportStatus(int reportNo, String status, String result) {
+        return adminMapper.updateReportStatus(reportNo, status, result);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int getPendingReportCount() {
+        return adminMapper.selectPendingReportCount();
+    }
 }

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Plus, ChevronLeft, ChevronRight, Loader2, Search, MessageSquare } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useReviews } from '../../api/useReview';
+import { useReviews } from '../../api/review/useReview';
 import { AuthContext } from '../../components/AuthContext';
 import heroStar from '../../assets/images/comapanion/별.png';
 import heroFriends from '../../assets/images/comapanion/친구.png';

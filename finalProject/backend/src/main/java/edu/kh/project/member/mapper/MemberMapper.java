@@ -1,5 +1,8 @@
 package edu.kh.project.member.mapper;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -93,6 +96,15 @@ public interface MemberMapper {
      * @param memberPw 새 비밀번호 (암호화된)
      * @return 수정된 행 수
      */
-    int resetPw(@Param("memberEmail") String memberEmail, 
+    int resetPw(@Param("memberEmail") String memberEmail,
                 @Param("memberPw") String memberPw);
+
+    /** 내가 작성한 글 목록 */
+    List<Map<String, Object>> selectMyPosts(@Param("memberNo") int memberNo);
+
+    /** 내가 작성한 후기 목록 */
+    List<Map<String, Object>> selectMyReviews(@Param("memberNo") int memberNo);
+
+    /** 내가 좋아요한 글 목록 */
+    List<Map<String, Object>> selectMyLikes(@Param("memberNo") int memberNo);
 }

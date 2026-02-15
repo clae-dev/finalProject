@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, FileText, Star, Building2, UserPlus, Loader2 } from 'lucide-react';
-import { useDashboard } from '../../api/useAdmin';
+import { useDashboard } from '../../api/admin/useAdmin';
 
 const statCards = [
   { key: 'memberCount', label: '전체 회원', icon: Users, color: 'sky' },

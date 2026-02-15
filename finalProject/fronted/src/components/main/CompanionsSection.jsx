@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useCompanions } from '../../api/useCompanion';
+import { useCompanions } from '../../api/companion/useCompanion';
 import { Loader2, Users, MapPin, Compass } from 'lucide-react';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=400';

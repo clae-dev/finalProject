@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, User, Search } from 'lucide-react';
-import { useSearchTarget } from '../../api/useChatting';
+import { useSearchTarget } from '../../api/chatting/useChatting';
 
 /**
  * 새 메시지 검색 모달

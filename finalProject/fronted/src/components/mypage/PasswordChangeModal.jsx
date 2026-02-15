@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Eye, EyeOff, Loader2 } from 'lucide-react';
-import { useResetPassword } from '../../api/useMember';
+import { useResetPassword } from '../../api/member/useMember';
 
 const backdropVariants = {
   hidden: { opacity: 0 },

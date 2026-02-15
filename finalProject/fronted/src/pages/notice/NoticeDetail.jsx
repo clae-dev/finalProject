@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Eye, Calendar, User, Loader2 } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useNoticeDetail } from '../../api/useNotice';
+import { useNoticeDetail } from '../../api/notice/useNotice';
 
 export default function NoticeDetail() {
   const { boardNo } = useParams();

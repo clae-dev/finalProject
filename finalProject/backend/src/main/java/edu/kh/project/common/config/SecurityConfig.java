@@ -75,6 +75,9 @@ public class SecurityConfig {
             // CSRF 비활성화 (API 서버용)
             .csrf(csrf -> csrf.disable())
 
+            // X-Frame-Options 비활성화 (SockJS iframe 폴백 허용)
+            .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+
             // 요청별 인증 설정
             .authorizeHttpRequests(auth -> auth
                 // 일단 모든 요청 허용 (테스트용)

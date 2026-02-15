@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, RotateCcw, AlertCircle, User, Palmtree, MapPin, UtensilsCrossed, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSendAiChat } from '../../api/useAiChat';
+import { useSendAiChat } from '../../api/ai/useAiChat';
 import changsikImg from '../../assets/images/제주.png';
 
 const QUICK_QUESTIONS = [

@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Calendar, Users, MapPin, Loader2, Check, X, Trash2, Heart, Share2, ImageIcon } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, MapPin, Loader2, Check, X, Trash2, Heart, Share2, ImageIcon, Flag } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useCompanionDetail, useJoinCompanion, useCancelJoin, useUpdateJoinStatus, useDeleteCompanion } from '../../api/useCompanion';
+import { useCompanionDetail, useJoinCompanion, useCancelJoin, useUpdateJoinStatus, useDeleteCompanion } from '../../api/companion/useCompanion';
+import { useCheckReport, useSubmitReport } from '../../api/report/useReport';
 import { AuthContext } from '../../components/AuthContext';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800';
@@ -30,11 +31,18 @@ export default function CompanionDetail() {
   const { user } = useContext(AuthContext) || {};
   const [lightboxImg, setLightboxImg] = useState(null);
 
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportType, setReportType] = useState('');
+  const [reportReason, setReportReason] = useState('');
+
   const { data, isLoading } = useCompanionDetail(companionNo);
   const joinMutation = useJoinCompanion();
   const cancelMutation = useCancelJoin();
   const updateStatusMutation = useUpdateJoinStatus(Number(companionNo));
   const deleteMutation = useDeleteCompanion();
+  const { data: reportCheckData } = useCheckReport(user ? 'COMPANION' : null, user ? Number(companionNo) : null);
+  const reportMutation = useSubmitReport('COMPANION', Number(companionNo));
+  const alreadyReported = reportCheckData?.reported === true;
 
   const companion = data?.success ? data.data : null;
   const joinList = data?.success ? (data.joinList || []) : [];
@@ -74,6 +82,15 @@ export default function CompanionDetail() {
       if (r.success) { alert('삭제되었습니다.'); navigate('/companions'); }
       else alert(r.message);
     } catch { alert('삭제 중 오류가 발생했습니다.'); }
+  };
+
+  const handleReportSubmit = async () => {
+    if (!reportType) { alert('신고 유형을 선택해주세요.'); return; }
+    try {
+      const r = await reportMutation.mutateAsync({ reportType, detailReason: reportReason });
+      if (r.success) { alert('신고가 접수되었습니다.'); setShowReportModal(false); setReportType(''); setReportReason(''); }
+      else alert(r.message);
+    } catch { alert('신고 접수 중 오류가 발생했습니다.'); }
   };
 
   if (isLoading) {
@@ -196,6 +213,22 @@ export default function CompanionDetail() {
               >
                 <Trash2 className="w-4 h-4" />
                 삭제
+              </motion.button>
+            )}
+            {user && !isAuthor && (
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => alreadyReported ? null : setShowReportModal(true)}
+                disabled={alreadyReported}
+                className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors border ${
+                  alreadyReported
+                    ? 'bg-slate-50 text-slate-400 border-slate-200 cursor-not-allowed'
+                    : 'bg-orange-50 text-orange-500 border-orange-100 hover:bg-orange-100'
+                }`}
+              >
+                <Flag className="w-4 h-4" />
+                {alreadyReported ? '신고 완료' : '신고'}
               </motion.button>
             )}
           </div>
@@ -373,6 +406,79 @@ export default function CompanionDetail() {
             <button className="absolute top-6 right-6 w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/20 transition-colors">
               <X className="w-6 h-6" />
             </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 신고 모달 */}
+      <AnimatePresence>
+        {showReportModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-5"
+            onClick={() => setShowReportModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="bg-white rounded-3xl shadow-2xl p-7 w-full max-w-md"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <Flag className="w-5 h-5 text-orange-500" />
+                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>게시글 신고</h3>
+                </div>
+                <button onClick={() => setShowReportModal(false)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
+                  <X className="w-5 h-5 text-slate-400" />
+                </button>
+              </div>
+
+              <div className="space-y-3 mb-5">
+                {[
+                  { value: 'SPAM', label: '스팸/광고' },
+                  { value: 'ABUSE', label: '욕설/비방' },
+                  { value: 'FALSE_INFO', label: '허위정보' },
+                  { value: 'ADULT', label: '성인콘텐츠' },
+                  { value: 'ETC', label: '기타' },
+                ].map((opt) => (
+                  <label key={opt.value} className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border ${reportType === opt.value ? 'bg-orange-50 border-orange-200' : 'bg-slate-50 border-transparent hover:bg-slate-100'}`}>
+                    <input type="radio" name="reportType" value={opt.value} checked={reportType === opt.value} onChange={(e) => setReportType(e.target.value)} className="accent-orange-500" />
+                    <span className="text-sm font-semibold text-slate-700">{opt.label}</span>
+                  </label>
+                ))}
+              </div>
+
+              <textarea
+                value={reportReason}
+                onChange={(e) => setReportReason(e.target.value)}
+                placeholder="상세 사유를 입력해주세요 (선택)"
+                maxLength={500}
+                rows={3}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none mb-5"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+              />
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowReportModal(false)}
+                  className="flex-1 py-3 rounded-xl bg-slate-100 text-slate-600 font-bold text-sm hover:bg-slate-200 transition-colors"
+                >
+                  취소
+                </button>
+                <button
+                  onClick={handleReportSubmit}
+                  disabled={reportMutation.isPending}
+                  className="flex-1 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-sm shadow-lg shadow-orange-200/50 hover:shadow-xl transition-all disabled:opacity-50"
+                >
+                  {reportMutation.isPending ? '접수 중...' : '신고 접수'}
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

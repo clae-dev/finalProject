@@ -59,4 +59,24 @@ public interface AdminMapper {
     int updateAccommodationStatus(
             @Param("accommodationNo") int accommodationNo,
             @Param("status") String status);
+
+    // 신고 관리
+    List<Map<String, Object>> selectAdminReportList(
+            @Param("offset") int offset,
+            @Param("limit") int limit,
+            @Param("status") String status,
+            @Param("targetType") String targetType);
+
+    int selectAdminReportCount(
+            @Param("status") String status,
+            @Param("targetType") String targetType);
+
+    Map<String, Object> selectAdminReportDetail(@Param("reportNo") int reportNo);
+
+    int updateReportStatus(
+            @Param("reportNo") int reportNo,
+            @Param("status") String status,
+            @Param("result") String result);
+
+    int selectPendingReportCount();
 }

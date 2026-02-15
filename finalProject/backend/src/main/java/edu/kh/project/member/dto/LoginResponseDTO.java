@@ -28,4 +28,6 @@ public class LoginResponseDTO {
     private String memberProfileImg;         // 프로필 이미지
     private String memberRole;               // 권한 (USER, ADMIN)
     private String loginType;                // 로그인 타입 (kakao, google, naver, normal)
+    private String memberPhone;              // 전화번호
+    private String memberIntro;              // 자기소개
 }

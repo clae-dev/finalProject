@@ -16,17 +16,15 @@ function Login() {
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:80';
 
-  const handleGoogleLogin = () => {
-    window.location.href = `${API_URL}/oauth2/authorization/google`;
+  // 소셜 로그인 전 rememberMe를 sessionStorage에 저장 (리다이렉트 후에도 유지)
+  const handleSocialLogin = (provider) => {
+    sessionStorage.setItem("oauthRememberMe", rememberMe ? "true" : "false");
+    window.location.href = `${API_URL}/oauth2/authorization/${provider}`;
   };
 
-  const handleKakaoLogin = () => {
-    window.location.href = `${API_URL}/oauth2/authorization/kakao`;
-  };
-
-  const handleNaverLogin = () => {
-    window.location.href = `${API_URL}/oauth2/authorization/naver`;
-  };
+  const handleGoogleLogin = () => handleSocialLogin("google");
+  const handleKakaoLogin = () => handleSocialLogin("kakao");
+  const handleNaverLogin = () => handleSocialLogin("naver");
 
   return (
     <div className="min-h-screen flex items-center justify-center p-5 relative overflow-hidden">
@@ -78,7 +76,7 @@ function Login() {
           </div>
 
           {/* 로그인 폼 */}
-          <form onSubmit={globalState.handleLogin} className="space-y-5">
+          <form onSubmit={(e) => globalState.handleLogin(e, rememberMe)} className="space-y-5">
             <div>
               <label
                 className="block text-sm font-semibold text-slate-600 mb-2"

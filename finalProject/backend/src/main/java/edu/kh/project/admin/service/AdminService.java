@@ -27,4 +27,11 @@ public interface AdminService {
     List<Map<String, Object>> getAccommodationList(int page, int size, String search);
     int getAccommodationCount(String search);
     int updateAccommodationStatus(int accommodationNo, String status);
+
+    // 신고 관리
+    List<Map<String, Object>> getReportList(int page, int size, String status, String targetType);
+    int getReportCount(String status, String targetType);
+    Map<String, Object> getReportDetail(int reportNo);
+    int updateReportStatus(int reportNo, String status, String result);
+    int getPendingReportCount();
 }

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { MessageSquareText, Search, Eye, Heart, MessageCircle, ChevronLeft, ChevronRight, Loader2, PenLine, ImageIcon } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useFreeBoardList } from '../../api/useFreeboard';
+import { useFreeBoardList } from '../../api/freeboard/useFreeboard';
 import { AuthContext } from '../../components/AuthContext';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=400';

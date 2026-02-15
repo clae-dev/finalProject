@@ -6,7 +6,7 @@ import { Search, MapPin, Heart, Phone, Clock, Loader2, ChevronLeft, ChevronRight
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useAccommodations } from '../../api/useAccommodation';
+import { useAccommodations } from '../../api/accommodation/useAccommodation';
 import heroImg1 from '../../assets/images/accommodation/월정리.png';
 import heroImg2 from '../../assets/images/accommodation/협재2.png';
 

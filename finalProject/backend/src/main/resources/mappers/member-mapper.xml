@@ -19,6 +19,10 @@
         <result property="emailVerified" column="EMAIL_VERIFIED" />
         <result property="createdAt" column="CREATED_AT" />
         <result property="updatedAt" column="UPDATED_AT" />
+        <result property="postCount" column="POST_COUNT" />
+        <result property="reviewCount" column="REVIEW_COUNT" />
+        <result property="companionCount" column="COMPANION_COUNT" />
+        <result property="likeCount" column="LIKE_COUNT" />
     </resultMap>
 
     <!-- 이메일로 회원 조회 (로그인용 - 비밀번호 포함) -->
@@ -29,6 +33,8 @@
             PASSWORD,
             NICKNAME,
             NAME,
+            PHONE,
+            INTRO,
             PROFILE_IMAGE,
             MEMBER_TYPE,
             STATUS,
@@ -38,24 +44,28 @@
           AND STATUS = 'A'
     </select>
 
-    <!-- 회원 번호로 회원 조회 -->
+    <!-- 회원 번호로 회원 조회 (통계 포함) -->
     <select id="selectMemberByNo" resultMap="memberResultMap">
         SELECT
-            MEMBER_NO,
-            EMAIL,
-            NICKNAME,
-            NAME,
-            PHONE,
-            GENDER,
-            AGE_RANGE,
-            PROFILE_IMAGE,
-            INTRO,
-            MEMBER_TYPE,
-            STATUS,
-            EMAIL_VERIFIED,
-            CREATED_AT
-        FROM MEMBER
-        WHERE MEMBER_NO = #{memberNo}
+            M.MEMBER_NO,
+            M.EMAIL,
+            M.NICKNAME,
+            M.NAME,
+            M.PHONE,
+            M.GENDER,
+            M.AGE_RANGE,
+            M.PROFILE_IMAGE,
+            M.INTRO,
+            M.MEMBER_TYPE,
+            M.STATUS,
+            M.EMAIL_VERIFIED,
+            M.CREATED_AT,
+            (SELECT COUNT(*) FROM BOARD B WHERE B.MEMBER_NO = M.MEMBER_NO AND B.STATUS = 'A') AS POST_COUNT,
+            (SELECT COUNT(*) FROM COMPANION_REVIEW R WHERE R.MEMBER_NO = M.MEMBER_NO AND R.STATUS = 'Y') AS REVIEW_COUNT,
+            (SELECT COUNT(*) FROM COMPANION_JOIN J WHERE J.MEMBER_NO = M.MEMBER_NO AND J.STATUS IN ('W', 'A')) AS COMPANION_COUNT,
+            (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.MEMBER_NO = M.MEMBER_NO) AS LIKE_COUNT
+        FROM MEMBER M
+        WHERE M.MEMBER_NO = #{memberNo}
     </select>
 
     <!-- 이메일 중복 확인 -->
@@ -164,5 +174,58 @@
             UPDATED_AT = SYSDATE
         WHERE EMAIL = #{memberEmail}
     </update>
+
+    <!-- 내가 작성한 자유게시판 글 (최근 10개) -->
+    <select id="selectMyPosts" resultType="java.util.HashMap">
+        SELECT * FROM (
+            SELECT
+                B.BOARD_NO AS "boardNo",
+                B.TITLE AS "title",
+                TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
+                (SELECT COUNT(*) FROM COMMENT_TBL C WHERE C.BOARD_NO = B.BOARD_NO AND C.STATUS = 'A') AS "commentCount",
+                (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.BOARD_NO = B.BOARD_NO) AS "likeCount",
+                ROW_NUMBER() OVER (ORDER BY B.CREATED_AT DESC) AS RN
+            FROM BOARD B
+            WHERE B.MEMBER_NO = #{memberNo}
+              AND B.STATUS = 'A'
+        )
+        WHERE RN &lt;= 10
+    </select>
+
+    <!-- 내가 작성한 후기 (최근 10개) -->
+    <select id="selectMyReviews" resultType="java.util.HashMap">
+        SELECT * FROM (
+            SELECT
+                R.REVIEW_NO AS "reviewNo",
+                R.TITLE AS "title",
+                R.RATING AS "rating",
+                TO_CHAR(R.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
+                CB.TITLE AS "companionTitle",
+                ROW_NUMBER() OVER (ORDER BY R.CREATED_AT DESC) AS RN
+            FROM COMPANION_REVIEW R
+            LEFT JOIN COMPANION_BOARD CB ON R.COMPANION_NO = CB.COMPANION_NO
+            WHERE R.MEMBER_NO = #{memberNo}
+              AND R.STATUS = 'Y'
+        )
+        WHERE RN &lt;= 10
+    </select>
+
+    <!-- 내가 좋아요한 글 (최근 10개) -->
+    <select id="selectMyLikes" resultType="java.util.HashMap">
+        SELECT * FROM (
+            SELECT
+                B.BOARD_NO AS "boardNo",
+                B.TITLE AS "title",
+                TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
+                M.NICKNAME AS "authorNickname",
+                ROW_NUMBER() OVER (ORDER BY BL.CREATED_AT DESC) AS RN
+            FROM BOARD_LIKE BL
+            JOIN BOARD B ON BL.BOARD_NO = B.BOARD_NO
+            JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
+            WHERE BL.MEMBER_NO = #{memberNo}
+              AND B.STATUS = 'A'
+        )
+        WHERE RN &lt;= 10
+    </select>
 
 </mapper>

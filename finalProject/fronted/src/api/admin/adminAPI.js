@@ -1,4 +1,4 @@
-import { axiosApi } from "./axiosAPI";
+import { axiosApi } from "../core/axiosAPI";
 
 /**
  * 관리자 API
@@ -64,5 +64,32 @@ export const getAdminAccommodations = async (page = 1, size = 10, search = '') =
 // 숙소 상태 변경
 export const updateAccommodationStatus = async (accommodationNo, status) => {
   const response = await axiosApi.put(`/api/admin/accommodations/${accommodationNo}/status`, { status });
+  return response.data;
+};
+
+// 신고 목록
+export const getAdminReports = async (page = 1, size = 10, status = '', targetType = '') => {
+  const params = { page, size };
+  if (status) params.status = status;
+  if (targetType) params.targetType = targetType;
+  const response = await axiosApi.get("/api/admin/reports", { params });
+  return response.data;
+};
+
+// 신고 상세
+export const getAdminReportDetail = async (reportNo) => {
+  const response = await axiosApi.get(`/api/admin/reports/${reportNo}`);
+  return response.data;
+};
+
+// 신고 상태 변경
+export const updateReportStatus = async (reportNo, status, result) => {
+  const response = await axiosApi.put(`/api/admin/reports/${reportNo}/status`, { status, result });
+  return response.data;
+};
+
+// 대기중 신고 건수
+export const getPendingReportCount = async () => {
+  const response = await axiosApi.get("/api/admin/reports/count");
   return response.data;
 };

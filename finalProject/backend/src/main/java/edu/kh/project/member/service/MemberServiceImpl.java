@@ -1,5 +1,9 @@
 package edu.kh.project.member.service;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,10 +104,12 @@ public class MemberServiceImpl implements MemberService {
             .memberNickname(member.getMemberNickname())
             .memberProfileImg(member.getMemberProfileImg())
             .memberRole(member.getMemberRole())
+            .memberPhone(member.getMemberPhone())
+            .memberIntro(member.getMemberIntro())
             .build();
-        
+
         log.info("로그인 성공: {}", member.getMemberEmail());
-        
+
         return response;
     }
 
@@ -203,11 +209,26 @@ public class MemberServiceImpl implements MemberService {
             .memberNickname(member.getMemberNickname())
             .memberProfileImg(member.getMemberProfileImg())
             .memberRole(member.getMemberRole())
+            .memberPhone(member.getMemberPhone())
+            .memberIntro(member.getMemberIntro())
             .build();
 
         log.info("토큰 갱신 성공: {}", member.getMemberEmail());
 
         return response;
+    }
+
+    /**
+     * 회원 활동 내역 조회
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<String, Object> getMyActivity(int memberNo) {
+        Map<String, Object> result = new HashMap<>();
+        result.put("posts", memberMapper.selectMyPosts(memberNo));
+        result.put("reviews", memberMapper.selectMyReviews(memberNo));
+        result.put("likes", memberMapper.selectMyLikes(memberNo));
+        return result;
     }
 
     /**
