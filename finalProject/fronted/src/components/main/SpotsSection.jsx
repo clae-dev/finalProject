@@ -23,6 +23,7 @@ function KiteChild() {
       {/* 연 줄 */}
       <motion.line x1="30" y1="48" x2="58" y2="8"
         stroke="#93c5fd" strokeWidth="1" strokeDasharray="3 2"
+        initial={{ x2: 58, y2: 8 }}
         animate={{ x2: [58, 62, 54, 58], y2: [8, 5, 10, 8] }}
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -33,6 +34,7 @@ function KiteChild() {
         <polygon points="58,0 68,12 58,24 48,12" fill="none" stroke="#a855f7" strokeWidth="1" />
         <motion.path d="M58,24 Q61,32 56,36 Q61,40 57,45"
           stroke="#c084fc" strokeWidth="1.5" fill="none"
+          initial={{ d: "M58,24 Q61,32 56,36 Q61,40 57,45" }}
           animate={{ d: ["M58,24 Q61,32 56,36 Q61,40 57,45","M58,24 Q63,31 54,37 Q63,41 55,47","M58,24 Q61,32 56,36 Q61,40 57,45"] }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -52,6 +54,7 @@ function KiteChild() {
       {/* 팔 - 연 잡는 손 위로 */}
       <motion.line x1="28" y1="66" x2="35" y2="52"
         stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round"
+        initial={{ x2: 35, y2: 52 }}
         animate={{ x2: [35, 37, 33, 35], y2: [52, 50, 54, 52] }}
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -85,11 +88,13 @@ function JumpingChild() {
       {/* 만세 팔 */}
       <motion.line x1="23" y1="52" x2="12" y2="36"
         stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round"
+        initial={{ x2: 12, y2: 36 }}
         animate={{ x2: [12, 10, 12], y2: [36, 38, 36] }}
         transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}
       />
       <motion.line x1="33" y1="52" x2="44" y2="36"
         stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round"
+        initial={{ x2: 44, y2: 36 }}
         animate={{ x2: [44, 46, 44], y2: [36, 38, 36] }}
         transition={{ duration: 0.6, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -113,6 +118,7 @@ function SandcastleChild() {
       {/* 깃발 */}
       <line x1="49" y1="50" x2="49" y2="59" stroke="#78716c" strokeWidth="1" />
       <motion.polygon points="49,50 58,53 49,56" fill="#ef4444"
+        initial={{ points: "49,50 58,53 49,56" }}
         animate={{ points: ["49,50 58,53 49,56","49,50 57,54 49,56","49,50 58,53 49,56"] }}
         transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -130,6 +136,7 @@ function SandcastleChild() {
       {/* 팔 - 모래성 쪽으로 */}
       <motion.line x1="24" y1="72" x2="38" y2="78"
         stroke="#fcd34d" strokeWidth="3" strokeLinecap="round"
+        initial={{ x2: 38, y2: 78 }}
         animate={{ x2: [38, 36, 38], y2: [78, 76, 78] }}
         transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -156,6 +163,7 @@ function Dog() {
       <ellipse cx="56" cy="14" rx="2.2" ry="1.8" fill="#1e293b" />
       <path d="M54,17 Q56,20 58,17" fill="#f87171" />
       <motion.path d="M14,14 Q8,4 10,0" stroke="#d4a574" strokeWidth="3.5" strokeLinecap="round" fill="none"
+        initial={{ d: "M14,14 Q8,4 10,0" }}
         animate={{ d: ["M14,14 Q8,4 10,0","M14,14 Q5,6 12,-2","M14,14 Q8,4 10,0"] }}
         transition={{ duration: 0.4, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -176,6 +184,7 @@ function Seagull({ className, delay = 0 }) {
     >
       <motion.path d="M0,12 Q10,2 20,10 Q30,2 40,12"
         stroke="#64748b" strokeWidth="2.5" strokeLinecap="round" fill="none"
+        initial={{ d: "M0,12 Q10,2 20,10 Q30,2 40,12" }}
         animate={{ d: ["M0,12 Q10,2 20,10 Q30,2 40,12","M0,8 Q10,14 20,10 Q30,14 40,8","M0,12 Q10,2 20,10 Q30,2 40,12"] }}
         transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut', delay }}
       />
@@ -363,6 +372,7 @@ export default function SpotsSection() {
           <motion.path
             fill="#bae6fd" opacity="0.4"
             d="M0,50 Q120,30 240,45 Q360,60 480,42 Q600,25 720,48 Q840,65 960,40 Q1080,20 1200,50 Q1320,65 1440,45 L1440,80 L0,80 Z"
+            initial={{ d: "M0,50 Q120,30 240,45 Q360,60 480,42 Q600,25 720,48 Q840,65 960,40 Q1080,20 1200,50 Q1320,65 1440,45 L1440,80 L0,80 Z" }}
             animate={{ d: [
               "M0,50 Q120,30 240,45 Q360,60 480,42 Q600,25 720,48 Q840,65 960,40 Q1080,20 1200,50 Q1320,65 1440,45 L1440,80 L0,80 Z",
               "M0,40 Q120,55 240,38 Q360,22 480,48 Q600,60 720,35 Q840,20 960,50 Q1080,62 1200,38 Q1320,25 1440,50 L1440,80 L0,80 Z",
@@ -382,6 +392,7 @@ export default function SpotsSection() {
           <motion.path
             fill="#7dd3fc" opacity="0.3"
             d="M0,55 Q180,35 360,52 Q540,68 720,45 Q900,28 1080,55 Q1260,68 1440,48 L1440,80 L0,80 Z"
+            initial={{ d: "M0,55 Q180,35 360,52 Q540,68 720,45 Q900,28 1080,55 Q1260,68 1440,48 L1440,80 L0,80 Z" }}
             animate={{ d: [
               "M0,55 Q180,35 360,52 Q540,68 720,45 Q900,28 1080,55 Q1260,68 1440,48 L1440,80 L0,80 Z",
               "M0,42 Q180,60 360,40 Q540,25 720,52 Q900,65 1080,38 Q1260,25 1440,55 L1440,80 L0,80 Z",
@@ -401,6 +412,7 @@ export default function SpotsSection() {
           <motion.path
             fill="#e0f2fe" opacity="0.5"
             d="M0,62 Q100,48 200,58 Q300,68 400,55 Q500,42 600,60 Q700,70 800,52 Q900,40 1000,58 Q1100,68 1200,54 Q1300,42 1440,60 L1440,80 L0,80 Z"
+            initial={{ d: "M0,62 Q100,48 200,58 Q300,68 400,55 Q500,42 600,60 Q700,70 800,52 Q900,40 1000,58 Q1100,68 1200,54 Q1300,42 1440,60 L1440,80 L0,80 Z" }}
             animate={{ d: [
               "M0,62 Q100,48 200,58 Q300,68 400,55 Q500,42 600,60 Q700,70 800,52 Q900,40 1000,58 Q1100,68 1200,54 Q1300,42 1440,60 L1440,80 L0,80 Z",
               "M0,52 Q100,65 200,50 Q300,38 400,58 Q500,68 600,48 Q700,36 800,56 Q900,68 1000,50 Q1100,38 1200,60 Q1300,68 1440,50 L1440,80 L0,80 Z",
@@ -412,6 +424,7 @@ export default function SpotsSection() {
           <motion.path
             fill="none" stroke="white" strokeWidth="2" opacity="0.6"
             d="M0,60 Q100,46 200,56 Q300,66 400,53 Q500,40 600,58 Q700,68 800,50 Q900,38 1000,56 Q1100,66 1200,52 Q1300,40 1440,58"
+            initial={{ d: "M0,60 Q100,46 200,56 Q300,66 400,53 Q500,40 600,58 Q700,68 800,50 Q900,38 1000,56 Q1100,66 1200,52 Q1300,40 1440,58" }}
             animate={{ d: [
               "M0,60 Q100,46 200,56 Q300,66 400,53 Q500,40 600,58 Q700,68 800,50 Q900,38 1000,56 Q1100,66 1200,52 Q1300,40 1440,58",
               "M0,50 Q100,63 200,48 Q300,36 400,56 Q500,66 600,46 Q700,34 800,54 Q900,66 1000,48 Q1100,36 1200,58 Q1300,66 1440,48",
@@ -458,6 +471,7 @@ export default function SpotsSection() {
           <motion.path
             fill="#d4a76a" opacity="0.15"
             d="M0,0 Q180,12 360,5 Q540,15 720,3 Q900,14 1080,6 Q1260,16 1440,4 L1440,30 L0,30 Z"
+            initial={{ d: "M0,0 Q180,12 360,5 Q540,15 720,3 Q900,14 1080,6 Q1260,16 1440,4 L1440,30 L0,30 Z" }}
             animate={{ d: [
               "M0,0 Q180,12 360,5 Q540,15 720,3 Q900,14 1080,6 Q1260,16 1440,4 L1440,30 L0,30 Z",
               "M0,8 Q180,0 360,10 Q540,2 720,14 Q900,4 1080,12 Q1260,2 1440,10 L1440,30 L0,30 Z",

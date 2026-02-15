@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Header from '../components/common/Header';
-import Footer from '../components/main/Footer';
-import { useAccommodationDetail } from '../api/useAccommodation';
+import Header from '../../components/common/Header';
+import Footer from '../../components/main/Footer';
+import { useAccommodationDetail } from '../../api/useAccommodation';
 import { Button } from '@/components/ui/button';
 import { Star, Heart, MapPin, Clock, Wifi, Car, Coffee, Waves, ChevronLeft, ChevronRight, Phone, Share2, Loader2, AlertCircle } from 'lucide-react';
 

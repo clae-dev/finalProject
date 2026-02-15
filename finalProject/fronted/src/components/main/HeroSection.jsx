@@ -43,6 +43,7 @@ export default function HeroSection() {
           style={{ fontFamily: "'GmarketSans', sans-serif" }}
         >
           파도 소리와 함께,
+        
         </h1>
         <h1
           className="text-4xl md:text-6xl font-black mb-8 leading-tight drop-shadow-lg bg-gradient-to-r from-cyan-300 to-sky-300 bg-clip-text text-transparent"

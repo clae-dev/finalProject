@@ -46,6 +46,7 @@ function Traveler1() {
       <line x1="22" y1="30" x2="16" y2="35" stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round" />
       <motion.line x1="28" y1="30" x2="34" y2="24"
         stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round"
+        initial={{ x2: 34, y2: 24 }}
         animate={{ x2: [34, 36, 34], y2: [24, 26, 24] }}
         transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -83,6 +84,7 @@ function Traveler2() {
       {/* 팔 - 카메라 잡는 팔 */}
       <motion.line x1="28" y1="30" x2="34" y2="28"
         stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round"
+        initial={{ x2: 34, y2: 28 }}
         animate={{ x2: [34, 35, 34], y2: [28, 29, 28] }}
         transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       />
@@ -113,6 +115,7 @@ function Traveler3() {
       {/* 손 흔들기 */}
       <motion.line x1="30" y1="30" x2="40" y2="16"
         stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round"
+        initial={{ x2: 40, y2: 16 }}
         animate={{ x2: [40, 38, 42, 40], y2: [16, 18, 14, 16] }}
         transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
       />

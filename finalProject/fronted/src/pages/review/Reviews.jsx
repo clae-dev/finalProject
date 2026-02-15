@@ -2,12 +2,12 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Plus, ChevronLeft, ChevronRight, Loader2, Search, MessageSquare } from 'lucide-react';
-import Header from '../components/common/Header';
-import Footer from '../components/main/Footer';
-import { useReviews } from '../api/useReview';
-import { AuthContext } from '../components/AuthContext';
-import heroStar from '../assets/images/comapanion/별.png';
-import heroFriends from '../assets/images/comapanion/친구.png';
+import Header from '../../components/common/Header';
+import Footer from '../../components/main/Footer';
+import { useReviews } from '../../api/useReview';
+import { AuthContext } from '../../components/AuthContext';
+import heroStar from '../../assets/images/comapanion/별.png';
+import heroFriends from '../../assets/images/comapanion/친구.png';
 
 const heroSlides = [heroStar, heroFriends];
 

@@ -18,7 +18,7 @@ export default function ChatPanel({ isOpen, onClose }) {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [showSearchModal, setShowSearchModal] = useState(false);
 
-  const { data: roomData } = useRoomList();
+  const { data: roomData } = useRoomList(isOpen && !!user);
   const { data: messageData } = useMessages(selectedRoom?.chattingRoomNo);
   const enterRoomMutation = useEnterRoom();
   const updateReadMutation = useUpdateReadFlag();
@@ -45,16 +45,26 @@ export default function ChatPanel({ isOpen, onClose }) {
     }
   };
 
-  const handleSelectTarget = async (target) => {
+  const handleSelectTarget = async (target, firstMessage) => {
     try {
       const result = await enterRoomMutation.mutateAsync(target.memberNo);
       if (result.success) {
-        setSelectedRoom({
+        const room = {
           chattingRoomNo: result.chattingRoomNo,
           targetNo: target.memberNo,
           targetNickName: target.nickname,
           targetProfile: target.profileImage,
-        });
+        };
+        setSelectedRoom(room);
+
+        // 첫 메시지가 있으면 바로 전송
+        if (firstMessage) {
+          sendMessage({
+            messageContent: firstMessage,
+            chattingRoomNo: result.chattingRoomNo,
+            targetNo: target.memberNo,
+          });
+        }
       }
     } catch (err) {
       console.error('채팅방 입장 실패:', err);
