@@ -98,7 +98,8 @@ export const AuthProvider = ({ children }) => {
         memberName: loginData.memberName,
         memberNickname: loginData.memberNickname,
         memberEmail: email,
-        memberProfileImg: loginData.memberProfileImg || null
+        memberProfileImg: loginData.memberProfileImg || null,
+        memberRole: loginData.memberRole || 'U'
       };
 
       setUser(userData);
@@ -136,7 +137,8 @@ export const AuthProvider = ({ children }) => {
       memberNickname: loginData.memberNickname,
       memberEmail: loginData.memberEmail,
       memberProfileImg: loginData.memberProfileImg || null,
-      loginType: loginData.loginType || null
+      loginType: loginData.loginType || null,
+      memberRole: loginData.memberRole || 'U'
     };
 
     setUser(userData);

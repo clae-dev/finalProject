@@ -9,16 +9,20 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import FindPassword from './components/FindPassword';
 import Main from './components/Main';
-import Accommodations from './pages/Accommodations';
-import AccommodationDetail from './pages/AccommodationDetail';
+import Accommodations from './pages/accommodation/Accommodations';
+import AccommodationDetail from './pages/accommodation/AccommodationDetail';
 import OAuthCallback from './components/OAuthCallback';
 import MyPage from './components/Mypage';
-import Companions from './pages/Companions';
-import CompanionWrite from './pages/CompanionWrite';
-import CompanionDetail from './pages/CompanionDetail';
-import Reviews from './pages/Reviews';
-import ReviewWrite from './pages/ReviewWrite';
-import ReviewDetail from './pages/ReviewDetail';
+import Companions from './pages/companion/Companions';
+import CompanionWrite from './pages/companion/CompanionWrite';
+import CompanionDetail from './pages/companion/CompanionDetail';
+import Reviews from './pages/review/Reviews';
+import ReviewWrite from './pages/review/ReviewWrite';
+import ReviewDetail from './pages/review/ReviewDetail';
+import NotFound from './pages/error/NotFound';
+import ServerError from './pages/error/ServerError';
+import Forbidden from './pages/error/Forbidden';
+import AdminPage from './pages/admin/AdminPage';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -40,6 +44,10 @@ function AnimatedRoutes() {
         <Route path="/reviews" element={<PageTransition><Reviews /></PageTransition>} />
         <Route path="/reviews/write" element={<PageTransition><ReviewWrite /></PageTransition>} />
         <Route path="/reviews/:reviewNo" element={<PageTransition><ReviewDetail /></PageTransition>} />
+        <Route path="/admin" element={<PageTransition><AdminPage /></PageTransition>} />
+        <Route path="/error/500" element={<PageTransition><ServerError /></PageTransition>} />
+        <Route path="/error/403" element={<PageTransition><Forbidden /></PageTransition>} />
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>
   );
