@@ -94,6 +94,7 @@ function FamilyWalk() {
         <line x1="9" y1="24" x2="4" y2="32" stroke="#fcd34d" strokeWidth="3" strokeLinecap="round" />
         <motion.line x1="21" y1="24" x2="30" y2="28"
           stroke="#fcd34d" strokeWidth="3" strokeLinecap="round"
+          initial={{ x2: 30, y2: 28 }}
           animate={{ x2: [30, 32, 30], y2: [28, 26, 28] }}
           transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
         />

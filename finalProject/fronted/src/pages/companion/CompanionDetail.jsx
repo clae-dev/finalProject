@@ -2,10 +2,10 @@ import React, { useContext, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Calendar, Users, MapPin, Loader2, Check, X, Trash2, Heart, Share2, ImageIcon } from 'lucide-react';
-import Header from '../components/common/Header';
-import Footer from '../components/main/Footer';
-import { useCompanionDetail, useJoinCompanion, useCancelJoin, useUpdateJoinStatus, useDeleteCompanion } from '../api/useCompanion';
-import { AuthContext } from '../components/AuthContext';
+import Header from '../../components/common/Header';
+import Footer from '../../components/main/Footer';
+import { useCompanionDetail, useJoinCompanion, useCancelJoin, useUpdateJoinStatus, useDeleteCompanion } from '../../api/useCompanion';
+import { AuthContext } from '../../components/AuthContext';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800';
 

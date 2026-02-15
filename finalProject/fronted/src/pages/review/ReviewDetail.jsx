@@ -2,10 +2,10 @@ import React, { useContext, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Loader2, Trash2, X, ImageIcon, ExternalLink } from 'lucide-react';
-import Header from '../components/common/Header';
-import Footer from '../components/main/Footer';
-import { useReviewDetail, useDeleteReview } from '../api/useReview';
-import { AuthContext } from '../components/AuthContext';
+import Header from '../../components/common/Header';
+import Footer from '../../components/main/Footer';
+import { useReviewDetail, useDeleteReview } from '../../api/useReview';
+import { AuthContext } from '../../components/AuthContext';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800';
 

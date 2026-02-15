@@ -4,11 +4,12 @@ import { getRoomList, searchTarget, getMessages, enterRoom, updateReadFlag } fro
 /**
  * 채팅방 목록 조회 훅
  */
-export const useRoomList = () => {
+export const useRoomList = (enabled = true) => {
   return useQuery({
     queryKey: ['chattingRooms'],
     queryFn: getRoomList,
     refetchInterval: 5000,
+    enabled,
   });
 };
 
