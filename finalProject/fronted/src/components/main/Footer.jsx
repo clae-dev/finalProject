@@ -11,11 +11,12 @@ const serviceLinks = [
 
 const communityLinks = [
   { name: '자유게시판', path: '/freeboard' },
+  { name: '공지사항', path: '/notices' },
   { name: '마이페이지', path: '/mypage' },
 ];
 
 const supportLinks = [
-  { name: '자주 묻는 질문', path: '#' },
+  { name: '자주 묻는 질문', path: '/faq' },
   { name: '문의하기', path: '#' },
   { name: '이용약관', path: '#' },
   { name: '개인정보처리방침', path: '#' },

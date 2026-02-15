@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.kh.project.notice.mapper.NoticeMapper">
+
+    <!-- 공지 ResultMap -->
+    <resultMap id="noticeResultMap" type="edu.kh.project.notice.dto.NoticeDTO">
+        <id property="boardNo"         column="BOARD_NO" />
+        <result property="boardTitle"     column="BOARD_TITLE" />
+        <result property="boardContent"   column="BOARD_CONTENT" />
+        <result property="readCount"      column="READ_COUNT" />
+        <result property="boardDelFl"     column="BOARD_DEL_FL" />
+        <result property="memberNo"       column="MEMBER_NO" />
+        <result property="boardTypeNo"    column="BOARD_TYPE_NO" />
+        <result property="createdAt"      column="CREATED_AT" />
+        <result property="updatedAt"      column="UPDATED_AT" />
+        <result property="memberNickname" column="MEMBER_NICKNAME" />
+    </resultMap>
+
+    <!-- 공지 목록 (사용자용, 삭제되지 않은 것만) -->
+    <select id="selectNoticeList" resultMap="noticeResultMap">
+        SELECT * FROM (
+            SELECT
+                B.BOARD_NO,
+                B.BOARD_TITLE,
+                B.READ_COUNT,
+                B.BOARD_DEL_FL,
+                TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
+                M.NICKNAME AS MEMBER_NICKNAME,
+                ROW_NUMBER() OVER (ORDER BY B.BOARD_NO DESC) AS RN
+            FROM BOARD B
+            JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
+            JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
+            WHERE BT.BOARD_TYPE_CODE = 'NOTICE'
+              AND B.BOARD_DEL_FL = 'N'
+            <if test="search != null and search != ''">
+                AND B.BOARD_TITLE LIKE '%' || #{search} || '%'
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 공지 총 개수 (사용자용) -->
+    <select id="selectNoticeCount" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARD B
+        JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
+        WHERE BT.BOARD_TYPE_CODE = 'NOTICE'
+          AND B.BOARD_DEL_FL = 'N'
+        <if test="search != null and search != ''">
+            AND B.BOARD_TITLE LIKE '%' || #{search} || '%'
+        </if>
+    </select>
+
+    <!-- 공지 상세 조회 -->
+    <select id="selectNoticeDetail" resultMap="noticeResultMap">
+        SELECT
+            B.BOARD_NO,
+            B.BOARD_TITLE,
+            B.BOARD_CONTENT,
+            B.READ_COUNT,
+            B.BOARD_DEL_FL,
+            B.MEMBER_NO,
+            TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
+            TO_CHAR(B.UPDATED_AT, 'YYYY-MM-DD') AS UPDATED_AT,
+            M.NICKNAME AS MEMBER_NICKNAME
+        FROM BOARD B
+        JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
+        JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
+        WHERE B.BOARD_NO = #{boardNo}
+          AND BT.BOARD_TYPE_CODE = 'NOTICE'
+          AND B.BOARD_DEL_FL = 'N'
+    </select>
+
+    <!-- 조회수 증가 -->
+    <update id="updateReadCount">
+        UPDATE BOARD
+        SET READ_COUNT = READ_COUNT + 1
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
+    <!-- 공지 목록 (관리자용, 삭제된 것 포함) -->
+    <select id="selectAdminNoticeList" resultMap="noticeResultMap">
+        SELECT * FROM (
+            SELECT
+                B.BOARD_NO,
+                B.BOARD_TITLE,
+                B.READ_COUNT,
+                B.BOARD_DEL_FL,
+                TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
+                M.NICKNAME AS MEMBER_NICKNAME,
+                ROW_NUMBER() OVER (ORDER BY B.BOARD_NO DESC) AS RN
+            FROM BOARD B
+            JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
+            JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
+            WHERE BT.BOARD_TYPE_CODE = 'NOTICE'
+            <if test="search != null and search != ''">
+                AND B.BOARD_TITLE LIKE '%' || #{search} || '%'
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 관리자용 공지 총 개수 -->
+    <select id="selectAdminNoticeCount" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARD B
+        JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
+        WHERE BT.BOARD_TYPE_CODE = 'NOTICE'
+        <if test="search != null and search != ''">
+            AND B.BOARD_TITLE LIKE '%' || #{search} || '%'
+        </if>
+    </select>
+
+    <!-- 공지 작성 -->
+    <insert id="insertNotice">
+        INSERT INTO BOARD (BOARD_NO, BOARD_TITLE, BOARD_CONTENT, MEMBER_NO, BOARD_TYPE_NO)
+        VALUES (
+            SEQ_BOARD_NO.NEXTVAL,
+            #{boardTitle},
+            #{boardContent},
+            #{memberNo},
+            (SELECT BOARD_TYPE_NO FROM BOARD_TYPE WHERE BOARD_TYPE_CODE = 'NOTICE')
+        )
+    </insert>
+
+    <!-- 공지 수정 -->
+    <update id="updateNotice">
+        UPDATE BOARD
+        SET BOARD_TITLE = #{boardTitle},
+            BOARD_CONTENT = #{boardContent},
+            UPDATED_AT = SYSDATE
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
+    <!-- 공지 소프트 삭제 -->
+    <update id="softDeleteNotice">
+        UPDATE BOARD
+        SET BOARD_DEL_FL = 'Y', UPDATED_AT = SYSDATE
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
+</mapper>
