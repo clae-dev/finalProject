@@ -92,10 +92,21 @@ export default function Header() {
 
                     <Link
                       to="/mypage"
-                      className="text-sm text-slate-600 hidden sm:block font-medium hover:text-sky-500 transition-colors"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="hidden sm:flex items-center gap-2 hover:opacity-80 transition-opacity"
                     >
-                      {user.memberNickname}님
+                      <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-sky-500 font-bold text-sm shadow-md shadow-sky-200/50 overflow-hidden">
+                        {user.memberProfileImg ? (
+                          <img src={user.memberProfileImg} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = user.memberNickname?.[0] || '?'; }} />
+                        ) : (
+                          user.memberNickname?.[0] || '?'
+                        )}
+                      </div>
+                      <span
+                        className="text-sm text-slate-600 font-medium hover:text-sky-500 transition-colors"
+                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      >
+                        {user.memberNickname}님
+                      </span>
                     </Link>
                     <button
                       onClick={handleLogout}

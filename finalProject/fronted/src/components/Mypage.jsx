@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AuthContext } from './AuthContext';
@@ -10,11 +10,13 @@ import StatsGrid from './mypage/StatsGrid';
 import ActivityTabs from './mypage/ActivityTabs';
 import QuickActions from './mypage/QuickActions';
 import BadgeSection from './mypage/BadgeSection';
+import ProfileEditModal from './mypage/ProfileEditModal';
 
 export default function MyPage() {
   const { user } = useContext(AuthContext);
   const { data: memberResponse, isLoading, isError } = useMember(user?.memberNo);
   const memberData = memberResponse?.data;
+  const [profileEditOpen, setProfileEditOpen] = useState(false);
 
   if (!user) {
     return <Navigate to="/login" replace />;
@@ -55,12 +57,17 @@ export default function MyPage() {
       transition={{ duration: 0.5 }}
     >
       <Header />
-      <ProfileHero user={user} memberData={memberData} />
+      <ProfileHero user={user} memberData={memberData} onEditProfile={() => setProfileEditOpen(true)} />
       <StatsGrid memberData={memberData} />
       <ActivityTabs />
       <BadgeSection memberData={memberData} />
       <QuickActions memberData={memberData} memberNo={user.memberNo} />
       <Footer />
+      <ProfileEditModal
+        isOpen={profileEditOpen}
+        onClose={() => setProfileEditOpen(false)}
+        memberData={memberData}
+      />
     </motion.div>
   );
 }

@@ -1,0 +1,107 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  getFreeBoardList,
+  getFreeBoardDetail,
+  createFreeBoard,
+  updateFreeBoard,
+  deleteFreeBoard,
+  getCommentList,
+  createComment,
+  deleteComment,
+  toggleLike,
+} from './freeboardAPI';
+
+/** 게시글 목록 */
+export const useFreeBoardList = (page = 1, size = 9, search = '') => {
+  return useQuery({
+    queryKey: ['freeboards', page, size, search],
+    queryFn: () => getFreeBoardList(page, size, search),
+  });
+};
+
+/** 게시글 상세 */
+export const useFreeBoardDetail = (boardNo) => {
+  return useQuery({
+    queryKey: ['freeboard', boardNo],
+    queryFn: () => getFreeBoardDetail(boardNo),
+    enabled: !!boardNo,
+  });
+};
+
+/** 게시글 작성 */
+export const useCreateFreeBoard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (formData) => createFreeBoard(formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['freeboards'] });
+    },
+  });
+};
+
+/** 게시글 수정 */
+export const useUpdateFreeBoard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ boardNo, formData }) => updateFreeBoard(boardNo, formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['freeboards'] });
+      queryClient.invalidateQueries({ queryKey: ['freeboard'] });
+    },
+  });
+};
+
+/** 게시글 삭제 */
+export const useDeleteFreeBoard = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (boardNo) => deleteFreeBoard(boardNo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['freeboards'] });
+    },
+  });
+};
+
+/** 댓글 목록 */
+export const useCommentList = (boardNo) => {
+  return useQuery({
+    queryKey: ['freeboard-comments', boardNo],
+    queryFn: () => getCommentList(boardNo),
+    enabled: !!boardNo,
+  });
+};
+
+/** 댓글 작성 */
+export const useCreateComment = (boardNo) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ content, parentCommentNo }) => createComment(boardNo, content, parentCommentNo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['freeboard-comments', boardNo] });
+      queryClient.invalidateQueries({ queryKey: ['freeboard', String(boardNo)] });
+    },
+  });
+};
+
+/** 댓글 삭제 */
+export const useDeleteComment = (boardNo) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (commentNo) => deleteComment(commentNo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['freeboard-comments', boardNo] });
+      queryClient.invalidateQueries({ queryKey: ['freeboard', String(boardNo)] });
+    },
+  });
+};
+
+/** 좋아요 토글 */
+export const useToggleLike = (boardNo) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => toggleLike(boardNo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['freeboard', String(boardNo)] });
+    },
+  });
+};
