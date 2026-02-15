@@ -26,6 +26,7 @@ import AdminPage from './pages/admin/AdminPage';
 import FaqPage from './pages/faq/FaqPage';
 import Notices from './pages/notice/Notices';
 import NoticeDetail from './pages/notice/NoticeDetail';
+import AiChatBubble from './components/ai/AiChatBubble';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -66,6 +67,7 @@ function App() {
         <BrowserRouter>
           <div className="min-h-screen bg-gradient-to-b from-sky-50 to-cyan-50">
             <AnimatedRoutes />
+            <AiChatBubble />
           </div>
         </BrowserRouter>
       </AuthProvider>

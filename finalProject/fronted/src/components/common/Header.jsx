@@ -1,16 +1,14 @@
 import React, { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageCircle, Sparkles, Shield } from 'lucide-react';
+import { MessageCircle, Headset, Shield } from 'lucide-react';
 import logo from '@/assets/images/logo/혼디.png';
 import { AuthContext } from '../AuthContext';
 import ChatPanel from '../chatting/ChatPanel';
-import AiChatPanel from '../ai/AiChatPanel';
 
 export default function Header() {
   const { user, handleLogout } = useContext(AuthContext);
   const location = useLocation();
   const [chatOpen, setChatOpen] = useState(false);
-  const [aiChatOpen, setAiChatOpen] = useState(false);
 
   const navItems = [
     { name: '홈', path: '/' },
@@ -19,6 +17,7 @@ export default function Header() {
     { name: '동행', path: '/companions' },
     { name: '후기', path: '/reviews' },
     { name: '맛집', path: '/restaurants' },
+    { name: '고객지원', path: '/faq' },
   ];
 
   return (
@@ -82,15 +81,6 @@ export default function Header() {
                       </Link>
                     )}
 
-                    {/* AI 채팅 아이콘 */}
-                    <button
-                      onClick={() => setAiChatOpen(true)}
-                      className="relative group w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-400 flex items-center justify-center shadow-md shadow-emerald-200/50 hover:shadow-lg hover:shadow-emerald-300/50 hover:scale-110 active:scale-95 transition-all duration-300"
-                      title="AI 창식이"
-                    >
-                      <Sparkles className="w-5 h-5 text-white stroke-[2.5] group-hover:rotate-12 transition-transform duration-300" />
-                    </button>
-
                     {/* 채팅 아이콘 */}
                     <button
                       onClick={() => setChatOpen(true)}
@@ -135,10 +125,6 @@ export default function Header() {
         <ChatPanel isOpen={chatOpen} onClose={() => setChatOpen(false)} />
       )}
 
-      {/* AI 채팅 슬라이드 패널 */}
-      {user && (
-        <AiChatPanel isOpen={aiChatOpen} onClose={() => setAiChatOpen(false)} />
-      )}
     </>
   );
 }

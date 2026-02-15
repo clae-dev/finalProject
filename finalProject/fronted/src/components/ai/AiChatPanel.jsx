@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, RotateCcw, AlertCircle, User, Palmtree, MapPin, UtensilsCrossed, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSendAiChat } from '../../api/useAiChat';
+import changsikImg from '../../assets/images/제주.png';
 
 const QUICK_QUESTIONS = [
   { icon: <Compass className="w-3.5 h-3.5" />, text: '제주 혼자 여행 코스 추천해줘' },
@@ -117,8 +118,8 @@ export default function AiChatPanel({ isOpen, onClose }) {
             <div className="flex items-center gap-3">
               {/* 창식이 아바타 */}
               <div className="relative">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-orange-400 via-amber-400 to-yellow-400 flex items-center justify-center shadow-lg shadow-orange-200/60">
-                  <span className="text-xl">🍊</span>
+                <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-lg shadow-sky-200/60">
+                  <img src={changsikImg} alt="AI 창식이" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-white" />
               </div>
@@ -162,8 +163,8 @@ export default function AiChatPanel({ isOpen, onClose }) {
             >
               {/* 아바타 */}
               {msg.role === 'assistant' ? (
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-                  <span className="text-sm">🍊</span>
+                <div className="w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 mt-0.5 shadow-sm">
+                  <img src={changsikImg} alt="AI 창식이" className="w-full h-full object-cover" />
                 </div>
               ) : (
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
@@ -193,8 +194,8 @@ export default function AiChatPanel({ isOpen, onClose }) {
                 exit={{ opacity: 0, y: -8 }}
                 className="flex gap-2.5"
               >
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-amber-400 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-                  <span className="text-sm">🍊</span>
+                <div className="w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 mt-0.5 shadow-sm">
+                  <img src={changsikImg} alt="AI 창식이" className="w-full h-full object-cover" />
                 </div>
                 <div className="bg-white border border-orange-100/80 rounded-2xl rounded-tl-md px-5 py-3.5 shadow-sm flex items-center gap-1.5">
                   {[0, 1, 2].map((i) => (
