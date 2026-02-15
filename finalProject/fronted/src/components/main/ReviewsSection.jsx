@@ -31,6 +31,9 @@ export default function ReviewsSection() {
 
   return (
     <section className="relative py-24 bg-gradient-to-b from-sky-50 via-white to-sky-50/50 overflow-hidden">
+      {/* 상단 페이드 - AccommodationsSection에서 자연스럽게 녹아듦 */}
+      <div className="absolute top-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-b from-[#bbf7d0]/30 via-[#e0f2fe]/40 to-transparent z-[1]" />
+
       {/* 배경 장식 */}
       <motion.div
         className="absolute top-16 right-[8%] w-48 h-48 bg-rose-100/40 rounded-full blur-3xl"

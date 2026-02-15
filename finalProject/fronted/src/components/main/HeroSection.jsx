@@ -42,7 +42,7 @@ export default function HeroSection() {
           className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight drop-shadow-lg"
           style={{ fontFamily: "'GmarketSans', sans-serif" }}
         >
-          파도 소리와 함께:
+          파도 소리와 함께,
         </h1>
         <h1
           className="text-4xl md:text-6xl font-black mb-8 leading-tight drop-shadow-lg bg-gradient-to-r from-cyan-300 to-sky-300 bg-clip-text text-transparent"
@@ -78,7 +78,7 @@ export default function HeroSection() {
       </div>
 
       {/* 하단: 슬라이드 인디케이터 */}
-      <div className="absolute bottom-8 left-0 right-0 z-10">
+      <div className="absolute bottom-16 left-0 right-0 z-10">
         <div className="flex justify-center">
           <div className="flex gap-2">
             {heroSlides.map((_, idx) => (
@@ -93,6 +93,9 @@ export default function HeroSection() {
           </div>
           </div>
       </div>
+
+      {/* 하단 그라데이션 페이드 - SpotsSection 하늘로 자연스럽게 녹아듦 */}
+      <div className="absolute bottom-0 left-0 right-0 z-10 h-32 md:h-40 bg-gradient-to-t from-[#bae6fd] via-[#bae6fd]/60 to-transparent" />
     </section>
   );
 }
