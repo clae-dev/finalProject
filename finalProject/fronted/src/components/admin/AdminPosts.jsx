@@ -6,7 +6,7 @@ import {
   useDeleteAdminCompanion,
   useAdminReviews,
   useDeleteAdminReview,
-} from '../../api/useAdmin';
+} from '../../api/admin/useAdmin';
 
 const SUB_TABS = [
   { key: 'companions', label: '동행 게시글' },

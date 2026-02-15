@@ -1,10 +1,11 @@
 import { createContext, useState, useEffect } from "react";
-import { axiosApi } from "../api/axiosAPI";
+import { axiosApi } from "../api/core/axiosAPI";
+import { getToken, saveToken, removeToken, clearAllAuth, setRememberMe, getRememberMe } from "../api/core/tokenStorage";
 
 /**
- * 인증 Context (학원 패턴)
+ * 인증 Context
  * - 로그인 상태 관리
- * - localStorage 사용
+ * - "로그인 유지" 체크 시 localStorage, 미체크 시 sessionStorage 사용
  * - globalState 객체로 전달
  */
 
@@ -12,9 +13,9 @@ export const AuthContext = createContext();
 
 // 전역 상태 제공자(Provider) 정의
 export const AuthProvider = ({ children }) => {
-  // 로그인한 회원 정보를 기억할 상태
+  // 로그인한 회원 정보를 기억할 상태 (양쪽 Storage 모두 확인)
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("userData");
+    const storedUser = getToken("userData");
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
@@ -23,9 +24,9 @@ export const AuthProvider = ({ children }) => {
 
   // 앱 시작 시 토큰 유효성 검증
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
-    const storedUser = localStorage.getItem("userData");
+    const token = getToken("accessToken");
+    const refreshToken = getToken("refreshToken");
+    const storedUser = getToken("userData");
 
     if (storedUser && token) {
       try {
@@ -33,25 +34,24 @@ export const AuthProvider = ({ children }) => {
         const payload = JSON.parse(atob(token.split('.')[1]));
         if (payload.exp * 1000 < Date.now()) {
           // accessToken 만료 → refreshToken 존재 시 유저 상태 유지
-          // (인터셉터가 첫 API 호출 시 자동 갱신)
           if (!refreshToken) {
-            localStorage.removeItem("userData");
-            localStorage.removeItem("accessToken");
+            removeToken("userData");
+            removeToken("accessToken");
             setUser(null);
           }
         }
       } catch (e) {
         // 토큰 파싱 실패 → refreshToken 있으면 유저 상태 유지
         if (!refreshToken) {
-          localStorage.removeItem("userData");
-          localStorage.removeItem("accessToken");
+          removeToken("userData");
+          removeToken("accessToken");
           setUser(null);
         }
       }
     } else if (storedUser && !token) {
       // 유저 데이터는 있는데 토큰 없음 → refreshToken 확인
       if (!refreshToken) {
-        localStorage.removeItem("userData");
+        removeToken("userData");
         setUser(null);
       }
     }
@@ -67,20 +67,16 @@ export const AuthProvider = ({ children }) => {
     setPassword(e.target.value);
   };
 
-  // 로그인 처리 함수
-  const handleLogin = async (e) => {
-    e.preventDefault(); // 기본 이벤트 막기
+  // 로그인 처리 함수 (rememberMe 파라미터 추가)
+  const handleLogin = async (e, rememberMe = false) => {
+    e.preventDefault();
 
     try {
-      // 비동기 로그인 요청
       const response = await axiosApi.post("/api/member/login", {
         memberEmail: email,
         memberPw: password
       });
 
-      console.log("로그인 응답:", response);
-
-      // 응답 데이터 확인
       if (!response.data.success) {
         alert(response.data.message || "이메일 또는 비밀번호가 일치하지 않습니다.");
         return;
@@ -88,9 +84,12 @@ export const AuthProvider = ({ children }) => {
 
       const loginData = response.data.data;
 
+      // "로그인 유지" 설정 저장 (이후 saveToken이 올바른 Storage를 사용)
+      setRememberMe(rememberMe);
+
       // JWT 토큰 저장
-      localStorage.setItem("accessToken", loginData.accessToken);
-      localStorage.setItem("refreshToken", loginData.refreshToken);
+      saveToken("accessToken", loginData.accessToken);
+      saveToken("refreshToken", loginData.refreshToken);
 
       // 사용자 정보 저장
       const userData = {
@@ -99,11 +98,13 @@ export const AuthProvider = ({ children }) => {
         memberNickname: loginData.memberNickname,
         memberEmail: email,
         memberProfileImg: loginData.memberProfileImg || null,
-        memberRole: loginData.memberRole || 'U'
+        memberRole: loginData.memberRole || 'U',
+        memberPhone: loginData.memberPhone || '',
+        memberIntro: loginData.memberIntro || '',
       };
 
       setUser(userData);
-      localStorage.setItem("userData", JSON.stringify(userData));
+      saveToken("userData", JSON.stringify(userData));
 
       // 입력 필드 초기화
       setEmail("");
@@ -122,12 +123,15 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // OAuth 콜백 처리 함수 (백엔드 리다이렉트에서 전달받은 토큰 저장)
-  const handleOAuthCallback = (loginData) => {
+  // OAuth 콜백 처리 함수 (rememberMe 파라미터 추가)
+  const handleOAuthCallback = (loginData, rememberMe = false) => {
+    // "로그인 유지" 설정 저장
+    setRememberMe(rememberMe);
+
     // JWT 토큰 저장
-    localStorage.setItem("accessToken", loginData.accessToken);
+    saveToken("accessToken", loginData.accessToken);
     if (loginData.refreshToken) {
-      localStorage.setItem("refreshToken", loginData.refreshToken);
+      saveToken("refreshToken", loginData.refreshToken);
     }
 
     // 사용자 정보 저장 (loginType 포함)
@@ -138,23 +142,25 @@ export const AuthProvider = ({ children }) => {
       memberEmail: loginData.memberEmail,
       memberProfileImg: loginData.memberProfileImg || null,
       loginType: loginData.loginType || null,
-      memberRole: loginData.memberRole || 'U'
+      memberRole: loginData.memberRole || 'U',
+      memberPhone: loginData.memberPhone || '',
+      memberIntro: loginData.memberIntro || '',
     };
 
     setUser(userData);
-    localStorage.setItem("userData", JSON.stringify(userData));
+    saveToken("userData", JSON.stringify(userData));
   };
 
   // 로그아웃 처리 함수
   const handleLogout = async () => {
     // OAuth 로그인인 경우 해당 플랫폼 로그아웃 API 호출 (best-effort)
-    const storedUser = localStorage.getItem("userData");
+    const storedUser = getToken("userData");
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
         const loginType = parsedUser.loginType;
         if (loginType && ["kakao", "naver", "google"].includes(loginType)) {
-          const accessToken = localStorage.getItem("accessToken");
+          const accessToken = getToken("accessToken");
           if (accessToken) {
             await axiosApi.post(`/api/oauth/${loginType}/logout`, null, {
               headers: { Authorization: `Bearer ${accessToken}` }
@@ -166,9 +172,8 @@ export const AuthProvider = ({ children }) => {
       }
     }
 
-    localStorage.removeItem("userData");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    // 양쪽 Storage 모두 삭제
+    clearAllAuth();
     setUser(null);
     setEmail("");
     setPassword("");
@@ -195,17 +200,3 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
-
-/*
- * localStorage vs sessionStorage
- * 
- * localStorage:
- * - 브라우저를 닫아도 데이터가 영구적으로 유지
- * - 브라우저 전역에서 사용 (모든 탭과 창에서 공유)
- * - 유효기간 만료 기능 없음 (setTimeout으로 직접 구현)
- * 
- * sessionStorage:
- * - 브라우저 탭을 닫으면 데이터 즉시 삭제
- * - 현재 탭에서만 데이터 유지
- * - 유효기간 만료 기능 없음
- */

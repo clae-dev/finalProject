@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Upload, X, ImagePlus, ArrowLeft, Loader2, Camera, FileText, Star, Sparkles, MessageSquare } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useCreateReview } from '../../api/useReview';
+import { useCreateReview } from '../../api/review/useReview';
 import { AuthContext } from '../../components/AuthContext';
 import heroStar from '../../assets/images/comapanion/별.png';
 import heroFriends from '../../assets/images/comapanion/친구.png';

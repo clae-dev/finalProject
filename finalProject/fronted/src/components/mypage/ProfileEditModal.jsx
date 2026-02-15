@@ -2,8 +2,9 @@ import React, { useState, useEffect, useContext, useMemo, useCallback, useRef } 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Loader2, RefreshCw, RotateCcw, CheckCircle2, Upload, ImagePlus } from 'lucide-react';
 import { AuthContext } from '../AuthContext';
-import { useUpdateMember } from '../../api/useMember';
-import { checkNickname, uploadProfileImage } from '../../api/memberAPI';
+import { useUpdateMember } from '../../api/member/useMember';
+import { checkNickname, uploadProfileImage } from '../../api/member/memberAPI';
+import { saveToken } from '../../api/core/tokenStorage';
 
 const AVATAR_STYLES = ['adventurer', 'fun-emoji', 'avataaars', 'bottts', 'pixel-art', 'lorelei'];
 
@@ -230,7 +231,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
   const [form, setForm] = useState({
     memberNickname: '',
     memberPhone: '',
-    memberIntroduce: '',
+    memberIntro: '',
     memberProfileImg: '',
   });
   const [nicknameStatus, setNicknameStatus] = useState(null);
@@ -262,7 +263,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
       setForm({
         memberNickname: memberData.memberNickname || '',
         memberPhone: memberData.memberPhone || '',
-        memberIntroduce: memberData.memberIntroduce || '',
+        memberIntro: memberData.memberIntro || '',
         memberProfileImg: memberData.memberProfileImg || '',
       });
       setOriginalNickname(memberData.memberNickname || '');
@@ -358,23 +359,30 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
     }
 
     try {
-      await updateMember.mutateAsync({
+      const result = await updateMember.mutateAsync({
         memberNo: user.memberNo,
         data: {
           memberNickname: nickname,
           memberPhone: form.memberPhone.trim(),
-          memberIntroduce: form.memberIntroduce.trim(),
+          memberIntro: form.memberIntro.trim(),
           memberProfileImg: form.memberProfileImg.trim(),
         },
       });
 
+      if (!result.success) {
+        alert(result.message || '프로필 수정에 실패했습니다.');
+        return;
+      }
+
       const updatedUser = {
         ...user,
         memberNickname: nickname,
+        memberPhone: form.memberPhone.trim(),
+        memberIntro: form.memberIntro.trim(),
         memberProfileImg: form.memberProfileImg.trim() || user.memberProfileImg,
       };
       setUser(updatedUser);
-      localStorage.setItem('userData', JSON.stringify(updatedUser));
+      saveToken('userData', JSON.stringify(updatedUser));
 
       alert('프로필이 수정되었습니다.');
       onClose();
@@ -650,15 +658,15 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                   자기소개
                 </label>
                 <textarea
-                  name="memberIntroduce"
-                  value={form.memberIntroduce}
+                  name="memberIntro"
+                  value={form.memberIntro}
                   onChange={handleChange}
                   rows={3}
                   maxLength={200}
                   placeholder="자기소개를 입력해주세요"
                   className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-sky-300 focus:border-sky-300 outline-none transition-all text-sm resize-none"
                 />
-                <p className="text-xs text-slate-400 text-right mt-1">{form.memberIntroduce.length}/200</p>
+                <p className="text-xs text-slate-400 text-right mt-1">{form.memberIntro.length}/200</p>
               </div>
 
               {/* 버튼 */}

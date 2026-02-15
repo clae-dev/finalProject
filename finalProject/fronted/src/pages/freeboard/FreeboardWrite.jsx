@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Upload, X, ImagePlus, ArrowLeft, Loader2, FileText, Sparkles, MessageSquareText } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useCreateFreeBoard, useUpdateFreeBoard, useFreeBoardDetail } from '../../api/useFreeboard';
+import { useCreateFreeBoard, useUpdateFreeBoard, useFreeBoardDetail } from '../../api/freeboard/useFreeboard';
 import { AuthContext } from '../../components/AuthContext';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;

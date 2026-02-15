@@ -9,6 +9,10 @@ import {
   deleteAdminReview,
   getAdminAccommodations,
   updateAccommodationStatus,
+  getAdminReports,
+  getAdminReportDetail,
+  updateReportStatus,
+  getPendingReportCount,
 } from './adminAPI';
 
 /** 대시보드 통계 */
@@ -92,5 +96,41 @@ export const useUpdateAccommodationStatus = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin'] });
     },
+  });
+};
+
+/** 신고 목록 (관리자) */
+export const useAdminReports = (page = 1, size = 10, status = '', targetType = '') => {
+  return useQuery({
+    queryKey: ['admin', 'reports', page, size, status, targetType],
+    queryFn: () => getAdminReports(page, size, status, targetType),
+  });
+};
+
+/** 신고 상세 (관리자) */
+export const useAdminReportDetail = (reportNo) => {
+  return useQuery({
+    queryKey: ['admin', 'reports', reportNo],
+    queryFn: () => getAdminReportDetail(reportNo),
+    enabled: !!reportNo,
+  });
+};
+
+/** 신고 상태 변경 (관리자) */
+export const useUpdateReportStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ reportNo, status, result }) => updateReportStatus(reportNo, status, result),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin'] });
+    },
+  });
+};
+
+/** 대기중 신고 건수 */
+export const usePendingReportCount = () => {
+  return useQuery({
+    queryKey: ['admin', 'reports', 'pendingCount'],
+    queryFn: getPendingReportCount,
   });
 };

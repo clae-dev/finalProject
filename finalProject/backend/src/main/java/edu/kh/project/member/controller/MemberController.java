@@ -244,6 +244,30 @@ public class MemberController {
     }
     
     /**
+     * 회원 활동 내역 조회 (내 글, 내 후기, 좋아요)
+     * @param memberNo
+     * @return 활동 내역
+     */
+    @GetMapping("/{memberNo}/activity")
+    public ResponseEntity<Map<String, Object>> getMyActivity(
+            @PathVariable("memberNo") int memberNo) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Map<String, Object> activity = memberService.getMyActivity(memberNo);
+            response.put("success", true);
+            response.put("data", activity);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("활동 내역 조회 실패", e);
+            response.put("success", false);
+            response.put("message", "활동 내역 조회 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
      * 아이디 찾기 (이름 + 이메일 인증)
      * @param memberName
      * @param memberEmail

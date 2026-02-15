@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import { useAdminMembers, useUpdateMemberStatus } from '../../api/useAdmin';
+import { useAdminMembers, useUpdateMemberStatus } from '../../api/admin/useAdmin';
 
 export default function AdminMembers() {
   const [page, setPage] = useState(1);

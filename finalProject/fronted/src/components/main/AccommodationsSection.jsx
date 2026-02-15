@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAccommodations } from '../../api/useAccommodation';
+import { useAccommodations } from '../../api/accommodation/useAccommodation';
 import { Loader2, MapPin, Heart } from 'lucide-react';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500';

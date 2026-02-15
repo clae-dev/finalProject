@@ -1,4 +1,4 @@
-import { axiosApi } from "./axiosAPI";
+import { axiosApi } from "../core/axiosAPI";
 
 /**
  * 회원 API
@@ -7,6 +7,12 @@ import { axiosApi } from "./axiosAPI";
 // 회원 상세 조회
 export const getMember = async (memberNo) => {
   const response = await axiosApi.get(`/api/member/${memberNo}`);
+  return response.data;
+};
+
+// 회원 활동 내역 조회
+export const getMyActivity = async (memberNo) => {
+  const response = await axiosApi.get(`/api/member/${memberNo}/activity`);
   return response.data;
 };
 

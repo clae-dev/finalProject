@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+       "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.kh.project.report.mapper.ReportMapper">
+
+    <!-- 신고 접수 -->
+    <insert id="insertReport">
+        INSERT INTO CONTENT_REPORT (
+            REPORT_NO, TARGET_TYPE, TARGET_NO, MEMBER_NO,
+            REPORT_TYPE, DETAIL_REASON
+        ) VALUES (
+            SEQ_CONTENT_REPORT_NO.NEXTVAL,
+            #{targetType}, #{targetNo}, #{memberNo},
+            #{reportType}, #{detailReason}
+        )
+    </insert>
+
+    <!-- 중복 신고 확인 -->
+    <select id="selectReportCheck" resultType="int">
+        SELECT COUNT(*)
+        FROM CONTENT_REPORT
+        WHERE TARGET_TYPE = #{targetType}
+          AND TARGET_NO = #{targetNo}
+          AND MEMBER_NO = #{memberNo}
+    </select>
+
+</mapper>

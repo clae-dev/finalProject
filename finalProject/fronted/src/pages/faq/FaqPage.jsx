@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { HelpCircle, Search, ChevronDown, Eye, Loader2 } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useFaqCategories, useFaqList, useIncreaseFaqView } from '../../api/useFaq';
+import { useFaqCategories, useFaqList, useIncreaseFaqView } from '../../api/faq/useFaq';
 
 const CATEGORY_TABS = [
   { code: null, label: '전체' },

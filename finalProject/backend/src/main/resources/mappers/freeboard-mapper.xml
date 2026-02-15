@@ -41,24 +41,23 @@
         SELECT * FROM (
             SELECT
                 B.BOARD_NO,
-                B.BOARD_TITLE,
-                B.BOARD_CONTENT,
-                B.READ_COUNT,
+                B.TITLE AS BOARD_TITLE,
+                B.CONTENT AS BOARD_CONTENT,
+                B.VIEW_COUNT AS READ_COUNT,
                 TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
                 M.NICKNAME AS MEMBER_NICKNAME,
-                M.PROFILE_IMG AS MEMBER_PROFILE,
-                (SELECT COUNT(*) FROM COMMENT_TBL C WHERE C.BOARD_NO = B.BOARD_NO AND C.STATUS = 'Y') AS COMMENT_COUNT,
+                M.PROFILE_IMAGE AS MEMBER_PROFILE,
+                (SELECT COUNT(*) FROM COMMENT_TBL C WHERE C.BOARD_NO = B.BOARD_NO AND C.STATUS = 'A') AS COMMENT_COUNT,
                 (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.BOARD_NO = B.BOARD_NO) AS LIKE_COUNT,
                 (SELECT MIN(BI.IMAGE_URL) FROM BOARD_IMAGE BI WHERE BI.BOARD_NO = B.BOARD_NO AND BI.IMAGE_ORDER = 0) AS IMAGE_URLS,
                 ROW_NUMBER() OVER (ORDER BY B.BOARD_NO DESC) AS RN
             FROM BOARD B
             JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
-            JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
-            WHERE BT.BOARD_TYPE_CODE = 'FREE'
-              AND B.BOARD_DEL_FL = 'N'
+            WHERE B.BOARD_CODE = 'FREE'
+              AND B.STATUS = 'A'
             <if test="search != null and search != ''">
-                AND (B.BOARD_TITLE LIKE '%' || #{search} || '%'
-                     OR B.BOARD_CONTENT LIKE '%' || #{search} || '%')
+                AND (B.TITLE LIKE '%' || #{search} || '%'
+                     OR B.CONTENT LIKE '%' || #{search} || '%')
             </if>
         )
         WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
@@ -68,12 +67,11 @@
     <select id="selectFreeBoardCount" resultType="int">
         SELECT COUNT(*)
         FROM BOARD B
-        JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
-        WHERE BT.BOARD_TYPE_CODE = 'FREE'
-          AND B.BOARD_DEL_FL = 'N'
+        WHERE B.BOARD_CODE = 'FREE'
+          AND B.STATUS = 'A'
         <if test="search != null and search != ''">
-            AND (B.BOARD_TITLE LIKE '%' || #{search} || '%'
-                 OR B.BOARD_CONTENT LIKE '%' || #{search} || '%')
+            AND (B.TITLE LIKE '%' || #{search} || '%'
+                 OR B.CONTENT LIKE '%' || #{search} || '%')
         </if>
     </select>
 
@@ -81,16 +79,16 @@
     <select id="selectFreeBoardDetail" resultMap="freeBoardResultMap">
         SELECT
             B.BOARD_NO,
-            B.BOARD_TITLE,
-            B.BOARD_CONTENT,
-            B.READ_COUNT,
-            B.BOARD_DEL_FL,
+            B.TITLE AS BOARD_TITLE,
+            B.CONTENT AS BOARD_CONTENT,
+            B.VIEW_COUNT AS READ_COUNT,
+            B.STATUS AS BOARD_DEL_FL,
             B.MEMBER_NO,
             TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
             TO_CHAR(B.UPDATED_AT, 'YYYY-MM-DD HH24:MI') AS UPDATED_AT,
             M.NICKNAME AS MEMBER_NICKNAME,
-            M.PROFILE_IMG AS MEMBER_PROFILE,
-            (SELECT COUNT(*) FROM COMMENT_TBL C WHERE C.BOARD_NO = B.BOARD_NO AND C.STATUS = 'Y') AS COMMENT_COUNT,
+            M.PROFILE_IMAGE AS MEMBER_PROFILE,
+            (SELECT COUNT(*) FROM COMMENT_TBL C WHERE C.BOARD_NO = B.BOARD_NO AND C.STATUS = 'A') AS COMMENT_COUNT,
             (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.BOARD_NO = B.BOARD_NO) AS LIKE_COUNT,
             <if test="memberNo != 0">
                 (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.BOARD_NO = B.BOARD_NO AND BL.MEMBER_NO = #{memberNo}) AS IS_LIKED,
@@ -102,16 +100,15 @@
              FROM BOARD_IMAGE BI WHERE BI.BOARD_NO = B.BOARD_NO) AS IMAGE_URLS
         FROM BOARD B
         JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
-        JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
         WHERE B.BOARD_NO = #{boardNo}
-          AND BT.BOARD_TYPE_CODE = 'FREE'
-          AND B.BOARD_DEL_FL = 'N'
+          AND B.BOARD_CODE = 'FREE'
+          AND B.STATUS = 'A'
     </select>
 
     <!-- 조회수 증가 -->
     <update id="updateReadCount">
         UPDATE BOARD
-        SET READ_COUNT = READ_COUNT + 1
+        SET VIEW_COUNT = VIEW_COUNT + 1
         WHERE BOARD_NO = #{boardNo}
     </update>
 
@@ -120,13 +117,13 @@
         <selectKey keyProperty="boardNo" resultType="int" order="AFTER">
             SELECT SEQ_BOARD_NO.CURRVAL FROM DUAL
         </selectKey>
-        INSERT INTO BOARD (BOARD_NO, BOARD_TITLE, BOARD_CONTENT, MEMBER_NO, BOARD_TYPE_NO)
+        INSERT INTO BOARD (BOARD_NO, BOARD_CODE, TITLE, CONTENT, MEMBER_NO)
         VALUES (
             SEQ_BOARD_NO.NEXTVAL,
+            'FREE',
             #{boardTitle},
             #{boardContent},
-            #{memberNo},
-            (SELECT BOARD_TYPE_NO FROM BOARD_TYPE WHERE BOARD_TYPE_CODE = 'FREE')
+            #{memberNo}
         )
     </insert>
 
@@ -139,8 +136,8 @@
     <!-- 게시글 수정 (작성자만) -->
     <update id="updateFreeBoard">
         UPDATE BOARD
-        SET BOARD_TITLE = #{boardTitle},
-            BOARD_CONTENT = #{boardContent},
+        SET TITLE = #{boardTitle},
+            CONTENT = #{boardContent},
             UPDATED_AT = SYSDATE
         WHERE BOARD_NO = #{boardNo}
           AND MEMBER_NO = #{memberNo}
@@ -155,7 +152,7 @@
     <!-- 게시글 소프트 삭제 (작성자만) -->
     <update id="softDeleteFreeBoard">
         UPDATE BOARD
-        SET BOARD_DEL_FL = 'Y', UPDATED_AT = SYSDATE
+        SET STATUS = 'D', UPDATED_AT = SYSDATE
         WHERE BOARD_NO = #{boardNo}
           AND MEMBER_NO = #{memberNo}
     </update>
@@ -171,12 +168,12 @@
             C.STATUS,
             TO_CHAR(C.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
             M.NICKNAME AS MEMBER_NICKNAME,
-            M.PROFILE_IMG AS MEMBER_PROFILE
+            M.PROFILE_IMAGE AS MEMBER_PROFILE
         FROM COMMENT_TBL C
         JOIN MEMBER M ON C.MEMBER_NO = M.MEMBER_NO
         WHERE C.BOARD_NO = #{boardNo}
           AND C.PARENT_COMMENT_NO IS NULL
-          AND C.STATUS = 'Y'
+          AND C.STATUS = 'A'
         ORDER BY C.COMMENT_NO ASC
     </select>
 
@@ -191,11 +188,11 @@
             C.STATUS,
             TO_CHAR(C.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
             M.NICKNAME AS MEMBER_NICKNAME,
-            M.PROFILE_IMG AS MEMBER_PROFILE
+            M.PROFILE_IMAGE AS MEMBER_PROFILE
         FROM COMMENT_TBL C
         JOIN MEMBER M ON C.MEMBER_NO = M.MEMBER_NO
         WHERE C.PARENT_COMMENT_NO = #{parentCommentNo}
-          AND C.STATUS = 'Y'
+          AND C.STATUS = 'A'
         ORDER BY C.COMMENT_NO ASC
     </select>
 
@@ -214,7 +211,7 @@
     <!-- 댓글 삭제 (작성자만, soft delete) -->
     <update id="deleteComment">
         UPDATE COMMENT_TBL
-        SET STATUS = 'N'
+        SET STATUS = 'D'
         WHERE COMMENT_NO = #{commentNo}
           AND MEMBER_NO = #{memberNo}
     </update>

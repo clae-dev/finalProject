@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 import SockJS from 'sockjs-client';
+import { getToken } from '../api/core/tokenStorage';
 
 /**
  * WebSocket 커스텀 훅
@@ -16,7 +17,7 @@ export default function useWebSocket(onMessage) {
   const connectedRef = useRef(false);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = getToken('accessToken');
     if (!accessToken) return;
 
     const sock = new SockJS('/chattingSock?token=' + accessToken);

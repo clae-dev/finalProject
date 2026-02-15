@@ -230,4 +230,95 @@
         WHERE ACCOMMODATION_NO = #{accommodationNo}
     </update>
 
+    <!-- 신고 목록 (관리자용, 페이징 + 필터) -->
+    <select id="selectAdminReportList" resultType="map">
+        SELECT * FROM (
+            SELECT
+                R.REPORT_NO AS "reportNo",
+                R.TARGET_TYPE AS "targetType",
+                R.TARGET_NO AS "targetNo",
+                R.REPORT_TYPE AS "reportType",
+                R.DETAIL_REASON AS "detailReason",
+                R.STATUS AS "status",
+                R.RESULT AS "result",
+                TO_CHAR(R.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS "createdAt",
+                TO_CHAR(R.UPDATED_AT, 'YYYY-MM-DD HH24:MI') AS "updatedAt",
+                M.NICKNAME AS "reporterNickname",
+                CASE R.TARGET_TYPE
+                    WHEN 'FREEBOARD' THEN (SELECT B.BOARD_TITLE FROM BOARD B WHERE B.BOARD_NO = R.TARGET_NO)
+                    WHEN 'COMPANION' THEN (SELECT CB.TITLE FROM COMPANION_BOARD CB WHERE CB.COMPANION_NO = R.TARGET_NO)
+                    WHEN 'REVIEW' THEN (SELECT CR.TITLE FROM COMPANION_REVIEW CR WHERE CR.REVIEW_NO = R.TARGET_NO)
+                END AS "targetTitle",
+                ROW_NUMBER() OVER (ORDER BY R.CREATED_AT DESC) AS RN
+            FROM CONTENT_REPORT R
+            JOIN MEMBER M ON R.MEMBER_NO = M.MEMBER_NO
+            WHERE 1=1
+            <if test="status != null and status != ''">
+                AND R.STATUS = #{status}
+            </if>
+            <if test="targetType != null and targetType != ''">
+                AND R.TARGET_TYPE = #{targetType}
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 신고 건수 (필터) -->
+    <select id="selectAdminReportCount" resultType="int">
+        SELECT COUNT(*)
+        FROM CONTENT_REPORT R
+        WHERE 1=1
+        <if test="status != null and status != ''">
+            AND R.STATUS = #{status}
+        </if>
+        <if test="targetType != null and targetType != ''">
+            AND R.TARGET_TYPE = #{targetType}
+        </if>
+    </select>
+
+    <!-- 신고 상세 (원본 게시글 정보 포함) -->
+    <select id="selectAdminReportDetail" resultType="map">
+        SELECT
+            R.REPORT_NO AS "reportNo",
+            R.TARGET_TYPE AS "targetType",
+            R.TARGET_NO AS "targetNo",
+            R.MEMBER_NO AS "memberNo",
+            R.REPORT_TYPE AS "reportType",
+            R.DETAIL_REASON AS "detailReason",
+            R.STATUS AS "status",
+            R.RESULT AS "result",
+            TO_CHAR(R.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS "createdAt",
+            TO_CHAR(R.UPDATED_AT, 'YYYY-MM-DD HH24:MI') AS "updatedAt",
+            M.NICKNAME AS "reporterNickname",
+            CASE R.TARGET_TYPE
+                WHEN 'FREEBOARD' THEN (SELECT B.BOARD_TITLE FROM BOARD B WHERE B.BOARD_NO = R.TARGET_NO)
+                WHEN 'COMPANION' THEN (SELECT CB.TITLE FROM COMPANION_BOARD CB WHERE CB.COMPANION_NO = R.TARGET_NO)
+                WHEN 'REVIEW' THEN (SELECT CR.TITLE FROM COMPANION_REVIEW CR WHERE CR.REVIEW_NO = R.TARGET_NO)
+            END AS "targetTitle",
+            CASE R.TARGET_TYPE
+                WHEN 'FREEBOARD' THEN (SELECT M2.NICKNAME FROM BOARD B JOIN MEMBER M2 ON B.MEMBER_NO = M2.MEMBER_NO WHERE B.BOARD_NO = R.TARGET_NO)
+                WHEN 'COMPANION' THEN (SELECT M2.NICKNAME FROM COMPANION_BOARD CB JOIN MEMBER M2 ON CB.MEMBER_NO = M2.MEMBER_NO WHERE CB.COMPANION_NO = R.TARGET_NO)
+                WHEN 'REVIEW' THEN (SELECT M2.NICKNAME FROM COMPANION_REVIEW CR JOIN MEMBER M2 ON CR.MEMBER_NO = M2.MEMBER_NO WHERE CR.REVIEW_NO = R.TARGET_NO)
+            END AS "targetAuthorNickname"
+        FROM CONTENT_REPORT R
+        JOIN MEMBER M ON R.MEMBER_NO = M.MEMBER_NO
+        WHERE R.REPORT_NO = #{reportNo}
+    </select>
+
+    <!-- 신고 상태 변경 -->
+    <update id="updateReportStatus">
+        UPDATE CONTENT_REPORT
+        SET STATUS = #{status},
+            RESULT = #{result},
+            UPDATED_AT = SYSDATE
+        WHERE REPORT_NO = #{reportNo}
+    </update>
+
+    <!-- 대기중 신고 건수 -->
+    <select id="selectPendingReportCount" resultType="int">
+        SELECT COUNT(*)
+        FROM CONTENT_REPORT
+        WHERE STATUS = 'P'
+    </select>
+
 </mapper>

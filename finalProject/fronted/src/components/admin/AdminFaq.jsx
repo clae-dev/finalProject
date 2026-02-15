@@ -7,7 +7,7 @@ import {
   useCreateFaq,
   useUpdateFaq,
   useDeleteFaq,
-} from '../../api/useFaq';
+} from '../../api/faq/useFaq';
 
 export default function AdminFaq() {
   const [page, setPage] = useState(1);

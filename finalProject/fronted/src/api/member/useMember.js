@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getMember, updateMember, withdrawMember, resetPassword } from './memberAPI';
+import { getMember, getMyActivity, updateMember, withdrawMember, resetPassword } from './memberAPI';
 
 /**
  * 회원 상세 조회 훅
@@ -9,6 +9,18 @@ export const useMember = (memberNo) => {
   return useQuery({
     queryKey: ['member', memberNo],
     queryFn: () => getMember(memberNo),
+    enabled: !!memberNo,
+  });
+};
+
+/**
+ * 회원 활동 내역 조회 훅
+ * @param {number|string} memberNo - 회원 번호
+ */
+export const useMyActivity = (memberNo) => {
+  return useQuery({
+    queryKey: ['myActivity', memberNo],
+    queryFn: () => getMyActivity(memberNo),
     enabled: !!memberNo,
   });
 };

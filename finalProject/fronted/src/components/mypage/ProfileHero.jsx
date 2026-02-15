@@ -14,8 +14,8 @@ export default function ProfileHero({ user, memberData, onEditProfile }) {
       user.memberNickname || 'user'
     )}&backgroundColor=0ea5e9,06b6d4&shapeColor=ffffff`;
 
-  const joinDate = memberData?.memberEnrollDate
-    ? new Date(memberData.memberEnrollDate).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
+  const joinDate = memberData?.createdAt
+    ? new Date(memberData.createdAt).toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
     : null;
 
   return (
@@ -72,9 +72,9 @@ export default function ProfileHero({ user, memberData, onEditProfile }) {
           </motion.h1>
 
           {/* 자기소개 */}
-          {memberData?.memberIntroduce && (
+          {memberData?.memberIntro && (
             <motion.p variants={fadeInUp} className="text-white/80 text-sm max-w-md mb-2">
-              {memberData.memberIntroduce}
+              {memberData.memberIntro}
             </motion.p>
           )}
 

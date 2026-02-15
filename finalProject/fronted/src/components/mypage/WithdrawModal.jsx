@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertTriangle, Loader2 } from 'lucide-react';
-import { useWithdrawMember } from '../../api/useMember';
+import { useWithdrawMember } from '../../api/member/useMember';
+import { clearAllAuth } from '../../api/core/tokenStorage';
 
 const backdropVariants = {
   hidden: { opacity: 0 },
@@ -35,10 +36,8 @@ export default function WithdrawModal({ isOpen, onClose, memberNo }) {
 
       alert('회원 탈퇴가 완료되었습니다.');
 
-      // 로그아웃 처리: localStorage 정리 + 홈 이동
-      localStorage.removeItem('userData');
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      // 로그아웃 처리: 양쪽 Storage 정리 + 홈 이동
+      clearAllAuth();
       window.location.href = '/';
     } catch (error) {
       alert(error.response?.data?.message || '회원 탈퇴 중 오류가 발생했습니다.');

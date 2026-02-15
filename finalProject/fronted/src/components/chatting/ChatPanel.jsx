@@ -3,7 +3,7 @@ import { X, ArrowLeft } from 'lucide-react';
 import ChatRoomList from './ChatRoomList';
 import ChatMessageArea from './ChatMessageArea';
 import ChatSearchModal from './ChatSearchModal';
-import { useRoomList, useMessages, useEnterRoom, useUpdateReadFlag } from '../../api/useChatting';
+import { useRoomList, useMessages, useEnterRoom, useUpdateReadFlag } from '../../api/chatting/useChatting';
 import useWebSocket from '../../lib/useWebSocket';
 import { useQueryClient } from '@tanstack/react-query';
 import { AuthContext } from '../AuthContext';
