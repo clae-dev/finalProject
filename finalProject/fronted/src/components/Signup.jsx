@@ -1120,6 +1120,7 @@ export default function Register() {
                         placeholder="특수문자 포함 8~20자"
                         value={formData.password}
                         onChange={(e) => handleChange('password', e.target.value)}
+                        maxLength={20}
                         autoComplete="new-password"
                         className={`h-12 pl-12 pr-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.password ? 'border-red-400' : ''}`}
                         style={{ fontFamily: "'Pretendard', sans-serif" }}

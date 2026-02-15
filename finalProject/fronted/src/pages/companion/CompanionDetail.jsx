@@ -178,14 +178,14 @@ export default function CompanionDetail() {
           <div className="flex items-center gap-4 mb-6 pb-6 border-b border-sky-50">
             <div className="w-14 h-14 bg-gradient-to-br from-sky-400 via-cyan-400 to-teal-400 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-sky-200/50 overflow-hidden">
               {companion.authorProfile ? (
-                <img src={companion.authorProfile} alt="" className="w-full h-full object-cover" />
+                <img src={companion.authorProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = companion.authorNickname?.[0] || '?'; }} />
               ) : (
                 companion.authorNickname?.[0] || '?'
               )}
             </div>
             <div className="flex-1">
               <p className="font-bold text-slate-800 text-lg">{companion.authorNickname}</p>
-              <p className="text-sm text-slate-400">{companion.authorAgeRange} · {companion.createdAt}</p>
+              <p className="text-sm text-slate-400">{companion.authorAgeRange || '-'} · {companion.createdAt}</p>
             </div>
             {isAuthor && (
               <motion.button
@@ -309,7 +309,7 @@ export default function CompanionDetail() {
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-sky-200/30 overflow-hidden">
                       {join.memberProfile ? (
-                        <img src={join.memberProfile} alt="" className="w-full h-full object-cover" />
+                        <img src={join.memberProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = join.memberNickname?.[0] || '?'; }} />
                       ) : (
                         join.memberNickname?.[0] || '?'
                       )}

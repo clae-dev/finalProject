@@ -37,3 +37,13 @@ export const resetPassword = async (data) => {
   const response = await axiosApi.put("/api/member/reset-password", data);
   return response.data;
 };
+
+// 프로필 이미지 업로드
+export const uploadProfileImage = async (file) => {
+  const formData = new FormData();
+  formData.append('profileImage', file);
+  const response = await axiosApi.post("/api/member/profile-image", formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+};

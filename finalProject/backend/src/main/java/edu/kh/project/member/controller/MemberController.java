@@ -1,8 +1,13 @@
 package edu.kh.project.member.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import edu.kh.project.member.dto.LoginRequestDTO;
 import edu.kh.project.member.dto.LoginResponseDTO;
@@ -31,10 +37,17 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
+@PropertySource("classpath:/config.properties")
 @Slf4j
 public class MemberController {
-    
+
     private final MemberService memberService;
+
+    @Value("${profile.image.web-path}")
+    private String profileWebPath;
+
+    @Value("${profile.image.folder-path}")
+    private String profileFolderPath;
     
     /**
      * 이메일 중복 확인
@@ -408,6 +421,63 @@ public class MemberController {
         }
     }
     
+    /**
+     * 프로필 이미지 업로드
+     * @param profileImage 업로드할 이미지 파일
+     * @return 이미지 웹 경로
+     */
+    @PostMapping("/profile-image")
+    public ResponseEntity<Map<String, Object>> uploadProfileImage(
+            @RequestParam("profileImage") MultipartFile profileImage) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            if (profileImage.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "파일이 비어있습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // 이미지 파일 타입 검증
+            String contentType = profileImage.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                response.put("success", false);
+                response.put("message", "이미지 파일만 업로드 가능합니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // 저장 폴더 생성
+            File folder = new File(profileFolderPath);
+            if (!folder.exists()) {
+                folder.mkdirs();
+            }
+
+            // 고유 파일명 생성
+            String originalName = profileImage.getOriginalFilename();
+            String ext = originalName != null && originalName.contains(".")
+                    ? originalName.substring(originalName.lastIndexOf("."))
+                    : ".png";
+            String savedName = UUID.randomUUID().toString() + ext;
+
+            // 파일 저장
+            profileImage.transferTo(new File(profileFolderPath + savedName));
+
+            // 웹 경로 반환
+            String imageUrl = profileWebPath + savedName;
+
+            response.put("success", true);
+            response.put("imageUrl", imageUrl);
+            return ResponseEntity.ok(response);
+
+        } catch (IOException e) {
+            log.error("프로필 이미지 업로드 실패", e);
+            response.put("success", false);
+            response.put("message", "이미지 업로드 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     /**
      * 이메일 마스킹 처리 (보안)
      * @param email

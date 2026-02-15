@@ -148,7 +148,7 @@ export default function ReviewDetail() {
           <div className="flex items-center gap-4 mb-6 pb-6 border-b border-sky-50">
             <div className="w-14 h-14 bg-gradient-to-br from-sky-400 via-cyan-400 to-teal-400 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-sky-200/50 overflow-hidden">
               {review.authorProfile ? (
-                <img src={review.authorProfile} alt="" className="w-full h-full object-cover" />
+                <img src={review.authorProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = review.authorNickname?.[0] || '?'; }} />
               ) : (
                 review.authorNickname?.[0] || '?'
               )}

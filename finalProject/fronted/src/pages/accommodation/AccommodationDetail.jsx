@@ -194,7 +194,7 @@ export default function AccommodationDetail() {
               </div>
 
               <p className="text-slate-600 leading-relaxed">
-                {accommodation.recommendationReason || `${accommodation.region}에 위치한 ${accommodation.accommodationType || '숙소'}입니다. ${accommodation.address}`}
+                {accommodation.recommendationReason || `${accommodation.region || '제주'}에 위치한 ${accommodation.accommodationType || '숙소'}입니다. ${accommodation.address || ''}`}
               </p>
             </div>
 
