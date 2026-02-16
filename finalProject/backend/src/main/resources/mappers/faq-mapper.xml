@@ -84,7 +84,7 @@
                 ROW_NUMBER() OVER (ORDER BY F.FAQ_NO DESC) AS RN
             FROM FAQ F
             JOIN FAQ_CATEGORY C ON F.CATEGORY_NO = C.CATEGORY_NO
-            WHERE F.STATUS = 'A'
+            WHERE 1=1
             <if test="search != null and search != ''">
                 AND (F.QUESTION LIKE '%' || #{search} || '%'
                      OR F.ANSWER LIKE '%' || #{search} || '%')
@@ -97,7 +97,7 @@
     <select id="selectAdminFaqCount" resultType="int">
         SELECT COUNT(*)
         FROM FAQ F
-        WHERE F.STATUS = 'A'
+        WHERE 1=1
         <if test="search != null and search != ''">
             AND (F.QUESTION LIKE '%' || #{search} || '%'
                  OR F.ANSWER LIKE '%' || #{search} || '%')

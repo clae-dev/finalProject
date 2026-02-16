@@ -25,4 +25,5 @@ public class SignupRequestDTO {
     private String memberGender;             // 성별 (M/F)
     private String memberAgeGroup;           // 연령대
     private String memberProfileImg;         // 프로필 이미지 (DiceBear URL)
+    private String memberBirthDate;          // 생년월일 (YYYY-MM-DD)
 }

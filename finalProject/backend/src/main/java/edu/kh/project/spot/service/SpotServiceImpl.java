@@ -1,9 +1,12 @@
 package edu.kh.project.spot.service;
 
+import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import edu.kh.project.spot.dto.SpotDTO;
 import edu.kh.project.spot.mapper.SpotMapper;
@@ -60,6 +63,24 @@ public class SpotServiceImpl implements SpotService {
     }
 
     /**
+     * 명소 등록 (이미지 파일 업로드 지원)
+     */
+    @Override
+    public int createSpotWithImage(SpotDTO spot, MultipartFile imageFile, String imageUrl, String webPath, String folderPath) {
+        // 파일 업로드 우선, 없으면 URL 사용
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String savedPath = saveFile(imageFile, webPath, folderPath);
+            if (savedPath != null) {
+                spot.setSpotImage(savedPath);
+            }
+        } else if (imageUrl != null && !imageUrl.isBlank()) {
+            spot.setSpotImage(imageUrl);
+        }
+
+        return createSpot(spot);
+    }
+
+    /**
      * 명소 수정
      */
     @Override
@@ -71,6 +92,30 @@ public class SpotServiceImpl implements SpotService {
         }
 
         return result;
+    }
+
+    /**
+     * 명소 수정 (이미지 파일 업로드 지원)
+     */
+    @Override
+    public int updateSpotWithImage(SpotDTO spot, MultipartFile imageFile, String imageUrl, String webPath, String folderPath) {
+        // 파일 업로드 우선, 없으면 URL 사용, 둘 다 없으면 기존 이미지 유지
+        if (imageFile != null && !imageFile.isEmpty()) {
+            String savedPath = saveFile(imageFile, webPath, folderPath);
+            if (savedPath != null) {
+                spot.setSpotImage(savedPath);
+            }
+        } else if (imageUrl != null && !imageUrl.isBlank()) {
+            spot.setSpotImage(imageUrl);
+        } else {
+            // 이미지 변경 없음 → 기존 이미지 유지를 위해 DB에서 조회
+            SpotDTO existing = spotMapper.selectSpotByNo(spot.getSpotNo());
+            if (existing != null) {
+                spot.setSpotImage(existing.getSpotImage());
+            }
+        }
+
+        return updateSpot(spot);
     }
 
     /**
@@ -99,5 +144,31 @@ public class SpotServiceImpl implements SpotService {
         }
 
         return result;
+    }
+
+    /**
+     * 파일 저장 유틸리티
+     */
+    private String saveFile(MultipartFile file, String webPath, String folderPath) {
+        try {
+            String originalName = file.getOriginalFilename();
+            String ext = "";
+            if (originalName != null && originalName.contains(".")) {
+                ext = originalName.substring(originalName.lastIndexOf("."));
+            }
+            String rename = UUID.randomUUID().toString() + ext;
+
+            File dir = new File(folderPath);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+
+            file.transferTo(new File(folderPath + rename));
+
+            return webPath + rename;
+        } catch (Exception e) {
+            log.error("파일 저장 실패", e);
+            return null;
+        }
     }
 }

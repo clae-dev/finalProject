@@ -16,6 +16,11 @@ import {
   getAdminReportDetail,
   updateReportStatus,
   getPendingReportCount,
+  getAdminVerifications,
+  approveVerification,
+  rejectVerification,
+  getAdminAccommodationReviews,
+  deleteAdminAccommodationReview,
 } from './adminAPI';
 
 /** 대시보드 통계 */
@@ -174,5 +179,54 @@ export const usePendingReportCount = () => {
   return useQuery({
     queryKey: ['admin', 'reports', 'pendingCount'],
     queryFn: getPendingReportCount,
+  });
+};
+
+/** 인증 요청 목록 (관리자) */
+export const useAdminVerifications = (page = 1, size = 10, status = '') => {
+  return useQuery({
+    queryKey: ['admin', 'verifications', page, size, status],
+    queryFn: () => getAdminVerifications(page, size, status),
+  });
+};
+
+/** 인증 승인 */
+export const useApproveVerification = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (verificationNo) => approveVerification(verificationNo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'verifications'] });
+    },
+  });
+};
+
+/** 인증 거부 */
+export const useRejectVerification = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ verificationNo, adminComment }) => rejectVerification(verificationNo, adminComment),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'verifications'] });
+    },
+  });
+};
+
+/** 숙소 후기 목록 (관리자) */
+export const useAdminAccommodationReviews = (page = 1, size = 10, search = '') => {
+  return useQuery({
+    queryKey: ['admin', 'accommodationReviews', page, size, search],
+    queryFn: () => getAdminAccommodationReviews(page, size, search),
+  });
+};
+
+/** 숙소 후기 삭제 (관리자) */
+export const useDeleteAdminAccommodationReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (reviewNo) => deleteAdminAccommodationReview(reviewNo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'accommodationReviews'] });
+    },
   });
 };

@@ -103,10 +103,10 @@ axiosApi.interceptors.response.use(
           const parsed = JSON.parse(storedUser);
           const updated = {
             ...parsed,
-            memberNo: userData.memberNo,
-            memberName: userData.memberName,
-            memberNickname: userData.memberNickname,
-            memberEmail: userData.memberEmail,
+            memberNo: userData.memberNo ?? parsed.memberNo,
+            memberName: userData.memberName ?? parsed.memberName,
+            memberNickname: userData.memberNickname ?? parsed.memberNickname,
+            memberEmail: userData.memberEmail ?? parsed.memberEmail,
             memberProfileImg: userData.memberProfileImg || parsed.memberProfileImg,
             memberPhone: userData.memberPhone || parsed.memberPhone || '',
             memberIntro: userData.memberIntro || parsed.memberIntro || '',

@@ -85,4 +85,17 @@ public interface AdminMapper {
             @Param("result") String result);
 
     int selectPendingReportCount();
+
+    // 인증 관리
+    int selectMemberNoByVerificationNo(@Param("verificationNo") int verificationNo);
+
+    // 숙소 후기 관리
+    List<Map<String, Object>> selectAdminAccommodationReviewList(
+            @Param("offset") int offset,
+            @Param("limit") int limit,
+            @Param("search") String search);
+
+    int selectAccommodationReviewCount(@Param("search") String search);
+
+    int deleteAccommodationReview(@Param("reviewNo") int reviewNo);
 }

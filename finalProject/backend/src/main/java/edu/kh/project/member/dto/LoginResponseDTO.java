@@ -30,4 +30,5 @@ public class LoginResponseDTO {
     private String loginType;                // 로그인 타입 (kakao, google, naver, normal)
     private String memberPhone;              // 전화번호
     private String memberIntro;              // 자기소개
+    private String verifiedReviewer;         // 인증 리뷰어 여부 (Y/N)
 }

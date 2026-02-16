@@ -11,6 +11,7 @@ import FindPassword from './components/FindPassword';
 import Main from './components/Main';
 import Accommodations from './pages/accommodation/Accommodations';
 import AccommodationDetail from './pages/accommodation/AccommodationDetail';
+import AccommodationReviewWrite from './pages/accommodation/AccommodationReviewWrite';
 import OAuthCallback from './components/OAuthCallback';
 import MyPage from './components/Mypage';
 import Companions from './pages/companion/Companions';
@@ -51,6 +52,7 @@ function AnimatedRoutes() {
         <Route path="/oauth/callback" element={<OAuthCallback />} />
         <Route path="/accommodations" element={<PageTransition><Accommodations /></PageTransition>} />
         <Route path="/accommodations/:accommodationNo" element={<PageTransition><AccommodationDetail /></PageTransition>} />
+        <Route path="/accommodations/:accommodationNo/review/write" element={<PageTransition><AccommodationReviewWrite /></PageTransition>} />
         <Route path="/mypage" element={<PageTransition><MyPage /></PageTransition>} />
         <Route path="/companions" element={<PageTransition><Companions /></PageTransition>} />
         <Route path="/companions/write" element={<PageTransition><CompanionWrite /></PageTransition>} />

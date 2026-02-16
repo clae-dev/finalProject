@@ -44,7 +44,7 @@ export default function useWebSocket(onMessage) {
         sock.close();
       }
     };
-  }, []);
+  }, [onMessage]);
 
   const sendMessage = useCallback((messageObj) => {
     if (socketRef.current && connectedRef.current) {

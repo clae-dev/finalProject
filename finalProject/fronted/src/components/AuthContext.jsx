@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import axios from "axios";
 import { axiosApi } from "../api/core/axiosAPI";
 import { getToken, saveToken, removeToken, clearAllAuth, setRememberMe, getRememberMe } from "../api/core/tokenStorage";
 
@@ -22,38 +23,67 @@ export const AuthProvider = ({ children }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // 앱 시작 시 토큰 유효성 검증
+  // 앱 시작 시 토큰 유효성 검증 및 만료된 accessToken 능동적 갱신
   useEffect(() => {
     const token = getToken("accessToken");
     const refreshToken = getToken("refreshToken");
     const storedUser = getToken("userData");
 
-    if (storedUser && token) {
+    // userData 자체가 없으면 로그인 상태가 아님
+    if (!storedUser) return;
+
+    // accessToken 만료 여부 확인
+    let isExpired = false;
+    if (token) {
       try {
-        // JWT 디코딩하여 만료 시간 확인
         const payload = JSON.parse(atob(token.split('.')[1]));
-        if (payload.exp * 1000 < Date.now()) {
-          // accessToken 만료 → refreshToken 존재 시 유저 상태 유지
-          if (!refreshToken) {
-            removeToken("userData");
-            removeToken("accessToken");
+        isExpired = payload.exp * 1000 < Date.now();
+      } catch {
+        isExpired = true;
+      }
+    } else {
+      isExpired = true; // 토큰 자체가 없으면 만료 취급
+    }
+
+    if (isExpired) {
+      if (!refreshToken) {
+        // 리프레시 토큰도 없으면 → 완전 로그아웃
+        clearAllAuth();
+        setUser(null);
+        return;
+      }
+
+      // 리프레시 토큰으로 능동적 갱신 시도 (plain axios로 interceptor 순환 방지)
+      axios.post("/api/member/refresh", { refreshToken })
+        .then((response) => {
+          if (response.data.success) {
+            const { accessToken, refreshToken: newRefreshToken } = response.data.data;
+            saveToken("accessToken", accessToken);
+            saveToken("refreshToken", newRefreshToken);
+            // userData도 갱신
+            const data = response.data.data;
+            const parsed = JSON.parse(storedUser);
+            const updated = {
+              ...parsed,
+              memberNo: data.memberNo ?? parsed.memberNo,
+              memberName: data.memberName ?? parsed.memberName,
+              memberNickname: data.memberNickname ?? parsed.memberNickname,
+              memberEmail: data.memberEmail ?? parsed.memberEmail,
+              memberProfileImg: data.memberProfileImg || parsed.memberProfileImg,
+              memberPhone: data.memberPhone || parsed.memberPhone || '',
+              memberIntro: data.memberIntro || parsed.memberIntro || '',
+            };
+            setUser(updated);
+            saveToken("userData", JSON.stringify(updated));
+          } else {
+            clearAllAuth();
             setUser(null);
           }
-        }
-      } catch (e) {
-        // 토큰 파싱 실패 → refreshToken 있으면 유저 상태 유지
-        if (!refreshToken) {
-          removeToken("userData");
-          removeToken("accessToken");
+        })
+        .catch(() => {
+          clearAllAuth();
           setUser(null);
-        }
-      }
-    } else if (storedUser && !token) {
-      // 유저 데이터는 있는데 토큰 없음 → refreshToken 확인
-      if (!refreshToken) {
-        removeToken("userData");
-        setUser(null);
-      }
+        });
     }
   }, []);
 
@@ -101,6 +131,7 @@ export const AuthProvider = ({ children }) => {
         memberRole: loginData.memberRole || 'U',
         memberPhone: loginData.memberPhone || '',
         memberIntro: loginData.memberIntro || '',
+        verifiedReviewer: loginData.verifiedReviewer || 'N',
       };
 
       setUser(userData);
@@ -145,6 +176,7 @@ export const AuthProvider = ({ children }) => {
       memberRole: loginData.memberRole || 'U',
       memberPhone: loginData.memberPhone || '',
       memberIntro: loginData.memberIntro || '',
+      verifiedReviewer: loginData.verifiedReviewer || 'N',
     };
 
     setUser(userData);

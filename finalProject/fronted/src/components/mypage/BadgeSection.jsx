@@ -7,6 +7,7 @@ import {
   MessageCircleHeart,
   ThumbsUp,
   UsersRound,
+  ShieldCheck,
   Trophy,
 } from 'lucide-react';
 
@@ -73,6 +74,17 @@ const badgeDefs = [
     current: (d) => d?.companionCount || 0,
   },
   {
+    key: 'verified',
+    label: '인증 리뷰어',
+    icon: ShieldCheck,
+    gradient: 'from-teal-400 to-emerald-500',
+    shadow: 'shadow-teal-300/40',
+    condition: '리뷰어 인증 완료',
+    check: (d) => d?.verifiedReviewer === 'Y',
+    goal: 1,
+    current: (d) => (d?.verifiedReviewer === 'Y' ? 1 : 0),
+  },
+  {
     key: 'master',
     label: '제주 통달자',
     icon: Trophy,
@@ -80,21 +92,22 @@ const badgeDefs = [
     shadow: 'shadow-yellow-300/40',
     condition: '모든 배지 획득',
     check: (d) => {
-      // 자기 자신을 제외한 나머지 5개 배지가 전부 획득 상태인지
       return (
         (d?.postCount || 0) >= 5 &&
         (d?.reviewCount || 0) >= 10 &&
         (d?.likeCount || 0) >= 50 &&
-        (d?.companionCount || 0) >= 5
+        (d?.companionCount || 0) >= 5 &&
+        d?.verifiedReviewer === 'Y'
       );
     },
-    goal: 5,
+    goal: 6,
     current: (d) => {
       let count = 1; // 신규 혼행러는 항상 달성
       if ((d?.postCount || 0) >= 5) count++;
       if ((d?.reviewCount || 0) >= 10) count++;
       if ((d?.likeCount || 0) >= 50) count++;
       if ((d?.companionCount || 0) >= 5) count++;
+      if (d?.verifiedReviewer === 'Y') count++;
       return count;
     },
   },

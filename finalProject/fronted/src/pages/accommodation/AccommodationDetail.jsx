@@ -6,6 +6,8 @@ import { useAccommodationDetail } from '../../api/accommodation/useAccommodation
 import { useUpdateAccommodation } from '../../api/admin/useAdmin';
 import AccommodationFormModal from '../../components/accommodation/AccommodationFormModal';
 import { AuthContext } from '../../components/AuthContext';
+import { useAccommodationReviews, useReviewSummary, useDeleteAccommodationReview } from '../../api/accommodation/useAccommodationReview';
+import AccommodationReviewCard from '../../components/accommodation/AccommodationReviewCard';
 import { Button } from '@/components/ui/button';
 import {
   Star, Heart, MapPin, Clock, ChevronLeft, ChevronRight,
@@ -492,25 +494,7 @@ export default function AccommodationDetail() {
             )}
 
             {/* 숙소 후기 */}
-            <div className="bg-white rounded-xl p-6 border border-slate-100">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-[17px] font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-                  <Star className="w-[18px] h-[18px] text-amber-400" />
-                  숙소 후기
-                </h2>
-                <Button className="bg-sky-500 hover:bg-sky-600 text-sm gap-1.5">
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  후기 작성
-                </Button>
-              </div>
-              <div className="text-center py-10">
-                <div className="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <MessageCircle className="w-7 h-7 text-slate-300" />
-                </div>
-                <p className="text-sm font-semibold text-slate-500">아직 작성된 후기가 없습니다</p>
-                <p className="text-xs mt-1.5 text-slate-300">이 숙소의 첫 번째 후기를 남겨주세요!</p>
-              </div>
-            </div>
+            <AccommodationReviewSection accommodationNo={accommodationNo} user={user} navigate={navigate} />
           </div>
 
           {/* 오른쪽 사이드바 */}
@@ -712,6 +696,115 @@ export default function AccommodationDetail() {
             );
           }}
         />
+      )}
+    </div>
+  );
+}
+
+// 숙소 후기 섹션 (인라인 컴포넌트)
+function AccommodationReviewSection({ accommodationNo, user, navigate }) {
+  const [reviewPage, setReviewPage] = useState(1);
+  const { data: reviewData, isLoading: reviewsLoading } = useAccommodationReviews(Number(accommodationNo), reviewPage, 5);
+  const { data: summaryData } = useReviewSummary(Number(accommodationNo));
+  const deleteMutation = useDeleteAccommodationReview(Number(accommodationNo));
+
+  const reviews = reviewData?.list || [];
+  const totalCount = reviewData?.totalCount || 0;
+  const totalPages = Math.ceil(totalCount / 5);
+  const summary = summaryData?.data || {};
+
+  const handleDelete = (reviewNo) => {
+    deleteMutation.mutate(reviewNo, {
+      onSuccess: (res) => {
+        if (res.success) alert('후기가 삭제되었습니다.');
+      },
+    });
+  };
+
+  return (
+    <div className="bg-white rounded-xl p-6 border border-slate-100">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-[17px] font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <Star className="w-[18px] h-[18px] text-amber-400" />
+          숙소 후기
+          {totalCount > 0 && (
+            <span className="text-sm font-normal text-slate-400 ml-1">
+              ({summary.avgRating || 0}점 / {totalCount}개)
+            </span>
+          )}
+        </h2>
+        {user && (
+          <Button
+            onClick={() => navigate(`/accommodations/${accommodationNo}/review/write`)}
+            className="bg-sky-500 hover:bg-sky-600 text-sm gap-1.5"
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            후기 작성
+          </Button>
+        )}
+      </div>
+
+      {/* 평균 별점 요약 */}
+      {totalCount > 0 && (
+        <div className="flex items-center gap-3 mb-5 p-3 bg-amber-50/50 rounded-lg border border-amber-100/50">
+          <div className="text-3xl font-black text-amber-500">{summary.avgRating || 0}</div>
+          <div>
+            <div className="flex items-center gap-0.5">
+              {Array.from({ length: 5 }, (_, i) => (
+                <Star
+                  key={i}
+                  className={`w-4 h-4 ${i < Math.round(summary.avgRating || 0) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`}
+                />
+              ))}
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">{totalCount}개의 후기</p>
+          </div>
+        </div>
+      )}
+
+      {/* 후기 목록 */}
+      {reviewsLoading ? (
+        <div className="text-center py-8">
+          <Loader2 className="w-6 h-6 animate-spin text-sky-500 mx-auto" />
+        </div>
+      ) : reviews.length > 0 ? (
+        <div className="space-y-4">
+          {reviews.map((review) => (
+            <AccommodationReviewCard
+              key={review.reviewNo}
+              review={review}
+              currentUserNo={user?.memberNo}
+              onDelete={handleDelete}
+            />
+          ))}
+
+          {/* 페이지네이션 */}
+          {totalPages > 1 && (
+            <div className="flex justify-center gap-2 pt-4">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i + 1}
+                  onClick={() => setReviewPage(i + 1)}
+                  className={`w-8 h-8 rounded-lg text-sm font-bold transition-all ${
+                    reviewPage === i + 1
+                      ? 'bg-sky-500 text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-500 hover:bg-sky-50'
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="text-center py-10">
+          <div className="w-16 h-16 bg-gradient-to-br from-slate-100 to-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <MessageCircle className="w-7 h-7 text-slate-300" />
+          </div>
+          <p className="text-sm font-semibold text-slate-500">아직 작성된 후기가 없습니다</p>
+          <p className="text-xs mt-1.5 text-slate-300">이 숙소의 첫 번째 후기를 남겨주세요!</p>
+        </div>
       )}
     </div>
   );

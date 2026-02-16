@@ -378,7 +378,8 @@ export default function Register() {
     nickname: '',
     gender: '',
     age_group: '',
-    profileImg: ''
+    profileImg: '',
+    birthDate: ''
   });
   const [avatars, setAvatars] = useState(() => generateAvatars());
 
@@ -552,6 +553,21 @@ export default function Register() {
     if (!formData.gender) newErrors.gender = '성별을 선택해주세요';
     if (!formData.age_group) newErrors.age_group = '연령대를 선택해주세요';
 
+    if (!formData.birthDate) {
+      newErrors.birthDate = '생년월일을 입력해주세요';
+    } else {
+      const birth = new Date(formData.birthDate);
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const monthDiff = today.getMonth() - birth.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        age--;
+      }
+      if (age < 14) {
+        newErrors.birthDate = '만 14세 미만은 가입할 수 없습니다';
+      }
+    }
+
     if (!agreements.terms) newErrors.terms = '이용약관에 동의해주세요';
     if (!agreements.privacy) newErrors.privacy = '개인정보 처리방침에 동의해주세요';
 
@@ -569,7 +585,8 @@ export default function Register() {
           memberPhone: '',
           memberGender: formData.gender === 'male' ? 'M' : 'F',
           memberAgeGroup: formData.age_group,
-          memberProfileImg: formData.profileImg || null
+          memberProfileImg: formData.profileImg || null,
+          memberBirthDate: formData.birthDate
         };
 
         const response = await axiosApi.post('/api/member/signup', signupData);
@@ -595,6 +612,13 @@ export default function Register() {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+    // 이메일 변경 시 인증 상태 초기화 (인증 우회 방지)
+    if (field === 'email') {
+      setIsVerified(false);
+      setIsCodeSent(false);
+      setVerificationCode('');
+      setTimer(0);
     }
   };
 
@@ -949,75 +973,24 @@ export default function Register() {
                       {errors.age_group && <p className="text-red-500 text-xs mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.age_group}</p>}
                     </div>
                   </div>
-                </div>
 
-                {/* 약관 동의 */}
-                <div className="bg-gradient-to-br from-slate-50 to-sky-50/50 rounded-2xl p-4 border border-sky-100/60">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-sky-200/60 mb-3">
-                    <Shield className="w-3.5 h-3.5 text-sky-500" />
-                    <span
-                      className="text-xs font-bold text-sky-600 tracking-wide"
+                  {/* 생년월일 */}
+                  <div className="mt-3">
+                    <label
+                      className="block text-sm font-semibold text-slate-600 mb-2"
                       style={{ fontFamily: "'Pretendard', sans-serif" }}
                     >
-                      약관 동의
-                    </span>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-start gap-2.5">
-                        <Checkbox
-                          id="terms"
-                          checked={agreements.terms}
-                          onCheckedChange={(checked) => setAgreements(prev => ({ ...prev, terms: checked }))}
-                          className={`border-sky-200 mt-0.5 data-[state=checked]:bg-sky-500 data-[state=checked]:border-sky-500 ${errors.terms ? 'border-red-400' : ''}`}
-                        />
-                        <label
-                          htmlFor="terms"
-                          className="text-sm text-slate-600 cursor-pointer leading-relaxed"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
-                        >
-                          <span className="text-sky-500 font-semibold">(필수)</span> 이용약관
-                        </label>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setTermsModal({ open: true, type: 'terms' })}
-                        className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors hover:underline"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
-                      >
-                        <FileText className="w-3 h-3" />
-                        보기
-                      </button>
-                    </div>
-                    {errors.terms && <p className="text-red-500 text-xs ml-6" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.terms}</p>}
-
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-start gap-2.5">
-                        <Checkbox
-                          id="privacy"
-                          checked={agreements.privacy}
-                          onCheckedChange={(checked) => setAgreements(prev => ({ ...prev, privacy: checked }))}
-                          className={`border-sky-200 mt-0.5 data-[state=checked]:bg-sky-500 data-[state=checked]:border-sky-500 ${errors.privacy ? 'border-red-400' : ''}`}
-                        />
-                        <label
-                          htmlFor="privacy"
-                          className="text-sm text-slate-600 cursor-pointer leading-relaxed"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
-                        >
-                          <span className="text-sky-500 font-semibold">(필수)</span> 개인정보 처리방침
-                        </label>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setTermsModal({ open: true, type: 'privacy' })}
-                        className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors hover:underline"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
-                      >
-                        <FileText className="w-3 h-3" />
-                        보기
-                      </button>
-                    </div>
-                    {errors.privacy && <p className="text-red-500 text-xs ml-6" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.privacy}</p>}
+                      생년월일 <span className="text-sky-500 text-xs font-medium">(만 14세 이상만 가입 가능)</span>
+                    </label>
+                    <Input
+                      type="date"
+                      value={formData.birthDate}
+                      onChange={(e) => handleChange('birthDate', e.target.value)}
+                      max={new Date().toISOString().split('T')[0]}
+                      className={`h-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.birthDate ? 'border-red-400' : ''}`}
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    />
+                    {errors.birthDate && <p className="text-red-500 text-xs mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.birthDate}</p>}
                   </div>
                 </div>
               </div>
@@ -1259,6 +1232,76 @@ export default function Register() {
                       <CheckCircle2 className="w-3.5 h-3.5" /> 이메일 인증이 완료되었습니다
                     </p>
                   )}
+                </div>
+
+                {/* 약관 동의 */}
+                <div className="bg-gradient-to-br from-slate-50 to-sky-50/50 rounded-2xl p-4 border border-sky-100/60">
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-sky-200/60 mb-3">
+                    <Shield className="w-3.5 h-3.5 text-sky-500" />
+                    <span
+                      className="text-xs font-bold text-sky-600 tracking-wide"
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    >
+                      약관 동의
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start gap-2.5">
+                        <Checkbox
+                          id="terms"
+                          checked={agreements.terms}
+                          onCheckedChange={(checked) => setAgreements(prev => ({ ...prev, terms: checked }))}
+                          className={`border-sky-200 mt-0.5 data-[state=checked]:bg-sky-500 data-[state=checked]:border-sky-500 ${errors.terms ? 'border-red-400' : ''}`}
+                        />
+                        <label
+                          htmlFor="terms"
+                          className="text-sm text-slate-600 cursor-pointer leading-relaxed"
+                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        >
+                          <span className="text-sky-500 font-semibold">(필수)</span> 이용약관
+                        </label>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setTermsModal({ open: true, type: 'terms' })}
+                        className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors hover:underline"
+                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      >
+                        <FileText className="w-3 h-3" />
+                        보기
+                      </button>
+                    </div>
+                    {errors.terms && <p className="text-red-500 text-xs ml-6" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.terms}</p>}
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start gap-2.5">
+                        <Checkbox
+                          id="privacy"
+                          checked={agreements.privacy}
+                          onCheckedChange={(checked) => setAgreements(prev => ({ ...prev, privacy: checked }))}
+                          className={`border-sky-200 mt-0.5 data-[state=checked]:bg-sky-500 data-[state=checked]:border-sky-500 ${errors.privacy ? 'border-red-400' : ''}`}
+                        />
+                        <label
+                          htmlFor="privacy"
+                          className="text-sm text-slate-600 cursor-pointer leading-relaxed"
+                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        >
+                          <span className="text-sky-500 font-semibold">(필수)</span> 개인정보 처리방침
+                        </label>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setTermsModal({ open: true, type: 'privacy' })}
+                        className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors hover:underline"
+                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      >
+                        <FileText className="w-3 h-3" />
+                        보기
+                      </button>
+                    </div>
+                    {errors.privacy && <p className="text-red-500 text-xs ml-6" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.privacy}</p>}
+                  </div>
                 </div>
               </div>
 

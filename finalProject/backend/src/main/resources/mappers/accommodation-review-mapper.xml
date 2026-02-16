@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.kh.project.accommodation.mapper.AccommodationReviewMapper">
+
+    <resultMap id="reviewResultMap" type="edu.kh.project.accommodation.dto.AccommodationReviewDTO">
+        <id property="reviewNo" column="REVIEW_NO" />
+        <result property="accommodationNo" column="ACCOMMODATION_NO" />
+        <result property="memberNo" column="MEMBER_NO" />
+        <result property="rating" column="RATING" />
+        <result property="content" column="CONTENT" />
+        <result property="checkInDate" column="CHECK_IN_DATE" />
+        <result property="checkOutDate" column="CHECK_OUT_DATE" />
+        <result property="recommendedFor" column="RECOMMENDED_FOR" />
+        <result property="status" column="STATUS" />
+        <result property="createdAt" column="CREATED_AT" />
+        <result property="authorNickname" column="NICKNAME" />
+        <result property="authorProfileImg" column="PROFILE_IMAGE" />
+        <result property="verifiedReviewer" column="VERIFIED_REVIEWER" />
+    </resultMap>
+
+    <resultMap id="reviewImageResultMap" type="edu.kh.project.accommodation.dto.ReviewImageDTO">
+        <id property="imageNo" column="IMAGE_NO" />
+        <result property="reviewNo" column="REVIEW_NO" />
+        <result property="imageUrl" column="IMAGE_URL" />
+        <result property="originalName" column="ORIGINAL_NAME" />
+        <result property="renamedName" column="RENAMED_NAME" />
+        <result property="imageOrder" column="IMAGE_ORDER" />
+    </resultMap>
+
+    <!-- 후기 목록 (숙소별, 페이징) -->
+    <select id="selectReviewList" resultMap="reviewResultMap">
+        SELECT * FROM (
+            SELECT
+                R.REVIEW_NO,
+                R.ACCOMMODATION_NO,
+                R.MEMBER_NO,
+                R.RATING,
+                R.CONTENT,
+                TO_CHAR(R.CHECK_IN_DATE, 'YYYY-MM-DD') AS CHECK_IN_DATE,
+                TO_CHAR(R.CHECK_OUT_DATE, 'YYYY-MM-DD') AS CHECK_OUT_DATE,
+                R.RECOMMENDED_FOR,
+                R.STATUS,
+                TO_CHAR(R.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
+                M.NICKNAME,
+                M.PROFILE_IMAGE,
+                M.VERIFIED_REVIEWER,
+                ROW_NUMBER() OVER (ORDER BY R.CREATED_AT DESC) AS RN
+            FROM ACCOMMODATION_REVIEW R
+            JOIN MEMBER M ON R.MEMBER_NO = M.MEMBER_NO
+            WHERE R.ACCOMMODATION_NO = #{accommodationNo}
+              AND R.STATUS = 'A'
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 후기 건수 -->
+    <select id="selectReviewCount" resultType="int">
+        SELECT COUNT(*)
+        FROM ACCOMMODATION_REVIEW
+        WHERE ACCOMMODATION_NO = #{accommodationNo}
+          AND STATUS = 'A'
+    </select>
+
+    <!-- 평균 별점 + 총 개수 -->
+    <select id="selectReviewSummary" resultType="map">
+        SELECT
+            NVL(ROUND(AVG(RATING), 1), 0) AS "avgRating",
+            COUNT(*) AS "reviewCount"
+        FROM ACCOMMODATION_REVIEW
+        WHERE ACCOMMODATION_NO = #{accommodationNo}
+          AND STATUS = 'A'
+    </select>
+
+    <!-- 후기 등록 -->
+    <insert id="insertReview">
+        <selectKey keyProperty="reviewNo" resultType="int" order="AFTER">
+            SELECT SEQ_REVIEW_NO.CURRVAL FROM DUAL
+        </selectKey>
+        INSERT INTO ACCOMMODATION_REVIEW (
+            REVIEW_NO, ACCOMMODATION_NO, MEMBER_NO, RATING, CONTENT,
+            CHECK_IN_DATE, CHECK_OUT_DATE, RECOMMENDED_FOR, STATUS, CREATED_AT
+        ) VALUES (
+            SEQ_REVIEW_NO.NEXTVAL, #{accommodationNo}, #{memberNo}, #{rating}, #{content},
+            TO_DATE(#{checkInDate}, 'YYYY-MM-DD'), TO_DATE(#{checkOutDate}, 'YYYY-MM-DD'),
+            #{recommendedFor}, 'A', SYSDATE
+        )
+    </insert>
+
+    <!-- 후기 이미지 등록 -->
+    <insert id="insertReviewImage">
+        INSERT INTO REVIEW_IMAGE (
+            IMAGE_NO, REVIEW_NO, IMAGE_URL, ORIGINAL_NAME, RENAMED_NAME, IMAGE_ORDER
+        ) VALUES (
+            SEQ_REVIEW_IMG_NO.NEXTVAL, #{reviewNo}, #{imageUrl}, #{originalName}, #{renamedName}, #{imageOrder}
+        )
+    </insert>
+
+    <!-- 후기 이미지 목록 -->
+    <select id="selectReviewImages" resultMap="reviewImageResultMap">
+        SELECT IMAGE_NO, REVIEW_NO, IMAGE_URL, ORIGINAL_NAME, RENAMED_NAME, IMAGE_ORDER
+        FROM REVIEW_IMAGE
+        WHERE REVIEW_NO = #{reviewNo}
+        ORDER BY IMAGE_ORDER
+    </select>
+
+    <!-- 후기 삭제 (본인) -->
+    <update id="deleteReview">
+        UPDATE ACCOMMODATION_REVIEW
+        SET STATUS = 'D', UPDATED_AT = SYSDATE
+        WHERE REVIEW_NO = #{reviewNo}
+          AND MEMBER_NO = #{memberNo}
+    </update>
+
+    <!-- 후기 삭제 (관리자) -->
+    <update id="deleteReviewByAdmin">
+        UPDATE ACCOMMODATION_REVIEW
+        SET STATUS = 'D', UPDATED_AT = SYSDATE
+        WHERE REVIEW_NO = #{reviewNo}
+    </update>
+
+    <!-- 회원 인증 상태 조회 -->
+    <select id="selectMemberVerifiedReviewer" resultType="string">
+        SELECT NVL(VERIFIED_REVIEWER, 'N')
+        FROM MEMBER
+        WHERE MEMBER_NO = #{memberNo}
+    </select>
+
+</mapper>

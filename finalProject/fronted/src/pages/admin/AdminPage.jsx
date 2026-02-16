@@ -1,16 +1,18 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, LayoutDashboard, Users, FileText, Building2, MessageCircleQuestion, Megaphone, Flag } from 'lucide-react';
+import { Shield, ShieldCheck, LayoutDashboard, Users, FileText, Building2, MapPin, MessageCircleQuestion, Megaphone, Flag } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import AdminDashboard from '../../components/admin/AdminDashboard';
 import AdminMembers from '../../components/admin/AdminMembers';
 import AdminPosts from '../../components/admin/AdminPosts';
 import AdminAccommodations from '../../components/admin/AdminAccommodations';
+import AdminSpots from '../../components/admin/AdminSpots';
 import AdminFaq from '../../components/admin/AdminFaq';
 import AdminNotices from '../../components/admin/AdminNotices';
 import AdminReports from '../../components/admin/AdminReports';
+import AdminVerifications from '../../components/admin/AdminVerifications';
 import { AuthContext } from '../../components/AuthContext';
 
 const TABS = [
@@ -18,8 +20,10 @@ const TABS = [
   { key: 'members', label: '회원 관리', icon: Users },
   { key: 'posts', label: '게시물 관리', icon: FileText },
   { key: 'accommodations', label: '숙소 관리', icon: Building2 },
+  { key: 'spots', label: '명소 관리', icon: MapPin },
   { key: 'faq', label: 'FAQ 관리', icon: MessageCircleQuestion },
   { key: 'notices', label: '공지 관리', icon: Megaphone },
+  { key: 'verifications', label: '인증 관리', icon: ShieldCheck },
   { key: 'reports', label: '신고 관리', icon: Flag },
 ];
 
@@ -137,8 +141,10 @@ export default function AdminPage() {
             {activeTab === 'members' && <AdminMembers />}
             {activeTab === 'posts' && <AdminPosts />}
             {activeTab === 'accommodations' && <AdminAccommodations />}
+            {activeTab === 'spots' && <AdminSpots />}
             {activeTab === 'faq' && <AdminFaq />}
             {activeTab === 'notices' && <AdminNotices />}
+            {activeTab === 'verifications' && <AdminVerifications />}
             {activeTab === 'reports' && <AdminReports />}
           </motion.div>
         </AnimatePresence>

@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Trash2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Star } from 'lucide-react';
 import {
   useAdminCompanions,
   useDeleteAdminCompanion,
   useAdminReviews,
   useDeleteAdminReview,
+  useAdminAccommodationReviews,
+  useDeleteAdminAccommodationReview,
 } from '../../api/admin/useAdmin';
 
 const SUB_TABS = [
   { key: 'companions', label: '동행 게시글' },
-  { key: 'reviews', label: '후기' },
+  { key: 'reviews', label: '동행 후기' },
+  { key: 'accomReviews', label: '숙소 후기' },
 ];
 
 export default function AdminPosts() {
@@ -38,6 +42,7 @@ export default function AdminPosts() {
 
       {subTab === 'companions' && <CompanionTable />}
       {subTab === 'reviews' && <ReviewTable />}
+      {subTab === 'accomReviews' && <AccommodationReviewTable />}
     </div>
   );
 }
@@ -218,6 +223,102 @@ function ReviewTable() {
               {list.length === 0 && (
                 <tr>
                   <td colSpan={6} className="text-center py-12 text-slate-400 text-sm">후기가 없습니다.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </motion.div>
+
+      <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+    </div>
+  );
+}
+
+function AccommodationReviewTable() {
+  const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
+  const size = 10;
+
+  const { data, isLoading } = useAdminAccommodationReviews(page, size, search);
+  const deleteMutation = useDeleteAdminAccommodationReview();
+
+  const list = data?.success ? (data.list || []) : [];
+  const totalCount = data?.success ? (data.totalCount || 0) : 0;
+  const totalPages = Math.ceil(totalCount / size);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(searchInput);
+    setPage(1);
+  };
+
+  const handleDelete = (item) => {
+    if (!confirm(`이 숙소 후기를 삭제하시겠습니까?`)) return;
+    deleteMutation.mutate(item.reviewNo);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
+          <Loader2 className="w-10 h-10 text-sky-400" />
+        </motion.div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <SearchBar searchInput={searchInput} setSearchInput={setSearchInput} onSubmit={handleSearch} />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg shadow-sky-100 border border-sky-50 overflow-hidden"
+      >
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-sky-50/80">
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">번호</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">숙소</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">내용</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">작성자</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">별점</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">등록일</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">삭제</th>
+              </tr>
+            </thead>
+            <tbody>
+              {list.map((item) => (
+                <tr key={item.reviewNo} className="border-t border-sky-50 hover:bg-sky-50/50 transition-colors">
+                  <td className="px-6 py-3 text-sm text-slate-500">{item.reviewNo}</td>
+                  <td className="px-6 py-3 text-sm font-semibold text-slate-700 max-w-[150px] truncate">{item.accommodationName}</td>
+                  <td className="px-6 py-3 text-sm text-slate-500 max-w-[200px] truncate">{item.content}</td>
+                  <td className="px-6 py-3 text-sm text-slate-500">{item.authorNickname}</td>
+                  <td className="px-6 py-3">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      <span className="text-sm font-bold text-amber-500">{item.rating}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-3 text-sm text-slate-400">{item.createdAt || '-'}</td>
+                  <td className="px-6 py-3">
+                    <button
+                      onClick={() => handleDelete(item)}
+                      disabled={deleteMutation.isPending}
+                      className="p-2 rounded-xl text-red-400 hover:bg-red-50 hover:text-red-500 transition-all"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {list.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="text-center py-12 text-slate-400 text-sm">숙소 후기가 없습니다.</td>
                 </tr>
               )}
             </tbody>

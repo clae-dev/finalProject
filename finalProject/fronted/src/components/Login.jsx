@@ -16,9 +16,9 @@ function Login() {
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:80';
 
-  // 소셜 로그인 전 rememberMe를 sessionStorage에 저장 (리다이렉트 후에도 유지)
+  // 소셜 로그인 전 rememberMe를 localStorage에 저장 (OAuth 리다이렉트 체인에서도 유실 방지)
   const handleSocialLogin = (provider) => {
-    sessionStorage.setItem("oauthRememberMe", rememberMe ? "true" : "false");
+    localStorage.setItem("oauthRememberMe", rememberMe ? "true" : "false");
     window.location.href = `${API_URL}/oauth2/authorization/${provider}`;
   };
 

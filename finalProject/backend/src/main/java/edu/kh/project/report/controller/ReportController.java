@@ -49,9 +49,16 @@ public class ReportController {
             int memberNo = extractMemberNo(authHeader);
 
             String targetType = (String) body.get("targetType");
-            int targetNo = ((Number) body.get("targetNo")).intValue();
             String reportType = (String) body.get("reportType");
             String detailReason = (String) body.get("detailReason");
+
+            if (targetType == null || body.get("targetNo") == null || reportType == null) {
+                response.put("success", false);
+                response.put("message", "필수 항목을 입력해주세요.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            int targetNo = ((Number) body.get("targetNo")).intValue();
 
             // 중복 신고 체크
             if (reportService.checkReport(targetType, targetNo, memberNo)) {

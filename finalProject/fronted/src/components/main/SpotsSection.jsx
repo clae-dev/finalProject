@@ -1,11 +1,13 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useActiveSpots } from '../../api/spot/useSpot';
 
-const spots = [
-  { id: 1, title: '월정리 해변', desc: '에메랄드빛 투명한 바다', image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800', tag: '🔥 인기' },
-  { id: 2, title: '협재해수욕장', desc: '새하얀 모래와 옥빛 바다', image: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600', tag: '🏖 해변' },
-  { id: 3, title: '성산일출봉', desc: '장엄한 일출 명소', image: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=600', tag: '🌅 일출' },
-  { id: 4, title: '우도', desc: '섬 속의 작은 섬', image: 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=600', tag: '🚲 우도' },
+const DEFAULT_SPOTS = [
+  { spotNo: 1, spotTitle: '월정리 해변', spotDesc: '에메랄드빛 투명한 바다', spotLocation: '제주시 구좌읍 월정리', spotImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800', spotTag: '🔥 인기', spotSize: 'large' },
+  { spotNo: 2, spotTitle: '협재해수욕장', spotDesc: '새하얀 모래와 옥빛 바다', spotLocation: '제주시 한림읍 협재리', spotImage: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600', spotTag: '🏖 해변', spotSize: 'small' },
+  { spotNo: 3, spotTitle: '성산일출봉', spotDesc: '장엄한 일출 명소', spotLocation: '서귀포시 성산읍', spotImage: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=600', spotTag: '🌅 일출', spotSize: 'small' },
+  { spotNo: 4, spotTitle: '우도', spotDesc: '섬 속의 작은 섬', spotLocation: '제주시 우도면', spotImage: 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=600', spotTag: '🚲 우도', spotSize: 'small' },
+  { spotNo: 5, spotTitle: '한라산 백록담', spotDesc: '제주의 지붕, 신비로운 분화구', spotLocation: '제주시 해안동', spotImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600', spotTag: '🌴 자연', spotSize: 'small' },
 ];
 
 const containerVariants = { hidden: {}, visible: { transition: { staggerChildren: 0.15 } } };
@@ -227,7 +229,123 @@ function PalmTree() {
   );
 }
 
+/* ─── 상세 모달 ─── */
+function SpotDetailModal({ spot, onClose }) {
+  if (!spot) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.9, y: 30 }}
+          transition={{ type: 'spring', duration: 0.5 }}
+          onClick={(e) => e.stopPropagation()}
+          className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden"
+        >
+          {/* 닫기 버튼 */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-black/30 backdrop-blur-md rounded-full text-white hover:bg-black/50 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+
+          {/* 이미지 */}
+          <div className="relative h-72 sm:h-80">
+            <img
+              src={spot.spotImage}
+              alt={spot.spotTitle}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            {/* 태그 */}
+            <div className="absolute top-4 left-4">
+              <span className="px-4 py-2 bg-white/95 backdrop-blur-sm rounded-full text-sm font-bold text-slate-700 shadow-lg border border-white/60">
+                {spot.spotTag}
+              </span>
+            </div>
+            {/* 제목 오버레이 */}
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <h3
+                className="text-3xl md:text-4xl font-black text-white drop-shadow-lg"
+                style={{ fontFamily: "'GmarketSans', sans-serif" }}
+              >
+                {spot.spotTitle}
+              </h3>
+            </div>
+          </div>
+
+          {/* 상세 정보 */}
+          <div className="p-6 sm:p-8 space-y-5">
+            {/* 설명 */}
+            <p
+              className="text-slate-600 text-base leading-relaxed"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              {spot.spotDesc || '제주도의 아름다운 명소입니다.'}
+            </p>
+
+            {/* 정보 카드들 */}
+            <div className="grid grid-cols-2 gap-3">
+              {spot.spotLocation && (
+                <div className="flex items-center gap-3 p-4 bg-sky-50/80 rounded-2xl">
+                  <div className="w-10 h-10 flex items-center justify-center bg-sky-100 rounded-xl">
+                    <svg className="w-5 h-5 text-sky-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-slate-400 font-medium">위치</p>
+                    <p className="text-sm text-slate-700 font-bold" style={{ fontFamily: "'Pretendard', sans-serif" }}>{spot.spotLocation}</p>
+                  </div>
+                </div>
+              )}
+              <div className="flex items-center gap-3 p-4 bg-amber-50/80 rounded-2xl">
+                <div className="w-10 h-10 flex items-center justify-center bg-amber-100 rounded-xl">
+                  <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>
+                </div>
+                <div>
+                  <p className="text-[11px] text-slate-400 font-medium">카테고리</p>
+                  <p className="text-sm text-slate-700 font-bold" style={{ fontFamily: "'Pretendard', sans-serif" }}>{spot.spotTag}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* 추천 문구 */}
+            <div className="p-4 bg-gradient-to-r from-sky-50 to-cyan-50 rounded-2xl border border-sky-100/50">
+              <div className="flex items-start gap-3">
+                <span className="text-xl mt-0.5">💡</span>
+                <div>
+                  <p className="text-sm font-bold text-sky-700 mb-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>혼디 추천</p>
+                  <p className="text-sm text-slate-500 leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                    혼자 여행하기 좋은 명소예요. 여유롭게 산책하며 제주의 자연을 느껴보세요.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 export default function SpotsSection() {
+  const { data } = useActiveSpots();
+  const [selectedSpot, setSelectedSpot] = useState(null);
+
+  const allSpots = (data?.success && data.data?.length > 0)
+    ? data.data
+    : DEFAULT_SPOTS;
+  // 최대 5개만 표시
+  const spots = allSpots.slice(0, 5);
+
   return (
     <section className="relative pt-16 pb-72 overflow-hidden">
       {/* 하늘 배경 그라데이션 */}
@@ -333,30 +451,36 @@ export default function SpotsSection() {
           viewport={{ once: true, margin: '-60px' }}
           className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5"
         >
-          {spots.map((spot, idx) => (
-            <motion.div key={spot.id} variants={cardVariants}
-              whileHover={{ y: -8, transition: { duration: 0.3 } }}
-              className={`group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg shadow-sky-100/50 hover:shadow-2xl hover:shadow-sky-200/60 transition-shadow duration-500 ${idx === 0 ? 'col-span-2 row-span-2' : ''}`}
-            >
-              <div className={`relative ${idx === 0 ? 'h-full min-h-[360px]' : 'aspect-[3/4]'}`}>
-                <img src={spot.image} alt={spot.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[800ms] ease-out" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent group-hover:from-slate-900/90 transition-all duration-500" />
-                <div className="absolute top-4 left-4">
-                  <span className="px-3.5 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-xs font-bold text-slate-700 shadow-lg border border-white/60">{spot.tag}</span>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <h3 className={`font-black text-white drop-shadow-lg mb-1.5 ${idx === 0 ? 'text-3xl md:text-4xl' : 'text-xl'}`} style={{ fontFamily: "'GmarketSans', sans-serif" }}>{spot.title}</h3>
-                  <p className={`text-white/80 drop-shadow font-medium ${idx === 0 ? 'text-base' : 'text-sm'}`} style={{ fontFamily: "'Pretendard', sans-serif" }}>{spot.desc}</p>
-                  <div className="mt-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                    <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold text-white border border-white/30">
-                      자세히 보기
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-                    </span>
+          {spots.map((spot, idx) => {
+            const isLarge = spot.spotSize === 'large' || (spot.spotSize == null && idx === 0);
+            return (
+              <motion.div key={spot.spotNo} variants={cardVariants}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                className={`group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg shadow-sky-100/50 hover:shadow-2xl hover:shadow-sky-200/60 transition-shadow duration-500 ${isLarge ? 'col-span-2 row-span-2' : ''}`}
+              >
+                <div className={`relative ${isLarge ? 'h-full min-h-[360px]' : 'aspect-[3/4]'}`}>
+                  <img src={spot.spotImage} alt={spot.spotTitle} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[800ms] ease-out" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent group-hover:from-slate-900/90 transition-all duration-500" />
+                  <div className="absolute top-4 left-4">
+                    <span className="px-3.5 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-xs font-bold text-slate-700 shadow-lg border border-white/60">{spot.spotTag}</span>
+                  </div>
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <h3 className={`font-black text-white drop-shadow-lg mb-1.5 ${isLarge ? 'text-3xl md:text-4xl' : 'text-xl'}`} style={{ fontFamily: "'GmarketSans', sans-serif" }}>{spot.spotTitle}</h3>
+                    <p className={`text-white/80 drop-shadow font-medium ${isLarge ? 'text-base' : 'text-sm'}`} style={{ fontFamily: "'Pretendard', sans-serif" }}>{spot.spotDesc}</p>
+                    <div className="mt-4 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                      <button
+                        onClick={() => setSelectedSpot(spot)}
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full text-sm font-semibold text-white border border-white/30 hover:bg-white/30 transition-colors"
+                      >
+                        자세히 보기
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
 
@@ -548,6 +672,11 @@ export default function SpotsSection() {
           </g>
         </svg>
       </motion.div>
+
+      {/* 상세 모달 */}
+      {selectedSpot && (
+        <SpotDetailModal spot={selectedSpot} onClose={() => setSelectedSpot(null)} />
+      )}
     </section>
   );
 }
