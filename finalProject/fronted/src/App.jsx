@@ -32,6 +32,9 @@ import FreeboardWrite from './pages/freeboard/FreeboardWrite';
 import Activities from './pages/activity/Activities';
 import ActivityDetail from './pages/activity/ActivityDetail';
 import ActivityWrite from './pages/activity/ActivityWrite';
+import Flights from './pages/flight/Flights';
+import PrivacyPolicy from './pages/privacy/PrivacyPolicy';
+import TermsOfService from './pages/terms/TermsOfService';
 import AiChatBubble from './components/ai/AiChatBubble';
 import WeatherWidget from './components/main/WeatherSection';
 
@@ -59,11 +62,14 @@ function AnimatedRoutes() {
         <Route path="/freeboard/write" element={<PageTransition><FreeboardWrite /></PageTransition>} />
         <Route path="/freeboard/:boardNo" element={<PageTransition><FreeboardDetail /></PageTransition>} />
         <Route path="/activities" element={<PageTransition><Activities /></PageTransition>} />
+        <Route path="/flights" element={<PageTransition><Flights /></PageTransition>} />
         <Route path="/activities/write" element={<PageTransition><ActivityWrite /></PageTransition>} />
         <Route path="/activities/:boardNo" element={<PageTransition><ActivityDetail /></PageTransition>} />
         <Route path="/faq" element={<PageTransition><FaqPage /></PageTransition>} />
         <Route path="/notices" element={<PageTransition><Notices /></PageTransition>} />
         <Route path="/notices/:boardNo" element={<PageTransition><NoticeDetail /></PageTransition>} />
+        <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
+        <Route path="/terms" element={<PageTransition><TermsOfService /></PageTransition>} />
         <Route path="/admin" element={<PageTransition><AdminPage /></PageTransition>} />
         <Route path="/error/500" element={<PageTransition><ServerError /></PageTransition>} />
         <Route path="/error/403" element={<PageTransition><Forbidden /></PageTransition>} />

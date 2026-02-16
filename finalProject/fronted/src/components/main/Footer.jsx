@@ -7,6 +7,7 @@ const serviceLinks = [
   { name: '동행찾기', path: '/companions' },
   { name: '여행후기', path: '/reviews' },
   { name: '행사/액티비티', path: '/activities' },
+  { name: '항공권', path: '/flights' },
 ];
 
 const communityLinks = [
@@ -18,8 +19,8 @@ const communityLinks = [
 const supportLinks = [
   { name: '자주 묻는 질문', path: '/faq' },
   { name: '문의하기', path: '#' },
-  { name: '이용약관', path: '#' },
-  { name: '개인정보처리방침', path: '#' },
+  { name: '이용약관', path: '/terms' },
+  { name: '개인정보처리방침', path: '/privacy' },
 ];
 
 export default function Footer() {
