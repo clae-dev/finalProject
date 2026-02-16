@@ -16,7 +16,7 @@ export default function Header() {
     { name: '게스트하우스', path: '/accommodations' },
     { name: '동행', path: '/companions' },
     { name: '후기', path: '/reviews' },
-    { name: '맛집', path: '/restaurants' },
+    { name: '행사', path: '/activities' },
     { name: '고객지원', path: '/faq' },
   ];
 

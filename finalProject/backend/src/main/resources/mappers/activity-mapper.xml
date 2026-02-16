@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.kh.project.activity.mapper.ActivityMapper">
+
+    <!-- 게시글 ResultMap -->
+    <resultMap id="activityResultMap" type="edu.kh.project.activity.dto.ActivityDTO">
+        <id property="boardNo"         column="BOARD_NO" />
+        <result property="boardTitle"     column="BOARD_TITLE" />
+        <result property="boardContent"   column="BOARD_CONTENT" />
+        <result property="readCount"      column="READ_COUNT" />
+        <result property="boardDelFl"     column="BOARD_DEL_FL" />
+        <result property="memberNo"       column="MEMBER_NO" />
+        <result property="boardTypeNo"    column="BOARD_TYPE_NO" />
+        <result property="createdAt"      column="CREATED_AT" />
+        <result property="updatedAt"      column="UPDATED_AT" />
+        <result property="memberNickname" column="MEMBER_NICKNAME" />
+        <result property="memberProfile"  column="MEMBER_PROFILE" />
+        <result property="commentCount"   column="COMMENT_COUNT" />
+        <result property="likeCount"      column="LIKE_COUNT" />
+        <result property="isLiked"        column="IS_LIKED" />
+        <result property="imageUrls"      column="IMAGE_URLS" />
+    </resultMap>
+
+    <!-- 댓글 ResultMap -->
+    <resultMap id="commentResultMap" type="edu.kh.project.freeboard.dto.CommentDTO">
+        <id property="commentNo"        column="COMMENT_NO" />
+        <result property="boardNo"        column="BOARD_NO" />
+        <result property="memberNo"       column="MEMBER_NO" />
+        <result property="parentCommentNo" column="PARENT_COMMENT_NO" />
+        <result property="content"        column="CONTENT" />
+        <result property="status"         column="STATUS" />
+        <result property="createdAt"      column="CREATED_AT" />
+        <result property="memberNickname" column="MEMBER_NICKNAME" />
+        <result property="memberProfile"  column="MEMBER_PROFILE" />
+    </resultMap>
+
+    <!-- 게시글 목록 (페이징 + 검색) -->
+    <select id="selectActivityList" resultMap="activityResultMap">
+        SELECT * FROM (
+            SELECT
+                B.BOARD_NO,
+                B.TITLE AS BOARD_TITLE,
+                B.CONTENT AS BOARD_CONTENT,
+                B.VIEW_COUNT AS READ_COUNT,
+                TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
+                M.NICKNAME AS MEMBER_NICKNAME,
+                M.PROFILE_IMAGE AS MEMBER_PROFILE,
+                (SELECT COUNT(*) FROM COMMENT_TBL C WHERE C.BOARD_NO = B.BOARD_NO AND C.STATUS = 'A') AS COMMENT_COUNT,
+                (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.BOARD_NO = B.BOARD_NO) AS LIKE_COUNT,
+                (SELECT MIN(BI.IMAGE_URL) FROM BOARD_IMAGE BI WHERE BI.BOARD_NO = B.BOARD_NO AND BI.IMAGE_ORDER = 0) AS IMAGE_URLS,
+                ROW_NUMBER() OVER (ORDER BY B.BOARD_NO DESC) AS RN
+            FROM BOARD B
+            JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
+            WHERE B.BOARD_CODE = 'ACTIVITY'
+              AND B.STATUS = 'A'
+            <if test="search != null and search != ''">
+                AND (B.TITLE LIKE '%' || #{search} || '%'
+                     OR B.CONTENT LIKE '%' || #{search} || '%')
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 게시글 총 개수 -->
+    <select id="selectActivityCount" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARD B
+        WHERE B.BOARD_CODE = 'ACTIVITY'
+          AND B.STATUS = 'A'
+        <if test="search != null and search != ''">
+            AND (B.TITLE LIKE '%' || #{search} || '%'
+                 OR B.CONTENT LIKE '%' || #{search} || '%')
+        </if>
+    </select>
+
+    <!-- 게시글 상세 조회 -->
+    <select id="selectActivityDetail" resultMap="activityResultMap">
+        SELECT
+            B.BOARD_NO,
+            B.TITLE AS BOARD_TITLE,
+            B.CONTENT AS BOARD_CONTENT,
+            B.VIEW_COUNT AS READ_COUNT,
+            B.STATUS AS BOARD_DEL_FL,
+            B.MEMBER_NO,
+            TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
+            TO_CHAR(B.UPDATED_AT, 'YYYY-MM-DD HH24:MI') AS UPDATED_AT,
+            M.NICKNAME AS MEMBER_NICKNAME,
+            M.PROFILE_IMAGE AS MEMBER_PROFILE,
+            (SELECT COUNT(*) FROM COMMENT_TBL C WHERE C.BOARD_NO = B.BOARD_NO AND C.STATUS = 'A') AS COMMENT_COUNT,
+            (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.BOARD_NO = B.BOARD_NO) AS LIKE_COUNT,
+            <if test="memberNo != 0">
+                (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.BOARD_NO = B.BOARD_NO AND BL.MEMBER_NO = #{memberNo}) AS IS_LIKED,
+            </if>
+            <if test="memberNo == 0">
+                0 AS IS_LIKED,
+            </if>
+            (SELECT LISTAGG(BI.IMAGE_URL, ',') WITHIN GROUP (ORDER BY BI.IMAGE_ORDER)
+             FROM BOARD_IMAGE BI WHERE BI.BOARD_NO = B.BOARD_NO) AS IMAGE_URLS
+        FROM BOARD B
+        JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
+        WHERE B.BOARD_NO = #{boardNo}
+          AND B.BOARD_CODE = 'ACTIVITY'
+          AND B.STATUS = 'A'
+    </select>
+
+    <!-- 조회수 증가 -->
+    <update id="updateReadCount">
+        UPDATE BOARD
+        SET VIEW_COUNT = VIEW_COUNT + 1
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
+    <!-- 게시글 작성 -->
+    <insert id="insertActivity">
+        <selectKey keyProperty="boardNo" resultType="int" order="AFTER">
+            SELECT SEQ_BOARD_NO.CURRVAL FROM DUAL
+        </selectKey>
+        INSERT INTO BOARD (BOARD_NO, BOARD_CODE, TITLE, CONTENT, MEMBER_NO)
+        VALUES (
+            SEQ_BOARD_NO.NEXTVAL,
+            'ACTIVITY',
+            #{boardTitle},
+            #{boardContent},
+            #{memberNo}
+        )
+    </insert>
+
+    <!-- 게시글 이미지 삽입 -->
+    <insert id="insertBoardImage">
+        INSERT INTO BOARD_IMAGE (IMAGE_NO, BOARD_NO, IMAGE_URL, IMAGE_ORDER)
+        VALUES (SEQ_BOARD_IMG_NO.NEXTVAL, #{boardNo}, #{imageUrl}, #{imageOrder})
+    </insert>
+
+    <!-- 게시글 수정 (작성자만) -->
+    <update id="updateActivity">
+        UPDATE BOARD
+        SET TITLE = #{boardTitle},
+            CONTENT = #{boardContent},
+            UPDATED_AT = SYSDATE
+        WHERE BOARD_NO = #{boardNo}
+          AND MEMBER_NO = #{memberNo}
+    </update>
+
+    <!-- 게시글 이미지 전체 삭제 -->
+    <delete id="deleteBoardImages">
+        DELETE FROM BOARD_IMAGE
+        WHERE BOARD_NO = #{boardNo}
+    </delete>
+
+    <!-- 게시글 소프트 삭제 (작성자만) -->
+    <update id="softDeleteActivity">
+        UPDATE BOARD
+        SET STATUS = 'D', UPDATED_AT = SYSDATE
+        WHERE BOARD_NO = #{boardNo}
+          AND MEMBER_NO = #{memberNo}
+    </update>
+
+    <!-- 게시글 소프트 삭제 (관리자) -->
+    <update id="adminSoftDeleteActivity">
+        UPDATE BOARD
+        SET STATUS = 'D', UPDATED_AT = SYSDATE
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
+    <!-- 부모 댓글 목록 -->
+    <select id="selectParentComments" resultMap="commentResultMap">
+        SELECT
+            C.COMMENT_NO,
+            C.BOARD_NO,
+            C.MEMBER_NO,
+            C.PARENT_COMMENT_NO,
+            C.CONTENT,
+            C.STATUS,
+            TO_CHAR(C.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
+            M.NICKNAME AS MEMBER_NICKNAME,
+            M.PROFILE_IMAGE AS MEMBER_PROFILE
+        FROM COMMENT_TBL C
+        JOIN MEMBER M ON C.MEMBER_NO = M.MEMBER_NO
+        WHERE C.BOARD_NO = #{boardNo}
+          AND C.PARENT_COMMENT_NO IS NULL
+          AND C.STATUS = 'A'
+        ORDER BY C.COMMENT_NO ASC
+    </select>
+
+    <!-- 대댓글 목록 -->
+    <select id="selectChildComments" resultMap="commentResultMap">
+        SELECT
+            C.COMMENT_NO,
+            C.BOARD_NO,
+            C.MEMBER_NO,
+            C.PARENT_COMMENT_NO,
+            C.CONTENT,
+            C.STATUS,
+            TO_CHAR(C.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
+            M.NICKNAME AS MEMBER_NICKNAME,
+            M.PROFILE_IMAGE AS MEMBER_PROFILE
+        FROM COMMENT_TBL C
+        JOIN MEMBER M ON C.MEMBER_NO = M.MEMBER_NO
+        WHERE C.PARENT_COMMENT_NO = #{parentCommentNo}
+          AND C.STATUS = 'A'
+        ORDER BY C.COMMENT_NO ASC
+    </select>
+
+    <!-- 댓글 작성 -->
+    <insert id="insertComment">
+        INSERT INTO COMMENT_TBL (COMMENT_NO, BOARD_NO, MEMBER_NO, PARENT_COMMENT_NO, CONTENT)
+        VALUES (
+            SEQ_COMMENT_NO.NEXTVAL,
+            #{boardNo},
+            #{memberNo},
+            #{parentCommentNo},
+            #{content}
+        )
+    </insert>
+
+    <!-- 댓글 삭제 (작성자만, soft delete) -->
+    <update id="deleteComment">
+        UPDATE COMMENT_TBL
+        SET STATUS = 'D'
+        WHERE COMMENT_NO = #{commentNo}
+          AND MEMBER_NO = #{memberNo}
+    </update>
+
+    <!-- 좋아요 여부 확인 -->
+    <select id="selectLikeCheck" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARD_LIKE
+        WHERE BOARD_NO = #{boardNo}
+          AND MEMBER_NO = #{memberNo}
+    </select>
+
+    <!-- 좋아요 추가 -->
+    <insert id="insertLike">
+        INSERT INTO BOARD_LIKE (LIKE_NO, BOARD_NO, MEMBER_NO)
+        VALUES (SEQ_BOARD_LIKE_NO.NEXTVAL, #{boardNo}, #{memberNo})
+    </insert>
+
+    <!-- 좋아요 삭제 -->
+    <delete id="deleteLike">
+        DELETE FROM BOARD_LIKE
+        WHERE BOARD_NO = #{boardNo}
+          AND MEMBER_NO = #{memberNo}
+    </delete>
+
+    <!-- 좋아요 총 수 -->
+    <select id="selectLikeCount" resultType="int">
+        SELECT COUNT(*)
+        FROM BOARD_LIKE
+        WHERE BOARD_NO = #{boardNo}
+    </select>
+
+</mapper>
