@@ -10,7 +10,7 @@ import {
   deleteActivityComment,
   toggleActivityLike,
 } from './activityAPI';
-import { getEventList } from './eventAPI';
+import { getEventList, getLeisureList } from './eventAPI';
 
 /** 게시글 목록 */
 export const useActivityList = (page = 1, size = 9, search = '') => {
@@ -112,6 +112,15 @@ export const useEventList = (page = 1, size = 9) => {
   return useQuery({
     queryKey: ['events', page, size],
     queryFn: () => getEventList(page, size),
+    staleTime: 30 * 60 * 1000,
+  });
+};
+
+/** 공공 레포츠/액티비티 목록 (TourAPI) */
+export const useLeisureList = (page = 1, size = 9) => {
+  return useQuery({
+    queryKey: ['leisure', page, size],
+    queryFn: () => getLeisureList(page, size),
     staleTime: 30 * 60 * 1000,
   });
 };
