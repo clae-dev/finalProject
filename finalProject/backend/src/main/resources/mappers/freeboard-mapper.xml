@@ -157,6 +157,13 @@
           AND MEMBER_NO = #{memberNo}
     </update>
 
+    <!-- 게시글 소프트 삭제 (관리자) -->
+    <update id="adminSoftDeleteFreeBoard">
+        UPDATE BOARD
+        SET STATUS = 'D', UPDATED_AT = SYSDATE
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
     <!-- 부모 댓글 목록 -->
     <select id="selectParentComments" resultMap="commentResultMap">
         SELECT

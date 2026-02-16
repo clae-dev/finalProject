@@ -40,9 +40,12 @@ public interface FreeBoardMapper {
     /** 게시글 이미지 전체 삭제 */
     int deleteBoardImages(@Param("boardNo") int boardNo);
 
-    /** 게시글 소프트 삭제 */
+    /** 게시글 소프트 삭제 (작성자) */
     int softDeleteFreeBoard(@Param("boardNo") int boardNo,
                             @Param("memberNo") int memberNo);
+
+    /** 게시글 소프트 삭제 (관리자) */
+    int adminSoftDeleteFreeBoard(@Param("boardNo") int boardNo);
 
     /** 부모 댓글 목록 */
     List<CommentDTO> selectParentComments(@Param("boardNo") int boardNo);

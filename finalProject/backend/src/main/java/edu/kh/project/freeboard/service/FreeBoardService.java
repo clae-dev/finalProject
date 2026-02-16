@@ -27,8 +27,11 @@ public interface FreeBoardService {
     int updateFreeBoard(FreeBoardDTO board, List<MultipartFile> images,
                         String webPath, String folderPath);
 
-    /** 게시글 소프트 삭제 */
+    /** 게시글 소프트 삭제 (작성자) */
     int deleteFreeBoard(int boardNo, int memberNo);
+
+    /** 게시글 소프트 삭제 (관리자) */
+    int adminDeleteFreeBoard(int boardNo);
 
     /** 댓글 목록 (대댓글 포함) */
     List<CommentDTO> getCommentList(int boardNo);

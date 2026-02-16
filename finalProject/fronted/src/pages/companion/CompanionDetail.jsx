@@ -47,8 +47,8 @@ export default function CompanionDetail() {
   const companion = data?.success ? data.data : null;
   const joinList = data?.success ? (data.joinList || []) : [];
 
-  const isAuthor = user && companion && user.memberNo === companion.memberNo;
-  const myJoin = user ? joinList.find(j => j.memberNo === user.memberNo) : null;
+  const isAuthor = user && companion && Number(user.memberNo) === Number(companion.memberNo);
+  const myJoin = user ? joinList.find(j => Number(j.memberNo) === Number(user.memberNo)) : null;
   const hasJoined = !!myJoin && myJoin.status !== 'R';
 
   const tagList = companion?.tags ? companion.tags.split(',').map(t => t.trim()).filter(Boolean) : [];

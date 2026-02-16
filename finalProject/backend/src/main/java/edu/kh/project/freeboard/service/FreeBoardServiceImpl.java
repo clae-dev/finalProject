@@ -121,6 +121,11 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     }
 
     @Override
+    public int adminDeleteFreeBoard(int boardNo) {
+        return freeBoardMapper.adminSoftDeleteFreeBoard(boardNo);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<CommentDTO> getCommentList(int boardNo) {
         List<CommentDTO> parents = freeBoardMapper.selectParentComments(boardNo);

@@ -9,7 +9,7 @@ const fadeInUp = {
 
 export default function ProfileHero({ user, memberData, onEditProfile }) {
   const avatarUrl =
-    user.memberProfileImg ||
+    memberData?.memberProfileImg || user.memberProfileImg ||
     `https://api.dicebear.com/7.x/thumbs/svg?seed=${encodeURIComponent(
       user.memberNickname || 'user'
     )}&backgroundColor=0ea5e9,06b6d4&shapeColor=ffffff`;
