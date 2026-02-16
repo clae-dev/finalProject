@@ -10,7 +10,7 @@ const navItems = [
     name: '여행',
     type: 'dropdown',
     children: [
-      { name: '게스트하우스', path: '/accommodations', icon: <Hotel className="w-4 h-4" />, desc: '제주 숙소 검색' },
+      { name: '숙소', path: '/accommodations', icon: <Hotel className="w-4 h-4" />, desc: '제주 숙소 검색' },
       { name: '항공권', path: '/flights', icon: <Plane className="w-4 h-4" />, desc: '항공권 비교 예약' },
       { name: '이벤트', path: '/activities', icon: <CalendarDays className="w-4 h-4" />, desc: '행사 · 액티비티' },
     ],
