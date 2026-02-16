@@ -30,6 +30,7 @@ import Freeboards from './pages/freeboard/Freeboards';
 import FreeboardDetail from './pages/freeboard/FreeboardDetail';
 import FreeboardWrite from './pages/freeboard/FreeboardWrite';
 import AiChatBubble from './components/ai/AiChatBubble';
+import WeatherWidget from './components/main/WeatherSection';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -73,6 +74,7 @@ function App() {
         <BrowserRouter>
           <div className="min-h-screen bg-gradient-to-b from-sky-50 to-cyan-50">
             <AnimatedRoutes />
+            <WeatherWidget />
             <AiChatBubble />
           </div>
         </BrowserRouter>

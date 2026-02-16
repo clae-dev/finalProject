@@ -48,7 +48,7 @@ export default function ReviewDetail() {
 
   const review = data?.success ? data.data : null;
 
-  const isAuthor = user && review && user.memberNo === review.memberNo;
+  const isAuthor = user && review && Number(user.memberNo) === Number(review.memberNo);
 
   const contentImageList = review?.contentImages
     ? review.contentImages.split(',').map(s => s.trim()).filter(Boolean)

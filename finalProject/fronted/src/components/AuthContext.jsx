@@ -149,6 +149,26 @@ export const AuthProvider = ({ children }) => {
 
     setUser(userData);
     saveToken("userData", JSON.stringify(userData));
+
+    // DB에서 최신 프로필 정보 동기화 (프로필 이미지 등 누락 방지)
+    if (loginData.memberNo) {
+      axiosApi.get(`/api/member/${loginData.memberNo}`)
+        .then(response => {
+          if (response.data.success && response.data.data) {
+            const member = response.data.data;
+            const synced = {
+              ...userData,
+              memberProfileImg: member.memberProfileImg || userData.memberProfileImg,
+              memberNickname: member.memberNickname || userData.memberNickname,
+              memberPhone: member.memberPhone || userData.memberPhone || '',
+              memberIntro: member.memberIntro || userData.memberIntro || '',
+            };
+            setUser(synced);
+            saveToken("userData", JSON.stringify(synced));
+          }
+        })
+        .catch(() => { /* 동기화 실패 시 무시 - OAuth 데이터로 유지 */ });
+    }
   };
 
   // 로그아웃 처리 함수

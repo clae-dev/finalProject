@@ -46,6 +46,11 @@ public class FreeBoardController {
         return jwtUtil.getMemberNo(token);
     }
 
+    private String extractRole(String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+        return jwtUtil.getRole(token);
+    }
+
     /**
      * 게시글 목록 (페이징 + 검색)
      * GET /api/freeboards?page=1&size=9&search=키워드
@@ -199,7 +204,7 @@ public class FreeBoardController {
     }
 
     /**
-     * 게시글 삭제 (작성자만, soft delete)
+     * 게시글 삭제 (작성자 또는 관리자, soft delete)
      * DELETE /api/freeboards/{boardNo}
      */
     @DeleteMapping("/{boardNo}")
@@ -211,7 +216,15 @@ public class FreeBoardController {
 
         try {
             int memberNo = extractMemberNo(authHeader);
-            int result = freeBoardService.deleteFreeBoard(boardNo, memberNo);
+            String role = extractRole(authHeader);
+            boolean isAdmin = "A".equals(role);
+
+            int result;
+            if (isAdmin) {
+                result = freeBoardService.adminDeleteFreeBoard(boardNo);
+            } else {
+                result = freeBoardService.deleteFreeBoard(boardNo, memberNo);
+            }
 
             response.put("success", result > 0);
             response.put("message", result > 0 ? "삭제 완료" : "삭제 실패 (권한 없음)");

@@ -1,0 +1,154 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { Droplets, Wind, CloudRain, Navigation, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { getJejuWeather } from '../../api/weather/weatherAPI';
+
+const SKY_MAP = {
+  1: { text: '맑음', emoji: '☀️' },
+  3: { text: '구름많음', emoji: '⛅' },
+  4: { text: '흐림', emoji: '☁️' },
+};
+
+const PTY_MAP = {
+  1: { text: '비', emoji: '🌧️' },
+  2: { text: '비/눈', emoji: '🌨️' },
+  3: { text: '눈', emoji: '❄️' },
+  5: { text: '빗방울', emoji: '🌦️' },
+  6: { text: '빗방울눈날림', emoji: '🌨️' },
+  7: { text: '눈날림', emoji: '🌬️' },
+};
+
+const CITIES = [
+  { key: 'jeju', label: '제주시' },
+  { key: 'seogwipo', label: '서귀포시' },
+];
+
+function getWeatherDisplay(sky, ptyCode) {
+  if (ptyCode > 0 && PTY_MAP[ptyCode]) return PTY_MAP[ptyCode];
+  return SKY_MAP[sky] || SKY_MAP[1];
+}
+
+function windDirText(deg) {
+  const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  return dirs[Math.round(deg / 22.5) % 16];
+}
+
+export default function WeatherWidget() {
+  const [expanded, setExpanded] = useState(true);
+  const [city, setCity] = useState('jeju');
+
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['jejuWeather', city],
+    queryFn: () => getJejuWeather(city),
+    staleTime: 10 * 60 * 1000,
+    retry: 1,
+  });
+
+  if (isError || (!isLoading && !data?.success)) return null;
+
+  const w = data?.data;
+  const weather = w ? getWeatherDisplay(w.sky, w.ptyCode) : null;
+  const cityLabel = CITIES.find(c => c.key === city)?.label || '제주시';
+
+  return (
+    <motion.div
+      initial={{ x: -100, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 25, delay: 0.5 }}
+      className="fixed left-0 top-1/2 -translate-y-1/2 z-40"
+    >
+      <div className="flex items-stretch">
+        {/* 위젯 본체 */}
+        <AnimatePresence initial={false}>
+          {expanded && (
+            <motion.div
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: 'auto', opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="overflow-hidden"
+            >
+              <div className="w-52 bg-white/95 backdrop-blur-md rounded-r-2xl shadow-xl shadow-sky-200/40 border border-l-0 border-sky-100/80">
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-10">
+                    <Loader2 className="w-6 h-6 text-sky-400 animate-spin" />
+                  </div>
+                ) : w && (
+                  <>
+                    {/* 메인: 아이콘 + 온도 */}
+                    <div className="px-4 pt-4 pb-3 bg-gradient-to-br from-sky-500 to-cyan-500 rounded-tr-2xl">
+                      <div className="flex items-center gap-3">
+                        <span className="text-4xl">{weather.emoji}</span>
+                        <div>
+                          <p className="text-2xl font-black text-white leading-none" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+                            {w.temp}°
+                          </p>
+                          <p className="text-xs text-white/70 font-medium mt-1">{weather.text}</p>
+                        </div>
+                      </div>
+                      <p className="text-[10px] text-white/50 mt-2">{cityLabel} · {w.fcstTime.slice(0, 2)}시 예보</p>
+                    </div>
+
+                    {/* 도시 선택 탭 */}
+                    <div className="flex border-b border-sky-100/60">
+                      {CITIES.map(c => (
+                        <button
+                          key={c.key}
+                          onClick={() => setCity(c.key)}
+                          className={`flex-1 py-2 text-xs font-bold transition-colors ${
+                            city === c.key
+                              ? 'text-sky-600 bg-sky-50/80 border-b-2 border-sky-500'
+                              : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50/50'
+                          }`}
+                        >
+                          {c.label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* 세부 정보 */}
+                    <div className="px-3 py-3 space-y-1.5">
+                      <Row icon={<Droplets className="w-3.5 h-3.5 text-blue-400" />} label="습도" value={`${w.humidity}%`} />
+                      <Row icon={<Wind className="w-3.5 h-3.5 text-teal-400" />} label="풍속" value={`${w.windSpeed} m/s`} />
+                      <Row icon={<Navigation className="w-3.5 h-3.5 text-indigo-400" />} label="풍향" value={windDirText(w.windDir)} />
+                      <Row icon={<CloudRain className="w-3.5 h-3.5 text-sky-400" />} label="강수" value={w.rain > 0 ? `${w.rain}mm` : '없음'} />
+                    </div>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* 토글 탭 */}
+        <button
+          onClick={() => setExpanded(prev => !prev)}
+          className="flex items-center justify-center w-7 bg-white/95 backdrop-blur-md border border-l-0 border-sky-100/80 rounded-r-xl shadow-lg shadow-sky-200/30 hover:bg-sky-50 transition-colors self-center h-16"
+        >
+          {expanded ? (
+            <ChevronLeft className="w-4 h-4 text-sky-500" />
+          ) : (
+            <div className="flex flex-col items-center gap-1">
+              <span className="text-sm leading-none">{weather?.emoji || '🌤️'}</span>
+              <span className="text-[10px] font-bold text-slate-600">{w ? `${w.temp}°` : ''}</span>
+              <ChevronRight className="w-3 h-3 text-sky-400" />
+            </div>
+          )}
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+function Row({ icon, label, value }) {
+  return (
+    <div className="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-sky-50/60 transition-colors">
+      <div className="flex items-center gap-2">
+        {icon}
+        <span className="text-[11px] text-slate-400">{label}</span>
+      </div>
+      <span className="text-xs font-bold text-slate-700">{value}</span>
+    </div>
+  );
+}

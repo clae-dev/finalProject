@@ -87,6 +87,8 @@ public class OAuthController {
                             loginResponse.getMemberNickname() != null ? loginResponse.getMemberNickname() : "", StandardCharsets.UTF_8)
                     + "&memberEmail=" + URLEncoder.encode(
                             loginResponse.getMemberEmail() != null ? loginResponse.getMemberEmail() : "", StandardCharsets.UTF_8)
+                    + "&memberProfileImg=" + URLEncoder.encode(
+                            loginResponse.getMemberProfileImg() != null ? loginResponse.getMemberProfileImg() : "", StandardCharsets.UTF_8)
                     + "&loginType=kakao";
 
             log.info("카카오 로그인 성공 - memberNo: {}, 프론트엔드로 리다이렉트", loginResponse.getMemberNo());
@@ -140,6 +142,8 @@ public class OAuthController {
                             loginResponse.getMemberNickname() != null ? loginResponse.getMemberNickname() : "", StandardCharsets.UTF_8)
                     + "&memberEmail=" + URLEncoder.encode(
                             loginResponse.getMemberEmail() != null ? loginResponse.getMemberEmail() : "", StandardCharsets.UTF_8)
+                    + "&memberProfileImg=" + URLEncoder.encode(
+                            loginResponse.getMemberProfileImg() != null ? loginResponse.getMemberProfileImg() : "", StandardCharsets.UTF_8)
                     + "&loginType=naver";
 
             log.info("네이버 로그인 성공 - memberNo: {}, 프론트엔드로 리다이렉트", loginResponse.getMemberNo());
@@ -191,6 +195,8 @@ public class OAuthController {
                             loginResponse.getMemberNickname() != null ? loginResponse.getMemberNickname() : "", StandardCharsets.UTF_8)
                     + "&memberEmail=" + URLEncoder.encode(
                             loginResponse.getMemberEmail() != null ? loginResponse.getMemberEmail() : "", StandardCharsets.UTF_8)
+                    + "&memberProfileImg=" + URLEncoder.encode(
+                            loginResponse.getMemberProfileImg() != null ? loginResponse.getMemberProfileImg() : "", StandardCharsets.UTF_8)
                     + "&loginType=google";
 
             log.info("구글 로그인 성공 - memberNo: {}, 프론트엔드로 리다이렉트", loginResponse.getMemberNo());

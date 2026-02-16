@@ -44,7 +44,9 @@ export default function FreeboardDetail() {
   const board = data?.success ? data.data : null;
   const comments = commentData?.success ? (commentData.list || []) : [];
 
-  const isAuthor = user && board && user.memberNo === board.memberNo;
+  const isAuthor = user && board && Number(user.memberNo) === Number(board.memberNo);
+  const isAdmin = user && user.memberRole === 'A';
+  const canDelete = isAuthor || isAdmin;
 
   const handleDelete = async () => {
     if (!window.confirm('정말 삭제하시겠습니까?')) return;
@@ -134,7 +136,7 @@ export default function FreeboardDetail() {
     <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-cyan-50">
       <Header />
 
-      <div className="max-w-4xl mx-auto px-5 py-16">
+      <div className="max-w-4xl mx-auto px-5 pt-24 pb-16">
         {/* 뒤로가기 */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
@@ -187,17 +189,19 @@ export default function FreeboardDetail() {
                 </div>
               </div>
 
-              {isAuthor && (
+              {(isAuthor || isAdmin) && (
                 <div className="flex items-center gap-2">
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => navigate(`/freeboard/write?edit=${boardNo}`)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-sky-50 text-sky-600 rounded-xl text-sm font-semibold hover:bg-sky-100 transition-colors border border-sky-100"
-                  >
-                    <Edit3 className="w-3.5 h-3.5" />
-                    수정
-                  </motion.button>
+                  {isAuthor && (
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => navigate(`/freeboard/write?edit=${boardNo}`)}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-sky-50 text-sky-600 rounded-xl text-sm font-semibold hover:bg-sky-100 transition-colors border border-sky-100"
+                    >
+                      <Edit3 className="w-3.5 h-3.5" />
+                      수정
+                    </motion.button>
+                  )}
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -363,7 +367,7 @@ export default function FreeboardDetail() {
                               답글
                             </button>
                           )}
-                          {user && user.memberNo === comment.memberNo && (
+                          {user && Number(user.memberNo) === Number(comment.memberNo) && (
                             <button
                               onClick={() => handleDeleteComment(comment.commentNo)}
                               className="text-xs text-slate-400 hover:text-red-500 font-semibold transition-colors"
@@ -423,7 +427,7 @@ export default function FreeboardDetail() {
                               <p className="text-xs text-slate-500 leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
                                 {reply.content}
                               </p>
-                              {user && user.memberNo === reply.memberNo && (
+                              {user && Number(user.memberNo) === Number(reply.memberNo) && (
                                 <button
                                   onClick={() => handleDeleteComment(reply.commentNo)}
                                   className="text-[10px] text-slate-400 hover:text-red-500 font-semibold mt-1 transition-colors"
