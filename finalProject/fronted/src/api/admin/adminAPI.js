@@ -67,6 +67,28 @@ export const updateAccommodationStatus = async (accommodationNo, status) => {
   return response.data;
 };
 
+// 숙소 추가 (FormData multipart)
+export const createAccommodation = async (formData) => {
+  const response = await axiosApi.post("/api/admin/accommodations", formData, {
+    headers: { "Content-Type": "multipart/form-data" }
+  });
+  return response.data;
+};
+
+// 숙소 수정 (FormData multipart — POST로 처리)
+export const updateAccommodation = async (accommodationNo, formData) => {
+  const response = await axiosApi.post(`/api/admin/accommodations/${accommodationNo}/update`, formData, {
+    headers: { "Content-Type": "multipart/form-data" }
+  });
+  return response.data;
+};
+
+// 숙소 삭제
+export const deleteAccommodation = async (accommodationNo) => {
+  const response = await axiosApi.delete(`/api/admin/accommodations/${accommodationNo}`);
+  return response.data;
+};
+
 // 신고 목록
 export const getAdminReports = async (page = 1, size = 10, status = '', targetType = '') => {
   const params = { page, size };

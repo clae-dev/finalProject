@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAccommodations } from '../../api/accommodation/useAccommodation';
-import { Loader2, MapPin, Heart } from 'lucide-react';
+import { useCreateAccommodation } from '../../api/admin/useAdmin';
+import AccommodationFormModal from '../accommodation/AccommodationFormModal';
+import { AuthContext } from '../AuthContext';
+import { Loader2, MapPin, Heart, Plus } from 'lucide-react';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500';
 
@@ -191,6 +194,11 @@ function Mountains() {
 export default function AccommodationsSection() {
   const navigate = useNavigate();
   const [slide, setSlide] = useState(0);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+
+  const { user } = useContext(AuthContext);
+  const isAdmin = user && user.memberRole === 'A';
+  const createAccom = useCreateAccommodation();
 
   const { data, isLoading } = useAccommodations(1, 9);
   const accommodations = data?.success ? (data.list || []) : [];
@@ -260,7 +268,17 @@ export default function AccommodationsSection() {
             </h2>
             <p className="text-slate-400 mt-4 text-lg" style={{ fontFamily: "'Pretendard', sans-serif" }}>파도 소리와 함께,<br />나만의 시간</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
+            {isAdmin && (
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                onClick={() => setAddModalOpen(true)}
+                className="flex items-center gap-1.5 px-5 py-3 bg-gradient-to-r from-emerald-400 to-teal-400 text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all border border-white/30"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+              >
+                <Plus className="w-4 h-4" />
+                숙소 추가
+              </motion.button>
+            )}
             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
               onClick={prevSlide} disabled={slide === 0}
               className="w-12 h-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg shadow-amber-100/60 flex items-center justify-center text-slate-400 hover:text-amber-500 hover:shadow-xl disabled:opacity-30 disabled:cursor-not-allowed transition-all border border-white/80"
@@ -465,6 +483,27 @@ export default function AccommodationsSection() {
           ))}
         </svg>
       </motion.div>
+
+      {/* 관리자 숙소 추가 모달 */}
+      {isAdmin && (
+        <AccommodationFormModal
+          isOpen={addModalOpen}
+          onClose={() => setAddModalOpen(false)}
+          editTarget={null}
+          isPending={createAccom.isPending}
+          onSubmit={(formData) => {
+            createAccom.mutate(formData, {
+              onSuccess: (res) => {
+                if (res?.success) {
+                  setAddModalOpen(false);
+                } else {
+                  alert(res?.message || '추가 실패');
+                }
+              },
+            });
+          }}
+        />
+      )}
     </section>
   );
 }

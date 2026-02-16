@@ -60,6 +60,12 @@ public interface AdminMapper {
             @Param("accommodationNo") int accommodationNo,
             @Param("status") String status);
 
+    int insertAccommodation(Map<String, Object> params);
+
+    int updateAccommodation(Map<String, Object> params);
+
+    int deleteAccommodation(@Param("accommodationNo") int accommodationNo);
+
     // 신고 관리
     List<Map<String, Object>> selectAdminReportList(
             @Param("offset") int offset,

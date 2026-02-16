@@ -5,9 +5,12 @@ import edu.kh.project.common.util.JwtUtil;
 import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,10 +20,17 @@ import java.util.Map;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Slf4j
+@PropertySource("classpath:/config.properties")
 public class AdminController {
 
     private final AdminService adminService;
     private final JwtUtil jwtUtil;
+
+    @Value("${accommodation.image.web-path}")
+    private String accommodationWebPath;
+
+    @Value("${accommodation.image.folder-path}")
+    private String accommodationFolderPath;
 
     /**
      * Authorization 헤더에서 memberNo 추출 + 관리자 권한 검증
@@ -318,6 +328,171 @@ public class AdminController {
             log.error("숙소 목록 조회 실패", e);
             response.put("success", false);
             response.put("message", "숙소 목록 조회 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // 숙소 수동 추가 (multipart)
+    @PostMapping("/accommodations")
+    public ResponseEntity<Map<String, Object>> createAccommodation(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam("name") String name,
+            @RequestParam("address") String address,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "accommodationType", required = false) String accommodationType,
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam(value = "priceMin", required = false) String priceMin,
+            @RequestParam(value = "priceMax", required = false) String priceMax,
+            @RequestParam(value = "checkInTime", required = false) String checkInTime,
+            @RequestParam(value = "checkOutTime", required = false) String checkOutTime,
+            @RequestParam(value = "facilities", required = false) String facilities,
+            @RequestParam(value = "thumbnailUrl", required = false) String thumbnailUrl,
+            @RequestParam(value = "latitude", required = false) String latitude,
+            @RequestParam(value = "longitude", required = false) String longitude,
+            @RequestParam(value = "recommendationReason", required = false) String recommendationReason,
+            @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail,
+            @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            extractAdminMemberNo(authHeader);
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("name", name);
+            params.put("address", address);
+            params.put("phone", phone);
+            params.put("accommodationType", accommodationType);
+            params.put("region", region);
+            params.put("priceMin", (priceMin != null && !priceMin.isEmpty()) ? priceMin : null);
+            params.put("priceMax", (priceMax != null && !priceMax.isEmpty()) ? priceMax : null);
+            params.put("checkInTime", checkInTime);
+            params.put("checkOutTime", checkOutTime);
+            params.put("facilities", facilities);
+            params.put("thumbnailUrl", thumbnailUrl);
+            params.put("latitude", (latitude != null && !latitude.isEmpty()) ? latitude : null);
+            params.put("longitude", (longitude != null && !longitude.isEmpty()) ? longitude : null);
+            params.put("recommendationReason", recommendationReason);
+
+            int result = adminService.insertAccommodationWithImages(
+                    params, thumbnail, images, accommodationWebPath, accommodationFolderPath);
+
+            response.put("success", result > 0);
+            response.put("message", result > 0 ? "숙소 추가 완료" : "숙소 추가 실패");
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("숙소 추가 실패", e);
+            response.put("success", false);
+            response.put("message", "숙소 추가 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // 숙소 정보 수정 (multipart — POST로 처리)
+    @PostMapping("/accommodations/{no}/update")
+    public ResponseEntity<Map<String, Object>> updateAccommodation(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("no") int accommodationNo,
+            @RequestParam("name") String name,
+            @RequestParam("address") String address,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "accommodationType", required = false) String accommodationType,
+            @RequestParam(value = "region", required = false) String region,
+            @RequestParam(value = "priceMin", required = false) String priceMin,
+            @RequestParam(value = "priceMax", required = false) String priceMax,
+            @RequestParam(value = "checkInTime", required = false) String checkInTime,
+            @RequestParam(value = "checkOutTime", required = false) String checkOutTime,
+            @RequestParam(value = "facilities", required = false) String facilities,
+            @RequestParam(value = "thumbnailUrl", required = false) String thumbnailUrl,
+            @RequestParam(value = "latitude", required = false) String latitude,
+            @RequestParam(value = "longitude", required = false) String longitude,
+            @RequestParam(value = "recommendationReason", required = false) String recommendationReason,
+            @RequestParam(value = "keepExistingImages", required = false, defaultValue = "true") boolean keepExistingImages,
+            @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail,
+            @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            extractAdminMemberNo(authHeader);
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("accommodationNo", accommodationNo);
+            params.put("name", name);
+            params.put("address", address);
+            params.put("phone", phone);
+            params.put("accommodationType", accommodationType);
+            params.put("region", region);
+            params.put("priceMin", (priceMin != null && !priceMin.isEmpty()) ? priceMin : null);
+            params.put("priceMax", (priceMax != null && !priceMax.isEmpty()) ? priceMax : null);
+            params.put("checkInTime", checkInTime);
+            params.put("checkOutTime", checkOutTime);
+            params.put("facilities", facilities);
+            params.put("thumbnailUrl", thumbnailUrl);
+            params.put("latitude", (latitude != null && !latitude.isEmpty()) ? latitude : null);
+            params.put("longitude", (longitude != null && !longitude.isEmpty()) ? longitude : null);
+            params.put("recommendationReason", recommendationReason);
+
+            int result = adminService.updateAccommodationWithImages(
+                    params, thumbnail, images, keepExistingImages, accommodationWebPath, accommodationFolderPath);
+
+            response.put("success", result > 0);
+            response.put("message", result > 0 ? "숙소 수정 완료" : "숙소 수정 실패");
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("숙소 수정 실패", e);
+            response.put("success", false);
+            response.put("message", "숙소 수정 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // 숙소 삭제 (소프트)
+    @DeleteMapping("/accommodations/{no}")
+    public ResponseEntity<Map<String, Object>> deleteAccommodation(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("no") int accommodationNo) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            extractAdminMemberNo(authHeader);
+            int result = adminService.deleteAccommodation(accommodationNo);
+
+            response.put("success", result > 0);
+            response.put("message", result > 0 ? "삭제 완료" : "삭제 실패");
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("숙소 삭제 실패", e);
+            response.put("success", false);
+            response.put("message", "숙소 삭제 중 오류가 발생했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

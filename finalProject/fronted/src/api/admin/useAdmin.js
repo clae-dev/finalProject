@@ -9,6 +9,9 @@ import {
   deleteAdminReview,
   getAdminAccommodations,
   updateAccommodationStatus,
+  createAccommodation,
+  updateAccommodation,
+  deleteAccommodation,
   getAdminReports,
   getAdminReportDetail,
   updateReportStatus,
@@ -95,6 +98,45 @@ export const useUpdateAccommodationStatus = () => {
     mutationFn: ({ accommodationNo, status }) => updateAccommodationStatus(accommodationNo, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin'] });
+    },
+  });
+};
+
+/** 숙소 추가 */
+export const useCreateAccommodation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (formData) => createAccommodation(formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin'] });
+      queryClient.invalidateQueries({ queryKey: ['accommodations'] });
+      queryClient.invalidateQueries({ queryKey: ['accommodation'] });
+    },
+  });
+};
+
+/** 숙소 수정 */
+export const useUpdateAccommodation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ accommodationNo, formData }) => updateAccommodation(accommodationNo, formData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin'] });
+      queryClient.invalidateQueries({ queryKey: ['accommodations'] });
+      queryClient.invalidateQueries({ queryKey: ['accommodation'] });
+    },
+  });
+};
+
+/** 숙소 삭제 */
+export const useDeleteAccommodation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (accommodationNo) => deleteAccommodation(accommodationNo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin'] });
+      queryClient.invalidateQueries({ queryKey: ['accommodations'] });
+      queryClient.invalidateQueries({ queryKey: ['accommodation'] });
     },
   });
 };

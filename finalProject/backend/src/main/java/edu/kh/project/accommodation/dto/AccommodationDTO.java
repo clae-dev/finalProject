@@ -1,10 +1,12 @@
 package edu.kh.project.accommodation.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 숙소 정보 DTO
@@ -51,4 +53,9 @@ public class AccommodationDTO {
     private String status;                  // 상태 (A:활성, C:폐업)
     private LocalDateTime createdAt;        // 등록일시
     private LocalDateTime updatedAt;        // 수정일시
+
+    // 이미지 정보
+    @JsonIgnore
+    private String imageUrlsRaw;            // LISTAGG 결과 (JSON에 포함 안됨)
+    private List<String> imageUrls;         // 파싱된 리스트 (프론트에 전달)
 }
