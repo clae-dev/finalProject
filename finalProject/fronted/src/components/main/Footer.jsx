@@ -6,7 +6,7 @@ const serviceLinks = [
   { name: '숙소', path: '/accommodations' },
   { name: '동행찾기', path: '/companions' },
   { name: '여행후기', path: '/reviews' },
-  { name: '맛집', path: '/restaurants' },
+  { name: '행사/액티비티', path: '/activities' },
 ];
 
 const communityLinks = [

@@ -34,42 +34,57 @@ export default function Freeboards() {
       <Header />
 
       {/* 히어로 배너 */}
-      <div className="relative h-[320px] overflow-hidden bg-gradient-to-br from-sky-500 via-cyan-500 to-blue-600">
+      <div className="relative h-[480px] overflow-hidden bg-gradient-to-br from-sky-500 via-cyan-500 to-blue-600">
         <motion.div
-          className="absolute top-10 left-[10%] w-40 h-40 bg-white/10 rounded-full blur-3xl"
+          className="absolute top-20 left-[10%] w-48 h-48 bg-white/10 rounded-full blur-3xl"
           animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
           transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
         />
         <motion.div
-          className="absolute bottom-10 right-[10%] w-48 h-48 bg-cyan-300/10 rounded-full blur-3xl"
+          className="absolute bottom-20 right-[10%] w-56 h-56 bg-cyan-300/10 rounded-full blur-3xl"
           animate={{ y: [0, 20, 0], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         />
+        <motion.div
+          className="absolute top-1/3 right-[30%] w-32 h-32 bg-sky-400/10 rounded-full blur-3xl"
+          animate={{ x: [0, 15, 0], opacity: [0.2, 0.4, 0.2] }}
+          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        />
 
         <div className="relative h-full flex flex-col items-center justify-center text-white px-5">
+          <motion.p
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            Free Board
+          </motion.p>
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5, type: 'spring' }}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg"
+            transition={{ delay: 0.3, duration: 0.5, type: 'spring' }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg shadow-cyan-500/10"
           >
             <MessageSquareText className="w-4 h-4 text-cyan-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>Free Board</span>
+            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>자유게시판</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.7 }}
-            className="text-4xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg"
+            transition={{ delay: 0.4, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg"
             style={{ fontFamily: "'GmarketSans', sans-serif" }}
           >
-            <span className="bg-gradient-to-r from-cyan-200 via-sky-200 to-teal-200 bg-clip-text text-transparent">자유게시판</span>
+            <span className="text-white">자유롭게 나누는 </span>
+            <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-teal-300 bg-clip-text text-transparent">제주 이야기</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-lg text-white/70 text-center"
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="text-lg text-white/70 text-center max-w-md leading-relaxed"
             style={{ fontFamily: "'Pretendard', sans-serif" }}
           >
             제주 혼행의 이야기를 자유롭게 나눠보세요
@@ -83,7 +98,7 @@ export default function Freeboards() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-5 py-10">
+      <div className="max-w-6xl mx-auto px-5 py-12">
         {/* 검색바 + 글쓰기 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
