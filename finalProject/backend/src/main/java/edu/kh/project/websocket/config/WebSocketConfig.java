@@ -26,7 +26,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(chattingWebSocketHandler, "/chattingSock")
                 .addInterceptors(jwtHandshakeInterceptor)
-                .setAllowedOriginPatterns("http://localhost:5173", "http://127.0.0.1:5173")
+                .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
 }

@@ -27,7 +27,8 @@ export default function Accommodations() {
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     region: 'all',
-    priceRange: 'all'
+    priceRange: 'all',
+    type: 'all'
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,7 +50,7 @@ export default function Accommodations() {
 
   const accommodations = data?.success ? (data.list || []) : [];
   const totalCount = data?.success ? (data.totalCount || 0) : 0;
-  const errorMessage = isError ? '서버와 연결할 수 없습니다.' : (data && !data.success ? (data.message || '게스트하우스 목록을 불러오는데 실패했습니다.') : null);
+  const errorMessage = isError ? '서버와 연결할 수 없습니다.' : (data && !data.success ? (data.message || '숙소 목록을 불러오는데 실패했습니다.') : null);
 
   // 지역 필터 변경 시 페이지 초기화
   const handleRegionChange = (value) => {
@@ -65,6 +66,9 @@ export default function Accommodations() {
       acc.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       acc.recommendationReason?.toLowerCase().includes(searchTerm.toLowerCase());
 
+    // 숙소 유형 필터
+    const matchesType = filters.type === 'all' || acc.accommodationType === filters.type;
+
     // 가격대 필터
     let matchesPriceRange = true;
     if (filters.priceRange !== 'all' && acc.priceMin) {
@@ -76,7 +80,7 @@ export default function Accommodations() {
         filters.priceRange === '100k+' ? price >= 100000 : true;
     }
 
-    return matchesSearch && matchesPriceRange;
+    return matchesSearch && matchesType && matchesPriceRange;
   });
 
   // 가격 포맷
@@ -98,10 +102,17 @@ export default function Accommodations() {
   // 기본 이미지
   const defaultImage = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600';
 
+  // 썸네일 있는 숙소 우선 정렬
+  const sortedAccommodations = [...filteredAccommodations].sort((a, b) => {
+    const aHas = a.thumbnailUrl ? 1 : 0;
+    const bHas = b.thumbnailUrl ? 1 : 0;
+    return bHas - aHas;
+  });
+
   // 프론트엔드 페이지네이션
-  const totalFilteredCount = filteredAccommodations.length;
+  const totalFilteredCount = sortedAccommodations.length;
   const totalPages = Math.ceil(totalFilteredCount / pageSize);
-  const paginatedAccommodations = filteredAccommodations.slice(
+  const paginatedAccommodations = sortedAccommodations.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -145,7 +156,7 @@ export default function Accommodations() {
             className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5"
             style={{ fontFamily: "'Pretendard', sans-serif" }}
           >
-            Jeju Guesthouse
+            Jeju Accommodation
           </motion.p>
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -154,7 +165,7 @@ export default function Accommodations() {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg shadow-cyan-500/10"
           >
             <Sparkles className="w-4 h-4 text-cyan-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>혼행 추천 게스트하우스</span>
+            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>혼행 추천 숙소</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
@@ -204,15 +215,15 @@ export default function Accommodations() {
           <div className="relative mb-4">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-sky-400" />
             <Input
-              placeholder="게스트하우스명, 주소로 검색..."
+              placeholder="숙소명, 주소로 검색..."
               value={searchTerm}
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
               className="pl-12 h-12 bg-sky-50/50 border-sky-100 focus:border-sky-400 rounded-2xl shadow-sm focus:shadow-md transition-shadow"
             />
           </div>
 
-          {/* 지역 / 가격 드롭다운 */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* 지역 / 유형 / 가격 드롭다운 */}
+          <div className="grid grid-cols-3 gap-3">
             <Select value={filters.region} onValueChange={handleRegionChange}>
               <SelectTrigger className="h-10 bg-white border-sky-100 rounded-xl hover:border-sky-200 transition-colors">
                 <SelectValue placeholder="전체 지역" />
@@ -221,6 +232,25 @@ export default function Accommodations() {
                 <SelectItem value="all">전체 지역</SelectItem>
                 <SelectItem value="jeju_city">제주시</SelectItem>
                 <SelectItem value="seogwipo">서귀포시</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={filters.type} onValueChange={(value) => { setFilters({...filters, type: value}); setCurrentPage(1); }}>
+              <SelectTrigger className="h-10 bg-white border-sky-100 rounded-xl hover:border-sky-200 transition-colors">
+                <SelectValue placeholder="숙소 유형" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">전체 유형</SelectItem>
+                <SelectItem value="호텔">호텔</SelectItem>
+                <SelectItem value="리조트">리조트</SelectItem>
+                <SelectItem value="펜션">펜션</SelectItem>
+                <SelectItem value="풀빌라">풀빌라</SelectItem>
+                <SelectItem value="게스트하우스">게스트하우스</SelectItem>
+                <SelectItem value="호스텔">호스텔</SelectItem>
+                <SelectItem value="모텔">모텔</SelectItem>
+                <SelectItem value="민박">민박</SelectItem>
+                <SelectItem value="한옥">한옥</SelectItem>
+                <SelectItem value="기타">기타</SelectItem>
               </SelectContent>
             </Select>
 
@@ -255,10 +285,10 @@ export default function Accommodations() {
         >
           <h2 className="text-2xl md:text-3xl font-black mb-2" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
             <span className="text-slate-800">여행자에게 추천하는 </span>
-            <span className="bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-400 bg-clip-text text-transparent">게스트하우스</span>
+            <span className="bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-400 bg-clip-text text-transparent">숙소</span>
           </h2>
           <p className="text-slate-400 text-sm">
-            총 <span className="font-bold text-sky-500">{totalCount}</span>개의 게스트하우스
+            총 <span className="font-bold text-sky-500">{totalCount}</span>개의 숙소
             {totalFilteredCount !== totalCount &&
               ` (필터 적용: ${totalFilteredCount}개)`
             }
@@ -278,7 +308,7 @@ export default function Accommodations() {
             >
               <Loader2 className="w-10 h-10 text-sky-400" />
             </motion.div>
-            <p className="text-slate-400 text-sm font-medium">게스트하우스를 찾고 있어요...</p>
+            <p className="text-slate-400 text-sm font-medium">숙소를 찾고 있어요...</p>
           </motion.div>
         )}
 
