@@ -1,10 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CalendarDays, Search, Eye, Heart, MessageCircle, ChevronLeft, ChevronRight, Loader2, PenLine, ImageIcon, MapPin, Phone, ExternalLink } from 'lucide-react';
+import { CalendarDays, Search, Eye, Heart, MessageCircle, ChevronLeft, ChevronRight, Loader2, PenLine, ImageIcon, MapPin, Phone, Bike } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { useActivityList, useEventList } from '../../api/activity/useActivity';
+import { useActivityList, useEventList, useLeisureList } from '../../api/activity/useActivity';
 import { AuthContext } from '../../components/AuthContext';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400';
@@ -18,10 +18,12 @@ const formatDate = (dateStr) => {
 export default function Activities() {
   const navigate = useNavigate();
   const { user } = useContext(AuthContext) || {};
-  const [activeTab, setActiveTab] = useState('events'); // 'events' | 'community'
+  const [activeTab, setActiveTab] = useState('events'); // 'events' | 'leisure' | 'community'
 
   // 공공 행사 상태
   const [eventPage, setEventPage] = useState(1);
+  // 액티비티 상태
+  const [leisurePage, setLeisurePage] = useState(1);
   // 커뮤니티 상태
   const [communityPage, setCommunityPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
@@ -29,6 +31,7 @@ export default function Activities() {
   const size = 9;
 
   const { data: eventData, isLoading: eventLoading } = useEventList(eventPage, size);
+  const { data: leisureData, isLoading: leisureLoading } = useLeisureList(leisurePage, size);
   const { data: communityData, isLoading: communityLoading } = useActivityList(communityPage, size, search);
 
   // 공공 행사 데이터
@@ -36,6 +39,11 @@ export default function Activities() {
   const eventTotalCount = eventData?.success ? (eventData.totalCount || 0) : 0;
   const eventTotalPages = Math.ceil(eventTotalCount / size);
   const needApiKey = eventData?.needApiKey === true;
+
+  // 액티비티 데이터
+  const leisureList = leisureData?.success ? (leisureData.list || []) : [];
+  const leisureTotalCount = leisureData?.success ? (leisureData.totalCount || 0) : 0;
+  const leisureTotalPages = Math.ceil(leisureTotalCount / size);
 
   // 커뮤니티 데이터
   const communityList = communityData?.success ? (communityData.list || []) : [];
@@ -137,6 +145,17 @@ export default function Activities() {
             공공 행사
           </button>
           <button
+            onClick={() => setActiveTab('leisure')}
+            className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all duration-300 ${
+              activeTab === 'leisure'
+                ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-200/60'
+                : 'bg-white/80 text-slate-500 hover:text-orange-500 shadow-md shadow-orange-50 border border-orange-50'
+            }`}
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            액티비티
+          </button>
+          <button
             onClick={() => setActiveTab('community')}
             className={`px-6 py-3 rounded-2xl text-sm font-bold transition-all duration-300 ${
               activeTab === 'community'
@@ -230,15 +249,12 @@ export default function Activities() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {eventList.map((event, index) => (
-                  <motion.a
+                  <motion.div
                     key={event.contentId || index}
-                    href={`https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid=${event.contentId}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05 }}
-                    className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-md shadow-orange-100/40 border border-orange-50 overflow-hidden cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group block"
+                    className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-md shadow-orange-100/40 border border-orange-50 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
                   >
                     {/* 썸네일 */}
                     <div className="relative h-44 overflow-hidden bg-gradient-to-br from-orange-100 to-amber-100">
@@ -263,10 +279,6 @@ export default function Activities() {
                         >
                           공공행사
                         </span>
-                      </div>
-                      {/* 외부 링크 아이콘 */}
-                      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ExternalLink className="w-5 h-5 text-white drop-shadow-lg" />
                       </div>
                     </div>
 
@@ -307,7 +319,7 @@ export default function Activities() {
                         </div>
                       )}
                     </div>
-                  </motion.a>
+                  </motion.div>
                 ))}
               </div>
             )}
@@ -315,6 +327,98 @@ export default function Activities() {
             {/* 공공 행사 페이지네이션 */}
             {eventTotalPages > 1 && (
               <Pagination page={eventPage} totalPages={eventTotalPages} setPage={setEventPage} />
+            )}
+          </>
+        )}
+
+        {/* ======= 액티비티 탭 ======= */}
+        {activeTab === 'leisure' && (
+          <>
+            {leisureLoading ? (
+              <div className="flex flex-col items-center justify-center py-24 gap-4">
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
+                  <Loader2 className="w-10 h-10 text-orange-400" />
+                </motion.div>
+              </div>
+            ) : leisureList.length === 0 ? (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-20"
+              >
+                <Bike className="w-16 h-16 text-slate-200 mx-auto mb-4" />
+                <p className="text-slate-400 text-lg font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  등록된 액티비티가 없습니다.
+                </p>
+              </motion.div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {leisureList.map((item, index) => (
+                  <motion.div
+                    key={item.contentId || index}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-md shadow-orange-100/40 border border-orange-50 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+                  >
+                    <div className="relative h-44 overflow-hidden bg-gradient-to-br from-orange-100 to-amber-100">
+                      {item.image ? (
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                          <ImageIcon className="w-10 h-10 text-orange-300" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" />
+                      <div className="absolute top-3 left-3">
+                        <span
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-bold rounded-full"
+                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        >
+                          <Bike className="w-3 h-3" />
+                          액티비티
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-5">
+                      <h3
+                        className="font-bold text-slate-800 text-base mb-3 line-clamp-1 group-hover:text-orange-600 transition-colors"
+                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      >
+                        {item.title}
+                      </h3>
+
+                      {item.addr && (
+                        <div className="flex items-center gap-2 mb-2">
+                          <MapPin className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" />
+                          <p className="text-sm text-slate-400 line-clamp-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                            {item.addr}
+                          </p>
+                        </div>
+                      )}
+
+                      {item.tel && (
+                        <div className="flex items-center gap-2">
+                          <Phone className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" />
+                          <p className="text-sm text-slate-400 line-clamp-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                            {item.tel}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            {leisureTotalPages > 1 && (
+              <Pagination page={leisurePage} totalPages={leisureTotalPages} setPage={setLeisurePage} />
             )}
           </>
         )}

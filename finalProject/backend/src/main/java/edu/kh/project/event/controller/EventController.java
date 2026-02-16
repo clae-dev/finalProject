@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 공공 행사 API 프록시 컨트롤러
+ * 공공 행사/액티비티 API 프록시 컨트롤러
  * - 프론트엔드에서 TourAPI를 직접 호출하지 않고 백엔드를 경유
  */
 @RestController
@@ -36,6 +36,28 @@ public class EventController {
             @RequestParam(required = false) String startDate) {
 
         Map<String, Object> result = eventService.searchFestivals(page, size, startDate);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("list", result.get("list"));
+        response.put("totalCount", result.get("totalCount"));
+
+        if (Boolean.TRUE.equals(result.get("needApiKey"))) {
+            response.put("needApiKey", true);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 제주 레포츠/액티비티 목록 조회
+     */
+    @GetMapping("/api/leisure")
+    public ResponseEntity<Map<String, Object>> getLeisure(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "9") int size) {
+
+        Map<String, Object> result = eventService.searchLeisure(page, size);
 
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
