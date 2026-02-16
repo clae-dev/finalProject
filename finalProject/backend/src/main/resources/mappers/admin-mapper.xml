@@ -230,6 +230,50 @@
         WHERE ACCOMMODATION_NO = #{accommodationNo}
     </update>
 
+    <!-- 숙소 수동 추가 -->
+    <insert id="insertAccommodation" parameterType="map">
+        <selectKey keyProperty="accommodationNo" resultType="long" order="AFTER">
+            SELECT SEQ_ACCOM_NO.CURRVAL FROM DUAL
+        </selectKey>
+        INSERT INTO ACCOMMODATION (
+            ACCOMMODATION_NO, NAME, ADDRESS, PHONE, ACCOMMODATION_TYPE, REGION,
+            PRICE_MIN, PRICE_MAX, CHECK_IN_TIME, CHECK_OUT_TIME, FACILITIES,
+            THUMBNAIL_URL, LATITUDE, LONGITUDE, RECOMMENDATION_REASON, STATUS, CREATED_AT
+        ) VALUES (
+            SEQ_ACCOM_NO.NEXTVAL, #{name}, #{address}, #{phone}, #{accommodationType}, #{region},
+            #{priceMin}, #{priceMax}, #{checkInTime}, #{checkOutTime}, #{facilities},
+            #{thumbnailUrl}, #{latitude}, #{longitude}, #{recommendationReason}, 'A', SYSDATE
+        )
+    </insert>
+
+    <!-- 숙소 정보 수정 -->
+    <update id="updateAccommodation" parameterType="map">
+        UPDATE ACCOMMODATION SET
+            NAME = #{name},
+            ADDRESS = #{address},
+            PHONE = #{phone},
+            ACCOMMODATION_TYPE = #{accommodationType},
+            REGION = #{region},
+            PRICE_MIN = #{priceMin},
+            PRICE_MAX = #{priceMax},
+            CHECK_IN_TIME = #{checkInTime},
+            CHECK_OUT_TIME = #{checkOutTime},
+            FACILITIES = #{facilities},
+            THUMBNAIL_URL = #{thumbnailUrl},
+            LATITUDE = #{latitude},
+            LONGITUDE = #{longitude},
+            RECOMMENDATION_REASON = #{recommendationReason},
+            UPDATED_AT = SYSDATE
+        WHERE ACCOMMODATION_NO = #{accommodationNo}
+    </update>
+
+    <!-- 숙소 삭제 (소프트) -->
+    <update id="deleteAccommodation">
+        UPDATE ACCOMMODATION
+        SET STATUS = 'N', UPDATED_AT = SYSDATE
+        WHERE ACCOMMODATION_NO = #{accommodationNo}
+    </update>
+
     <!-- 신고 목록 (관리자용, 페이징 + 필터) -->
     <select id="selectAdminReportList" resultType="map">
         SELECT * FROM (

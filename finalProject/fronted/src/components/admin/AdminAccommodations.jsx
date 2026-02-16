@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import { useAdminAccommodations, useUpdateAccommodationStatus } from '../../api/admin/useAdmin';
+import { Search, ChevronLeft, ChevronRight, Loader2, Plus, Pencil, Trash2 } from 'lucide-react';
+import {
+  useAdminAccommodations,
+  useUpdateAccommodationStatus,
+  useCreateAccommodation,
+  useUpdateAccommodation,
+  useDeleteAccommodation,
+} from '../../api/admin/useAdmin';
+import AccommodationFormModal from '../accommodation/AccommodationFormModal';
 
 export default function AdminAccommodations() {
   const [page, setPage] = useState(1);
@@ -9,8 +16,15 @@ export default function AdminAccommodations() {
   const [search, setSearch] = useState('');
   const size = 10;
 
+  // 모달 상태
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState(null);
+
   const { data, isLoading } = useAdminAccommodations(page, size, search);
   const updateStatus = useUpdateAccommodationStatus();
+  const createAccom = useCreateAccommodation();
+  const updateAccom = useUpdateAccommodation();
+  const deleteAccom = useDeleteAccommodation();
 
   const list = data?.success ? (data.list || []) : [];
   const totalCount = data?.success ? (data.totalCount || 0) : 0;
@@ -29,6 +43,41 @@ export default function AdminAccommodations() {
     updateStatus.mutate({ accommodationNo: item.accommodationNo, status: newStatus });
   };
 
+  const openAddModal = () => {
+    setEditTarget(null);
+    setModalOpen(true);
+  };
+
+  const openEditModal = (item) => {
+    setEditTarget(item);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setEditTarget(null);
+  };
+
+  const handleModalSubmit = (formData) => {
+    if (editTarget) {
+      updateAccom.mutate(
+        { accommodationNo: editTarget.accommodationNo, formData },
+        { onSuccess: (res) => { if (res?.success) closeModal(); else alert(res?.message || '수정 실패'); } }
+      );
+    } else {
+      createAccom.mutate(formData, {
+        onSuccess: (res) => { if (res?.success) closeModal(); else alert(res?.message || '추가 실패'); },
+      });
+    }
+  };
+
+  const handleDelete = (item) => {
+    if (!confirm(`"${item.name}" 숙소를 삭제하시겠습니까?\n(소프트 삭제 — 상태가 'N'으로 변경됩니다)`)) return;
+    deleteAccom.mutate(item.accommodationNo);
+  };
+
+  const isMutating = createAccom.isPending || updateAccom.isPending;
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4">
@@ -42,7 +91,7 @@ export default function AdminAccommodations() {
 
   return (
     <div className="space-y-6">
-      {/* 검색 */}
+      {/* 검색 + 추가 버튼 */}
       <motion.form
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -66,6 +115,15 @@ export default function AdminAccommodations() {
           style={{ fontFamily: "'Pretendard', sans-serif" }}
         >
           검색
+        </button>
+        <button
+          type="button"
+          onClick={openAddModal}
+          className="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-emerald-400 to-teal-400 text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
+          style={{ fontFamily: "'Pretendard', sans-serif" }}
+        >
+          <Plus className="w-4 h-4" />
+          숙소 추가
         </button>
       </motion.form>
 
@@ -103,17 +161,34 @@ export default function AdminAccommodations() {
                     </span>
                   </td>
                   <td className="px-6 py-3">
-                    <button
-                      onClick={() => handleStatusToggle(item)}
-                      disabled={updateStatus.isPending}
-                      className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-300 ${
-                        item.status === 'A'
-                          ? 'bg-red-50 text-red-500 hover:bg-red-100'
-                          : 'bg-emerald-50 text-emerald-500 hover:bg-emerald-100'
-                      }`}
-                    >
-                      {item.status === 'A' ? '비활성화' : '활성화'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleStatusToggle(item)}
+                        disabled={updateStatus.isPending}
+                        className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 ${
+                          item.status === 'A'
+                            ? 'bg-red-50 text-red-500 hover:bg-red-100'
+                            : 'bg-emerald-50 text-emerald-500 hover:bg-emerald-100'
+                        }`}
+                      >
+                        {item.status === 'A' ? '비활성화' : '활성화'}
+                      </button>
+                      <button
+                        onClick={() => openEditModal(item)}
+                        className="p-1.5 rounded-lg bg-sky-50 text-sky-500 hover:bg-sky-100 transition-colors"
+                        title="수정"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item)}
+                        disabled={deleteAccom.isPending}
+                        className="p-1.5 rounded-lg bg-red-50 text-red-400 hover:bg-red-100 transition-colors"
+                        title="삭제"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -171,6 +246,15 @@ export default function AdminAccommodations() {
           </motion.button>
         </div>
       )}
+
+      {/* 공유 모달 (이미지 업로드 지원) */}
+      <AccommodationFormModal
+        isOpen={modalOpen}
+        onClose={closeModal}
+        editTarget={editTarget}
+        isPending={isMutating}
+        onSubmit={handleModalSubmit}
+      />
     </div>
   );
 }

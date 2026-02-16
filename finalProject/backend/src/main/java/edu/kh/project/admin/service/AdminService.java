@@ -1,5 +1,7 @@
 package edu.kh.project.admin.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +29,14 @@ public interface AdminService {
     List<Map<String, Object>> getAccommodationList(int page, int size, String search);
     int getAccommodationCount(String search);
     int updateAccommodationStatus(int accommodationNo, String status);
+    int insertAccommodation(Map<String, Object> params);
+    int updateAccommodation(Map<String, Object> params);
+    int deleteAccommodation(int accommodationNo);
+    int insertAccommodationWithImages(Map<String, Object> params, MultipartFile thumbnail,
+                                       List<MultipartFile> images, String webPath, String folderPath);
+    int updateAccommodationWithImages(Map<String, Object> params, MultipartFile thumbnail,
+                                       List<MultipartFile> images, boolean keepExistingImages,
+                                       String webPath, String folderPath);
 
     // 신고 관리
     List<Map<String, Object>> getReportList(int page, int size, String status, String targetType);
