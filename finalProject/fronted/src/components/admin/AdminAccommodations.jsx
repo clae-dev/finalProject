@@ -8,6 +8,7 @@ import {
   useUpdateAccommodation,
   useDeleteAccommodation,
 } from '../../api/admin/useAdmin';
+import { getAccommodationDetail } from '../../api/accommodation/accommodationAPI';
 import AccommodationFormModal from '../accommodation/AccommodationFormModal';
 
 export default function AdminAccommodations() {
@@ -48,8 +49,21 @@ export default function AdminAccommodations() {
     setModalOpen(true);
   };
 
-  const openEditModal = (item) => {
-    setEditTarget(item);
+  const [editLoading, setEditLoading] = useState(false);
+
+  const openEditModal = async (item) => {
+    setEditLoading(true);
+    try {
+      const res = await getAccommodationDetail(item.accommodationNo);
+      if (res?.success && res.data) {
+        setEditTarget(res.data);
+      } else {
+        setEditTarget(item);
+      }
+    } catch {
+      setEditTarget(item);
+    }
+    setEditLoading(false);
     setModalOpen(true);
   };
 
