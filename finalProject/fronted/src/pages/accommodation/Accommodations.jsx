@@ -209,23 +209,24 @@ export default function Accommodations() {
       </div>
 
       {/* 필터 섹션 */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-sky-100 sticky top-16 z-40 shadow-sm shadow-sky-100/30">
-        <div className="max-w-6xl mx-auto px-5 py-5">
-          {/* 검색바 */}
-          <div className="relative mb-4">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-sky-400" />
-            <Input
-              placeholder="숙소명, 주소로 검색..."
-              value={searchTerm}
-              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-              className="pl-12 h-12 bg-sky-50/50 border-sky-100 focus:border-sky-400 rounded-2xl shadow-sm focus:shadow-md transition-shadow"
-            />
-          </div>
+      <div className="bg-white/95 backdrop-blur-md border-b border-slate-200/60 sticky top-16 z-40" style={{ fontFamily: "'Pretendard', 'Noto Sans KR', sans-serif" }}>
+        <div className="max-w-6xl mx-auto px-5 py-4">
+          <div className="flex items-center gap-3">
+            {/* 검색바 */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Input
+                placeholder="숙소명, 주소로 검색..."
+                value={searchTerm}
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                className="pl-10 h-10 bg-slate-50 border-slate-200 focus:border-sky-400 focus:bg-white rounded-lg text-sm transition-colors"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+              />
+            </div>
 
-          {/* 지역 / 유형 / 가격 드롭다운 */}
-          <div className="grid grid-cols-3 gap-3">
+            {/* 지역 드롭다운 */}
             <Select value={filters.region} onValueChange={handleRegionChange}>
-              <SelectTrigger className="h-10 bg-white border-sky-100 rounded-xl hover:border-sky-200 transition-colors">
+              <SelectTrigger className="h-10 w-[130px] bg-slate-50 border-slate-200 rounded-lg text-sm hover:bg-white transition-colors">
                 <SelectValue placeholder="전체 지역" />
               </SelectTrigger>
               <SelectContent>
@@ -235,9 +236,10 @@ export default function Accommodations() {
               </SelectContent>
             </Select>
 
+            {/* 유형 드롭다운 */}
             <Select value={filters.type} onValueChange={(value) => { setFilters({...filters, type: value}); setCurrentPage(1); }}>
-              <SelectTrigger className="h-10 bg-white border-sky-100 rounded-xl hover:border-sky-200 transition-colors">
-                <SelectValue placeholder="숙소 유형" />
+              <SelectTrigger className="h-10 w-[130px] bg-slate-50 border-slate-200 rounded-lg text-sm hover:bg-white transition-colors">
+                <SelectValue placeholder="전체 유형" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체 유형</SelectItem>
@@ -254,9 +256,10 @@ export default function Accommodations() {
               </SelectContent>
             </Select>
 
+            {/* 가격 드롭다운 */}
             <Select value={filters.priceRange} onValueChange={(value) => { setFilters({...filters, priceRange: value}); setCurrentPage(1); }}>
-              <SelectTrigger className="h-10 bg-white border-sky-100 rounded-xl hover:border-sky-200 transition-colors">
-                <SelectValue placeholder="가격대" />
+              <SelectTrigger className="h-10 w-[130px] bg-slate-50 border-slate-200 rounded-lg text-sm hover:bg-white transition-colors">
+                <SelectValue placeholder="전체 가격" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체 가격</SelectItem>
@@ -351,93 +354,69 @@ export default function Accommodations() {
                     variants={cardVariants}
                     initial="hidden"
                     animate="visible"
-                    whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                    whileHover={{ y: -4, transition: { duration: 0.2 } }}
                     onClick={() => navigate(`/accommodations/${acc.accommodationNo}`)}
-                    className="bg-white rounded-3xl overflow-hidden shadow-lg shadow-sky-100/50 hover:shadow-2xl hover:shadow-sky-200/60 transition-shadow duration-300 cursor-pointer group border border-sky-50"
+                    className="bg-white rounded-xl overflow-hidden border border-slate-200/80 hover:border-slate-300 hover:shadow-lg transition-all duration-200 cursor-pointer group"
+                    style={{ fontFamily: "'Pretendard', 'Noto Sans KR', sans-serif" }}
                   >
                     {/* 이미지 */}
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <img
                         src={acc.thumbnailUrl || defaultImage}
                         alt={acc.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => { e.target.src = defaultImage; }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-slate-900/5 to-transparent" />
 
                       {/* 찜 버튼 */}
                       <button
                         onClick={(e) => e.stopPropagation()}
-                        className="absolute top-4 right-4 w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+                        className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors"
                       >
-                        <Heart className="w-4.5 h-4.5 text-slate-400 hover:text-rose-500 transition-colors" />
+                        <Heart className="w-4 h-4 text-slate-400 hover:text-rose-500 transition-colors" />
                       </button>
 
                       {/* 숙소 유형 배지 */}
                       {acc.accommodationType && (
-                        <span className="absolute top-4 left-4 px-3.5 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-xs font-bold text-sky-500 shadow-lg">
+                        <span className="absolute top-3 left-3 px-2.5 py-1 bg-white/90 rounded-md text-[11px] font-semibold text-slate-700">
                           {acc.accommodationType}
                         </span>
                       )}
-
-                      {/* 가격 */}
-                      <div className="absolute bottom-4 right-4">
-                        <span className="px-3.5 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-sm font-bold text-sky-600 shadow-lg">
-                          {formatPrice(acc.priceMin, acc.priceMax)}
-                        </span>
-                      </div>
                     </div>
 
                     {/* 카드 내용 */}
-                    <div className="p-5">
-                      <h3 className="font-bold text-slate-800 text-lg mb-3 line-clamp-1 group-hover:text-sky-600 transition-colors duration-300">
-                        {acc.name}
-                      </h3>
-
-                      <div className="flex items-center gap-1.5 text-slate-400 text-sm mb-2">
-                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 text-sky-400" />
-                        <span className="line-clamp-1">{acc.address || acc.region}</span>
+                    <div className="p-4">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h3 className="font-bold text-slate-900 text-[16px] leading-snug line-clamp-1">
+                          {acc.name}
+                        </h3>
+                        <span className="text-[15px] font-bold text-slate-800 whitespace-nowrap flex-shrink-0">
+                          {formatPrice(acc.priceMin, acc.priceMax)}
+                        </span>
                       </div>
 
-                      {acc.phone && (
-                        <div className="flex items-center gap-1.5 text-slate-400 text-sm mb-2">
-                          <Phone className="w-3.5 h-3.5 flex-shrink-0 text-sky-400" />
-                          <span>{acc.phone}</span>
-                        </div>
-                      )}
+                      <p className="text-[13px] text-slate-500 line-clamp-1 mb-2.5">
+                        {acc.address || acc.region}
+                      </p>
 
                       {(acc.checkInTime || acc.checkOutTime) && (
-                        <div className="flex items-center gap-1.5 text-slate-400 text-sm mb-2">
-                          <Clock className="w-3.5 h-3.5 flex-shrink-0 text-sky-400" />
-                          <span>
-                            {acc.checkInTime && `입실 ${acc.checkInTime}`}
-                            {acc.checkInTime && acc.checkOutTime && ' / '}
-                            {acc.checkOutTime && `퇴실 ${acc.checkOutTime}`}
-                          </span>
-                        </div>
-                      )}
-
-                      {acc.recommendationReason && (
-                        <p className="text-slate-500 text-sm mb-3 line-clamp-2 leading-relaxed">{acc.recommendationReason}</p>
+                        <p className="text-[12px] text-slate-400 mb-3">
+                          {acc.checkInTime && `IN ${acc.checkInTime}`}
+                          {acc.checkInTime && acc.checkOutTime && ' · '}
+                          {acc.checkOutTime && `OUT ${acc.checkOutTime}`}
+                        </p>
                       )}
 
                       {/* 편의시설 */}
                       {acc.facilities && (
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {parseFacilities(acc.facilities).slice(0, 3).map((facility, idx) => (
-                            <span key={idx} className="text-xs bg-sky-50 text-sky-600 px-2.5 py-1 rounded-full font-medium">
+                        <div className="flex flex-wrap gap-1.5">
+                          {parseFacilities(acc.facilities).slice(0, 4).map((facility, idx) => (
+                            <span key={idx} className="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
                               {facility}
                             </span>
                           ))}
                         </div>
                       )}
-
-                      <div className="flex items-center justify-between pt-3 border-t border-sky-50">
-                        <span className="text-xs text-slate-400 font-medium">{acc.region}</span>
-                        <span className="text-sm font-bold bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">
-                          {formatPrice(acc.priceMin, acc.priceMax)}
-                        </span>
-                      </div>
                     </div>
                   </motion.div>
                 ))}

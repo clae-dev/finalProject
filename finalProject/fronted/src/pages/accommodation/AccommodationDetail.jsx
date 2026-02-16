@@ -270,7 +270,7 @@ export default function AccommodationDetail() {
   const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-cyan-50">
+    <div className="min-h-screen bg-[#f8fafb]" style={{ fontFamily: "'Pretendard', 'Noto Sans KR', sans-serif" }}>
       <Header />
 
       <div className="pt-24 max-w-6xl mx-auto px-5 py-8">
@@ -287,7 +287,7 @@ export default function AccommodationDetail() {
 
         {/* 이미지 갤러리 */}
         <div className="mb-8">
-          <div className="relative h-[320px] md:h-[440px] rounded-3xl overflow-hidden shadow-2xl group">
+          <div className="relative h-[320px] md:h-[440px] rounded-2xl overflow-hidden shadow-md group">
             <img
               src={images[currentImageIndex]}
               alt={accommodation.name}
@@ -307,7 +307,7 @@ export default function AccommodationDetail() {
                   {accommodation.region}
                 </span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">{accommodation.name}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg" style={{ fontFamily: "'GmarketSans', 'Pretendard', sans-serif" }}>{accommodation.name}</h1>
             </div>
 
             {/* 이미지 네비게이션 */}
@@ -355,44 +355,34 @@ export default function AccommodationDetail() {
 
             {/* 핵심 정보 카드 4개 */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-white rounded-2xl p-4 shadow-md border border-slate-100/80 hover:shadow-lg transition-shadow text-center group">
-                <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-500 rounded-xl flex items-center justify-center mx-auto mb-2.5 group-hover:scale-110 transition-transform shadow-md shadow-sky-200/50">
-                  <DoorOpen className="w-5 h-5 text-white" />
-                </div>
+              <div className="bg-white rounded-xl p-4 border border-slate-100 text-center">
+                <DoorOpen className="w-5 h-5 text-sky-500 mx-auto mb-2" />
                 <div className="text-[11px] text-slate-400 font-medium mb-0.5">체크인</div>
-                <div className="text-base font-bold text-slate-800">{accommodation.checkInTime || '-'}</div>
+                <div className="text-[15px] font-semibold text-slate-700">{accommodation.checkInTime || '-'}</div>
               </div>
-              <div className="bg-white rounded-2xl p-4 shadow-md border border-slate-100/80 hover:shadow-lg transition-shadow text-center group">
-                <div className="w-10 h-10 bg-gradient-to-br from-violet-400 to-purple-500 rounded-xl flex items-center justify-center mx-auto mb-2.5 group-hover:scale-110 transition-transform shadow-md shadow-violet-200/50">
-                  <DoorClosed className="w-5 h-5 text-white" />
-                </div>
+              <div className="bg-white rounded-xl p-4 border border-slate-100 text-center">
+                <DoorClosed className="w-5 h-5 text-violet-500 mx-auto mb-2" />
                 <div className="text-[11px] text-slate-400 font-medium mb-0.5">체크아웃</div>
-                <div className="text-base font-bold text-slate-800">{accommodation.checkOutTime || '-'}</div>
+                <div className="text-[15px] font-semibold text-slate-700">{accommodation.checkOutTime || '-'}</div>
               </div>
-              <div className="bg-white rounded-2xl p-4 shadow-md border border-slate-100/80 hover:shadow-lg transition-shadow text-center group">
-                <div className="w-10 h-10 bg-gradient-to-br from-emerald-400 to-green-500 rounded-xl flex items-center justify-center mx-auto mb-2.5 group-hover:scale-110 transition-transform shadow-md shadow-emerald-200/50">
-                  <CircleDollarSign className="w-5 h-5 text-white" />
-                </div>
+              <div className="bg-white rounded-xl p-4 border border-slate-100 text-center">
+                <CircleDollarSign className="w-5 h-5 text-emerald-500 mx-auto mb-2" />
                 <div className="text-[11px] text-slate-400 font-medium mb-0.5">가격대</div>
-                <div className="text-base font-bold text-slate-800">
+                <div className="text-[15px] font-semibold text-slate-700">
                   {accommodation.priceMin ? `${(accommodation.priceMin / 10000).toFixed(0)}만~` : '문의'}
                 </div>
               </div>
-              <div className="bg-white rounded-2xl p-4 shadow-md border border-slate-100/80 hover:shadow-lg transition-shadow text-center group">
-                <div className={`w-10 h-10 bg-gradient-to-br ${typeStyle.color} rounded-xl flex items-center justify-center mx-auto mb-2.5 group-hover:scale-110 transition-transform shadow-md`}>
-                  <TypeIcon className="w-5 h-5 text-white" />
-                </div>
+              <div className="bg-white rounded-xl p-4 border border-slate-100 text-center">
+                <TypeIcon className="w-5 h-5 text-slate-500 mx-auto mb-2" />
                 <div className="text-[11px] text-slate-400 font-medium mb-0.5">유형</div>
-                <div className="text-base font-bold text-slate-800">{accommodation.accommodationType || '숙소'}</div>
+                <div className="text-[15px] font-semibold text-slate-700">{accommodation.accommodationType || '숙소'}</div>
               </div>
             </div>
 
             {/* 위치 & 연락처 */}
-            <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-100/80">
-              <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2.5">
-                <div className="w-8 h-8 bg-gradient-to-br from-sky-400 to-blue-500 rounded-lg flex items-center justify-center shadow-sm">
-                  <MapPin className="w-4 h-4 text-white" />
-                </div>
+            <div className="bg-white rounded-xl p-6 border border-slate-100">
+              <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <MapPin className="w-[18px] h-[18px] text-sky-500" />
                 위치 & 연락처
               </h2>
               <div className="space-y-2.5">
@@ -440,24 +430,20 @@ export default function AccommodationDetail() {
 
             {/* 편의시설 */}
             {facilities.length > 0 && (
-              <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-100/80">
-                <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center shadow-sm">
-                    <Sparkles className="w-4 h-4 text-white" />
-                  </div>
+              <div className="bg-white rounded-xl p-6 border border-slate-100">
+                <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <Sparkles className="w-[18px] h-[18px] text-emerald-500" />
                   편의시설 & 서비스
                 </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
+                <div className="flex flex-wrap gap-2">
                   {facilities.map((facility, idx) => {
                     const style = getFacilityStyle(facility);
                     const FacIcon = style.icon;
                     return (
-                      <div key={idx} className={`flex items-center gap-2.5 p-3 ${style.bg} rounded-xl border border-slate-100 hover:shadow-md transition-all group min-w-0`}>
-                        <div className={`w-8 h-8 bg-gradient-to-br ${style.color} rounded-lg flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm`}>
-                          <FacIcon className="w-4 h-4 text-white" />
-                        </div>
-                        <span className={`text-xs font-semibold ${style.text} truncate`}>{facility}</span>
-                      </div>
+                      <span key={idx} className={`inline-flex items-center gap-1.5 px-3 py-1.5 ${style.bg} rounded-lg border border-slate-100`}>
+                        <FacIcon className={`w-3.5 h-3.5 ${style.text}`} />
+                        <span className={`text-xs font-medium ${style.text}`}>{facility}</span>
+                      </span>
                     );
                   })}
                 </div>
@@ -466,14 +452,12 @@ export default function AccommodationDetail() {
 
             {/* 가격 정보 */}
             {priceDisplay && (
-              <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-100/80">
-                <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center shadow-sm">
-                    <Banknote className="w-4 h-4 text-white" />
-                  </div>
+              <div className="bg-white rounded-xl p-6 border border-slate-100">
+                <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <Banknote className="w-[18px] h-[18px] text-amber-500" />
                   객실 가격 안내
                 </h2>
-                <div className="bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 rounded-xl p-5 border border-emerald-100/80">
+                <div className="bg-emerald-50/60 rounded-lg p-5 border border-emerald-100">
                   <div className="flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
@@ -496,29 +480,25 @@ export default function AccommodationDetail() {
 
             {/* 숙소 소개 */}
             {accommodation.recommendationReason && (
-              <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-100/80">
-                <h2 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-rose-400 to-pink-500 rounded-lg flex items-center justify-center shadow-sm">
-                    <Compass className="w-4 h-4 text-white" />
-                  </div>
+              <div className="bg-white rounded-xl p-6 border border-slate-100">
+                <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <Compass className="w-[18px] h-[18px] text-rose-400" />
                   숙소 소개
                 </h2>
-                <p className="text-sm text-slate-600 leading-relaxed bg-gradient-to-r from-rose-50/50 to-pink-50/50 p-4 rounded-xl border border-rose-100/50">
+                <p className="text-[13px] text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-lg whitespace-pre-line">
                   {accommodation.recommendationReason}
                 </p>
               </div>
             )}
 
             {/* 숙소 후기 */}
-            <div className="bg-white rounded-2xl p-6 shadow-md border border-slate-100/80">
+            <div className="bg-white rounded-xl p-6 border border-slate-100">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-lg flex items-center justify-center shadow-sm">
-                    <Star className="w-4 h-4 text-white" />
-                  </div>
+                <h2 className="text-[17px] font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <Star className="w-[18px] h-[18px] text-amber-400" />
                   숙소 후기
                 </h2>
-                <Button className="bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-sm gap-1.5 shadow-md shadow-sky-200/30">
+                <Button className="bg-sky-500 hover:bg-sky-600 text-sm gap-1.5">
                   <MessageCircle className="w-3.5 h-3.5" />
                   후기 작성
                 </Button>
@@ -538,8 +518,8 @@ export default function AccommodationDetail() {
             <div className="sticky top-24 space-y-4">
 
               {/* 예약 카드 */}
-              <div className="bg-white rounded-2xl p-5 shadow-xl border border-slate-100/80 overflow-hidden relative">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-sky-400 via-cyan-400 to-teal-400" />
+              <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 overflow-hidden relative">
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-sky-400" />
 
                 <div className="mb-4 pt-1">
                   <div className="flex items-baseline gap-1.5">
@@ -580,7 +560,7 @@ export default function AccommodationDetail() {
                 <div className="space-y-2.5">
                   <Button
                     onClick={handleReservation}
-                    className="w-full h-12 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-bold text-sm shadow-lg shadow-sky-200/50 gap-2"
+                    className="w-full h-12 bg-sky-500 hover:bg-sky-600 text-white font-semibold text-sm gap-2"
                   >
                     {accommodation.phone ? (
                       <><PhoneCall className="w-4 h-4" /> 전화 예약하기</>
@@ -609,27 +589,22 @@ export default function AccommodationDetail() {
               </div>
 
               {/* 혼행 TIP */}
-              <div className="bg-gradient-to-br from-cyan-50 via-sky-50 to-blue-50 rounded-2xl p-5 shadow-lg border border-cyan-100/80 relative overflow-hidden">
-                <div className="absolute -top-6 -right-6 w-24 h-24 bg-gradient-to-br from-cyan-200/30 to-sky-200/30 rounded-full blur-xl" />
-                <div className="relative">
-                  <div className="flex items-center gap-2.5 mb-4">
-                    <div className="w-9 h-9 bg-gradient-to-br from-cyan-400 to-teal-500 rounded-xl flex items-center justify-center shadow-md shadow-cyan-200/50">
-                      <Compass className="w-4.5 h-4.5 text-white" />
-                    </div>
+              <div className="bg-sky-50/80 rounded-2xl p-5 border border-sky-100">
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <Compass className="w-[18px] h-[18px] text-cyan-500" />
                     <div>
-                      <div className="text-sm font-bold text-cyan-800">혼행 TIP</div>
-                      <div className="text-[10px] text-cyan-500 font-medium">혼자 여행하는 당신을 위한 꿀팁</div>
+                      <div className="text-sm font-bold text-slate-700">혼행 TIP</div>
+                      <div className="text-[10px] text-slate-400 font-medium">혼자 여행하는 당신을 위한 꿀팁</div>
                     </div>
                   </div>
                   <div className="space-y-2">
                     {hondiTips.map((tip, idx) => {
                       const TipIcon = tip.icon;
                       return (
-                        <div key={idx} className="flex items-start gap-2.5 p-2.5 bg-white/70 rounded-xl backdrop-blur-sm border border-white/80 hover:bg-white/90 transition-colors">
-                          <div className="w-6 h-6 bg-white rounded-md flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-                            <TipIcon className={`w-3.5 h-3.5 ${tip.color}`} />
-                          </div>
-                          <span className="text-xs text-cyan-800 leading-relaxed font-medium">{tip.text}</span>
+                        <div key={idx} className="flex items-start gap-2 p-2.5 bg-white/80 rounded-lg">
+                          <TipIcon className={`w-3.5 h-3.5 mt-0.5 flex-shrink-0 ${tip.color}`} />
+                          <span className="text-xs text-slate-600 leading-relaxed">{tip.text}</span>
                         </div>
                       );
                     })}
@@ -638,11 +613,9 @@ export default function AccommodationDetail() {
               </div>
 
               {/* 위치 지도 */}
-              <div className="bg-white rounded-2xl p-5 shadow-xl border border-slate-100/80">
-                <h3 className="font-bold text-slate-800 mb-3 flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-teal-400 to-emerald-500 rounded-lg flex items-center justify-center shadow-sm">
-                    <Map className="w-4 h-4 text-white" />
-                  </div>
+              <div className="bg-white rounded-xl p-5 border border-slate-100">
+                <h3 className="text-[15px] font-bold text-slate-800 mb-3 flex items-center gap-2">
+                  <Map className="w-[18px] h-[18px] text-teal-500" />
                   위치
                 </h3>
 

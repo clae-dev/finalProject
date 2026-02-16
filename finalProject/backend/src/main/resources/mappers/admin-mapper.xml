@@ -197,10 +197,24 @@
             SELECT
                 A.ACCOMMODATION_NO AS "accommodationNo",
                 A.NAME AS "name",
+                A.ADDRESS AS "address",
+                A.PHONE AS "phone",
                 A.REGION AS "region",
                 A.ACCOMMODATION_TYPE AS "accommodationType",
+                A.PRICE_MIN AS "priceMin",
+                A.PRICE_MAX AS "priceMax",
+                A.CHECK_IN_TIME AS "checkInTime",
+                A.CHECK_OUT_TIME AS "checkOutTime",
+                A.FACILITIES AS "facilities",
+                A.THUMBNAIL_URL AS "thumbnailUrl",
+                A.LATITUDE AS "latitude",
+                A.LONGITUDE AS "longitude",
+                A.RECOMMENDATION_REASON AS "recommendationReason",
                 A.STATUS AS "status",
                 TO_CHAR(A.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
+                (SELECT LISTAGG(AI.IMAGE_URL, '||') WITHIN GROUP (ORDER BY AI.IMAGE_ORDER)
+                 FROM ACCOMMODATION_IMAGE AI
+                 WHERE AI.ACCOMMODATION_NO = A.ACCOMMODATION_NO) AS "imageUrlsRaw",
                 ROW_NUMBER() OVER (ORDER BY A.CREATED_AT DESC) AS RN
             FROM ACCOMMODATION A
             WHERE 1=1
