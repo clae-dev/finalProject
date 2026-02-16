@@ -39,6 +39,8 @@ public class MemberDTO {
     private LocalDateTime updatedAt;         // 수정일
     private LocalDateTime withdrawnAt;       // 탈퇴일
     
+    private String verifiedReviewer;         // 인증 리뷰어 여부 (Y/N)
+
     // 추가 필드 (조회 시 필요한 정보)
     private int postCount;                   // 작성 글 수
     private int reviewCount;                 // 작성 후기 수

@@ -38,6 +38,17 @@ public interface AdminService {
                                        List<MultipartFile> images, boolean keepExistingImages,
                                        String webPath, String folderPath);
 
+    // 회원 인증 관리
+    List<Map<String, Object>> getVerificationList(int page, int size, String status);
+    int getVerificationCount(String status);
+    int approveVerification(int verificationNo, int adminMemberNo);
+    int rejectVerification(int verificationNo, String adminComment, int adminMemberNo);
+
+    // 숙소 후기 관리
+    List<Map<String, Object>> getAccommodationReviewList(int page, int size, String search);
+    int getAccommodationReviewCount(String search);
+    int deleteAccommodationReview(int reviewNo);
+
     // 신고 관리
     List<Map<String, Object>> getReportList(int page, int size, String status, String targetType);
     int getReportCount(String status, String targetType);

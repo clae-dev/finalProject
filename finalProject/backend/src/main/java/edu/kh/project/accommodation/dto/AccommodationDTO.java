@@ -54,6 +54,10 @@ public class AccommodationDTO {
     private LocalDateTime createdAt;        // 등록일시
     private LocalDateTime updatedAt;        // 수정일시
 
+    // 후기 통계
+    private Double avgRating;               // 평균 별점
+    private Integer reviewCount;            // 후기 수
+
     // 이미지 정보
     @JsonIgnore
     private String imageUrlsRaw;            // LISTAGG 결과 (JSON에 포함 안됨)

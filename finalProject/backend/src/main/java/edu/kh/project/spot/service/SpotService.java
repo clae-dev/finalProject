@@ -2,6 +2,8 @@ package edu.kh.project.spot.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import edu.kh.project.spot.dto.SpotDTO;
 
 /**
@@ -21,8 +23,14 @@ public interface SpotService {
     // 명소 등록
     int createSpot(SpotDTO spot);
 
+    // 명소 등록 (이미지 파일 업로드 지원)
+    int createSpotWithImage(SpotDTO spot, MultipartFile imageFile, String imageUrl, String webPath, String folderPath);
+
     // 명소 수정
     int updateSpot(SpotDTO spot);
+
+    // 명소 수정 (이미지 파일 업로드 지원)
+    int updateSpotWithImage(SpotDTO spot, MultipartFile imageFile, String imageUrl, String webPath, String folderPath);
 
     // 명소 삭제
     int deleteSpot(int spotNo);

@@ -9,26 +9,27 @@ function OAuthCallback() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    let timerId;
     const params = new URLSearchParams(location.search);
     const accessToken = params.get('accessToken');
     const errorMsg = params.get('error');
 
     if (errorMsg) {
       setError(errorMsg);
-      setTimeout(() => navigate('/login'), 3000);
-      return;
+      timerId = setTimeout(() => navigate('/login'), 3000);
+      return () => clearTimeout(timerId);
     }
 
     if (!accessToken) {
       setError('로그인 정보를 찾을 수 없습니다.');
-      setTimeout(() => navigate('/login'), 3000);
-      return;
+      timerId = setTimeout(() => navigate('/login'), 3000);
+      return () => clearTimeout(timerId);
     }
 
     try {
-      // 소셜 로그인 전 저장했던 rememberMe 읽기
-      const rememberMe = sessionStorage.getItem("oauthRememberMe") === "true";
-      sessionStorage.removeItem("oauthRememberMe");
+      // 소셜 로그인 전 저장했던 rememberMe 읽기 (localStorage에서 — 리다이렉트 유실 방지)
+      const rememberMe = localStorage.getItem("oauthRememberMe") === "true";
+      localStorage.removeItem("oauthRememberMe");
 
       handleOAuthCallback({
         accessToken,
@@ -45,8 +46,10 @@ function OAuthCallback() {
     } catch (err) {
       console.error('OAuth 콜백 처리 실패:', err);
       setError('로그인 처리 중 오류가 발생했습니다.');
-      setTimeout(() => navigate('/login'), 3000);
+      timerId = setTimeout(() => navigate('/login'), 3000);
     }
+
+    return () => clearTimeout(timerId);
   }, []);
 
   if (error) {

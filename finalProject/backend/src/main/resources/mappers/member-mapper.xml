@@ -17,6 +17,7 @@
         <result property="memberRole" column="MEMBER_TYPE" />
         <result property="memberStatus" column="STATUS" />
         <result property="emailVerified" column="EMAIL_VERIFIED" />
+        <result property="verifiedReviewer" column="VERIFIED_REVIEWER" />
         <result property="createdAt" column="CREATED_AT" />
         <result property="updatedAt" column="UPDATED_AT" />
         <result property="postCount" column="POST_COUNT" />
@@ -38,7 +39,8 @@
             PROFILE_IMAGE,
             MEMBER_TYPE,
             STATUS,
-            EMAIL_VERIFIED
+            EMAIL_VERIFIED,
+            VERIFIED_REVIEWER
         FROM MEMBER
         WHERE EMAIL = #{memberEmail}
           AND STATUS = 'A'
@@ -59,6 +61,7 @@
             M.MEMBER_TYPE,
             M.STATUS,
             M.EMAIL_VERIFIED,
+            M.VERIFIED_REVIEWER,
             M.CREATED_AT,
             (SELECT COUNT(*) FROM BOARD B WHERE B.MEMBER_NO = M.MEMBER_NO AND B.STATUS = 'A') AS POST_COUNT,
             (SELECT COUNT(*) FROM COMPANION_REVIEW R WHERE R.MEMBER_NO = M.MEMBER_NO AND R.STATUS = 'Y') AS REVIEW_COUNT,
@@ -96,6 +99,7 @@
             GENDER,
             AGE_RANGE,
             PROFILE_IMAGE,
+            BIRTH_DATE,
             MEMBER_TYPE,
             STATUS,
             EMAIL_VERIFIED
@@ -109,6 +113,7 @@
             #{memberGender},
             #{memberAgeGroup},
             #{memberProfileImg},
+            TO_DATE(#{memberBirthDate}, 'YYYY-MM-DD'),
             'U',
             'A',
             'Y'

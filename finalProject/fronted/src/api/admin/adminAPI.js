@@ -115,3 +115,41 @@ export const getPendingReportCount = async () => {
   const response = await axiosApi.get("/api/admin/reports/count");
   return response.data;
 };
+
+// ===== 인증 관리 =====
+
+// 인증 요청 목록
+export const getAdminVerifications = async (page = 1, size = 10, status = '') => {
+  const params = { page, size };
+  if (status) params.status = status;
+  const response = await axiosApi.get("/api/admin/verifications", { params });
+  return response.data;
+};
+
+// 인증 승인
+export const approveVerification = async (verificationNo) => {
+  const response = await axiosApi.put(`/api/admin/verifications/${verificationNo}/approve`);
+  return response.data;
+};
+
+// 인증 거부
+export const rejectVerification = async (verificationNo, adminComment) => {
+  const response = await axiosApi.put(`/api/admin/verifications/${verificationNo}/reject`, { adminComment });
+  return response.data;
+};
+
+// ===== 숙소 후기 관리 =====
+
+// 숙소 후기 목록
+export const getAdminAccommodationReviews = async (page = 1, size = 10, search = '') => {
+  const params = { page, size };
+  if (search) params.search = search;
+  const response = await axiosApi.get("/api/admin/accommodation-reviews", { params });
+  return response.data;
+};
+
+// 숙소 후기 삭제
+export const deleteAdminAccommodationReview = async (reviewNo) => {
+  const response = await axiosApi.delete(`/api/admin/accommodation-reviews/${reviewNo}`);
+  return response.data;
+};

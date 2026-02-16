@@ -2,6 +2,7 @@ package edu.kh.project.admin.service;
 
 import edu.kh.project.accommodation.mapper.AccommodationMapper;
 import edu.kh.project.admin.mapper.AdminMapper;
+import edu.kh.project.member.mapper.MemberVerificationMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class AdminServiceImpl implements AdminService {
 
     private final AdminMapper adminMapper;
     private final AccommodationMapper accommodationMapper;
+    private final MemberVerificationMapper verificationMapper;
 
     @Override
     public Map<String, Object> getDashboardStats() {
@@ -143,6 +145,76 @@ public class AdminServiceImpl implements AdminService {
     @Transactional(readOnly = true)
     public int getPendingReportCount() {
         return adminMapper.selectPendingReportCount();
+    }
+
+    // 회원 인증 관리
+    @Override
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getVerificationList(int page, int size, String status) {
+        int offset = (page - 1) * size;
+        List<edu.kh.project.member.dto.MemberVerificationDTO> list =
+                verificationMapper.selectVerificationList(offset, size, status);
+
+        return list.stream().map(v -> {
+            Map<String, Object> map = new HashMap<>();
+            map.put("verificationNo", v.getVerificationNo());
+            map.put("memberNo", v.getMemberNo());
+            map.put("memberNickname", v.getMemberNickname());
+            map.put("memberEmail", v.getMemberEmail());
+            map.put("memberProfileImg", v.getMemberProfileImg());
+            map.put("verificationFile", v.getVerificationFile());
+            map.put("originalName", v.getOriginalName());
+            map.put("status", v.getStatus());
+            map.put("adminComment", v.getAdminComment());
+            map.put("submittedAt", v.getSubmittedAt());
+            map.put("processedAt", v.getProcessedAt());
+            return map;
+        }).collect(java.util.stream.Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int getVerificationCount(String status) {
+        return verificationMapper.selectVerificationCount(status);
+    }
+
+    @Override
+    public int approveVerification(int verificationNo, int adminMemberNo) {
+        // 인증 요청에서 memberNo 가져오기 위해 상태 업데이트 후 회원 상태도 업데이트
+        int result = verificationMapper.updateVerificationStatus(verificationNo, "Y", null, adminMemberNo);
+
+        if (result > 0) {
+            // verificationNo로 memberNo를 찾기: 목록에서 찾아서 처리
+            // 간단하게 admin-mapper에서 직접 조회
+            int memberNo = adminMapper.selectMemberNoByVerificationNo(verificationNo);
+            verificationMapper.updateMemberVerifiedReviewer(memberNo, "Y");
+        }
+
+        return result;
+    }
+
+    @Override
+    public int rejectVerification(int verificationNo, String adminComment, int adminMemberNo) {
+        return verificationMapper.updateVerificationStatus(verificationNo, "R", adminComment, adminMemberNo);
+    }
+
+    // 숙소 후기 관리
+    @Override
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getAccommodationReviewList(int page, int size, String search) {
+        int offset = (page - 1) * size;
+        return adminMapper.selectAdminAccommodationReviewList(offset, size, search);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public int getAccommodationReviewCount(String search) {
+        return adminMapper.selectAccommodationReviewCount(search);
+    }
+
+    @Override
+    public int deleteAccommodationReview(int reviewNo) {
+        return adminMapper.deleteAccommodationReview(reviewNo);
     }
 
     @Override

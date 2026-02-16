@@ -2,6 +2,8 @@ package edu.kh.project.member.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -16,17 +18,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import edu.kh.project.common.util.JwtUtil;
 import edu.kh.project.member.dto.LoginRequestDTO;
 import edu.kh.project.member.dto.LoginResponseDTO;
 import edu.kh.project.member.dto.MemberDTO;
+import edu.kh.project.member.dto.MemberVerificationDTO;
 import edu.kh.project.member.dto.RefreshRequestDTO;
 import edu.kh.project.member.dto.SignupRequestDTO;
 import edu.kh.project.member.service.MemberService;
+import edu.kh.project.member.service.MemberVerificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,12 +48,20 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberVerificationService verificationService;
+    private final JwtUtil jwtUtil;
 
     @Value("${profile.image.web-path}")
     private String profileWebPath;
 
     @Value("${profile.image.folder-path}")
     private String profileFolderPath;
+
+    @Value("${verification.image.web-path}")
+    private String verificationWebPath;
+
+    @Value("${verification.image.folder-path}")
+    private String verificationFolderPath;
     
     /**
      * 이메일 중복 확인
@@ -123,10 +137,25 @@ public class MemberController {
             @RequestBody SignupRequestDTO signupRequest) {
         
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
+            // 만 14세 미만 가입 차단 (서버측 검증)
+            if (signupRequest.getMemberBirthDate() != null && !signupRequest.getMemberBirthDate().isEmpty()) {
+                LocalDate birthDate = LocalDate.parse(signupRequest.getMemberBirthDate());
+                int age = Period.between(birthDate, LocalDate.now()).getYears();
+                if (age < 14) {
+                    response.put("success", false);
+                    response.put("message", "만 14세 미만은 가입할 수 없습니다.");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+                }
+            } else {
+                response.put("success", false);
+                response.put("message", "생년월일을 입력해주세요.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
             int result = memberService.signup(signupRequest);
-            
+
             if (result > 0) {
                 response.put("success", true);
                 response.put("message", "회원가입이 완료되었습니다.");
@@ -136,7 +165,7 @@ public class MemberController {
                 response.put("message", "회원가입에 실패했습니다.");
                 return ResponseEntity.ok(response);
             }
-            
+
         } catch (Exception e) {
             log.error("회원가입 실패", e);
             response.put("success", false);
@@ -377,6 +406,46 @@ public class MemberController {
     }
     
     /**
+     * 비밀번호 변경 (로그인 상태에서 현재 비밀번호 확인 후 변경)
+     */
+    @PutMapping("/{memberNo}/change-password")
+    public ResponseEntity<Map<String, Object>> changePassword(
+            @PathVariable("memberNo") int memberNo,
+            @RequestBody Map<String, String> body) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String currentPassword = body.get("currentPassword");
+            String newPassword = body.get("newPassword");
+
+            if (currentPassword == null || newPassword == null) {
+                response.put("success", false);
+                response.put("message", "현재 비밀번호와 새 비밀번호를 입력해주세요.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            int result = memberService.changePassword(memberNo, currentPassword, newPassword);
+
+            if (result > 0) {
+                response.put("success", true);
+                response.put("message", "비밀번호가 변경되었습니다.");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "현재 비밀번호가 일치하지 않습니다.");
+                return ResponseEntity.ok(response);
+            }
+
+        } catch (Exception e) {
+            log.error("비밀번호 변경 실패", e);
+            response.put("success", false);
+            response.put("message", "비밀번호 변경 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
      * 회원 정보 수정
      * @param memberNo
      * @param member
@@ -498,6 +567,68 @@ public class MemberController {
             log.error("프로필 이미지 업로드 실패", e);
             response.put("success", false);
             response.put("message", "이미지 업로드 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 인증서류 이미지 업로드
+     */
+    @PostMapping("/verification")
+    public ResponseEntity<Map<String, Object>> submitVerification(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam("file") MultipartFile file) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            int memberNo = jwtUtil.getMemberNo(token);
+
+            if (file.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "파일이 비어있습니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            int result = verificationService.submitVerification(
+                    memberNo, file, verificationWebPath, verificationFolderPath);
+
+            response.put("success", result > 0);
+            response.put("message", result > 0 ? "인증 서류가 제출되었습니다." : "인증 서류 제출에 실패했습니다.");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("인증서류 제출 실패", e);
+            response.put("success", false);
+            response.put("message", "인증서류 제출 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 내 인증 상태 조회
+     */
+    @GetMapping("/verification/status")
+    public ResponseEntity<Map<String, Object>> getVerificationStatus(
+            @RequestHeader("Authorization") String authHeader) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            String token = authHeader.replace("Bearer ", "");
+            int memberNo = jwtUtil.getMemberNo(token);
+
+            MemberVerificationDTO verification = verificationService.getVerificationStatus(memberNo);
+
+            response.put("success", true);
+            response.put("data", verification);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            log.error("인증 상태 조회 실패", e);
+            response.put("success", false);
+            response.put("message", "인증 상태 조회 중 오류가 발생했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

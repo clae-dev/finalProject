@@ -106,6 +106,7 @@ public class MemberServiceImpl implements MemberService {
             .memberRole(member.getMemberRole())
             .memberPhone(member.getMemberPhone())
             .memberIntro(member.getMemberIntro())
+            .verifiedReviewer(member.getVerifiedReviewer())
             .build();
 
         log.info("로그인 성공: {}", member.getMemberEmail());
@@ -211,6 +212,7 @@ public class MemberServiceImpl implements MemberService {
             .memberRole(member.getMemberRole())
             .memberPhone(member.getMemberPhone())
             .memberIntro(member.getMemberIntro())
+            .verifiedReviewer(member.getVerifiedReviewer())
             .build();
 
         log.info("토큰 갱신 성공: {}", member.getMemberEmail());
@@ -229,6 +231,27 @@ public class MemberServiceImpl implements MemberService {
         result.put("reviews", memberMapper.selectMyReviews(memberNo));
         result.put("likes", memberMapper.selectMyLikes(memberNo));
         return result;
+    }
+
+    /**
+     * 비밀번호 변경 (현재 비밀번호 확인 후)
+     */
+    @Override
+    public int changePassword(int memberNo, String currentPassword, String newPassword) {
+
+        // 1. 회원 조회
+        MemberDTO member = memberMapper.selectMemberByNo(memberNo);
+
+        if (member == null) return 0;
+
+        // 2. 현재 비밀번호 확인
+        if (!passwordEncoder.matches(currentPassword, member.getMemberPw())) {
+            return 0;
+        }
+
+        // 3. 새 비밀번호 암호화 후 업데이트
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        return memberMapper.resetPw(member.getMemberEmail(), encodedPassword);
     }
 
     /**

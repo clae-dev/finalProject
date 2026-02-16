@@ -96,6 +96,15 @@ public interface MemberService {
     LoginResponseDTO refreshToken(String refreshToken);
 
     /**
+     * 비밀번호 변경 (현재 비밀번호 확인 후)
+     * @param memberNo 회원 번호
+     * @param currentPassword 현재 비밀번호
+     * @param newPassword 새 비밀번호
+     * @return 성공한 행의 개수 (0이면 현재 비밀번호 불일치)
+     */
+    int changePassword(int memberNo, String currentPassword, String newPassword);
+
+    /**
      * 회원 활동 내역 조회
      * @param memberNo 회원 번호
      * @return 내 글, 내 후기, 좋아요 목록

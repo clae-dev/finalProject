@@ -647,6 +647,186 @@ public class AdminController {
         }
     }
 
+    // ===== 회원 인증 관리 =====
+
+    // 인증 요청 목록
+    @GetMapping("/verifications")
+    public ResponseEntity<Map<String, Object>> getVerifications(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String status) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            extractAdminMemberNo(authHeader);
+
+            List<Map<String, Object>> list = adminService.getVerificationList(page, size, status);
+            int totalCount = adminService.getVerificationCount(status);
+
+            response.put("success", true);
+            response.put("list", list);
+            response.put("totalCount", totalCount);
+            response.put("currentPage", page);
+            response.put("pageSize", size);
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("인증 요청 목록 조회 실패", e);
+            response.put("success", false);
+            response.put("message", "인증 요청 목록 조회 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // 인증 승인
+    @PutMapping("/verifications/{no}/approve")
+    public ResponseEntity<Map<String, Object>> approveVerification(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("no") int verificationNo) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            int adminMemberNo = extractAdminMemberNo(authHeader);
+            int result = adminService.approveVerification(verificationNo, adminMemberNo);
+
+            response.put("success", result > 0);
+            response.put("message", result > 0 ? "인증이 승인되었습니다." : "인증 승인에 실패했습니다.");
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("인증 승인 실패", e);
+            response.put("success", false);
+            response.put("message", "인증 승인 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // 인증 거부
+    @PutMapping("/verifications/{no}/reject")
+    public ResponseEntity<Map<String, Object>> rejectVerification(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("no") int verificationNo,
+            @RequestBody Map<String, String> body) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            int adminMemberNo = extractAdminMemberNo(authHeader);
+            String adminComment = body.get("adminComment");
+            int result = adminService.rejectVerification(verificationNo, adminComment, adminMemberNo);
+
+            response.put("success", result > 0);
+            response.put("message", result > 0 ? "인증이 거부되었습니다." : "인증 거부에 실패했습니다.");
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("인증 거부 실패", e);
+            response.put("success", false);
+            response.put("message", "인증 거부 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // ===== 숙소 후기 관리 =====
+
+    // 숙소 후기 목록
+    @GetMapping("/accommodation-reviews")
+    public ResponseEntity<Map<String, Object>> getAccommodationReviews(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String search) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            extractAdminMemberNo(authHeader);
+
+            List<Map<String, Object>> list = adminService.getAccommodationReviewList(page, size, search);
+            int totalCount = adminService.getAccommodationReviewCount(search);
+
+            response.put("success", true);
+            response.put("list", list);
+            response.put("totalCount", totalCount);
+            response.put("currentPage", page);
+            response.put("pageSize", size);
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("숙소 후기 목록 조회 실패", e);
+            response.put("success", false);
+            response.put("message", "숙소 후기 목록 조회 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    // 숙소 후기 삭제 (소프트)
+    @DeleteMapping("/accommodation-reviews/{reviewNo}")
+    public ResponseEntity<Map<String, Object>> deleteAccommodationReview(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("reviewNo") int reviewNo) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            extractAdminMemberNo(authHeader);
+            int result = adminService.deleteAccommodationReview(reviewNo);
+
+            response.put("success", result > 0);
+            response.put("message", result > 0 ? "삭제 완료" : "삭제 실패");
+            return ResponseEntity.ok(response);
+
+        } catch (SecurityException e) {
+            response.put("success", false);
+            response.put("message", "관리자 권한이 없습니다.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("숙소 후기 삭제 실패", e);
+            response.put("success", false);
+            response.put("message", "숙소 후기 삭제 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     // 대기중 신고 건수
     @GetMapping("/reports/count")
     public ResponseEntity<Map<String, Object>> getPendingReportCount(

@@ -38,9 +38,12 @@ export const checkNickname = async (nickname) => {
   return response.data;
 };
 
-// 비밀번호 변경
+// 비밀번호 변경 (로그인 상태에서 현재 비밀번호 확인 후)
 export const resetPassword = async (data) => {
-  const response = await axiosApi.put("/api/member/reset-password", data);
+  const response = await axiosApi.put(`/api/member/${data.memberNo}/change-password`, {
+    currentPassword: data.currentPassword,
+    newPassword: data.newPassword,
+  });
   return response.data;
 };
 

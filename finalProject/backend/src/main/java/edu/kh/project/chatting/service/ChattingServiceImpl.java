@@ -46,12 +46,14 @@ public class ChattingServiceImpl implements ChattingService {
         }
 
         // 없으면 새로 생성
-        ChattingRoomDTO room = new ChattingRoomDTO();
-        // openMember = memberNo, participant = targetNo 를 mapper에서 처리
         chattingMapper.insertChattingRoom(memberNo, targetNo);
 
         // 방금 생성된 방 번호 조회
-        return chattingMapper.selectExistRoom(memberNo, targetNo);
+        Integer newRoomNo = chattingMapper.selectExistRoom(memberNo, targetNo);
+        if (newRoomNo == null) {
+            throw new RuntimeException("채팅방 생성에 실패했습니다.");
+        }
+        return newRoomNo;
     }
 
     @Override

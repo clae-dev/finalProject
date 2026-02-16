@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.kh.project.member.mapper.MemberVerificationMapper">
+
+    <resultMap id="verificationResultMap" type="edu.kh.project.member.dto.MemberVerificationDTO">
+        <id property="verificationNo" column="VERIFICATION_NO" />
+        <result property="memberNo" column="MEMBER_NO" />
+        <result property="verificationFile" column="VERIFICATION_FILE" />
+        <result property="originalName" column="ORIGINAL_NAME" />
+        <result property="renamedName" column="RENAMED_NAME" />
+        <result property="status" column="STATUS" />
+        <result property="adminComment" column="ADMIN_COMMENT" />
+        <result property="submittedAt" column="SUBMITTED_AT" />
+        <result property="processedAt" column="PROCESSED_AT" />
+        <result property="processedBy" column="PROCESSED_BY" />
+        <result property="memberNickname" column="NICKNAME" />
+        <result property="memberEmail" column="EMAIL" />
+        <result property="memberProfileImg" column="PROFILE_IMAGE" />
+    </resultMap>
+
+    <!-- 인증 요청 등록 -->
+    <insert id="insertVerification">
+        INSERT INTO MEMBER_VERIFICATION (
+            VERIFICATION_NO, MEMBER_NO, VERIFICATION_FILE,
+            ORIGINAL_NAME, RENAMED_NAME, STATUS, SUBMITTED_AT
+        ) VALUES (
+            SEQ_MEMBER_VERIFY_NO.NEXTVAL, #{memberNo}, #{verificationFile},
+            #{originalName}, #{renamedName}, 'W', SYSDATE
+        )
+    </insert>
+
+    <!-- 회원의 최신 인증 요청 조회 -->
+    <select id="selectLatestByMemberNo" resultMap="verificationResultMap">
+        SELECT * FROM (
+            SELECT
+                V.VERIFICATION_NO,
+                V.MEMBER_NO,
+                V.VERIFICATION_FILE,
+                V.ORIGINAL_NAME,
+                V.RENAMED_NAME,
+                V.STATUS,
+                V.ADMIN_COMMENT,
+                TO_CHAR(V.SUBMITTED_AT, 'YYYY-MM-DD HH24:MI') AS SUBMITTED_AT,
+                TO_CHAR(V.PROCESSED_AT, 'YYYY-MM-DD HH24:MI') AS PROCESSED_AT,
+                V.PROCESSED_BY
+            FROM MEMBER_VERIFICATION V
+            WHERE V.MEMBER_NO = #{memberNo}
+            ORDER BY V.SUBMITTED_AT DESC
+        )
+        WHERE ROWNUM = 1
+    </select>
+
+    <!-- 인증 요청 목록 (관리자용, 페이징 + 상태 필터) -->
+    <select id="selectVerificationList" resultMap="verificationResultMap">
+        SELECT * FROM (
+            SELECT
+                V.VERIFICATION_NO,
+                V.MEMBER_NO,
+                V.VERIFICATION_FILE,
+                V.ORIGINAL_NAME,
+                V.RENAMED_NAME,
+                V.STATUS,
+                V.ADMIN_COMMENT,
+                TO_CHAR(V.SUBMITTED_AT, 'YYYY-MM-DD HH24:MI') AS SUBMITTED_AT,
+                TO_CHAR(V.PROCESSED_AT, 'YYYY-MM-DD HH24:MI') AS PROCESSED_AT,
+                V.PROCESSED_BY,
+                M.NICKNAME,
+                M.EMAIL,
+                M.PROFILE_IMAGE,
+                ROW_NUMBER() OVER (ORDER BY V.SUBMITTED_AT DESC) AS RN
+            FROM MEMBER_VERIFICATION V
+            JOIN MEMBER M ON V.MEMBER_NO = M.MEMBER_NO
+            WHERE 1=1
+            <if test="status != null and status != ''">
+                AND V.STATUS = #{status}
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 인증 요청 건수 -->
+    <select id="selectVerificationCount" resultType="int">
+        SELECT COUNT(*)
+        FROM MEMBER_VERIFICATION
+        WHERE 1=1
+        <if test="status != null and status != ''">
+            AND STATUS = #{status}
+        </if>
+    </select>
+
+    <!-- 인증 요청 상태 변경 (승인/거부) -->
+    <update id="updateVerificationStatus">
+        UPDATE MEMBER_VERIFICATION
+        SET STATUS = #{status},
+            ADMIN_COMMENT = #{adminComment},
+            PROCESSED_AT = SYSDATE,
+            PROCESSED_BY = #{processedBy}
+        WHERE VERIFICATION_NO = #{verificationNo}
+    </update>
+
+    <!-- 회원 인증 리뷰어 상태 변경 -->
+    <update id="updateMemberVerifiedReviewer">
+        UPDATE MEMBER
+        SET VERIFIED_REVIEWER = #{verifiedReviewer},
+            UPDATED_AT = SYSDATE
+        WHERE MEMBER_NO = #{memberNo}
+    </update>
+
+</mapper>

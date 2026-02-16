@@ -303,7 +303,7 @@
                 TO_CHAR(R.UPDATED_AT, 'YYYY-MM-DD HH24:MI') AS "updatedAt",
                 M.NICKNAME AS "reporterNickname",
                 CASE R.TARGET_TYPE
-                    WHEN 'FREEBOARD' THEN (SELECT B.BOARD_TITLE FROM BOARD B WHERE B.BOARD_NO = R.TARGET_NO)
+                    WHEN 'FREEBOARD' THEN (SELECT B.TITLE FROM BOARD B WHERE B.BOARD_NO = R.TARGET_NO)
                     WHEN 'COMPANION' THEN (SELECT CB.TITLE FROM COMPANION_BOARD CB WHERE CB.COMPANION_NO = R.TARGET_NO)
                     WHEN 'REVIEW' THEN (SELECT CR.TITLE FROM COMPANION_REVIEW CR WHERE CR.REVIEW_NO = R.TARGET_NO)
                 END AS "targetTitle",
@@ -349,7 +349,7 @@
             TO_CHAR(R.UPDATED_AT, 'YYYY-MM-DD HH24:MI') AS "updatedAt",
             M.NICKNAME AS "reporterNickname",
             CASE R.TARGET_TYPE
-                WHEN 'FREEBOARD' THEN (SELECT B.BOARD_TITLE FROM BOARD B WHERE B.BOARD_NO = R.TARGET_NO)
+                WHEN 'FREEBOARD' THEN (SELECT B.TITLE FROM BOARD B WHERE B.BOARD_NO = R.TARGET_NO)
                 WHEN 'COMPANION' THEN (SELECT CB.TITLE FROM COMPANION_BOARD CB WHERE CB.COMPANION_NO = R.TARGET_NO)
                 WHEN 'REVIEW' THEN (SELECT CR.TITLE FROM COMPANION_REVIEW CR WHERE CR.REVIEW_NO = R.TARGET_NO)
             END AS "targetTitle",
@@ -378,5 +378,60 @@
         FROM CONTENT_REPORT
         WHERE STATUS = 'P'
     </select>
+
+    <!-- 인증 요청에서 MEMBER_NO 조회 -->
+    <select id="selectMemberNoByVerificationNo" resultType="int">
+        SELECT MEMBER_NO
+        FROM MEMBER_VERIFICATION
+        WHERE VERIFICATION_NO = #{verificationNo}
+    </select>
+
+    <!-- 숙소 후기 목록 (관리자용) -->
+    <select id="selectAdminAccommodationReviewList" resultType="map">
+        SELECT * FROM (
+            SELECT
+                R.REVIEW_NO AS "reviewNo",
+                R.RATING AS "rating",
+                DBMS_LOB.SUBSTR(R.CONTENT, 100, 1) AS "content",
+                R.STATUS AS "status",
+                TO_CHAR(R.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
+                M.NICKNAME AS "authorNickname",
+                M.MEMBER_NO AS "memberNo",
+                A.NAME AS "accommodationName",
+                A.ACCOMMODATION_NO AS "accommodationNo",
+                ROW_NUMBER() OVER (ORDER BY R.CREATED_AT DESC) AS RN
+            FROM ACCOMMODATION_REVIEW R
+            JOIN MEMBER M ON R.MEMBER_NO = M.MEMBER_NO
+            JOIN ACCOMMODATION A ON R.ACCOMMODATION_NO = A.ACCOMMODATION_NO
+            WHERE R.STATUS != 'D'
+            <if test="search != null and search != ''">
+                AND (A.NAME LIKE '%' || #{search} || '%'
+                     OR M.NICKNAME LIKE '%' || #{search} || '%')
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 숙소 후기 건수 -->
+    <select id="selectAccommodationReviewCount" resultType="int">
+        SELECT COUNT(*)
+        FROM ACCOMMODATION_REVIEW R
+        <if test="search != null and search != ''">
+            JOIN MEMBER M ON R.MEMBER_NO = M.MEMBER_NO
+            JOIN ACCOMMODATION A ON R.ACCOMMODATION_NO = A.ACCOMMODATION_NO
+        </if>
+        WHERE R.STATUS != 'D'
+        <if test="search != null and search != ''">
+            AND (A.NAME LIKE '%' || #{search} || '%'
+                 OR M.NICKNAME LIKE '%' || #{search} || '%')
+        </if>
+    </select>
+
+    <!-- 숙소 후기 삭제 (소프트) -->
+    <update id="deleteAccommodationReview">
+        UPDATE ACCOMMODATION_REVIEW
+        SET STATUS = 'D', UPDATED_AT = SYSDATE
+        WHERE REVIEW_NO = #{reviewNo}
+    </update>
 
 </mapper>

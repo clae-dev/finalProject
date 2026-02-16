@@ -63,6 +63,20 @@ public class FileConfig implements WebMvcConfigurer {
 	@Value("${accommodation.image.folder-path}")
 	private String accommodationImageFolderPath;
 
+	// 명소 이미지 경로
+	@Value("${spot.image.web-path}")
+	private String spotImageWebPath;
+
+	@Value("${spot.image.folder-path}")
+	private String spotImageFolderPath;
+
+	// 인증서류 이미지 경로
+	@Value("${verification.image.web-path}")
+	private String verificationImageWebPath;
+
+	@Value("${verification.image.folder-path}")
+	private String verificationImageFolderPath;
+
 	// 공통 파일 업로드 경로
 	@Value("${file.upload.path}")
 	private String fileUploadPath;
@@ -101,6 +115,14 @@ public class FileConfig implements WebMvcConfigurer {
 		// 숙소 이미지 경로 매핑
 		registry.addResourceHandler(accommodationImageWebPath + "**")
 		        .addResourceLocations("file:///" + accommodationImageFolderPath);
+
+		// 명소 이미지 경로 매핑
+		registry.addResourceHandler(spotImageWebPath + "**")
+		        .addResourceLocations("file:///" + spotImageFolderPath);
+
+		// 인증서류 이미지 경로 매핑
+		registry.addResourceHandler(verificationImageWebPath + "**")
+		        .addResourceLocations("file:///" + verificationImageFolderPath);
 
 		// 공통 파일 업로드 경로 매핑
 		registry.addResourceHandler(fileUploadUrl)

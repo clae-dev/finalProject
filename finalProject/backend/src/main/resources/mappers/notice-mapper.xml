@@ -23,19 +23,18 @@
         SELECT * FROM (
             SELECT
                 B.BOARD_NO,
-                B.BOARD_TITLE,
-                B.READ_COUNT,
-                B.BOARD_DEL_FL,
+                B.TITLE AS BOARD_TITLE,
+                B.VIEW_COUNT AS READ_COUNT,
+                B.STATUS AS BOARD_DEL_FL,
                 TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
                 M.NICKNAME AS MEMBER_NICKNAME,
                 ROW_NUMBER() OVER (ORDER BY B.BOARD_NO DESC) AS RN
             FROM BOARD B
             JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
-            JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
-            WHERE BT.BOARD_TYPE_CODE = 'NOTICE'
-              AND B.BOARD_DEL_FL = 'N'
+            WHERE B.BOARD_CODE = 'NOTICE'
+              AND B.STATUS = 'A'
             <if test="search != null and search != ''">
-                AND B.BOARD_TITLE LIKE '%' || #{search} || '%'
+                AND B.TITLE LIKE '%' || #{search} || '%'
             </if>
         )
         WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
@@ -45,11 +44,10 @@
     <select id="selectNoticeCount" resultType="int">
         SELECT COUNT(*)
         FROM BOARD B
-        JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
-        WHERE BT.BOARD_TYPE_CODE = 'NOTICE'
-          AND B.BOARD_DEL_FL = 'N'
+        WHERE B.BOARD_CODE = 'NOTICE'
+          AND B.STATUS = 'A'
         <if test="search != null and search != ''">
-            AND B.BOARD_TITLE LIKE '%' || #{search} || '%'
+            AND B.TITLE LIKE '%' || #{search} || '%'
         </if>
     </select>
 
@@ -57,26 +55,25 @@
     <select id="selectNoticeDetail" resultMap="noticeResultMap">
         SELECT
             B.BOARD_NO,
-            B.BOARD_TITLE,
-            B.BOARD_CONTENT,
-            B.READ_COUNT,
-            B.BOARD_DEL_FL,
+            B.TITLE AS BOARD_TITLE,
+            B.CONTENT AS BOARD_CONTENT,
+            B.VIEW_COUNT AS READ_COUNT,
+            B.STATUS AS BOARD_DEL_FL,
             B.MEMBER_NO,
             TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
             TO_CHAR(B.UPDATED_AT, 'YYYY-MM-DD') AS UPDATED_AT,
             M.NICKNAME AS MEMBER_NICKNAME
         FROM BOARD B
         JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
-        JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
         WHERE B.BOARD_NO = #{boardNo}
-          AND BT.BOARD_TYPE_CODE = 'NOTICE'
-          AND B.BOARD_DEL_FL = 'N'
+          AND B.BOARD_CODE = 'NOTICE'
+          AND B.STATUS = 'A'
     </select>
 
     <!-- 조회수 증가 -->
     <update id="updateReadCount">
         UPDATE BOARD
-        SET READ_COUNT = READ_COUNT + 1
+        SET VIEW_COUNT = VIEW_COUNT + 1
         WHERE BOARD_NO = #{boardNo}
     </update>
 
@@ -85,18 +82,17 @@
         SELECT * FROM (
             SELECT
                 B.BOARD_NO,
-                B.BOARD_TITLE,
-                B.READ_COUNT,
-                B.BOARD_DEL_FL,
+                B.TITLE AS BOARD_TITLE,
+                B.VIEW_COUNT AS READ_COUNT,
+                B.STATUS AS BOARD_DEL_FL,
                 TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
                 M.NICKNAME AS MEMBER_NICKNAME,
                 ROW_NUMBER() OVER (ORDER BY B.BOARD_NO DESC) AS RN
             FROM BOARD B
             JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
-            JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
-            WHERE BT.BOARD_TYPE_CODE = 'NOTICE'
+            WHERE B.BOARD_CODE = 'NOTICE'
             <if test="search != null and search != ''">
-                AND B.BOARD_TITLE LIKE '%' || #{search} || '%'
+                AND B.TITLE LIKE '%' || #{search} || '%'
             </if>
         )
         WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
@@ -106,30 +102,29 @@
     <select id="selectAdminNoticeCount" resultType="int">
         SELECT COUNT(*)
         FROM BOARD B
-        JOIN BOARD_TYPE BT ON B.BOARD_TYPE_NO = BT.BOARD_TYPE_NO
-        WHERE BT.BOARD_TYPE_CODE = 'NOTICE'
+        WHERE B.BOARD_CODE = 'NOTICE'
         <if test="search != null and search != ''">
-            AND B.BOARD_TITLE LIKE '%' || #{search} || '%'
+            AND B.TITLE LIKE '%' || #{search} || '%'
         </if>
     </select>
 
     <!-- 공지 작성 -->
     <insert id="insertNotice">
-        INSERT INTO BOARD (BOARD_NO, BOARD_TITLE, BOARD_CONTENT, MEMBER_NO, BOARD_TYPE_NO)
+        INSERT INTO BOARD (BOARD_NO, BOARD_CODE, TITLE, CONTENT, MEMBER_NO)
         VALUES (
             SEQ_BOARD_NO.NEXTVAL,
+            'NOTICE',
             #{boardTitle},
             #{boardContent},
-            #{memberNo},
-            (SELECT BOARD_TYPE_NO FROM BOARD_TYPE WHERE BOARD_TYPE_CODE = 'NOTICE')
+            #{memberNo}
         )
     </insert>
 
     <!-- 공지 수정 -->
     <update id="updateNotice">
         UPDATE BOARD
-        SET BOARD_TITLE = #{boardTitle},
-            BOARD_CONTENT = #{boardContent},
+        SET TITLE = #{boardTitle},
+            CONTENT = #{boardContent},
             UPDATED_AT = SYSDATE
         WHERE BOARD_NO = #{boardNo}
     </update>
@@ -137,7 +132,7 @@
     <!-- 공지 소프트 삭제 -->
     <update id="softDeleteNotice">
         UPDATE BOARD
-        SET BOARD_DEL_FL = 'Y', UPDATED_AT = SYSDATE
+        SET STATUS = 'D', UPDATED_AT = SYSDATE
         WHERE BOARD_NO = #{boardNo}
     </update>
 
