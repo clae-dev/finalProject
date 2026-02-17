@@ -46,7 +46,7 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-14">
             {/* 브랜드 영역 */}
             <div className="lg:col-span-1">
-              <Link to="/" className="flex items-center gap-3 group mb-5">
+              <Link to="/home" className="flex items-center gap-3 group mb-5">
                 <img
                   src={logo}
                   alt="혼디"

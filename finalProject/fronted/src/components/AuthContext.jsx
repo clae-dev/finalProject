@@ -141,8 +141,8 @@ export const AuthProvider = ({ children }) => {
       setEmail("");
       setPassword("");
 
-      // 메인 페이지로 이동
-      window.location.href = "/";
+      // 홈 페이지로 이동
+      window.location.href = "/home";
 
     } catch (error) {
       console.error("로그인 실패:", error);
@@ -230,7 +230,7 @@ export const AuthProvider = ({ children }) => {
     setEmail("");
     setPassword("");
     // 홈으로 이동
-    window.location.href = "/";
+    window.location.href = "/home";
   };
 
   // 자식 컴포넌트에게 전달할 데이터를 하나로 묶기

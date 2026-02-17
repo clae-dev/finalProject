@@ -28,6 +28,11 @@ export default defineConfig({
         changeOrigin: true,
         ws: true,
       },
+      '/notificationSock': {
+        target: 'http://localhost:80',
+        changeOrigin: true,
+        ws: true,
+      },
     },
   },
 })

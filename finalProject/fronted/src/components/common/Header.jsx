@@ -4,6 +4,7 @@ import { MessageCircle, Shield, ChevronDown, Plane, Hotel, CalendarDays, Users, 
 import logo from '@/assets/images/logo/혼디.png';
 import { AuthContext } from '../AuthContext';
 import ChatPanel from '../chatting/ChatPanel';
+import NotificationBell from '../notification/NotificationBell';
 
 const navItems = [
   {
@@ -123,7 +124,7 @@ export default function Header() {
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-center justify-between h-18 relative">
               {/* 로고 - 왼쪽 */}
-              <Link to="/" className="cursor-pointer flex items-center gap-3 group">
+              <Link to="/home" className="cursor-pointer flex items-center gap-3 group">
                 <img src={logo} alt="혼디" className="h-14 group-hover:scale-105 transition-transform duration-300" />
                 <div className="flex flex-col leading-tight">
                   <span
@@ -190,6 +191,9 @@ export default function Header() {
                         <Shield className="w-5 h-5 text-white stroke-[2.5] group-hover:rotate-12 transition-transform duration-300" />
                       </Link>
                     )}
+
+                    {/* 알림 아이콘 */}
+                    <NotificationBell />
 
                     {/* 채팅 아이콘 */}
                     <button

@@ -146,14 +146,14 @@ export default function AdminReports() {
           <table className="w-full">
             <thead>
               <tr className="bg-sky-50/80">
-                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">번호</th>
-                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">대상</th>
-                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">게시글 제목</th>
-                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">신고유형</th>
-                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">신고자</th>
-                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">상태</th>
-                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">등록일</th>
-                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">관리</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">번호</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">대상</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">게시글 제목</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">신고유형</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">신고자</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">상태</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">등록일</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">관리</th>
               </tr>
             </thead>
             <tbody>
@@ -161,29 +161,29 @@ export default function AdminReports() {
                 const badge = STATUS_BADGE[report.status] || { label: report.status, cls: 'bg-slate-100 text-slate-500' };
                 return (
                   <tr key={report.reportNo} className="border-t border-sky-50 hover:bg-sky-50/50 transition-colors">
-                    <td className="px-5 py-3 text-sm text-slate-500">{report.reportNo}</td>
-                    <td className="px-5 py-3">
-                      <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-50 text-sky-600">
+                    <td className="px-6 py-3 text-sm text-slate-500">{report.reportNo}</td>
+                    <td className="px-6 py-3">
+                      <span className="px-3 py-1 rounded-full text-xs font-bold bg-sky-50 text-sky-600">
                         {TARGET_TYPE_LABEL[report.targetType] || report.targetType}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-sm font-semibold text-slate-700 max-w-[200px] truncate">
+                    <td className="px-6 py-3 text-sm font-semibold text-slate-700 max-w-[200px] truncate">
                       {report.targetTitle || '(삭제됨)'}
                     </td>
-                    <td className="px-5 py-3 text-sm text-slate-600">
+                    <td className="px-6 py-3 text-sm text-slate-600">
                       {REPORT_TYPE_LABEL[report.reportType] || report.reportType}
                     </td>
-                    <td className="px-5 py-3 text-sm text-slate-500">{report.reporterNickname}</td>
-                    <td className="px-5 py-3">
+                    <td className="px-6 py-3 text-sm text-slate-500">{report.reporterNickname}</td>
+                    <td className="px-6 py-3">
                       <span className={`px-3 py-1 rounded-full text-xs font-bold ${badge.cls}`}>
                         {badge.label}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-sm text-slate-400">{report.createdAt}</td>
-                    <td className="px-5 py-3">
+                    <td className="px-6 py-3 text-sm text-slate-400">{report.createdAt}</td>
+                    <td className="px-6 py-3">
                       <button
                         onClick={() => handleOpenDetail(report.reportNo, report.status, report.result)}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-sky-50 text-sky-600 text-xs font-bold hover:bg-sky-100 transition-colors"
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-sky-50 text-sky-600 text-xs font-bold hover:bg-sky-100 transition-colors"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         상세
@@ -262,7 +262,7 @@ export default function AdminReports() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="bg-white rounded-3xl shadow-2xl p-7 w-full max-w-lg max-h-[85vh] overflow-y-auto"
+              className="bg-white rounded-3xl shadow-2xl p-6 w-full max-w-lg max-h-[85vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
