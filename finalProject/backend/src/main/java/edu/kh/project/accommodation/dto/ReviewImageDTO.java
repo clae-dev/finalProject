@@ -19,10 +19,16 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ReviewImageDTO {
 
-    private int imageNo;        // 이미지 번호 (PK)
-    private int reviewNo;       // 후기 번호 (FK)
-    private String imageUrl;    // 이미지 접근 URL
-    private String originalName;// 원본 파일명
-    private String renamedName; // 저장된 파일명 (UUID)
-    private int imageOrder;     // 이미지 순서
+    /** 이미지 번호 (PK) */
+    private int imageNo;
+    /** 후기 번호 (FK → ACCOMMODATION_REVIEW) */
+    private int reviewNo;
+    /** 이미지 접근 URL */
+    private String imageUrl;
+    /** 원본 파일명 */
+    private String originalName;
+    /** 저장된 파일명 (UUID) */
+    private String renamedName;
+    /** 이미지 순서 */
+    private int imageOrder;
 }
