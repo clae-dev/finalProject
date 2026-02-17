@@ -27,10 +27,6 @@ function OAuthCallback() {
     }
 
     try {
-      // 소셜 로그인 전 저장했던 rememberMe 읽기 (localStorage에서 — 리다이렉트 유실 방지)
-      const rememberMe = localStorage.getItem("oauthRememberMe") === "true";
-      localStorage.removeItem("oauthRememberMe");
-
       handleOAuthCallback({
         accessToken,
         refreshToken: params.get('refreshToken'),
@@ -40,7 +36,7 @@ function OAuthCallback() {
         memberEmail: params.get('memberEmail'),
         memberProfileImg: params.get('memberProfileImg'),
         loginType: params.get('loginType')
-      }, rememberMe);
+      });
 
       navigate('/home');
     } catch (err) {

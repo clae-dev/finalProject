@@ -1,10 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { getSavedEmail, saveEmail, removeSavedEmail } from '../api/core/tokenStorage';
 import logo from '@/assets/images/logo/혼디.png';
 import bgImage from '@/assets/images/auth/협재.png';
 
@@ -12,13 +13,20 @@ function Login() {
   const globalState = useContext(AuthContext);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+  const [saveId, setSaveId] = useState(false);
+
+  // 저장된 이메일 불러오기
+  useEffect(() => {
+    const saved = getSavedEmail();
+    if (saved) {
+      setSaveId(true);
+      globalState.changeInputEmail({ target: { value: saved } });
+    }
+  }, []);
 
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:80';
 
-  // 소셜 로그인 전 rememberMe를 localStorage에 저장 (OAuth 리다이렉트 체인에서도 유실 방지)
   const handleSocialLogin = (provider) => {
-    localStorage.setItem("oauthRememberMe", rememberMe ? "true" : "false");
     window.location.href = `${API_URL}/oauth2/authorization/${provider}`;
   };
 
@@ -76,7 +84,10 @@ function Login() {
           </div>
 
           {/* 로그인 폼 */}
-          <form onSubmit={(e) => globalState.handleLogin(e, rememberMe)} className="space-y-5">
+          <form onSubmit={(e) => {
+            if (saveId) { saveEmail(globalState.email); } else { removeSavedEmail(); }
+            globalState.handleLogin(e);
+          }} className="space-y-5">
             <div>
               <label
                 className="block text-sm font-semibold text-slate-600 mb-2"
@@ -131,17 +142,17 @@ function Login() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Checkbox
-                  id="remember"
-                  checked={rememberMe}
-                  onCheckedChange={setRememberMe}
+                  id="saveId"
+                  checked={saveId}
+                  onCheckedChange={setSaveId}
                   className="border-slate-300"
                 />
                 <label
-                  htmlFor="remember"
+                  htmlFor="saveId"
                   className="text-sm text-slate-500 cursor-pointer"
                   style={{ fontFamily: "'Pretendard', sans-serif" }}
                 >
-                  로그인 유지
+                  아이디 저장
                 </label>
               </div>
               <Link

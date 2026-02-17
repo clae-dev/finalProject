@@ -1,40 +1,39 @@
 /**
  * 토큰 저장소 유틸리티
- * - "로그인 유지" 체크 시 → localStorage (브라우저 닫아도 유지)
- * - 미체크 시 → sessionStorage (브라우저 닫으면 삭제)
+ * - 인증 토큰은 항상 localStorage에 저장 (브라우저 닫아도 유지)
+ * - "아이디 저장" 기능은 별도 키로 관리
  */
 
-const REMEMBER_KEY = "rememberMe";
+const SAVED_EMAIL_KEY = "savedEmail";
 
-/** "로그인 유지" 여부 저장 (항상 localStorage에 저장) */
-export const setRememberMe = (value) => {
-  localStorage.setItem(REMEMBER_KEY, value ? "true" : "false");
+/** 이메일 저장 */
+export const saveEmail = (email) => {
+  localStorage.setItem(SAVED_EMAIL_KEY, email);
 };
 
-/** "로그인 유지" 여부 확인 */
-export const getRememberMe = () => {
-  return localStorage.getItem(REMEMBER_KEY) === "true";
+/** 저장된 이메일 불러오기 */
+export const getSavedEmail = () => {
+  return localStorage.getItem(SAVED_EMAIL_KEY) || "";
 };
 
-/** 현재 설정에 맞는 Storage 반환 */
-const getStorage = () => {
-  return getRememberMe() ? localStorage : sessionStorage;
+/** 저장된 이메일 삭제 */
+export const removeSavedEmail = () => {
+  localStorage.removeItem(SAVED_EMAIL_KEY);
 };
 
 /** 토큰/유저 데이터 저장 */
 export const saveToken = (key, value) => {
-  getStorage().setItem(key, value);
+  localStorage.setItem(key, value);
 };
 
-/** 토큰/유저 데이터 읽기 (양쪽 Storage 모두 확인) */
+/** 토큰/유저 데이터 읽기 */
 export const getToken = (key) => {
-  return localStorage.getItem(key) || sessionStorage.getItem(key);
+  return localStorage.getItem(key);
 };
 
-/** 토큰/유저 데이터 삭제 (양쪽 모두 삭제) */
+/** 토큰/유저 데이터 삭제 */
 export const removeToken = (key) => {
   localStorage.removeItem(key);
-  sessionStorage.removeItem(key);
 };
 
 /** 모든 인증 데이터 삭제 */
@@ -42,5 +41,4 @@ export const clearAllAuth = () => {
   removeToken("accessToken");
   removeToken("refreshToken");
   removeToken("userData");
-  localStorage.removeItem(REMEMBER_KEY);
 };
