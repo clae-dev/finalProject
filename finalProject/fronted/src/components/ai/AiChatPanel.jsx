@@ -7,8 +7,8 @@ import changsikImg from '../../assets/images/제주.png';
 const QUICK_QUESTIONS = [
   { icon: <Compass className="w-3.5 h-3.5" />, text: '제주 혼자 여행 코스 추천해줘' },
   { icon: <UtensilsCrossed className="w-3.5 h-3.5" />, text: '제주 맛집 추천해줘' },
-  { icon: <Palmtree className="w-3.5 h-3.5" />, text: '제주 숨은 명소 알려줘' },
-  { icon: <MapPin className="w-3.5 h-3.5" />, text: '제주 게스트하우스 추천해줘' },
+  { icon: <Palmtree className="w-3.5 h-3.5" />, text: 'HONDI 추천 명소 알려줘' },
+  { icon: <MapPin className="w-3.5 h-3.5" />, text: 'HONDI에 등록된 숙소 추천해줘' },
 ];
 
 const WELCOME_MESSAGE = {

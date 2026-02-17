@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import edu.kh.project.ai.mapper.AiContextMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AiChatService {
 
     private final RestTemplate restTemplate;
+    private final AiContextMapper aiContextMapper;
 
     @Value("${openai.api.key}")
     private String apiKey;
@@ -32,6 +34,11 @@ public class AiChatService {
     private String model;
 
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
+
+    // DB 컨텍스트 캐시 (5분)
+    private String cachedDbContext = null;
+    private long cacheTimestamp = 0;
+    private static final long CACHE_TTL_MS = 5 * 60 * 1000; // 5분
 
     private static final String SYSTEM_PROMPT =
         "## 역할\n" +
@@ -70,7 +77,142 @@ public class AiChatService {
         "- 욕설이나 부적절한 요청에는 정중하게 거절해.\n\n" +
 
         "## 첫 인사 예시\n" +
-        "사용자가 처음 인사하면: '혼저옵서예~ 🍊 제주 여행 도우미 창식이입니다! 제주에 대해 궁금한 거 뭐든 물어보세요!'";
+        "사용자가 처음 인사하면: '혼저옵서예~ 🍊 제주 여행 도우미 창식이입니다! 제주에 대해 궁금한 거 뭐든 물어보세요!'\n\n" +
+
+        "## HONDI 사이트 데이터 활용 규칙\n" +
+        "- 아래에 HONDI 플랫폼의 실제 데이터가 제공될 수 있어.\n" +
+        "- 숙소 추천 시 HONDI에 등록된 숙소를 우선 안내하고, 'HONDI에서 자세한 정보를 확인해보세요!'라고 안내해.\n" +
+        "- 동행 모집 글이 있으면, 혼행족에게 '지금 HONDI에서 동행을 모집 중인 글도 있어요!'라고 자연스럽게 안내해.\n" +
+        "- HONDI 명소 데이터가 있으면 우선 참고하되, 일반 제주 지식과 함께 답변해.\n" +
+        "- 데이터에 없는 내용을 묻는 경우, 일반 제주 여행 지식으로 답변해.\n" +
+        "- 가격 정보는 '약 ~원대'로 안내하고, 정확한 금액은 현장 확인을 권해.\n" +
+        "- 커뮤니티 인기 글이나 동행 모집 정보를 안내할 때 구체적인 제목을 언급해도 돼.";
+
+    /**
+     * DB 컨텍스트를 캐시와 함께 반환 (5분 TTL)
+     */
+    private String getDbContext() {
+        long now = System.currentTimeMillis();
+        if (cachedDbContext != null && (now - cacheTimestamp) < CACHE_TTL_MS) {
+            log.debug("AI DB 컨텍스트 캐시 사용 (남은 시간: {}초)", (CACHE_TTL_MS - (now - cacheTimestamp)) / 1000);
+            return cachedDbContext;
+        }
+
+        log.info("AI DB 컨텍스트 새로 조회");
+        cachedDbContext = buildDbContext();
+        cacheTimestamp = now;
+        return cachedDbContext;
+    }
+
+    /**
+     * DB에서 데이터를 조회하여 텍스트 컨텍스트로 변환
+     */
+    private String buildDbContext() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n\n## HONDI 사이트 실시간 데이터\n");
+
+        try {
+            // 1. 인기 숙소
+            List<Map<String, Object>> accommodations = aiContextMapper.selectAccommodationSummary();
+            if (accommodations != null && !accommodations.isEmpty()) {
+                sb.append("\n### 등록 숙소 (인기순 ").append(accommodations.size()).append("개)\n");
+                for (Map<String, Object> acc : accommodations) {
+                    sb.append("- ").append(acc.get("name"));
+                    sb.append(" (").append(acc.get("type")).append(", ").append(acc.get("region")).append(")");
+
+                    Object priceMin = acc.get("priceMin");
+                    Object priceMax = acc.get("priceMax");
+                    if (priceMin != null && priceMax != null) {
+                        sb.append(" ").append(priceMin).append("~").append(priceMax).append("원");
+                    }
+
+                    Object avgRating = acc.get("avgRating");
+                    Object reviewCount = acc.get("reviewCount");
+                    if (avgRating != null && !"0".equals(avgRating.toString()) && !"0.0".equals(avgRating.toString())) {
+                        sb.append(" ★").append(avgRating).append("(").append(reviewCount).append("건)");
+                    }
+
+                    Object facilities = acc.get("facilities");
+                    if (facilities != null && !facilities.toString().isEmpty()) {
+                        sb.append(" [").append(facilities).append("]");
+                    }
+                    sb.append("\n");
+                }
+            }
+
+            // 2. 추천 명소
+            List<Map<String, Object>> spots = aiContextMapper.selectActiveSpotSummary();
+            if (spots != null && !spots.isEmpty()) {
+                sb.append("\n### HONDI 추천 명소\n");
+                for (Map<String, Object> spot : spots) {
+                    sb.append("- ").append(spot.get("title"));
+
+                    Object desc = spot.get("description");
+                    if (desc != null && !desc.toString().isEmpty()) {
+                        String descStr = desc.toString();
+                        if (descStr.length() > 50) descStr = descStr.substring(0, 50) + "...";
+                        sb.append(": ").append(descStr);
+                    }
+
+                    Object location = spot.get("location");
+                    if (location != null && !location.toString().isEmpty()) {
+                        sb.append(" (").append(location).append(")");
+                    }
+
+                    Object tag = spot.get("tag");
+                    if (tag != null && !tag.toString().isEmpty()) {
+                        sb.append(" #").append(tag);
+                    }
+                    sb.append("\n");
+                }
+            }
+
+            // 3. 동행 모집
+            List<Map<String, Object>> companions = aiContextMapper.selectRecentCompanionSummary();
+            if (companions != null && !companions.isEmpty()) {
+                sb.append("\n### 동행 모집 중 (최근 ").append(companions.size()).append("건)\n");
+                for (Map<String, Object> comp : companions) {
+                    sb.append("- ").append(comp.get("title"));
+                    sb.append(" (").append(comp.get("travelDate"));
+                    sb.append(", ").append(comp.get("joinCount")).append("/").append(comp.get("maxMembers")).append("명)");
+
+                    Object tags = comp.get("tags");
+                    if (tags != null && !tags.toString().isEmpty()) {
+                        sb.append(" ").append(tags);
+                    }
+                    sb.append("\n");
+                }
+            }
+
+            // 4. 인기 게시글
+            List<Map<String, Object>> boards = aiContextMapper.selectPopularBoardSummary();
+            if (boards != null && !boards.isEmpty()) {
+                sb.append("\n### 커뮤니티 인기 게시글 (조회수 TOP ").append(boards.size()).append(")\n");
+                for (Map<String, Object> board : boards) {
+                    sb.append("- ").append(board.get("title"));
+                    sb.append(" (조회 ").append(board.get("viewCount")).append(")\n");
+                }
+            }
+
+            // 5. 후기 통계
+            Map<String, Object> reviewStats = aiContextMapper.selectReviewStats();
+            if (reviewStats != null && reviewStats.get("totalCount") != null) {
+                sb.append("\n### 숙소 후기 통계\n");
+                sb.append("- 총 후기 ").append(reviewStats.get("totalCount")).append("건");
+                Object avgRating = reviewStats.get("avgRating");
+                if (avgRating != null) {
+                    sb.append(", 평균 별점 ★").append(avgRating);
+                }
+                sb.append("\n");
+            }
+
+        } catch (Exception e) {
+            log.warn("AI DB 컨텍스트 빌드 중 오류 (일반 프롬프트로 대체): {}", e.getMessage());
+            return "";
+        }
+
+        return sb.toString();
+    }
 
     /**
      * OpenAI API를 호출하여 AI 응답을 생성
@@ -80,10 +222,10 @@ public class AiChatService {
         // 메시지 배열 구성
         List<Map<String, String>> messages = new ArrayList<>();
 
-        // 시스템 프롬프트
+        // 시스템 프롬프트 + DB 컨텍스트
         Map<String, String> systemMsg = new HashMap<>();
         systemMsg.put("role", "system");
-        systemMsg.put("content", SYSTEM_PROMPT);
+        systemMsg.put("content", SYSTEM_PROMPT + getDbContext());
         messages.add(systemMsg);
 
         // 이전 대화 히스토리 (최근 20개로 제한)

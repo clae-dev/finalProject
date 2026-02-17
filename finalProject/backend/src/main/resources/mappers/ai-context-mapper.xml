@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.kh.project.ai.mapper.AiContextMapper">
+
+    <!-- 인기 숙소 15개 (조회수 순, 평균 별점 포함) -->
+    <select id="selectAccommodationSummary" resultType="map">
+        SELECT *
+        FROM (
+            SELECT
+                A.NAME              AS "name",
+                A.ACCOMMODATION_TYPE AS "type",
+                A.REGION            AS "region",
+                A.PRICE_MIN         AS "priceMin",
+                A.PRICE_MAX         AS "priceMax",
+                A.FACILITIES        AS "facilities",
+                A.VIEW_COUNT        AS "viewCount",
+                NVL((SELECT ROUND(AVG(R.RATING), 1)
+                      FROM ACCOMMODATION_REVIEW R
+                     WHERE R.ACCOMMODATION_NO = A.ACCOMMODATION_NO
+                       AND R.STATUS = 'A'), 0) AS "avgRating",
+                NVL((SELECT COUNT(*)
+                      FROM ACCOMMODATION_REVIEW R
+                     WHERE R.ACCOMMODATION_NO = A.ACCOMMODATION_NO
+                       AND R.STATUS = 'A'), 0) AS "reviewCount"
+            FROM ACCOMMODATION A
+            WHERE A.STATUS = 'A'
+            ORDER BY A.VIEW_COUNT DESC
+        )
+        WHERE ROWNUM &lt;= 15
+    </select>
+
+    <!-- 활성 명소 전체 -->
+    <select id="selectActiveSpotSummary" resultType="map">
+        SELECT
+            S.SPOT_TITLE    AS "title",
+            S.SPOT_DESC     AS "description",
+            S.SPOT_LOCATION AS "location",
+            S.SPOT_TAG      AS "tag"
+        FROM SPOT S
+        WHERE S.SPOT_STATUS = 'ACTIVE'
+        ORDER BY S.SPOT_ORDER ASC
+    </select>
+
+    <!-- 모집중 동행 최근 10건 -->
+    <select id="selectRecentCompanionSummary" resultType="map">
+        SELECT *
+        FROM (
+            SELECT
+                C.TITLE        AS "title",
+                TO_CHAR(C.TRAVEL_DATE, 'YYYY-MM-DD') AS "travelDate",
+                C.MAX_MEMBERS  AS "maxMembers",
+                C.TAGS         AS "tags",
+                NVL((SELECT COUNT(*)
+                      FROM COMPANION_JOIN J
+                     WHERE J.COMPANION_NO = C.COMPANION_NO
+                       AND J.STATUS = 'A'), 0) AS "joinCount"
+            FROM COMPANION_BOARD C
+            WHERE C.STATUS = 'Y'
+              AND C.TRAVEL_DATE >= SYSDATE
+            ORDER BY C.CREATED_AT DESC
+        )
+        WHERE ROWNUM &lt;= 10
+    </select>
+
+    <!-- 인기 게시글 조회수 TOP 10 -->
+    <select id="selectPopularBoardSummary" resultType="map">
+        SELECT *
+        FROM (
+            SELECT
+                B.TITLE      AS "title",
+                B.VIEW_COUNT AS "viewCount"
+            FROM BOARD B
+            WHERE B.STATUS = 'A'
+            ORDER BY B.VIEW_COUNT DESC
+        )
+        WHERE ROWNUM &lt;= 10
+    </select>
+
+    <!-- 숙소 후기 전체 통계 -->
+    <select id="selectReviewStats" resultType="map">
+        SELECT
+            COUNT(*)            AS "totalCount",
+            ROUND(AVG(RATING), 1) AS "avgRating"
+        FROM ACCOMMODATION_REVIEW
+        WHERE STATUS = 'A'
+    </select>
+
+</mapper>
