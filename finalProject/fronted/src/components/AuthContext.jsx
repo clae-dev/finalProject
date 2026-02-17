@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import { axiosApi } from "../api/core/axiosAPI";
 import { getToken, saveToken, removeToken, clearAllAuth } from "../api/core/tokenStorage";
@@ -86,6 +86,41 @@ export const AuthProvider = ({ children }) => {
         });
     }
   }, []);
+
+  // ── 1시간 미활동 자동 로그아웃 ──
+  const INACTIVITY_LIMIT = 60 * 60 * 1000; // 1시간
+  const CHECK_INTERVAL   = 60 * 1000;      // 1분마다 체크
+  const logoutTimerRef = useRef(null);
+
+  const updateLastActivity = useCallback(() => {
+    localStorage.setItem("lastActivity", Date.now().toString());
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    // 로그인 시점에 활동 시간 초기화
+    updateLastActivity();
+
+    const events = ["click", "keydown", "scroll", "mousemove", "touchstart"];
+    events.forEach((e) => window.addEventListener(e, updateLastActivity, { passive: true }));
+
+    logoutTimerRef.current = setInterval(() => {
+      const last = parseInt(localStorage.getItem("lastActivity") || "0", 10);
+      if (Date.now() - last >= INACTIVITY_LIMIT) {
+        clearInterval(logoutTimerRef.current);
+        alert("장시간 활동이 없어 자동 로그아웃 되었습니다.");
+        clearAllAuth();
+        setUser(null);
+        window.location.href = "/home";
+      }
+    }, CHECK_INTERVAL);
+
+    return () => {
+      events.forEach((e) => window.removeEventListener(e, updateLastActivity));
+      clearInterval(logoutTimerRef.current);
+    };
+  }, [user, updateLastActivity]);
 
   // 이메일 입력 핸들러
   const changeInputEmail = (e) => {
