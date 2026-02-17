@@ -8,7 +8,11 @@ import org.apache.ibatis.annotations.Param;
 import edu.kh.project.spot.dto.SpotDTO;
 
 /**
- * 명소 MyBatis Mapper
+ * 명소 MyBatis Mapper 인터페이스
+ *
+ * <p>SPOT 테이블에 대한 CRUD SQL을 매핑한다.</p>
+ *
+ * @author HONDI
  */
 @Mapper
 public interface SpotMapper {

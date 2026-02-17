@@ -14,7 +14,17 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 공공 행사/액티비티 API 프록시 컨트롤러
- * - 프론트엔드에서 TourAPI를 직접 호출하지 않고 백엔드를 경유
+ *
+ * <p>프론트엔드에서 한국관광공사 TourAPI를 직접 호출하지 않고
+ * 백엔드를 경유하여 CORS 문제를 우회한다.</p>
+ *
+ * <h3>API 목록</h3>
+ * <ul>
+ *   <li><b>GET /api/events</b> – 제주 축제/행사 목록 조회</li>
+ *   <li><b>GET /api/leisure</b> – 제주 레포츠/액티비티 목록 조회</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @RestController
 @RequiredArgsConstructor
@@ -51,6 +61,10 @@ public class EventController {
 
     /**
      * 제주 레포츠/액티비티 목록 조회
+     *
+     * @param page 페이지 번호 (기본값 1)
+     * @param size 페이지 당 항목 수 (기본값 9)
+     * @return 레포츠 목록 및 총 건수
      */
     @GetMapping("/api/leisure")
     public ResponseEntity<Map<String, Object>> getLeisure(

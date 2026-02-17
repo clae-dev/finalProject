@@ -9,6 +9,11 @@ import java.util.List;
 
 /**
  * 동행 모집 MyBatis Mapper
+ *
+ * <p>COMPANION_BOARD, COMPANION_JOIN 테이블에 대한 SQL 매핑 인터페이스.
+ * 동행 게시글 CRUD 및 참여 신청 관리 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
  */
 @Mapper
 public interface CompanionMapper {

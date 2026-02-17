@@ -19,6 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 행사/액티비티 게시판 서비스 구현체
+ *
+ * <p>게시글 CRUD(이미지 UUID 저장 포함), 댓글/대댓글,
+ * 좋아요 토글 등 행사 게시판 비즈니스 로직을 구현한다.</p>
+ *
+ * @author HONDI
  */
 @Service
 @RequiredArgsConstructor
@@ -91,6 +96,14 @@ public class ActivityServiceImpl implements ActivityService {
         return result;
     }
 
+    /**
+     * 게시글 이미지 저장 (UUID 리네임 후 서버에 저장, DB INSERT)
+     *
+     * @param boardNo    게시글 번호
+     * @param images     업로드된 이미지 파일 목록
+     * @param webPath    웹 접근 경로
+     * @param folderPath 서버 저장 경로
+     */
     private void saveImages(int boardNo, List<MultipartFile> images,
                             String webPath, String folderPath) {
         File dir = new File(folderPath);
@@ -112,6 +125,7 @@ public class ActivityServiceImpl implements ActivityService {
         }
     }
 
+    /** 파일명에서 확장자 추출 (.jpg, .png 등) */
     private String getFileExtension(String fileName) {
         if (fileName == null || !fileName.contains(".")) return "";
         return fileName.substring(fileName.lastIndexOf("."));

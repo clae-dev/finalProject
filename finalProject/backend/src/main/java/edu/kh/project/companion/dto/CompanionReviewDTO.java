@@ -4,7 +4,11 @@ import lombok.*;
 
 /**
  * 동행 후기 DTO
- * - COMPANION_REVIEW 테이블과 매핑
+ *
+ * <p>COMPANION_REVIEW 테이블과 매핑되는 후기 데이터 객체.
+ * 별점(1~5), 이미지, 동행 게시글 연결(선택), 작성자 정보를 포함한다.</p>
+ *
+ * @author HONDI
  */
 @Getter
 @Setter

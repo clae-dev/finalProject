@@ -14,6 +14,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 알림 API 컨트롤러
+ *
+ * <p>알림 목록 조회, 읽지 않은 알림 수, 읽음 처리, 삭제를 처리하는 REST 컨트롤러.</p>
+ *
+ * <h3>API 엔드포인트</h3>
+ * <ul>
+ *   <li>GET    /api/notifications                         - 알림 목록 조회 (페이징)</li>
+ *   <li>GET    /api/notifications/unread-count            - 읽지 않은 알림 수</li>
+ *   <li>PUT    /api/notifications/{notificationNo}/read   - 단건 읽음 처리</li>
+ *   <li>PUT    /api/notifications/read-all                - 전체 읽음 처리</li>
+ *   <li>DELETE /api/notifications/{notificationNo}        - 알림 삭제</li>
+ * </ul>
+ *
+ * @author HONDI
+ */
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor

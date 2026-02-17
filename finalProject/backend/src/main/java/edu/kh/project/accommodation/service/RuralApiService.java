@@ -15,7 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * TourAPI 숙박정보 호출 서비스
- * - 한국관광공사 areaBasedList2 (contentTypeId=32, 숙박) 제주 지역 조회
+ *
+ * <p>한국관광공사 TourAPI를 호출하여 제주 지역(areaCode=39)
+ * 숙박(contentTypeId=32) 정보를 조회한다.
+ * areaBasedList2, detailIntro2, detailInfo2, detailCommon2 API를 지원한다.</p>
+ *
+ * @author HONDI
  */
 @Service
 @RequiredArgsConstructor

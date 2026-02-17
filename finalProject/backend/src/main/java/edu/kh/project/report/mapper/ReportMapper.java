@@ -7,6 +7,14 @@ import org.apache.ibatis.annotations.Param;
 
 import edu.kh.project.report.dto.ReportDTO;
 
+/**
+ * 신고 MyBatis Mapper
+ *
+ * <p>REPORT 테이블에 대한 SQL 매핑 인터페이스.
+ * 신고 접수, 중복 신고 확인 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
+ */
 @Mapper
 public interface ReportMapper {
 

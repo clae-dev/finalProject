@@ -9,7 +9,11 @@ import lombok.ToString;
 
 /**
  * 로그인 응답 DTO
- * - JWT 토큰 + 회원 기본 정보
+ *
+ * <p>로그인 성공 시 프론트엔드로 반환하는 응답 데이터.
+ * JWT 토큰(Access/Refresh)과 회원 기본 정보를 포함한다.</p>
+ *
+ * @author HONDI
  */
 @Getter
 @Setter

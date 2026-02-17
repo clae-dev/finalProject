@@ -16,7 +16,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 이메일 인증 REST API Controller
+ * 이메일 인증 REST API 컨트롤러
+ *
+ * <p>회원 가입 시 이메일 본인 인증을 위한 인증 코드 발송·검증 API를 제공한다.</p>
+ *
+ * <h3>API 목록</h3>
+ * <ul>
+ *   <li><b>POST /api/email/send-code</b> – 인증 코드 발송</li>
+ *   <li><b>POST /api/email/verify-code</b> – 인증 코드 검증</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @RestController
 @RequestMapping("/api/email")

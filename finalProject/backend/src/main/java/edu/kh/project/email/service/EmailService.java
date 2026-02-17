@@ -17,7 +17,11 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 이메일 인증 서비스
- * - 인증 코드 생성, 발송, 검증
+ *
+ * <p>6자리 인증 코드 생성, JavaMailSender를 통한 HTML 이메일 발송,
+ * ConcurrentHashMap 기반 인증 코드 저장 및 3분 만료 검증 로직을 구현한다.</p>
+ *
+ * @author HONDI
  */
 @Service
 @RequiredArgsConstructor

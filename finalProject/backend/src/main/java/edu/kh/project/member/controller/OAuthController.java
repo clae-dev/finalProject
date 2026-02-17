@@ -21,6 +21,27 @@ import edu.kh.project.member.service.OAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * OAuth2 소셜 로그인 컨트롤러
+ *
+ * <p>카카오, 네이버, 구글 OAuth2 로그인/로그아웃을 처리한다.
+ * 인가 코드 → 액세스 토큰 교환 → 사용자 정보 조회 → JWT 발급 → 프론트엔드 리다이렉트 흐름.</p>
+ *
+ * <h3>API 엔드포인트</h3>
+ * <ul>
+ *   <li>GET  /oauth2/authorization/kakao  - 카카오 인증 페이지 리다이렉트</li>
+ *   <li>GET  /login/oauth2/code/kakao     - 카카오 인가 코드 콜백</li>
+ *   <li>GET  /oauth2/authorization/naver  - 네이버 인증 페이지 리다이렉트</li>
+ *   <li>GET  /login/oauth2/code/naver     - 네이버 인가 코드 콜백</li>
+ *   <li>GET  /oauth2/authorization/google - 구글 인증 페이지 리다이렉트</li>
+ *   <li>GET  /login/oauth2/code/google    - 구글 인가 코드 콜백</li>
+ *   <li>POST /api/oauth/kakao/logout      - 카카오 로그아웃</li>
+ *   <li>POST /api/oauth/naver/logout      - 네이버 로그아웃</li>
+ *   <li>POST /api/oauth/google/logout     - 구글 로그아웃</li>
+ * </ul>
+ *
+ * @author HONDI
+ */
 @Controller
 @RequiredArgsConstructor
 @Slf4j

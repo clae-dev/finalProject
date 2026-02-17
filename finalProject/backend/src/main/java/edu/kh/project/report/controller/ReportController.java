@@ -20,6 +20,19 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 신고 API 컨트롤러
+ *
+ * <p>게시글/댓글/동행/후기에 대한 사용자 신고 접수 및 중복 확인을 처리하는 REST 컨트롤러.</p>
+ *
+ * <h3>API 엔드포인트</h3>
+ * <ul>
+ *   <li>POST /api/reports       - 신고 접수 (중복 신고 방지)</li>
+ *   <li>GET  /api/reports/check - 내 신고 여부 확인</li>
+ * </ul>
+ *
+ * @author HONDI
+ */
 @RestController
 @RequestMapping("/api/reports")
 @RequiredArgsConstructor

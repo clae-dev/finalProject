@@ -17,8 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 알림 전용 WebSocket 핸들러
- * - /notificationSock 엔드포인트
- * - 서버 → 클라이언트 단방향 push
+ *
+ * <p>/notificationSock 엔드포인트에 연결되며,
+ * 서버에서 클라이언트로 단방향 push 알림을 전송한다.
+ * 클라이언트 → 서버 메시지는 무시한다.</p>
+ *
+ * @author HONDI
  */
 @Component
 @Slf4j
@@ -47,6 +51,9 @@ public class NotificationWebSocketHandler extends TextWebSocketHandler {
 
     /**
      * 특정 사용자에게 알림 push
+     *
+     * @param recipientNo 수신자 회원 번호
+     * @param dto         전송할 알림 데이터
      */
     public void sendToUser(int recipientNo, NotificationDTO dto) {
         try {

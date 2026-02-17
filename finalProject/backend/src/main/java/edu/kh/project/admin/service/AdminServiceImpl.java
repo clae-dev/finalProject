@@ -18,6 +18,12 @@ import java.util.UUID;
 
 /**
  * 관리자 서비스 구현체
+ *
+ * <p>대시보드 통계 조회, 회원 상태 관리, 게시글 삭제,
+ * 숙소 CRUD(이미지 포함), 인증서류 승인/거부, 신고 처리 등
+ * 관리자 기능 전체를 구현한다.</p>
+ *
+ * @author HONDI
  */
 @Service
 @RequiredArgsConstructor

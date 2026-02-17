@@ -7,6 +7,11 @@ import edu.kh.project.accommodation.dto.AccommodationDTO;
 
 /**
  * 숙소 MyBatis Mapper
+ *
+ * <p>ACCOMMODATION 테이블에 대한 SQL 매핑 인터페이스.
+ * 숙소 CRUD, TourAPI 동기화, 유형 재분류, 이미지 관리 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
  */
 @Mapper
 public interface AccommodationMapper {

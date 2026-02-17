@@ -15,7 +15,16 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 날씨 API 컨트롤러
- * - 프론트엔드에서 호출하는 프록시 엔드포인트
+ *
+ * <p>기상청 초단기예보 API를 백엔드에서 프록시 호출하여
+ * 프론트엔드에 제주 날씨 데이터를 제공한다.</p>
+ *
+ * <h3>API 목록</h3>
+ * <ul>
+ *   <li><b>GET /api/weather/jeju</b> – 제주도 날씨 조회 (제주시/서귀포시)</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @RestController
 @RequiredArgsConstructor

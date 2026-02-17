@@ -8,6 +8,21 @@ import org.apache.ibatis.annotations.Param;
 import edu.kh.project.freeboard.dto.CommentDTO;
 import edu.kh.project.freeboard.dto.FreeBoardDTO;
 
+/**
+ * 자유게시판 MyBatis Mapper
+ *
+ * <p>BOARD(BOARD_TYPE_NO=2), BOARD_IMAGE, COMMENT_TBL, BOARD_LIKE 테이블에 대한
+ * SQL 매핑 인터페이스. 게시글/댓글/좋아요 CRUD 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
+ */
+/**
+ * 자유게시판 MyBatis Mapper 인터페이스
+ *
+ * <p>BOARD 테이블(BOARD_TYPE_NO=2)에 대한 게시글·댓글·좋아요 SQL을 매핑한다.</p>
+ *
+ * @author HONDI
+ */
 @Mapper
 public interface FreeBoardMapper {
 

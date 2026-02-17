@@ -19,9 +19,12 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 채팅 WebSocket 핸들러
- * - TextWebSocketHandler 확장 (수업 패턴 동일)
- * - sessions Set으로 연결 관리
- * - 메시지 수신 -> DB 저장 -> sender/target에게 브로드캐스트
+ *
+ * <p>TextWebSocketHandler를 확장하여 1:1 실시간 채팅을 처리한다.
+ * sessions Set으로 연결을 관리하며, 메시지 수신 시 DB에 저장한 후
+ * 발신자(sender)와 수신자(target)에게 브로드캐스트한다.</p>
+ *
+ * @author HONDI
  */
 @Component
 @RequiredArgsConstructor

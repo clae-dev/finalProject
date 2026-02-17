@@ -14,6 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 채팅 서비스 구현체
+ *
+ * <p>1:1 채팅방 생성, 채팅방 목록 조회, 메시지 저장,
+ * 읽음 처리 등 실시간 채팅 관련 비즈니스 로직을 구현한다.</p>
+ *
+ * @author HONDI
  */
 @Service
 @RequiredArgsConstructor

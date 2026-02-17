@@ -11,8 +11,12 @@ import java.time.LocalDateTime;
 
 /**
  * 회원 정보 DTO
- * - DB MEMBER 테이블과 매핑
- * - MyBatis 조회 결과 매핑용
+ *
+ * <p>DB MEMBER 테이블과 매핑되는 핵심 회원 데이터 객체.
+ * 계정 정보, 개인 정보, 상태 필드, 활동 통계를 포함한다.
+ * MyBatis 조회 결과 및 서비스 간 데이터 전달에 사용된다.</p>
+ *
+ * @author HONDI
  */
 @Getter
 @Setter

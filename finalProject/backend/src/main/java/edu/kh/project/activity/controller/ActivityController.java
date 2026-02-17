@@ -28,6 +28,24 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 행사/액티비티 게시판 API 컨트롤러
+ *
+ * <p>행사/액티비티 게시글 CRUD, 댓글(대댓글 포함), 좋아요 토글을 처리하는 REST 컨트롤러.
+ * BOARD 테이블의 BOARD_TYPE_NO=3에 해당한다.</p>
+ *
+ * <h3>API 엔드포인트</h3>
+ * <ul>
+ *   <li>GET    /api/activities                       - 게시글 목록 (페이징 + 검색)</li>
+ *   <li>GET    /api/activities/{boardNo}             - 게시글 상세 조회</li>
+ *   <li>POST   /api/activities                       - 게시글 작성 (이미지 업로드)</li>
+ *   <li>PUT    /api/activities/{boardNo}             - 게시글 수정</li>
+ *   <li>DELETE /api/activities/{boardNo}             - 게시글 삭제 (작성자/관리자)</li>
+ *   <li>GET    /api/activities/{boardNo}/comments    - 댓글 목록 (대댓글 포함)</li>
+ *   <li>POST   /api/activities/{boardNo}/comments    - 댓글 작성</li>
+ *   <li>DELETE /api/activities/comments/{commentNo}  - 댓글 삭제</li>
+ *   <li>POST   /api/activities/{boardNo}/like        - 좋아요 토글</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @RestController
 @RequestMapping("/api/activities")
@@ -44,11 +62,13 @@ public class ActivityController {
     @Value("${board.image.folder-path}")
     private String boardFolderPath;
 
+    /** Authorization 헤더에서 회원 번호 추출 */
     private int extractMemberNo(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         return jwtUtil.getMemberNo(token);
     }
 
+    /** Authorization 헤더에서 회원 권한 추출 */
     private String extractRole(String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         return jwtUtil.getRole(token);

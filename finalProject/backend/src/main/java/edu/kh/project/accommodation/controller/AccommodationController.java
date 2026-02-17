@@ -19,7 +19,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 숙소 정보 REST API Controller
+ * 숙소 정보 REST API 컨트롤러
+ *
+ * <p>TourAPI 기반 숙소 정보 동기화 및 목록/상세 조회를 처리한다.</p>
+ *
+ * <h3>API 엔드포인트</h3>
+ * <ul>
+ *   <li>POST /api/accommodations/sync          - 관리자용 API 데이터 동기화</li>
+ *   <li>GET  /api/accommodations               - 숙소 목록 조회 (페이징 + 지역 필터)</li>
+ *   <li>GET  /api/accommodations/{no}           - 숙소 상세 조회</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @RestController
 @RequestMapping("/api/accommodations")

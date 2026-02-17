@@ -7,7 +7,11 @@ import lombok.NoArgsConstructor;
 
 /**
  * 숙소 후기 이미지 DTO
- * - REVIEW_IMAGE 테이블과 매핑
+ *
+ * <p>REVIEW_IMAGE 테이블과 매핑되는 이미지 데이터 객체.
+ * UUID 기반 파일명 변환, 이미지 순서 관리를 지원한다.</p>
+ *
+ * @author HONDI
  */
 @Data
 @NoArgsConstructor

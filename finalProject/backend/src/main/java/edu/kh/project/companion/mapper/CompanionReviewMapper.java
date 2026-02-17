@@ -8,6 +8,11 @@ import java.util.List;
 
 /**
  * 동행 후기 MyBatis Mapper
+ *
+ * <p>COMPANION_REVIEW 테이블에 대한 SQL 매핑 인터페이스.
+ * 후기 CRUD 및 메인페이지용 최신 후기 조회 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
  */
 @Mapper
 public interface CompanionReviewMapper {

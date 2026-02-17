@@ -11,7 +11,11 @@ import lombok.ToString;
 
 /**
  * 자유게시판 게시글 DTO
- * - BOARD 테이블 (BOARD_TYPE_NO=2) 매핑
+ *
+ * <p>BOARD 테이블(BOARD_TYPE_NO=2)과 매핑되는 자유게시판 게시글 데이터 객체.
+ * 게시글 정보, 작성자 정보, 댓글/좋아요 집계, 이미지 목록을 포함한다.</p>
+ *
+ * @author HONDI
  */
 @Getter
 @Setter
@@ -21,28 +25,43 @@ import lombok.ToString;
 @ToString
 public class FreeBoardDTO {
 
-    private int boardNo;           // 게시글 번호 (PK)
-    private int memberNo;          // 작성자 번호 (FK)
-    private int boardTypeNo;       // 게시판 유형 번호
-    private String boardTitle;     // 제목
-    private String boardContent;   // 내용
-    private int readCount;         // 조회수
-    private String boardDelFl;     // 삭제 여부 (N:정상, Y:삭제)
-    private String createdAt;      // 작성일
-    private String updatedAt;      // 수정일
+    /** 게시글 번호 (PK) */
+    private int boardNo;
+    /** 작성자 번호 (FK → MEMBER) */
+    private int memberNo;
+    /** 게시판 유형 번호 (2: 자유게시판) */
+    private int boardTypeNo;
+    /** 제목 */
+    private String boardTitle;
+    /** 내용 */
+    private String boardContent;
+    /** 조회수 */
+    private int readCount;
+    /** 삭제 여부 (N:정상, Y:삭제) */
+    private String boardDelFl;
+    /** 작성일 */
+    private String createdAt;
+    /** 수정일 */
+    private String updatedAt;
 
-    // JOIN 파생 필드 (작성자 정보)
-    private String memberNickname; // 작성자 닉네임
-    private String memberProfile;  // 작성자 프로필 이미지
+    // ==================== JOIN 파생 필드 ====================
 
-    // 집계 필드
-    private int commentCount;      // 댓글 수
-    private int likeCount;         // 좋아요 수
-    private int isLiked;           // 현재 사용자 좋아요 여부 (0/1)
+    /** 작성자 닉네임 */
+    private String memberNickname;
+    /** 작성자 프로필 이미지 */
+    private String memberProfile;
 
-    // 이미지 (LISTAGG 결과, 쉼표 구분)
+    // ==================== 집계 필드 ====================
+
+    /** 댓글 수 */
+    private int commentCount;
+    /** 좋아요 수 */
+    private int likeCount;
+    /** 현재 사용자 좋아요 여부 (0/1) */
+    private int isLiked;
+
+    /** 이미지 URL (LISTAGG 결과, 쉼표 구분) */
     private String imageUrls;
-
-    // 이미지 목록 (서비스에서 imageUrls를 파싱한 결과)
+    /** 이미지 목록 (서비스에서 imageUrls를 파싱한 결과) */
     private List<String> imageList;
 }

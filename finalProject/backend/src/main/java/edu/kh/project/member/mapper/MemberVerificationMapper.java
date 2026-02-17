@@ -8,6 +8,11 @@ import java.util.List;
 
 /**
  * 회원 인증 서류 MyBatis Mapper
+ *
+ * <p>MEMBER_VERIFICATION 테이블에 대한 SQL 매핑 인터페이스.
+ * 인증 서류 제출, 관리자 승인/거부, 인증뱃지 상태 변경 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
  */
 @Mapper
 public interface MemberVerificationMapper {

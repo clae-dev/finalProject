@@ -17,7 +17,24 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 관리자 API 컨트롤러 (대시보드, 회원/숙소/동행/후기/신고/인증 관리)
+ * 관리자 API 컨트롤러
+ *
+ * <p>대시보드 통계, 회원/동행/후기/숙소/신고/인증 관리를 처리하는 REST 컨트롤러.
+ * 모든 엔드포인트는 관리자 권한(role="A") 검증을 수행한다.</p>
+ *
+ * <h3>주요 API 그룹</h3>
+ * <ul>
+ *   <li>GET /api/admin/dashboard              - 대시보드 통계</li>
+ *   <li>/api/admin/members/**                 - 회원 관리 (목록, 상태 변경)</li>
+ *   <li>/api/admin/companions/**              - 동행 관리 (목록, 삭제)</li>
+ *   <li>/api/admin/reviews/**                 - 동행 후기 관리</li>
+ *   <li>/api/admin/accommodations/**          - 숙소 관리 (CRUD, 상태 변경)</li>
+ *   <li>/api/admin/accommodation-reviews/**   - 숙소 후기 관리</li>
+ *   <li>/api/admin/reports/**                 - 신고 관리 (목록, 상세, 상태 변경)</li>
+ *   <li>/api/admin/verifications/**           - 인증 관리 (승인, 거부)</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @RestController
 @RequestMapping("/api/admin")

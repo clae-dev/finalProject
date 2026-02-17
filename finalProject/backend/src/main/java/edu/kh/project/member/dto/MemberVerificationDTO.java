@@ -9,8 +9,18 @@ import lombok.ToString;
 
 /**
  * 회원 인증 서류 DTO
- * - MEMBER_VERIFICATION 테이블과 매핑
- * - 인증뱃지 발급을 위한 서류 심사 정보
+ *
+ * <p>MEMBER_VERIFICATION 테이블과 매핑되는 인증 서류 데이터 객체.
+ * 인증뱃지(인증 리뷰어) 발급을 위한 서류 제출 및 심사 정보를 담는다.</p>
+ *
+ * <h3>상태 코드</h3>
+ * <ul>
+ *   <li>W - 심사 대기 중</li>
+ *   <li>Y - 승인 완료</li>
+ *   <li>R - 거부</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @Getter
 @Setter

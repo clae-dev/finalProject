@@ -24,6 +24,24 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * FAQ(자주 묻는 질문) API 컨트롤러
+ *
+ * <p>사용자용 FAQ 조회와 관리자용 FAQ CRUD를 처리하는 REST 컨트롤러.</p>
+ *
+ * <h3>API 엔드포인트</h3>
+ * <ul>
+ *   <li>GET    /api/faq/categories      - 카테고리 목록 조회</li>
+ *   <li>GET    /api/faq                  - FAQ 전체 조회 (카테고리/검색 필터)</li>
+ *   <li>PUT    /api/faq/{faqNo}/view     - 조회수 증가</li>
+ *   <li>GET    /api/admin/faq            - 관리자용 FAQ 목록 (페이징)</li>
+ *   <li>POST   /api/admin/faq            - FAQ 등록</li>
+ *   <li>PUT    /api/admin/faq/{faqNo}    - FAQ 수정</li>
+ *   <li>DELETE /api/admin/faq/{faqNo}    - FAQ 삭제</li>
+ * </ul>
+ *
+ * @author HONDI
+ */
 @RestController
 @RequiredArgsConstructor
 @Slf4j

@@ -23,7 +23,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 채팅 REST API Controller
+ * 채팅 REST API 컨트롤러
+ *
+ * <p>1:1 실시간 채팅의 REST API를 처리한다.
+ * 채팅방 목록 조회, 상대 검색, 채팅방 입장/생성, 메시지 조회, 읽음 처리를 제공한다.</p>
+ *
+ * <h3>API 엔드포인트</h3>
+ * <ul>
+ *   <li>GET /api/chatting/rooms    - 채팅방 목록 조회</li>
+ *   <li>GET /api/chatting/search   - 대화 상대 검색</li>
+ *   <li>GET /api/chatting/enter    - 채팅방 입장/생성</li>
+ *   <li>GET /api/chatting/messages - 메시지 목록 조회</li>
+ *   <li>PUT /api/chatting/read     - 읽음 처리</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @RestController
 @RequestMapping("/api/chatting")

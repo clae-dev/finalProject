@@ -16,6 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 숙소 정보 서비스 구현체
+ *
+ * <p>TourAPI(areaBasedList2, detailIntro2, detailInfo2, detailCommon2)를 호출하여
+ * 숙소 데이터를 동기화하고, 목록/상세 조회, 숙소 유형 재분류를 구현한다.
+ * 동기화 시 기존 데이터를 삭제 후 전체 재적재(Full Refresh) 방식을 사용한다.</p>
+ *
+ * @author HONDI
  */
 @Service
 @RequiredArgsConstructor

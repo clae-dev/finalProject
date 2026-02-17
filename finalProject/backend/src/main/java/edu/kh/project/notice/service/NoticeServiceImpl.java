@@ -10,6 +10,14 @@ import edu.kh.project.notice.mapper.NoticeMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 공지사항 서비스 구현체
+ *
+ * <p>공지사항 목록/상세 조회, CRUD, 조회수 증가 등
+ * 공지사항 관련 비즈니스 로직을 구현한다.</p>
+ *
+ * @author HONDI
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional

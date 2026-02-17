@@ -11,6 +11,11 @@ import edu.kh.project.chatting.dto.MessageDTO;
 
 /**
  * 채팅 MyBatis Mapper
+ *
+ * <p>CHATTING_ROOM, MESSAGE 테이블에 대한 SQL 매핑 인터페이스.
+ * 채팅방 CRUD, 메시지 저장/조회, 읽음 처리 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
  */
 @Mapper
 public interface ChattingMapper {

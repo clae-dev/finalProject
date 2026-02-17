@@ -11,6 +11,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.UUID;
 
+/**
+ * 회원 인증서류 서비스 구현체
+ *
+ * <p>인증서류 파일 업로드(UUID 기반), DB 삽입, 상태 조회 등
+ * 인증 관련 비즈니스 로직을 구현한다.</p>
+ *
+ * @author HONDI
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor

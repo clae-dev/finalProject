@@ -8,6 +8,11 @@ import java.util.List;
 
 /**
  * 알림 MyBatis Mapper
+ *
+ * <p>NOTIFICATION 테이블에 대한 SQL 매핑 인터페이스.
+ * 알림 등록, 목록/건수 조회, 읽음 처리, 삭제 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
  */
 @Mapper
 public interface NotificationMapper {

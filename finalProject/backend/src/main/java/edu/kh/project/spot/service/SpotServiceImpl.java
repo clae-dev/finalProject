@@ -14,7 +14,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 명소 Service 구현체
+ * 명소 서비스 구현체
+ *
+ * <p>명소 CRUD, 이미지 파일 업로드(UUID 리네임),
+ * 상태 변경 등의 비즈니스 로직을 구현한다.</p>
+ *
+ * @author HONDI
  */
 @Service
 @Transactional
@@ -148,6 +153,11 @@ public class SpotServiceImpl implements SpotService {
 
     /**
      * 파일 저장 유틸리티
+     *
+     * @param file       업로드된 파일
+     * @param webPath    웹 접근 경로
+     * @param folderPath 서버 저장 경로
+     * @return 저장된 파일의 웹 경로 (실패 시 null)
      */
     private String saveFile(MultipartFile file, String webPath, String folderPath) {
         try {

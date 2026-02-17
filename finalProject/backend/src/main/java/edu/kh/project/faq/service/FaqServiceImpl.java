@@ -11,6 +11,14 @@ import edu.kh.project.faq.mapper.FaqMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * FAQ 서비스 구현체
+ *
+ * <p>FAQ 카테고리별 목록 조회, CRUD 등
+ * 자주 묻는 질문 관련 비즈니스 로직을 구현한다.</p>
+ *
+ * @author HONDI
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional

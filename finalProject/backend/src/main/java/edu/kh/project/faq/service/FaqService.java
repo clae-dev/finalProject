@@ -5,6 +5,14 @@ import java.util.List;
 import edu.kh.project.faq.dto.FaqCategoryDTO;
 import edu.kh.project.faq.dto.FaqDTO;
 
+/**
+ * FAQ 서비스 인터페이스
+ *
+ * <p>FAQ 카테고리 조회, 사용자/관리자용 FAQ 목록 조회,
+ * CRUD, 조회수 증가 등 비즈니스 로직을 정의한다.</p>
+ *
+ * @author HONDI
+ */
 public interface FaqService {
 
     /** 카테고리 목록 조회 */
