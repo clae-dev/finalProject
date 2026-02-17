@@ -49,4 +49,7 @@ public interface CompanionMapper {
         @Param("companionNo") int companionNo,
         @Param("memberNo") int memberNo
     );
+
+    /** 참여 신청 단건 조회 (알림용) */
+    CompanionJoinDTO selectJoinByJoinNo(@Param("joinNo") int joinNo);
 }

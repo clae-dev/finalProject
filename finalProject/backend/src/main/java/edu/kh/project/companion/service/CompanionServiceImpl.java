@@ -3,6 +3,8 @@ package edu.kh.project.companion.service;
 import edu.kh.project.companion.dto.CompanionDTO;
 import edu.kh.project.companion.dto.CompanionJoinDTO;
 import edu.kh.project.companion.mapper.CompanionMapper;
+import edu.kh.project.notification.dto.NotificationDTO;
+import edu.kh.project.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.util.UUID;
 public class CompanionServiceImpl implements CompanionService {
 
     private final CompanionMapper companionMapper;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional(readOnly = true)
@@ -106,7 +109,30 @@ public class CompanionServiceImpl implements CompanionService {
         if (exists > 0) {
             return -1;
         }
-        return companionMapper.insertJoin(companionNo, memberNo);
+        int result = companionMapper.insertJoin(companionNo, memberNo);
+
+        // 알림: 게시글 작성자에게 COMPANION_JOIN 알림
+        if (result > 0) {
+            try {
+                CompanionDTO companion = companionMapper.selectCompanionDetail(companionNo);
+                if (companion != null && companion.getMemberNo() != memberNo) {
+                    NotificationDTO notification = NotificationDTO.builder()
+                            .recipientNo(companion.getMemberNo())
+                            .senderNo(memberNo)
+                            .notificationType("COMPANION_JOIN")
+                            .targetType("COMPANION")
+                            .targetNo(companionNo)
+                            .title("동행 참여 신청")
+                            .content("'" + companion.getTitle() + "' 게시글에 새로운 참여 신청이 있습니다.")
+                            .build();
+                    notificationService.createNotification(notification);
+                }
+            } catch (Exception e) {
+                log.warn("동행 참여 알림 전송 실패", e);
+            }
+        }
+
+        return result;
     }
 
     @Override
@@ -116,6 +142,32 @@ public class CompanionServiceImpl implements CompanionService {
 
     @Override
     public int updateJoinStatus(int joinNo, String status, int memberNo) {
-        return companionMapper.updateJoinStatus(joinNo, status, memberNo);
+        int result = companionMapper.updateJoinStatus(joinNo, status, memberNo);
+
+        // 알림: 승인 시 신청자에게 COMPANION_ACCEPTED 알림
+        if (result > 0 && "A".equals(status)) {
+            try {
+                CompanionJoinDTO join = companionMapper.selectJoinByJoinNo(joinNo);
+                if (join != null) {
+                    CompanionDTO companion = companionMapper.selectCompanionDetail(join.getCompanionNo());
+                    if (companion != null) {
+                        NotificationDTO notification = NotificationDTO.builder()
+                                .recipientNo(join.getMemberNo())
+                                .senderNo(memberNo)
+                                .notificationType("COMPANION_ACCEPTED")
+                                .targetType("COMPANION")
+                                .targetNo(join.getCompanionNo())
+                                .title("동행 신청 승인")
+                                .content("'" + companion.getTitle() + "' 동행 신청이 승인되었습니다.")
+                                .build();
+                        notificationService.createNotification(notification);
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("동행 승인 알림 전송 실패", e);
+            }
+        }
+
+        return result;
     }
 }

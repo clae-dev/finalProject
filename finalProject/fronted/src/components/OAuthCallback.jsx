@@ -42,7 +42,7 @@ function OAuthCallback() {
         loginType: params.get('loginType')
       }, rememberMe);
 
-      navigate('/');
+      navigate('/home');
     } catch (err) {
       console.error('OAuth 콜백 처리 실패:', err);
       setError('로그인 처리 중 오류가 발생했습니다.');

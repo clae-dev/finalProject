@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+       "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.kh.project.notification.mapper.NotificationMapper">
+
+    <resultMap id="notificationResultMap" type="edu.kh.project.notification.dto.NotificationDTO">
+        <id property="notificationNo" column="NOTIFICATION_NO" />
+        <result property="recipientNo" column="RECIPIENT_NO" />
+        <result property="senderNo" column="SENDER_NO" />
+        <result property="notificationType" column="NOTIFICATION_TYPE" />
+        <result property="targetType" column="TARGET_TYPE" />
+        <result property="targetNo" column="TARGET_NO" />
+        <result property="title" column="TITLE" />
+        <result property="content" column="CONTENT" />
+        <result property="readFl" column="READ_FL" />
+        <result property="status" column="STATUS" />
+        <result property="createdAt" column="CREATED_AT" />
+        <result property="senderNickname" column="SENDER_NICKNAME" />
+        <result property="senderProfileImg" column="SENDER_PROFILE_IMG" />
+    </resultMap>
+
+    <!-- 알림 삽입 -->
+    <insert id="insert">
+        INSERT INTO NOTIFICATION (
+            NOTIFICATION_NO, RECIPIENT_NO, SENDER_NO,
+            NOTIFICATION_TYPE, TARGET_TYPE, TARGET_NO,
+            TITLE, CONTENT
+        ) VALUES (
+            SEQ_NOTIFICATION_NO.NEXTVAL,
+            #{recipientNo}, #{senderNo},
+            #{notificationType}, #{targetType}, #{targetNo},
+            #{title}, #{content}
+        )
+    </insert>
+
+    <!-- 알림 목록 조회 (페이징 + sender JOIN) -->
+    <select id="selectList" resultMap="notificationResultMap">
+        SELECT * FROM (
+            SELECT
+                N.NOTIFICATION_NO,
+                N.RECIPIENT_NO,
+                N.SENDER_NO,
+                N.NOTIFICATION_TYPE,
+                N.TARGET_TYPE,
+                N.TARGET_NO,
+                N.TITLE,
+                N.CONTENT,
+                N.READ_FL,
+                N.STATUS,
+                TO_CHAR(N.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
+                M.NICKNAME AS SENDER_NICKNAME,
+                M.PROFILE_IMAGE AS SENDER_PROFILE_IMG,
+                ROW_NUMBER() OVER (ORDER BY N.CREATED_AT DESC) AS RN
+            FROM NOTIFICATION N
+            LEFT JOIN MEMBER M ON N.SENDER_NO = M.MEMBER_NO
+            WHERE N.RECIPIENT_NO = #{recipientNo}
+              AND N.STATUS = 'A'
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 전체 알림 수 -->
+    <select id="selectCount" resultType="int">
+        SELECT COUNT(*)
+        FROM NOTIFICATION
+        WHERE RECIPIENT_NO = #{recipientNo}
+          AND STATUS = 'A'
+    </select>
+
+    <!-- 읽지 않은 알림 수 -->
+    <select id="selectUnreadCount" resultType="int">
+        SELECT COUNT(*)
+        FROM NOTIFICATION
+        WHERE RECIPIENT_NO = #{recipientNo}
+          AND READ_FL = 'N'
+          AND STATUS = 'A'
+    </select>
+
+    <!-- 단건 읽음 처리 -->
+    <update id="updateReadFlag">
+        UPDATE NOTIFICATION
+        SET READ_FL = 'Y'
+        WHERE NOTIFICATION_NO = #{notificationNo}
+          AND RECIPIENT_NO = #{recipientNo}
+    </update>
+
+    <!-- 전체 읽음 처리 -->
+    <update id="updateAllReadFlag">
+        UPDATE NOTIFICATION
+        SET READ_FL = 'Y'
+        WHERE RECIPIENT_NO = #{recipientNo}
+          AND READ_FL = 'N'
+          AND STATUS = 'A'
+    </update>
+
+    <!-- 알림 삭제 (소프트 삭제) -->
+    <update id="deleteNotification">
+        UPDATE NOTIFICATION
+        SET STATUS = 'D'
+        WHERE NOTIFICATION_NO = #{notificationNo}
+          AND RECIPIENT_NO = #{recipientNo}
+    </update>
+
+</mapper>

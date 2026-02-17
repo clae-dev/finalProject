@@ -189,18 +189,18 @@ export default function AdminAccommodations() {
                       </button>
                       <button
                         onClick={() => openEditModal(item)}
-                        className="p-1.5 rounded-lg bg-sky-50 text-sky-500 hover:bg-sky-100 transition-colors"
+                        className="p-2 rounded-xl bg-sky-50 text-sky-500 hover:bg-sky-100 transition-colors"
                         title="수정"
                       >
-                        <Pencil className="w-3.5 h-3.5" />
+                        <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(item)}
                         disabled={deleteAccom.isPending}
-                        className="p-1.5 rounded-lg bg-red-50 text-red-400 hover:bg-red-100 transition-colors"
+                        className="p-2 rounded-xl bg-red-50 text-red-400 hover:bg-red-100 transition-colors"
                         title="삭제"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </td>

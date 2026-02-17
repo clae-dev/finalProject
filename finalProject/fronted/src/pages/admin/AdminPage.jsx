@@ -14,6 +14,7 @@ import AdminNotices from '../../components/admin/AdminNotices';
 import AdminReports from '../../components/admin/AdminReports';
 import AdminVerifications from '../../components/admin/AdminVerifications';
 import { AuthContext } from '../../components/AuthContext';
+import adminHeroBg from '../../assets/images/admin/admin-hero.png';
 
 const TABS = [
   { key: 'dashboard', label: '대시보드', icon: LayoutDashboard },
@@ -45,7 +46,15 @@ export default function AdminPage() {
       <Header />
 
       {/* 히어로 배너 */}
-      <div className="relative h-[320px] overflow-hidden bg-gradient-to-br from-sky-500 via-cyan-500 to-blue-600">
+      <div className="relative h-[320px] overflow-hidden">
+        {/* 배경 이미지 */}
+        <img
+          src={adminHeroBg}
+          alt=""
+          className="absolute inset-0 w-full h-full object-cover object-top"
+        />
+        {/* 그라데이션 오버레이 */}
+        <div className="absolute inset-0 bg-gradient-to-r from-sky-900/60 via-cyan-800/50 to-blue-900/60" />
         {/* 장식 */}
         <motion.div
           className="absolute top-10 left-[10%] w-40 h-40 bg-white/10 rounded-full blur-3xl"
@@ -103,7 +112,7 @@ export default function AdminPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 p-2 flex justify-center gap-2 overflow-x-auto"
+          className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 p-2 flex justify-center gap-1.5 overflow-x-auto"
         >
           {TABS.map((tab) => {
             const Icon = tab.icon;
@@ -112,7 +121,7 @@ export default function AdminPage() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold transition-all duration-300 whitespace-nowrap ${
+                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 whitespace-nowrap ${
                   isActive
                     ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-200/60'
                     : 'text-slate-500 hover:text-sky-600 hover:bg-sky-50'

@@ -439,7 +439,7 @@ export default function SpotsSection() {
             transition={{ delay: 0.1, duration: 0.5, type: 'spring' }}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/90 backdrop-blur-sm rounded-full text-sm font-bold text-sky-600 mb-5 shadow-md shadow-sky-200/40 border border-white/80"
           >
-            <span>🌊</span> HOT PLACE
+            <span>✨</span> <span style={{ fontFamily: "'GmarketSans', sans-serif", letterSpacing: '0.05em' }}>HOT PLACE</span>
           </motion.span>
           <h2 className="text-3xl md:text-5xl font-black text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
             혼행러들이 사랑한 <span className="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">명소</span>

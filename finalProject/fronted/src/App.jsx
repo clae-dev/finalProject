@@ -1,5 +1,5 @@
 import { AuthProvider } from './components/AuthContext';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { queryClientInstance } from './lib/query-client';
@@ -38,6 +38,16 @@ import PrivacyPolicy from './pages/privacy/PrivacyPolicy';
 import TermsOfService from './pages/terms/TermsOfService';
 import AiChatBubble from './components/ai/AiChatBubble';
 import WeatherWidget from './components/main/WeatherSection';
+import LandingPage from './pages/landing/LandingPage';
+
+function LandingGuard() {
+  const visited = localStorage.getItem('hondi_visited');
+  if (visited) {
+    return <Navigate to="/home" replace />;
+  }
+  localStorage.setItem('hondi_visited', 'true');
+  return <PageTransition><LandingPage /></PageTransition>;
+}
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -45,7 +55,8 @@ function AnimatedRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageTransition><Main /></PageTransition>} />
+        <Route path="/" element={<LandingGuard />} />
+        <Route path="/home" element={<PageTransition><Main /></PageTransition>} />
         <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
         <Route path="/signup" element={<PageTransition><Signup /></PageTransition>} />
         <Route path="/find-password" element={<PageTransition><FindPassword /></PageTransition>} />

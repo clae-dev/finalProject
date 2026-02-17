@@ -184,4 +184,19 @@
           AND STATUS IN ('W', 'A')
     </select>
 
+    <!-- 참여 신청 단건 조회 (알림용) -->
+    <select id="selectJoinByJoinNo" resultMap="joinResultMap">
+        SELECT
+            J.JOIN_NO,
+            J.COMPANION_NO,
+            J.MEMBER_NO,
+            J.STATUS,
+            TO_CHAR(J.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
+            M.NICKNAME AS MEMBER_NICKNAME,
+            M.PROFILE_IMAGE AS MEMBER_PROFILE
+        FROM COMPANION_JOIN J
+        JOIN MEMBER M ON J.MEMBER_NO = M.MEMBER_NO
+        WHERE J.JOIN_NO = #{joinNo}
+    </select>
+
 </mapper>
