@@ -11,19 +11,17 @@ import {
   Trophy,
 } from 'lucide-react';
 
-/**
- * 배지 정의
- * - check: memberData 기반 획득 여부 판별 함수
- * - goal: 목표 수치 (프로그레스 바 표시용)
- * - current: memberData에서 현재 수치를 꺼내는 함수
- */
 const badgeDefs = [
   {
     key: 'newcomer',
     label: '신규 혼행러',
     icon: Compass,
-    gradient: 'from-sky-400 to-cyan-400',
-    shadow: 'shadow-sky-300/40',
+    emoji: '🐣',
+    bg: 'bg-sky-100',
+    ring: 'ring-sky-300',
+    iconColor: 'text-sky-500',
+    earnedBg: 'bg-gradient-to-br from-sky-400 to-cyan-400',
+    shadow: 'shadow-sky-200/60',
     condition: '회원가입 완료',
     check: () => true,
     goal: 1,
@@ -33,8 +31,12 @@ const badgeDefs = [
     key: 'explorer',
     label: '제주 탐험가',
     icon: PenLine,
-    gradient: 'from-emerald-400 to-teal-400',
-    shadow: 'shadow-emerald-300/40',
+    emoji: '🗺️',
+    bg: 'bg-emerald-100',
+    ring: 'ring-emerald-300',
+    iconColor: 'text-emerald-500',
+    earnedBg: 'bg-gradient-to-br from-emerald-400 to-teal-400',
+    shadow: 'shadow-emerald-200/60',
     condition: '게시글 5개 작성',
     check: (d) => (d?.postCount || 0) >= 5,
     goal: 5,
@@ -44,8 +46,12 @@ const badgeDefs = [
     key: 'communicator',
     label: '소통왕',
     icon: MessageCircleHeart,
-    gradient: 'from-amber-400 to-orange-400',
-    shadow: 'shadow-amber-300/40',
+    emoji: '💬',
+    bg: 'bg-amber-100',
+    ring: 'ring-amber-300',
+    iconColor: 'text-amber-500',
+    earnedBg: 'bg-gradient-to-br from-amber-400 to-orange-400',
+    shadow: 'shadow-amber-200/60',
     condition: '후기 10개 작성',
     check: (d) => (d?.reviewCount || 0) >= 10,
     goal: 10,
@@ -55,8 +61,12 @@ const badgeDefs = [
     key: 'popular',
     label: '인기스타',
     icon: ThumbsUp,
-    gradient: 'from-rose-400 to-pink-400',
-    shadow: 'shadow-rose-300/40',
+    emoji: '⭐',
+    bg: 'bg-rose-100',
+    ring: 'ring-rose-300',
+    iconColor: 'text-rose-500',
+    earnedBg: 'bg-gradient-to-br from-rose-400 to-pink-400',
+    shadow: 'shadow-rose-200/60',
     condition: '좋아요 50개 달성',
     check: (d) => (d?.likeCount || 0) >= 50,
     goal: 50,
@@ -66,8 +76,12 @@ const badgeDefs = [
     key: 'companion',
     label: '동행 마스터',
     icon: UsersRound,
-    gradient: 'from-violet-400 to-purple-400',
-    shadow: 'shadow-violet-300/40',
+    emoji: '🤝',
+    bg: 'bg-violet-100',
+    ring: 'ring-violet-300',
+    iconColor: 'text-violet-500',
+    earnedBg: 'bg-gradient-to-br from-violet-400 to-purple-400',
+    shadow: 'shadow-violet-200/60',
     condition: '동행 참여 5회',
     check: (d) => (d?.companionCount || 0) >= 5,
     goal: 5,
@@ -77,8 +91,12 @@ const badgeDefs = [
     key: 'verified',
     label: '인증 리뷰어',
     icon: ShieldCheck,
-    gradient: 'from-teal-400 to-emerald-500',
-    shadow: 'shadow-teal-300/40',
+    emoji: '🛡️',
+    bg: 'bg-teal-100',
+    ring: 'ring-teal-300',
+    iconColor: 'text-teal-500',
+    earnedBg: 'bg-gradient-to-br from-teal-400 to-emerald-500',
+    shadow: 'shadow-teal-200/60',
     condition: '리뷰어 인증 완료',
     check: (d) => d?.verifiedReviewer === 'Y',
     goal: 1,
@@ -88,8 +106,12 @@ const badgeDefs = [
     key: 'master',
     label: '제주 통달자',
     icon: Trophy,
-    gradient: 'from-yellow-400 to-amber-500',
-    shadow: 'shadow-yellow-300/40',
+    emoji: '🏆',
+    bg: 'bg-yellow-100',
+    ring: 'ring-yellow-400',
+    iconColor: 'text-yellow-500',
+    earnedBg: 'bg-gradient-to-br from-yellow-400 to-amber-500',
+    shadow: 'shadow-yellow-200/60',
     condition: '모든 배지 획득',
     check: (d) => {
       return (
@@ -102,7 +124,7 @@ const badgeDefs = [
     },
     goal: 6,
     current: (d) => {
-      let count = 1; // 신규 혼행러는 항상 달성
+      let count = 1;
       if ((d?.postCount || 0) >= 5) count++;
       if ((d?.reviewCount || 0) >= 10) count++;
       if ((d?.likeCount || 0) >= 50) count++;
@@ -113,135 +135,181 @@ const badgeDefs = [
   },
 ];
 
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
-};
-
-const badgeVariants = {
-  hidden: { opacity: 0, scale: 0.5, rotate: -10 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    rotate: 0,
-    transition: { type: 'spring', stiffness: 300, damping: 15 },
-  },
-};
-
 export default function BadgeSection({ memberData }) {
   const earnedCount = badgeDefs.filter((b) => b.check(memberData)).length;
 
   return (
-    <section className="py-12 px-5">
+    <section className="py-10 px-5">
       <div className="max-w-4xl mx-auto">
+        {/* 헤더 */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
+          className="flex items-center justify-between mb-6"
         >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-400 rounded-xl flex items-center justify-center shadow-lg shadow-amber-200/50">
-              <Award className="w-5 h-5 text-white" />
-            </div>
+          <div className="flex items-center gap-2.5">
+            <span className="text-2xl">🎖️</span>
             <h2
-              className="text-2xl sm:text-3xl font-bold text-slate-800"
-              style={{ fontFamily: "'GmarketSans', sans-serif" }}
-            >
-              활동 배지
-            </h2>
-            <span
-              className="ml-auto text-sm font-semibold text-slate-400"
+              className="text-xl font-extrabold text-slate-800"
               style={{ fontFamily: "'Pretendard', sans-serif" }}
             >
-              {earnedCount} / {badgeDefs.length}
+              나의 배지 컬렉션
+            </h2>
+          </div>
+          <div
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-full"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            <span className="text-sm">✨</span>
+            <span className="text-xs font-bold text-amber-600">
+              {earnedCount}개 획득
             </span>
           </div>
-          <p className="text-slate-500 mt-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-            활동을 통해 특별한 배지를 모아보세요
-          </p>
         </motion.div>
 
-        <motion.div
-          className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 sm:p-8 shadow-lg shadow-sky-100 border border-sky-50"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-        >
+        {/* 획득 배지 가로 스크롤 */}
+        {earnedCount > 0 && (
           <motion.div
-            className="grid grid-cols-2 sm:grid-cols-3 gap-4"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-50px' }}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-6"
           >
-            {badgeDefs.map((badge) => {
-              const earned = badge.check(memberData);
-              const Icon = badge.icon;
-              const current = Math.min(badge.current(memberData), badge.goal);
-              const progress = Math.round((current / badge.goal) * 100);
-
-              return (
+            <div className="flex gap-3 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
+              {badgeDefs.filter((b) => b.check(memberData)).map((badge, i) => (
                 <motion.div
                   key={badge.key}
-                  variants={badgeVariants}
-                  whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-                  className={`relative rounded-2xl p-5 text-center transition-all cursor-default ${
-                    earned
-                      ? `bg-gradient-to-br ${badge.gradient} shadow-lg ${badge.shadow}`
-                      : 'bg-slate-50 border-2 border-dashed border-slate-200'
-                  }`}
+                  initial={{ opacity: 0, scale: 0.6, rotate: -15 }}
+                  whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, type: 'spring', stiffness: 250, damping: 15 }}
+                  whileHover={{ scale: 1.08, y: -4 }}
+                  className={`flex-shrink-0 ${badge.earnedBg} rounded-2xl px-5 py-4 shadow-lg ${badge.shadow} cursor-default min-w-[140px]`}
                 >
-                  {/* 아이콘 */}
+                  <div className="text-center">
+                    <span className="text-3xl block mb-2">{badge.emoji}</span>
+                    <p
+                      className="text-[13px] font-bold text-white leading-tight"
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    >
+                      {badge.label}
+                    </p>
+                    <p
+                      className="text-[10px] text-white/70 mt-0.5"
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    >
+                      {badge.condition}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <style>{`div::-webkit-scrollbar { display: none; }`}</style>
+          </motion.div>
+        )}
+
+        {/* 전체 배지 그리드 */}
+        <motion.div
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-30px' }}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
+        >
+          {badgeDefs.map((badge) => {
+            const earned = badge.check(memberData);
+            const Icon = badge.icon;
+            const current = Math.min(badge.current(memberData), badge.goal);
+            const pct = Math.round((current / badge.goal) * 100);
+
+            return (
+              <motion.div
+                key={badge.key}
+                variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 200, damping: 18 } },
+                }}
+                whileHover={{ y: -3, transition: { duration: 0.2 } }}
+                className={`relative rounded-2xl p-4 transition-all cursor-default ${
+                  earned
+                    ? 'bg-white shadow-md ring-1 ring-slate-100'
+                    : 'bg-slate-50/70 ring-1 ring-slate-100'
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  {/* 아이콘 영역 */}
                   <div
-                    className={`w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center ${
-                      earned ? 'bg-white/25' : 'bg-slate-100'
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                      earned
+                        ? `${badge.bg} ring-2 ${badge.ring}`
+                        : 'bg-slate-100'
                     }`}
                   >
-                    <Icon className={`w-6 h-6 ${earned ? 'text-white' : 'text-slate-300'}`} />
+                    {earned ? (
+                      <span className="text-lg">{badge.emoji}</span>
+                    ) : (
+                      <Icon className="w-5 h-5 text-slate-300" />
+                    )}
                   </div>
 
-                  <h4
-                    className={`text-sm font-bold mb-1 ${earned ? 'text-white' : 'text-slate-400'}`}
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
-                  >
-                    {badge.label}
-                  </h4>
-                  <p className={`text-xs mb-3 ${earned ? 'text-white/80' : 'text-slate-300'}`}>
-                    {badge.condition}
-                  </p>
+                  {/* 텍스트 */}
+                  <div className="flex-1 min-w-0">
+                    <h4
+                      className={`text-[13px] font-bold leading-tight ${
+                        earned ? 'text-slate-700' : 'text-slate-400'
+                      }`}
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    >
+                      {badge.label}
+                    </h4>
+                    <p
+                      className={`text-[11px] mt-0.5 ${
+                        earned ? 'text-slate-400' : 'text-slate-300'
+                      }`}
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    >
+                      {badge.condition}
+                    </p>
+                  </div>
+                </div>
 
-                  {/* 프로그레스 바 */}
-                  {!earned && (
-                    <div className="mt-auto">
-                      <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-gradient-to-r from-sky-400 to-cyan-400 rounded-full transition-all duration-500"
-                          style={{ width: `${progress}%` }}
+                {/* 프로그레스 */}
+                {!earned && (
+                  <div className="mt-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex-1 h-1.5 bg-slate-200 rounded-full overflow-hidden mr-2">
+                        <motion.div
+                          className={`h-full rounded-full bg-gradient-to-r ${badge.earnedBg}`}
+                          initial={{ width: 0 }}
+                          whileInView={{ width: `${pct}%` }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
                         />
                       </div>
-                      <p className="text-[10px] text-slate-400 mt-1.5 font-semibold">
-                        {current} / {badge.goal}
-                      </p>
+                      <span
+                        className="text-[10px] font-bold text-slate-400 tabular-nums flex-shrink-0"
+                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      >
+                        {current}/{badge.goal}
+                      </span>
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {/* 획득 체크 */}
-                  {earned && (
-                    <div className="absolute -top-1.5 -right-1.5 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-md">
-                      <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                {/* 획득 표시 */}
+                {earned && (
+                  <div className="absolute -top-1 -right-1">
+                    <div className="w-5 h-5 bg-emerald-400 rounded-full flex items-center justify-center shadow-sm shadow-emerald-200/80">
+                      <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                  )}
-
-                  {/* 미획득 잠금 오버레이 제거 — 프로그레스 바가 대신 보이도록 */}
-                </motion.div>
-              );
-            })}
-          </motion.div>
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { axiosApi } from "../api/core/axiosAPI";
-import { getToken, saveToken, removeToken, clearAllAuth, setRememberMe, getRememberMe } from "../api/core/tokenStorage";
+import { getToken, saveToken, removeToken, clearAllAuth } from "../api/core/tokenStorage";
 
 /**
  * 인증 Context
@@ -97,8 +97,8 @@ export const AuthProvider = ({ children }) => {
     setPassword(e.target.value);
   };
 
-  // 로그인 처리 함수 (rememberMe 파라미터 추가)
-  const handleLogin = async (e, rememberMe = false) => {
+  // 로그인 처리 함수
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
@@ -113,9 +113,6 @@ export const AuthProvider = ({ children }) => {
       }
 
       const loginData = response.data.data;
-
-      // "로그인 유지" 설정 저장 (이후 saveToken이 올바른 Storage를 사용)
-      setRememberMe(rememberMe);
 
       // JWT 토큰 저장
       saveToken("accessToken", loginData.accessToken);
@@ -154,11 +151,8 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // OAuth 콜백 처리 함수 (rememberMe 파라미터 추가)
-  const handleOAuthCallback = (loginData, rememberMe = false) => {
-    // "로그인 유지" 설정 저장
-    setRememberMe(rememberMe);
-
+  // OAuth 콜백 처리 함수
+  const handleOAuthCallback = (loginData) => {
     // JWT 토큰 저장
     saveToken("accessToken", loginData.accessToken);
     if (loginData.refreshToken) {

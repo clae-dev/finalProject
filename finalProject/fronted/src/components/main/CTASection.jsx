@@ -1,209 +1,430 @@
-import React from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CalendarDays, MapPin, ChevronLeft, ChevronRight, Sparkles, ArrowRight, Loader2, ImageIcon } from 'lucide-react';
+import { useEventList, useLeisureList } from '../../api/activity/useActivity';
+
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400';
+
+const formatDate = (dateStr) => {
+  if (!dateStr) return '';
+  const s = String(dateStr);
+  if (s.length !== 8) return s;
+  return `${s.slice(0, 4)}.${s.slice(4, 6)}.${s.slice(6, 8)}`;
+};
+
+function EventCard({ item, type, index }) {
+  const isEvent = type === 'event';
+
+  return (
+    <motion.div
+      className="flex-shrink-0 w-[300px] group cursor-pointer"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.08, duration: 0.5 }}
+    >
+      <div className="relative bg-white rounded-3xl shadow-lg shadow-slate-200/60 border border-slate-100/80 overflow-hidden hover:shadow-2xl hover:shadow-orange-200/40 hover:-translate-y-2 transition-all duration-500">
+        {/* 이미지 */}
+        <div className="relative h-[200px] overflow-hidden">
+          {item.image ? (
+            <img
+              src={item.image}
+              alt={item.title}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+              onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center">
+              <ImageIcon className="w-12 h-12 text-orange-200" />
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+          {/* 뱃지 */}
+          <div className="absolute top-3 left-3">
+            <span
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-white text-[11px] font-bold rounded-full backdrop-blur-md shadow-lg ${
+                isEvent
+                  ? 'bg-gradient-to-r from-orange-500/90 to-amber-500/90'
+                  : 'bg-gradient-to-r from-emerald-500/90 to-teal-500/90'
+              }`}
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              {isEvent ? '축제' : '액티비티'}
+            </span>
+          </div>
+
+          {/* 날짜 (이벤트만) */}
+          {isEvent && item.startDate && (
+            <div className="absolute bottom-3 left-3 right-3">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full">
+                <CalendarDays className="w-3 h-3 text-amber-300" />
+                <span
+                  className="text-[11px] text-white/90 font-medium"
+                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                >
+                  {formatDate(item.startDate)} ~ {formatDate(item.endDate)}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 내용 */}
+        <div className="p-5">
+          <h3
+            className="font-bold text-slate-800 text-[15px] leading-snug mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors duration-300"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            {item.title}
+          </h3>
+
+          {item.addr && (
+            <div className="flex items-start gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-slate-300 flex-shrink-0 mt-0.5" />
+              <p
+                className="text-[13px] text-slate-400 line-clamp-1"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+              >
+                {item.addr}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function CTASection() {
   const navigate = useNavigate();
+  const scrollRef = useRef(null);
+  const [scrollX, setScrollX] = useState(0);
+  const [maxScroll, setMaxScroll] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const autoScrollRef = useRef(null);
+
+  const { data: eventData, isLoading: eventLoading } = useEventList(1, 12);
+  const { data: leisureData, isLoading: leisureLoading } = useLeisureList(1, 12);
+
+  const eventList = eventData?.success ? (eventData.list || []) : [];
+  const leisureList = leisureData?.success ? (leisureData.list || []) : [];
+
+  // 이벤트와 액티비티를 번갈아 섞기
+  const allItems = [];
+  const maxLen = Math.max(eventList.length, leisureList.length);
+  for (let i = 0; i < maxLen; i++) {
+    if (i < eventList.length) allItems.push({ ...eventList[i], _type: 'event' });
+    if (i < leisureList.length) allItems.push({ ...leisureList[i], _type: 'leisure' });
+  }
+
+  const isLoading = eventLoading && leisureLoading;
+
+  // 스크롤 상태 추적
+  const updateScrollState = useCallback(() => {
+    if (!scrollRef.current) return;
+    const el = scrollRef.current;
+    setScrollX(el.scrollLeft);
+    setMaxScroll(el.scrollWidth - el.clientWidth);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener('scroll', updateScrollState, { passive: true });
+    const resizeObserver = new ResizeObserver(updateScrollState);
+    resizeObserver.observe(el);
+    return () => {
+      el.removeEventListener('scroll', updateScrollState);
+      resizeObserver.disconnect();
+    };
+  }, [updateScrollState, allItems.length]);
+
+  // 자동 스크롤
+  useEffect(() => {
+    if (allItems.length === 0 || isPaused) {
+      clearInterval(autoScrollRef.current);
+      return;
+    }
+
+    autoScrollRef.current = setInterval(() => {
+      if (!scrollRef.current) return;
+      const el = scrollRef.current;
+      const cardWidth = 316; // 300 + gap
+      const nextScroll = el.scrollLeft + cardWidth;
+
+      if (nextScroll >= el.scrollWidth - el.clientWidth) {
+        el.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        el.scrollTo({ left: nextScroll, behavior: 'smooth' });
+      }
+    }, 3500);
+
+    return () => clearInterval(autoScrollRef.current);
+  }, [allItems.length, isPaused]);
+
+  const scroll = (direction) => {
+    if (!scrollRef.current) return;
+    const cardWidth = 316;
+    const amount = direction === 'left' ? -cardWidth * 2 : cardWidth * 2;
+    scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+  };
+
+  const canScrollLeft = scrollX > 10;
+  const canScrollRight = scrollX < maxScroll - 10;
 
   return (
-    <section className="relative py-32 overflow-hidden">
-      {/* 그라데이션 배경 */}
-      <div className="absolute inset-0 bg-gradient-to-br from-sky-400 via-cyan-500 to-blue-600" />
-
-      {/* 파도 SVG 레이어 */}
-      <div className="absolute inset-0">
-        <motion.svg
-          className="absolute top-0 w-full"
-          viewBox="0 0 1440 120"
-          preserveAspectRatio="none"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 0.15 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-        >
-          <motion.path
-            fill="white"
-            d="M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,0 L0,0 Z"
-            initial={{ d: "M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,0 L0,0 Z" }}
-            animate={{ d: [
-              "M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,0 L0,0 Z",
-              "M0,40 C240,20 480,80 720,40 C960,20 1200,80 1440,40 L1440,0 L0,0 Z",
-              "M0,60 C240,100 480,20 720,60 C960,100 1200,20 1440,60 L1440,0 L0,0 Z",
-            ] }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </motion.svg>
-        <motion.svg
-          className="absolute bottom-0 w-full"
-          viewBox="0 0 1440 120"
-          preserveAspectRatio="none"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 0.15 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1 }}
-        >
-          <motion.path
-            fill="white"
-            d="M0,60 C200,20 400,100 600,60 C800,20 1000,100 1200,60 C1350,40 1440,80 1440,80 L1440,120 L0,120 Z"
-            initial={{ d: "M0,60 C200,20 400,100 600,60 C800,20 1000,100 1200,60 C1350,40 1440,80 1440,80 L1440,120 L0,120 Z" }}
-            animate={{ d: [
-              "M0,60 C200,20 400,100 600,60 C800,20 1000,100 1200,60 C1350,40 1440,80 1440,80 L1440,120 L0,120 Z",
-              "M0,80 C200,100 400,20 600,80 C800,100 1000,20 1200,80 C1350,60 1440,40 1440,40 L1440,120 L0,120 Z",
-              "M0,60 C200,20 400,100 600,60 C800,20 1000,100 1200,60 C1350,40 1440,80 1440,80 L1440,120 L0,120 Z",
-            ] }}
-            transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-          />
-        </motion.svg>
-      </div>
-
-      {/* 떠다니는 장식 */}
-      <motion.div
-        className="absolute top-12 left-[10%] w-52 h-52 bg-white/15 rounded-full blur-3xl"
-        animate={{ y: [0, -20, 0], x: [0, 10, 0], opacity: [0.15, 0.3, 0.15] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute bottom-12 right-[10%] w-72 h-72 bg-white/10 rounded-full blur-3xl"
-        animate={{ y: [0, 25, 0], x: [0, -15, 0], opacity: [0.1, 0.25, 0.1] }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute top-1/2 left-[50%] w-40 h-40 bg-cyan-300/20 rounded-full blur-3xl"
-        animate={{ scale: [1, 1.3, 1], opacity: [0.15, 0.3, 0.15] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-      />
-
-      {/* 떠다니는 거품 */}
-      {[
-        { size: 'w-3 h-3', left: '15%', delay: 0, duration: 5 },
-        { size: 'w-2 h-2', left: '30%', delay: 1.5, duration: 6 },
-        { size: 'w-4 h-4', left: '55%', delay: 0.8, duration: 7 },
-        { size: 'w-2.5 h-2.5', left: '75%', delay: 2, duration: 5.5 },
-        { size: 'w-3 h-3', left: '88%', delay: 0.5, duration: 6.5 },
-      ].map((bubble, i) => (
+    <section className="relative overflow-hidden">
+      {/* ── 히어로 배너 ── */}
+      <div className="relative h-[340px] md:h-[380px] overflow-hidden">
+        {/* 배경 이미지 */}
         <motion.div
-          key={i}
-          className={`absolute bottom-0 ${bubble.size} bg-white/30 rounded-full`}
-          style={{ left: bubble.left }}
-          animate={{
-            y: [0, -300, -500],
-            opacity: [0, 0.6, 0],
-            scale: [0.5, 1, 0.3],
-          }}
-          transition={{
-            duration: bubble.duration,
-            repeat: Infinity,
-            delay: bubble.delay,
-            ease: 'easeOut',
-          }}
-        />
-      ))}
-
-      {/* 콘텐츠 */}
-      <div className="relative max-w-4xl mx-auto px-5 text-center">
-        {/* 아이콘 */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+          className="absolute inset-0"
+          initial={{ scale: 1.1 }}
+          whileInView={{ scale: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, type: 'spring', bounce: 0.5 }}
-          className="mb-8"
+          transition={{ duration: 10, ease: 'easeOut' }}
         >
-          <motion.div
-            animate={{ y: [0, -8, 0], rotate: [0, 5, -5, 0] }}
-            transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-3xl shadow-lg shadow-sky-900/20 border border-white/30"
-          >
-            <span className="text-4xl">🌊</span>
-          </motion.div>
+          <img
+            src="https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=1600&q=80"
+            alt=""
+            className="w-full h-full object-cover"
+          />
         </motion.div>
 
-        {/* 제목 */}
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, delay: 0.15 }}
-          className="text-4xl md:text-6xl font-black text-white mb-6 drop-shadow-lg leading-tight"
-          style={{ fontFamily: "'GmarketSans', sans-serif" }}
-        >
-          파도가 부르는 소리,
-          <br />
+        {/* 오버레이 그라데이션 */}
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-600/80 via-amber-500/60 to-orange-600/70" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
+
+        {/* 떠다니는 컨페티 */}
+        {[
+          { emoji: '🎉', left: '8%', top: '20%', delay: 0, size: 'text-3xl', dur: 5 },
+          { emoji: '🎪', left: '85%', top: '15%', delay: 0.5, size: 'text-4xl', dur: 6 },
+          { emoji: '🎊', left: '75%', top: '60%', delay: 1, size: 'text-2xl', dur: 5.5 },
+          { emoji: '🎈', left: '15%', top: '65%', delay: 1.5, size: 'text-3xl', dur: 7 },
+          { emoji: '🎶', left: '50%', top: '12%', delay: 0.8, size: 'text-2xl', dur: 6 },
+          { emoji: '✨', left: '30%', top: '75%', delay: 2, size: 'text-xl', dur: 4.5 },
+          { emoji: '🎭', left: '92%', top: '45%', delay: 0.3, size: 'text-2xl', dur: 5 },
+          { emoji: '🎵', left: '60%', top: '70%', delay: 1.2, size: 'text-xl', dur: 6.5 },
+        ].map((item, i) => (
           <motion.span
-            initial={{ opacity: 0, y: 20 }}
+            key={i}
+            className={`absolute ${item.size} pointer-events-none select-none`}
+            style={{ left: item.left, top: item.top }}
+            animate={{
+              y: [0, -12, 0],
+              rotate: [0, 8, -8, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              delay: item.delay,
+              duration: item.dur,
+              repeat: Infinity,
+              ease: 'easeInOut',
+            }}
+          >
+            {item.emoji}
+          </motion.span>
+        ))}
+
+        {/* 빛나는 파티클 */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={`p-${i}`}
+            className="absolute w-1.5 h-1.5 bg-yellow-300 rounded-full"
+            style={{ left: `${15 + i * 15}%`, top: `${20 + (i % 3) * 25}%` }}
+            animate={{
+              opacity: [0, 1, 0],
+              scale: [0, 1.5, 0],
+              y: [0, -30, -60],
+            }}
+            transition={{
+              duration: 2.5 + i * 0.3,
+              repeat: Infinity,
+              delay: i * 0.4,
+              ease: 'easeOut',
+            }}
+          />
+        ))}
+
+        {/* 텍스트 콘텐츠 */}
+        <div className="relative h-full max-w-7xl mx-auto px-6 flex flex-col justify-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.35 }}
+            transition={{ duration: 0.7 }}
           >
-            들리시나요?
-          </motion.span>
-        </motion.h2>
-
-        {/* 설명 */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.45 }}
-          className="text-xl md:text-2xl text-white/85 mb-12 leading-relaxed font-medium"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
-        >
-          제주 바다가 당신을 기다리고 있어요
-          <br />
-          지금 바로 나만의 여행을 시작해보세요
-        </motion.p>
-
-        {/* 버튼 */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-        >
-          <motion.button
-            whileHover={{ scale: 1.05, y: -3 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => navigate('/companions')}
-            className="group inline-flex items-center gap-3 px-12 py-5 bg-white text-sky-600 font-black text-lg rounded-full shadow-2xl shadow-sky-900/30 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] transition-shadow duration-500"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
-          >
-            <span>여행 시작하기</span>
-            <motion.svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              animate={{ x: [0, 4, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+            <motion.div
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-md rounded-full mb-5 border border-white/30"
+              initial={{ opacity: 0, scale: 0.8 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-            </motion.svg>
-          </motion.button>
-        </motion.div>
+              <Sparkles className="w-4 h-4 text-yellow-300" />
+              <span
+                className="text-xs font-bold text-white tracking-wider"
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+              >
+                FESTIVAL & ACTIVITY
+              </span>
+            </motion.div>
 
-        {/* 하단 장식 텍스트 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.9 }}
-          className="mt-12 flex items-center justify-center gap-6 text-white/40 text-sm font-medium"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
-        >
-          <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-white/40 rounded-full" />
-            혼자여도 괜찮아
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-white/40 rounded-full" />
-            함께하면 더 좋아
-          </span>
-          <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-white/40 rounded-full" />
-            제주에서 만나요
-          </span>
-        </motion.div>
+            <h2
+              className="text-4xl md:text-5xl font-black text-white mb-3 drop-shadow-lg"
+              style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            >
+              제주의 즐길거리
+            </h2>
+            <p
+              className="text-lg md:text-xl text-white/85 font-medium drop-shadow max-w-lg"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              지금 제주에서 펼쳐지는 축제와 액티비티를 만나보세요
+            </p>
+          </motion.div>
+        </div>
+
+        {/* 하단 물결 연결 */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 60" preserveAspectRatio="none" className="w-full h-[40px]">
+            <path fill="#fffbeb" d="M0,30 C360,60 720,0 1080,30 C1260,45 1380,20 1440,30 L1440,60 L0,60 Z" />
+          </svg>
+        </div>
       </div>
+
+      {/* ── 카드 영역 ── */}
+      <div className="relative pt-6 pb-20">
+        {/* 배경 */}
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-50 via-orange-50/30 to-sky-50" />
+
+        <div className="relative max-w-7xl mx-auto">
+          {/* 네비게이션 + 더보기 */}
+          <div className="px-6 mb-8 flex items-center justify-end gap-3">
+            <button
+              onClick={() => scroll('left')}
+              disabled={!canScrollLeft}
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                canScrollLeft
+                  ? 'bg-white text-slate-600 shadow-md shadow-slate-200/50 hover:shadow-lg hover:bg-orange-50 hover:text-orange-500 active:scale-95'
+                  : 'bg-slate-100 text-slate-300 cursor-not-allowed'
+              }`}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => scroll('right')}
+              disabled={!canScrollRight}
+              className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all duration-300 ${
+                canScrollRight
+                  ? 'bg-white text-slate-600 shadow-md shadow-slate-200/50 hover:shadow-lg hover:bg-orange-50 hover:text-orange-500 active:scale-95'
+                  : 'bg-slate-100 text-slate-300 cursor-not-allowed'
+              }`}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => navigate('/activities')}
+              className="hidden md:inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-orange-200/50 hover:shadow-xl hover:shadow-orange-300/50 transition-all duration-300"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              전체보기
+              <ArrowRight className="w-4 h-4" />
+            </motion.button>
+          </div>
+
+        {/* 카드 슬라이드 */}
+        {isLoading ? (
+          <div className="flex items-center justify-center py-24">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
+            >
+              <Loader2 className="w-10 h-10 text-orange-400" />
+            </motion.div>
+          </div>
+        ) : allItems.length === 0 ? (
+          <div className="text-center py-20 px-6">
+            <CalendarDays className="w-14 h-14 text-slate-200 mx-auto mb-4" />
+            <p
+              className="text-slate-400 text-lg font-medium"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              등록된 축제 및 액티비티가 없습니다
+            </p>
+          </div>
+        ) : (
+          <div
+            className="relative"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
+            {/* 좌측 그라데이션 페이드 */}
+            <div
+              className={`absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-amber-50 to-transparent z-10 pointer-events-none transition-opacity duration-300 ${
+                canScrollLeft ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+            {/* 우측 그라데이션 페이드 */}
+            <div
+              className={`absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-sky-50 to-transparent z-10 pointer-events-none transition-opacity duration-300 ${
+                canScrollRight ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+
+            <div
+              ref={scrollRef}
+              className="flex gap-4 overflow-x-auto px-6 pb-4 scrollbar-hide"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+            >
+              {allItems.map((item, index) => (
+                <EventCard
+                  key={`${item._type}-${item.contentId || index}`}
+                  item={item}
+                  type={item._type}
+                  index={index}
+                />
+              ))}
+            </div>
+
+            {/* 스크롤 프로그레스 바 */}
+            {maxScroll > 0 && (
+              <div className="mt-6 px-6">
+                <div className="max-w-xs mx-auto h-1 bg-slate-200/60 rounded-full overflow-hidden">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-orange-400 to-amber-400 rounded-full"
+                    style={{ width: `${Math.max(10, (scrollX / maxScroll) * 100)}%` }}
+                    transition={{ duration: 0.1 }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+          {/* 모바일 더보기 버튼 */}
+          <div className="md:hidden flex justify-center mt-8 px-6">
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => navigate('/activities')}
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-orange-200/50"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              전체보기
+              <ArrowRight className="w-4 h-4" />
+            </motion.button>
+          </div>
+        </div>
+      </div>
+
+      {/* scrollbar-hide CSS */}
+      <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
     </section>
   );
 }
