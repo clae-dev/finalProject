@@ -18,7 +18,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 회원 Service 구현체
+ * 회원 서비스 구현체
+ *
+ * <p>회원가입(BCrypt 암호화), 로그인(JWT 발급), 회원 정보 수정,
+ * 아이디/비밀번호 찾기, Refresh Token Rotation, 활동 내역 조회를 구현한다.</p>
+ *
+ * @author HONDI
  */
 @Service
 @Transactional

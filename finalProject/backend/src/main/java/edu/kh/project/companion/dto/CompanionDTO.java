@@ -4,7 +4,11 @@ import lombok.*;
 
 /**
  * 동행 모집 게시글 DTO
- * - COMPANION_BOARD 테이블과 매핑
+ *
+ * <p>COMPANION_BOARD 테이블과 매핑되는 동행 모집 데이터 객체.
+ * 게시글 정보, 여행 일정, 참여 인원, 태그, 이미지, 작성자 정보를 포함한다.</p>
+ *
+ * @author HONDI
  */
 @Getter
 @Setter

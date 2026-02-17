@@ -10,6 +10,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * 알림 서비스 구현체
+ *
+ * <p>알림 생성, 목록 조회, 읽음 처리, 삭제 및
+ * WebSocket을 통한 실시간 알림 전송을 구현한다.</p>
+ *
+ * @author HONDI
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional

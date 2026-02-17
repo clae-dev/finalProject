@@ -10,8 +10,12 @@ import edu.kh.project.member.dto.MemberDTO;
 import edu.kh.project.member.dto.SignupRequestDTO;
 
 /**
- * 회원 Mapper 인터페이스
- * - MyBatis와 연동되는 SQL 매핑 인터페이스
+ * 회원 MyBatis Mapper 인터페이스
+ *
+ * <p>MEMBER 테이블에 대한 SQL 매핑 인터페이스.
+ * 회원 CRUD, 인증, 아이디/비밀번호 찾기, 활동 내역 조회를 정의한다.</p>
+ *
+ * @author HONDI
  */
 @Mapper
 public interface MemberMapper {

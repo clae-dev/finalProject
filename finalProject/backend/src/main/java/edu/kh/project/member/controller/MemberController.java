@@ -37,8 +37,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 회원 REST API Controller
- * - 회원가입, 로그인, 정보 수정 등 회원 관련 API
+ * 회원 REST API 컨트롤러
+ *
+ * <p>회원 가입, 로그인, 정보 수정 등 회원 관련 전체 API를 처리한다.</p>
+ *
+ * <h3>주요 엔드포인트</h3>
+ * <ul>
+ *   <li>POST /api/member/signup - 회원가입</li>
+ *   <li>POST /api/member/login - 로그인 (JWT 발급)</li>
+ *   <li>POST /api/member/refresh - Access Token 갱신</li>
+ *   <li>GET  /api/member/info - 회원 정보 조회</li>
+ *   <li>PUT  /api/member/info - 회원 정보 수정</li>
+ *   <li>PUT  /api/member/password - 비밀번호 변경</li>
+ *   <li>DELETE /api/member - 회원 탈퇴</li>
+ *   <li>POST /api/member/verification - 인증서류 제출</li>
+ *   <li>POST /api/member/profile-image - 프로필 이미지 업로드</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @RestController
 @RequestMapping("/api/member")

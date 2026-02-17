@@ -4,6 +4,14 @@ import edu.kh.project.notification.dto.NotificationDTO;
 
 import java.util.List;
 
+/**
+ * 알림 서비스 인터페이스
+ *
+ * <p>알림 생성(WebSocket push 포함), 목록 조회, 읽음 처리,
+ * 삭제 등 알림 관련 비즈니스 로직을 정의한다.</p>
+ *
+ * @author HONDI
+ */
 public interface NotificationService {
 
     /** 알림 생성 + WebSocket push */

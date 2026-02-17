@@ -13,14 +13,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * 동행 후기 서비스 구현체
+ *
+ * <p>동행 후기의 CRUD 및 이미지 파일 관리 비즈니스 로직을 구현한다.
+ * companionNo가 null인 경우 독립 후기로 작성된다.</p>
+ *
+ * @author HONDI
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class CompanionReviewServiceImpl implements CompanionReviewService {
 
+    /** 후기 MyBatis Mapper */
     private final CompanionReviewMapper reviewMapper;
 
+    // ==================== 조회 ====================
+
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public List<CompanionReviewDTO> getReviewList(int page, int size) {
@@ -28,18 +40,35 @@ public class CompanionReviewServiceImpl implements CompanionReviewService {
         return reviewMapper.selectReviewList(offset, size);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public int getReviewCount() {
         return reviewMapper.selectReviewCount();
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public CompanionReviewDTO getReviewDetail(int reviewNo) {
         return reviewMapper.selectReviewDetail(reviewNo);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    @Transactional(readOnly = true)
+    public List<CompanionReviewDTO> getRecentReviews(int limit) {
+        return reviewMapper.selectRecentReviews(limit);
+    }
+
+    // ==================== 작성/삭제 ====================
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>companionNo가 0이면 null로 변환하여 FK 위반을 방지한다.
+     * 이미지 파일은 UUID 기반으로 리네임하여 서버에 저장한다.</p>
+     */
     @Override
     public int createReview(CompanionReviewDTO review, MultipartFile thumbnail,
                             List<MultipartFile> contentImages,
@@ -50,12 +79,12 @@ public class CompanionReviewServiceImpl implements CompanionReviewService {
             review.setCompanionNo(null);
         }
 
-        // 폴더 생성
+        // 업로드 폴더 생성
         File dir = new File(folderPath);
         if (!dir.exists()) dir.mkdirs();
 
         try {
-            // 썸네일 저장
+            // 썸네일 이미지 저장
             if (thumbnail != null && !thumbnail.isEmpty()) {
                 String rename = UUID.randomUUID().toString()
                         + getFileExtension(thumbnail.getOriginalFilename());
@@ -87,19 +116,20 @@ public class CompanionReviewServiceImpl implements CompanionReviewService {
         return reviewMapper.insertReview(review);
     }
 
+    /**
+     * 파일명에서 확장자를 추출한다.
+     *
+     * @param fileName 원본 파일명
+     * @return 확장자 문자열 (예: ".jpg"), 없으면 빈 문자열
+     */
     private String getFileExtension(String fileName) {
         if (fileName == null || !fileName.contains(".")) return "";
         return fileName.substring(fileName.lastIndexOf("."));
     }
 
+    /** {@inheritDoc} */
     @Override
     public int deleteReview(int reviewNo, int memberNo) {
         return reviewMapper.deleteReview(reviewNo, memberNo);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<CompanionReviewDTO> getRecentReviews(int limit) {
-        return reviewMapper.selectRecentReviews(limit);
     }
 }

@@ -15,8 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * WebSocket 핸드셰이크 인터셉터
- * - SockJS 연결 URL의 ?token=xxx 쿼리 파라미터에서 JWT 추출
- * - 수업 코드의 SessionHandshakeInterceptor를 JWT 방식으로 대체
+ *
+ * <p>SockJS 연결 URL의 {@code ?token=xxx} 쿼리 파라미터에서 JWT를 추출하여
+ * 유효성을 검증하고, memberNo를 WebSocket 세션 속성에 저장한다.</p>
+ *
+ * @author HONDI
  */
 @Component
 @RequiredArgsConstructor

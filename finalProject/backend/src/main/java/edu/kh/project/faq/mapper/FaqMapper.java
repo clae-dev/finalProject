@@ -8,6 +8,14 @@ import org.apache.ibatis.annotations.Param;
 import edu.kh.project.faq.dto.FaqCategoryDTO;
 import edu.kh.project.faq.dto.FaqDTO;
 
+/**
+ * FAQ MyBatis Mapper
+ *
+ * <p>FAQ, FAQ_CATEGORY 테이블에 대한 SQL 매핑 인터페이스.
+ * FAQ CRUD, 카테고리 조회, 조회수 증가 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
+ */
 @Mapper
 public interface FaqMapper {
 

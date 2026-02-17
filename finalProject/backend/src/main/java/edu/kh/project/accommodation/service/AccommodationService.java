@@ -5,6 +5,11 @@ import edu.kh.project.accommodation.dto.AccommodationDTO;
 
 /**
  * 숙소 정보 서비스 인터페이스
+ *
+ * <p>TourAPI 데이터 동기화, 숙소 목록/상세 조회,
+ * 숙소 유형 재분류 등 숙소 관련 비즈니스 로직을 정의한다.</p>
+ *
+ * @author HONDI
  */
 public interface AccommodationService {
     

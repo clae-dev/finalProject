@@ -31,6 +31,15 @@ import edu.kh.project.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * OAuth2 소셜 로그인 서비스
+ *
+ * <p>카카오, 네이버, 구글 OAuth2 로그인/로그아웃 비즈니스 로직을 구현한다.
+ * 인가 코드 → 액세스 토큰 교환 → 사용자 정보 조회 → 회원 자동 가입 → JWT 발급 흐름을 처리하며,
+ * OAuth 액세스 토큰을 인메모리(ConcurrentHashMap)에 저장하여 로그아웃 시 활용한다.</p>
+ *
+ * @author HONDI
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor

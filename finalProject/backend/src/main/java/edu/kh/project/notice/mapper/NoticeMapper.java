@@ -7,6 +7,14 @@ import org.apache.ibatis.annotations.Param;
 
 import edu.kh.project.notice.dto.NoticeDTO;
 
+/**
+ * 공지사항 MyBatis Mapper
+ *
+ * <p>BOARD(BOARD_TYPE_NO=1) 테이블에 대한 SQL 매핑 인터페이스.
+ * 사용자/관리자용 공지 조회, CRUD, 조회수 증가 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
+ */
 @Mapper
 public interface NoticeMapper {
 

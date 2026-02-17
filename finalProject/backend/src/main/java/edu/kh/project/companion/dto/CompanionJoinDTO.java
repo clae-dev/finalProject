@@ -4,7 +4,11 @@ import lombok.*;
 
 /**
  * 동행 참가 신청 DTO
- * - COMPANION_JOIN 테이블과 매핑
+ *
+ * <p>COMPANION_JOIN 테이블과 매핑되는 참가 신청 데이터 객체.
+ * 신청자 정보, 신청 상태(W:대기/A:수락/C:거절), JOIN 파생 필드를 포함한다.</p>
+ *
+ * @author HONDI
  */
 @Getter
 @Setter

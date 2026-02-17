@@ -10,7 +10,11 @@ import java.util.List;
 
 /**
  * 숙소 정보 DTO
- * - ACCOMMODATION 테이블과 매핑
+ *
+ * <p>ACCOMMODATION 테이블과 매핑되는 숙소 데이터 객체.
+ * TourAPI에서 동기화된 기본 정보, 가격, 운영, 분류, 위치, 통계, 이미지 정보를 포함한다.</p>
+ *
+ * @author HONDI
  */
 @Data
 @NoArgsConstructor

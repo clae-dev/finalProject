@@ -9,7 +9,11 @@ import lombok.ToString;
 
 /**
  * 채팅 메시지 DTO
- * - MESSAGE 테이블과 매핑
+ *
+ * <p>MESSAGE 테이블과 매핑되는 메시지 데이터 객체.
+ * WebSocket 전송 시 수신자(targetNo) 지정 필드를 추가로 포함한다.</p>
+ *
+ * @author HONDI
  */
 @Getter
 @Setter
@@ -19,13 +23,19 @@ import lombok.ToString;
 @ToString
 public class MessageDTO {
 
-    private int messageNo;         // 메시지 번호 (PK)
-    private String messageContent; // 메시지 내용
-    private String readFl;         // 읽음 여부 (Y/N)
-    private int senderNo;          // 발신자 회원 번호 (FK)
-    private int chattingRoomNo;    // 채팅방 번호 (FK)
-    private String sendTime;       // 전송 시간
+    /** 메시지 번호 (PK) */
+    private int messageNo;
+    /** 메시지 내용 */
+    private String messageContent;
+    /** 읽음 여부 (Y/N) */
+    private String readFl;
+    /** 발신자 회원 번호 (FK → MEMBER) */
+    private int senderNo;
+    /** 채팅방 번호 (FK → CHATTING_ROOM) */
+    private int chattingRoomNo;
+    /** 전송 시간 */
+    private String sendTime;
 
-    // WebSocket 전송 시 수신자 지정용 (DB 컬럼 아님)
-    private int targetNo;          // 수신자 회원 번호
+    /** 수신자 회원 번호 (WebSocket 전송 시 수신자 지정용, DB 컬럼 아님) */
+    private int targetNo;
 }

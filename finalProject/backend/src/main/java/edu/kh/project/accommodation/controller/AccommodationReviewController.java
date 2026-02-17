@@ -18,6 +18,19 @@ import java.util.Map;
 
 /**
  * 숙소 후기 API 컨트롤러
+ *
+ * <p>특정 숙소에 대한 후기 목록 조회, 요약(평균 별점), 작성, 삭제를 처리한다.
+ * 후기 작성은 인증뱃지(verifiedReviewer) 보유 회원만 가능하다.</p>
+ *
+ * <h3>API 엔드포인트</h3>
+ * <ul>
+ *   <li>GET    /api/accommodations/{no}/reviews         - 후기 목록 조회</li>
+ *   <li>GET    /api/accommodations/{no}/reviews/summary - 후기 요약 (평균 별점)</li>
+ *   <li>POST   /api/accommodations/{no}/reviews         - 후기 작성 (인증뱃지 필수)</li>
+ *   <li>DELETE /api/accommodations/{no}/reviews/{reviewNo} - 후기 삭제 (본인)</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @RestController
 @RequestMapping("/api/accommodations/{accommodationNo}/reviews")

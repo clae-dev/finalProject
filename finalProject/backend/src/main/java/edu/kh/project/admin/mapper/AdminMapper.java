@@ -8,7 +8,11 @@ import java.util.Map;
 
 /**
  * 관리자 MyBatis Mapper
- * - 대시보드, 회원/동행/후기/숙소/신고/인증 관리 SQL 매핑
+ *
+ * <p>관리자 기능에 필요한 SQL 매핑 인터페이스.
+ * 대시보드 통계, 회원/동행/후기/숙소/신고/인증 관리 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
  */
 @Mapper
 public interface AdminMapper {

@@ -18,7 +18,12 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 한국관광공사 TourAPI 호출 서비스
- * - 제주 지역(areaCode=39) 축제/행사 + 레포츠/액티비티 데이터 조회
+ *
+ * <p>제주 지역(areaCode=39) 축제/행사(searchFestival2) 및
+ * 레포츠/액티비티(areaBasedList2, contentTypeId=28) 데이터를
+ * RestTemplate으로 호출·파싱하여 반환한다.</p>
+ *
+ * @author HONDI
  */
 @Service
 @RequiredArgsConstructor

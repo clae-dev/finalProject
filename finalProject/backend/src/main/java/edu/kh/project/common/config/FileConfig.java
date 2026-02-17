@@ -10,130 +10,167 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * 파일 업로드 관련 설정 클래스
- * 
- * @Configuration
- * - 스프링 설정용 클래스임을 명시
- * 
- * @PropertySource("classpath:/config.properties")
- * - config.properties 파일의 파일 업로드 관련 설정값을 읽어옴
- * 
- * WebMvcConfigurer
- * - Spring MVC 설정을 커스터마이징할 수 있는 인터페이스
- * - 정적 리소스 경로 매핑, 인터셉터 등록 등 가능
+ * 파일 업로드 및 정적 리소스 설정 클래스
+ *
+ * <p>업로드된 파일(이미지 등)에 브라우저에서 접근할 수 있도록
+ * 웹 경로와 서버 물리 경로를 매핑한다.
+ * config.properties에서 각 모듈별 이미지 경로를 읽어온다.</p>
+ *
+ * <h3>매핑 대상 모듈</h3>
+ * <ul>
+ *   <li>게시판(board) 이미지</li>
+ *   <li>프로필(profile) 이미지</li>
+ *   <li>동행(companion) 이미지</li>
+ *   <li>후기(review) 이미지</li>
+ *   <li>숙소(accommodation) 이미지</li>
+ *   <li>명소(spot) 이미지</li>
+ *   <li>인증서류(verification) 이미지</li>
+ *   <li>공통 파일 업로드</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @Configuration
 @PropertySource("classpath:/config.properties")
 public class FileConfig implements WebMvcConfigurer {
 
-	// config.properties에서 파일 경로 값 주입
-	
-	// 게시판 이미지 경로
+	// ==================== 게시판 이미지 경로 ====================
+
+	/** 게시판 이미지 웹 접근 경로 (예: /upload/board/) */
 	@Value("${board.image.web-path}")
 	private String boardImageWebPath;
-	
+
+	/** 게시판 이미지 서버 물리 경로 (예: C:/finalProject/upload/board/) */
 	@Value("${board.image.folder-path}")
 	private String boardImageFolderPath;
-	
-	// 프로필 이미지 경로
+
+	// ==================== 프로필 이미지 경로 ====================
+
+	/** 프로필 이미지 웹 접근 경로 */
 	@Value("${profile.image.web-path}")
 	private String profileImageWebPath;
-	
+
+	/** 프로필 이미지 서버 물리 경로 */
 	@Value("${profile.image.folder-path}")
 	private String profileImageFolderPath;
-	
-	// 동행 이미지 경로
+
+	// ==================== 동행 이미지 경로 ====================
+
+	/** 동행 게시글 이미지 웹 접근 경로 */
 	@Value("${companion.image.web-path}")
 	private String companionImageWebPath;
 
+	/** 동행 게시글 이미지 서버 물리 경로 */
 	@Value("${companion.image.folder-path}")
 	private String companionImageFolderPath;
 
-	// 후기 이미지 경로
+	// ==================== 후기 이미지 경로 ====================
+
+	/** 숙소 후기 이미지 웹 접근 경로 */
 	@Value("${review.image.web-path}")
 	private String reviewImageWebPath;
 
+	/** 숙소 후기 이미지 서버 물리 경로 */
 	@Value("${review.image.folder-path}")
 	private String reviewImageFolderPath;
 
-	// 숙소 이미지 경로
+	// ==================== 숙소 이미지 경로 ====================
+
+	/** 숙소 이미지 웹 접근 경로 */
 	@Value("${accommodation.image.web-path}")
 	private String accommodationImageWebPath;
 
+	/** 숙소 이미지 서버 물리 경로 */
 	@Value("${accommodation.image.folder-path}")
 	private String accommodationImageFolderPath;
 
-	// 명소 이미지 경로
+	// ==================== 명소 이미지 경로 ====================
+
+	/** 관광 명소 이미지 웹 접근 경로 */
 	@Value("${spot.image.web-path}")
 	private String spotImageWebPath;
 
+	/** 관광 명소 이미지 서버 물리 경로 */
 	@Value("${spot.image.folder-path}")
 	private String spotImageFolderPath;
 
-	// 인증서류 이미지 경로
+	// ==================== 인증서류 이미지 경로 ====================
+
+	/** 인증서류 이미지 웹 접근 경로 */
 	@Value("${verification.image.web-path}")
 	private String verificationImageWebPath;
 
+	/** 인증서류 이미지 서버 물리 경로 */
 	@Value("${verification.image.folder-path}")
 	private String verificationImageFolderPath;
 
-	// 공통 파일 업로드 경로
+	// ==================== 공통 파일 업로드 경로 ====================
+
+	/** 공통 파일 업로드 서버 물리 경로 */
 	@Value("${file.upload.path}")
 	private String fileUploadPath;
 
+	/** 공통 파일 업로드 웹 접근 경로 */
 	@Value("${file.upload.url}")
 	private String fileUploadUrl;
-	
-	
+
 	/**
-	 * 정적 리소스 핸들러 등록
-	 * - 업로드된 파일에 브라우저에서 접근 가능하도록 경로 매핑
-	 * 
+	 * 정적 리소스 핸들러를 등록한다.
+	 *
+	 * <p>업로드된 파일에 브라우저에서 접근할 수 있도록
+	 * 웹 경로(URL)와 서버의 물리적 폴더 경로를 매핑한다.</p>
+	 *
+	 * <pre>
 	 * 예시:
-	 * - 웹 경로: http://localhost/upload/board/image.jpg
-	 * - 실제 경로: C:/finalProject/upload/board/image.jpg
+	 * 웹 경로:  http://localhost/upload/board/image.jpg
+	 * 실제 경로: file:///C:/finalProject/upload/board/image.jpg
+	 * </pre>
+	 *
+	 * @param registry 리소스 핸들러 레지스트리
 	 */
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		
-		// 게시판 이미지 경로 매핑
+
+		// 게시판 이미지
 		registry.addResourceHandler(boardImageWebPath + "**")
-		        .addResourceLocations("file:///" + boardImageFolderPath);
-		
-		// 프로필 이미지 경로 매핑
+				.addResourceLocations("file:///" + boardImageFolderPath);
+
+		// 프로필 이미지
 		registry.addResourceHandler(profileImageWebPath + "**")
-		        .addResourceLocations("file:///" + profileImageFolderPath);
-		
-		// 동행 이미지 경로 매핑
+				.addResourceLocations("file:///" + profileImageFolderPath);
+
+		// 동행 이미지
 		registry.addResourceHandler(companionImageWebPath + "**")
-		        .addResourceLocations("file:///" + companionImageFolderPath);
+				.addResourceLocations("file:///" + companionImageFolderPath);
 
-		// 후기 이미지 경로 매핑
+		// 후기 이미지
 		registry.addResourceHandler(reviewImageWebPath + "**")
-		        .addResourceLocations("file:///" + reviewImageFolderPath);
+				.addResourceLocations("file:///" + reviewImageFolderPath);
 
-		// 숙소 이미지 경로 매핑
+		// 숙소 이미지
 		registry.addResourceHandler(accommodationImageWebPath + "**")
-		        .addResourceLocations("file:///" + accommodationImageFolderPath);
+				.addResourceLocations("file:///" + accommodationImageFolderPath);
 
-		// 명소 이미지 경로 매핑
+		// 명소 이미지
 		registry.addResourceHandler(spotImageWebPath + "**")
-		        .addResourceLocations("file:///" + spotImageFolderPath);
+				.addResourceLocations("file:///" + spotImageFolderPath);
 
-		// 인증서류 이미지 경로 매핑
+		// 인증서류 이미지
 		registry.addResourceHandler(verificationImageWebPath + "**")
-		        .addResourceLocations("file:///" + verificationImageFolderPath);
+				.addResourceLocations("file:///" + verificationImageFolderPath);
 
-		// 공통 파일 업로드 경로 매핑
+		// 공통 파일 업로드
 		registry.addResourceHandler(fileUploadUrl)
-		        .addResourceLocations("file:///" + fileUploadPath);
+				.addResourceLocations("file:///" + fileUploadPath);
 	}
-	
-	
+
 	/**
-	 * MultipartResolver 빈 등록
-	 * - 파일 업로드 처리를 담당하는 객체
-	 * - StandardServletMultipartResolver: Servlet 3.0+ 표준 방식
+	 * MultipartResolver 빈을 등록한다.
+	 *
+	 * <p>Servlet 3.0+ 표준 방식({@link StandardServletMultipartResolver})으로
+	 * 멀티파트 파일 업로드 요청을 처리한다.</p>
+	 *
+	 * @return StandardServletMultipartResolver
 	 */
 	@Bean
 	public MultipartResolver multipartResolver() {

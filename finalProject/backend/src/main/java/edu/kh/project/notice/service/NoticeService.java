@@ -4,6 +4,14 @@ import java.util.List;
 
 import edu.kh.project.notice.dto.NoticeDTO;
 
+/**
+ * 공지사항 서비스 인터페이스
+ *
+ * <p>공지사항 목록/상세 조회, CRUD, 조회수 증가 등
+ * 공지사항 관련 비즈니스 로직을 정의한다.</p>
+ *
+ * @author HONDI
+ */
 public interface NoticeService {
 
     /** 공지 목록 (사용자용, 페이징) */

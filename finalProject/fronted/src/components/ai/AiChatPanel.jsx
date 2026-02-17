@@ -2,7 +2,7 @@
  * AI 창식이 채팅 슬라이드 패널 컴포넌트 - 실시간 대화 UI, 빠른 질문, 타이핑 인디케이터
  */
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, RotateCcw, AlertCircle, User, Palmtree, MapPin, UtensilsCrossed, Compass } from 'lucide-react';
+import { X, Send, RotateCcw, AlertCircle, Palmtree, MapPin, UtensilsCrossed, Compass, Plane } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSendAiChat } from '../../api/ai/useAiChat';
 import changsikImg from '../../assets/images/제주.png';
@@ -10,16 +10,49 @@ import changsikImg from '../../assets/images/제주.png';
 const QUICK_QUESTIONS = [
   { icon: <Compass className="w-3.5 h-3.5" />, text: '제주 혼자 여행 코스 추천해줘' },
   { icon: <UtensilsCrossed className="w-3.5 h-3.5" />, text: '제주 맛집 추천해줘' },
-  { icon: <Palmtree className="w-3.5 h-3.5" />, text: 'HONDI 추천 명소 알려줘' },
+  { icon: <Plane className="w-3.5 h-3.5" />, text: '제주 항공편 저렴하게 예약하는 법 알려줘' },
   { icon: <MapPin className="w-3.5 h-3.5" />, text: 'HONDI에 등록된 숙소 추천해줘' },
 ];
 
 const WELCOME_MESSAGE = {
   role: 'assistant',
-  content: '혼저옵서예~ 🍊\n저는 제주 여행 AI 도우미 창식이예요!\n\n관광지, 맛집, 숙소, 교통 등\n제주에 대해 궁금한 거 뭐든 물어보세요!',
+  content: '혼저옵서예~ 🍊\n저는 제주 여행 AI 도우미 창식이예요!\n\n관광지, 맛집, 숙소, 항공편, 교통 등\n제주에 대해 궁금한 거 뭐든 물어보세요!',
 };
 
-export default function AiChatPanel({ isOpen, onClose }) {
+/** 마크다운 **bold** 를 <strong> 태그로 변환하여 렌더링 */
+function renderMarkdown(text) {
+  if (!text) return null;
+
+  return text.split('\n').map((line, li) => {
+    const parts = [];
+    let rest = line;
+    let k = 0;
+
+    while (rest.length > 0) {
+      const s = rest.indexOf('**');
+      if (s === -1) { parts.push(rest); break; }
+      const e = rest.indexOf('**', s + 2);
+      if (e === -1) { parts.push(rest); break; }
+
+      if (s > 0) parts.push(rest.substring(0, s));
+      parts.push(
+        <strong key={k++} className="font-semibold">
+          {rest.substring(s + 2, e)}
+        </strong>
+      );
+      rest = rest.substring(e + 2);
+    }
+
+    return (
+      <React.Fragment key={li}>
+        {li > 0 && <br />}
+        {parts}
+      </React.Fragment>
+    );
+  });
+}
+
+export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState(null);
@@ -92,98 +125,75 @@ export default function AiChatPanel({ isOpen, onClose }) {
   };
 
   return (
-    <>
-      {/* 배경 오버레이 */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]"
-            onClick={onClose}
-          />
-        )}
-      </AnimatePresence>
-
-      {/* 슬라이드 패널 */}
-      <div
-        className={`fixed top-0 left-0 h-full w-[420px] max-w-full z-[70] transition-transform duration-300 ease-in-out flex flex-col ${
-          isOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+    <AnimatePresence>
+      {isOpen && (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+        style={{ x: motionX, y: motionY }}
+        className="fixed bottom-24 right-6 w-[360px] h-[520px] max-w-[calc(100vw-2rem)] max-h-[calc(100vh-8rem)] z-[70] flex flex-col bg-white rounded-2xl shadow-2xl overflow-hidden"
       >
-        {/* 패널 배경 */}
-        <div className="absolute inset-0 bg-gradient-to-b from-orange-50 via-white to-amber-50/30 rounded-r-2xl shadow-2xl" />
-
         {/* 헤더 */}
-        <div className="relative z-10 px-5 py-4">
+        <div className="px-5 py-3.5 border-b border-gray-100 bg-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {/* 창식이 아바타 */}
               <div className="relative">
-                <div className="w-11 h-11 rounded-2xl overflow-hidden shadow-lg shadow-sky-200/60">
-                  <img src={changsikImg} alt="AI 창식이" className="w-full h-full object-cover" />
+                <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-orange-100">
+                  <img src={changsikImg} alt="창식이" className="w-full h-full object-cover" />
                 </div>
-                <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-white" />
+                <div className="absolute -bottom-px -right-px w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
               </div>
               <div>
-                <h2 className="text-[15px] font-bold text-slate-800 tracking-tight">AI 창식이</h2>
-                <p className="text-[11px] text-emerald-500 font-medium">온라인</p>
+                <h2 className="text-sm font-bold text-gray-800">창식이</h2>
+                <p className="text-[11px] text-green-500 font-medium leading-tight">응답 가능</p>
               </div>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5">
               <button
                 onClick={handleReset}
-                className="p-2 rounded-xl hover:bg-orange-100 transition-all duration-200 group"
+                className="p-2 rounded-lg hover:bg-gray-50 transition-colors group"
                 title="대화 초기화"
               >
-                <RotateCcw className="w-4 h-4 text-slate-400 group-hover:text-orange-500 group-hover:rotate-[-180deg] transition-all duration-300" />
+                <RotateCcw className="w-[18px] h-[18px] text-gray-400 group-hover:text-orange-500 transition-colors" />
               </button>
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl hover:bg-slate-100 transition-all duration-200 group"
+                className="p-2 rounded-lg hover:bg-gray-50 transition-colors group"
               >
-                <X className="w-4.5 h-4.5 text-slate-400 group-hover:text-slate-600 transition-colors" />
+                <X className="w-[18px] h-[18px] text-gray-400 group-hover:text-gray-600 transition-colors" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* 구분선 */}
-        <div className="relative z-10 mx-5">
-          <div className="h-px bg-gradient-to-r from-transparent via-orange-200 to-transparent" />
-        </div>
-
         {/* 메시지 영역 */}
-        <div className="relative z-10 flex-1 overflow-y-auto px-5 py-4 space-y-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-[#f7f7f8]">
           {messages.map((msg, idx) => (
             <motion.div
               key={idx}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: idx === 0 ? 0.1 : 0 }}
-              className={`flex gap-2.5 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
+              transition={{ duration: 0.25 }}
+              className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
             >
-              {/* 아바타 */}
-              {msg.role === 'assistant' ? (
-                <div className="w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 mt-0.5 shadow-sm">
-                  <img src={changsikImg} alt="AI 창식이" className="w-full h-full object-cover" />
-                </div>
-              ) : (
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
-                  <User className="w-4 h-4 text-white" />
+              {/* 어시스턴트 아바타 */}
+              {msg.role === 'assistant' && (
+                <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-1">
+                  <img src={changsikImg} alt="창식이" className="w-full h-full object-cover" />
                 </div>
               )}
 
               {/* 메시지 버블 */}
               <div
-                className={`max-w-[78%] px-4 py-3 text-[13.5px] leading-[1.7] whitespace-pre-wrap break-words ${
+                className={`max-w-[80%] px-3.5 py-2.5 text-[13px] leading-relaxed ${
                   msg.role === 'user'
-                    ? 'bg-gradient-to-br from-slate-700 to-slate-800 text-white rounded-2xl rounded-tr-md shadow-md'
-                    : 'bg-white border border-orange-100/80 text-slate-700 rounded-2xl rounded-tl-md shadow-sm'
+                    ? 'bg-orange-500 text-white rounded-2xl rounded-br-md'
+                    : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-[0_1px_2px_rgba(0,0,0,0.06)]'
                 }`}
               >
-                {msg.content}
+                {renderMarkdown(msg.content)}
               </div>
             </motion.div>
           ))}
@@ -192,24 +202,24 @@ export default function AiChatPanel({ isOpen, onClose }) {
           <AnimatePresence>
             {sendMutation.isPending && (
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
+                initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                className="flex gap-2.5"
+                exit={{ opacity: 0 }}
+                className="flex gap-2"
               >
-                <div className="w-8 h-8 rounded-xl overflow-hidden flex-shrink-0 mt-0.5 shadow-sm">
-                  <img src={changsikImg} alt="AI 창식이" className="w-full h-full object-cover" />
+                <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-1">
+                  <img src={changsikImg} alt="창식이" className="w-full h-full object-cover" />
                 </div>
-                <div className="bg-white border border-orange-100/80 rounded-2xl rounded-tl-md px-5 py-3.5 shadow-sm flex items-center gap-1.5">
+                <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.06)] flex items-center gap-1">
                   {[0, 1, 2].map((i) => (
                     <motion.div
                       key={i}
-                      className="w-2 h-2 bg-orange-300 rounded-full"
-                      animate={{ y: [0, -6, 0], opacity: [0.4, 1, 0.4] }}
+                      className="w-1.5 h-1.5 bg-gray-300 rounded-full"
+                      animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
                       transition={{
-                        duration: 0.8,
+                        duration: 0.7,
                         repeat: Infinity,
-                        delay: i * 0.2,
+                        delay: i * 0.15,
                         ease: 'easeInOut',
                       }}
                     />
@@ -219,38 +229,38 @@ export default function AiChatPanel({ isOpen, onClose }) {
             )}
           </AnimatePresence>
 
-          {/* 에러 배너 */}
+          {/* 에러 메시지 */}
           <AnimatePresence>
             {error && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="flex items-center gap-2.5 px-4 py-3 bg-red-50 border border-red-100 rounded-2xl text-[13px] text-red-500"
+                className="flex items-center gap-2 px-3.5 py-2.5 bg-red-50 border border-red-100 rounded-xl text-[12.5px] text-red-500"
               >
-                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
                 <span>{error}</span>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* 빠른 질문 칩 */}
+          {/* 빠른 질문 */}
           {messages.length === 1 && (
             <motion.div
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.3 }}
-              className="pt-2 space-y-2"
+              transition={{ duration: 0.35, delay: 0.2 }}
+              className="pt-1"
             >
-              <p className="text-[11px] text-slate-400 font-medium px-1">이런 걸 물어보세요</p>
-              <div className="flex flex-wrap gap-2">
+              <p className="text-[11px] text-gray-400 mb-2 px-0.5">이런 걸 물어보세요</p>
+              <div className="flex flex-col gap-1.5">
                 {QUICK_QUESTIONS.map((q) => (
                   <button
                     key={q.text}
                     onClick={() => handleSend(q.text)}
-                    className="flex items-center gap-1.5 px-3.5 py-2 text-[12.5px] font-medium bg-white text-orange-600 border border-orange-200/70 rounded-xl hover:bg-orange-50 hover:border-orange-300 hover:shadow-sm active:scale-[0.97] transition-all duration-200"
+                    className="flex items-center gap-2 w-full text-left px-3.5 py-2.5 text-[12.5px] text-gray-600 bg-white rounded-xl border border-gray-100 hover:border-orange-200 hover:text-orange-600 active:scale-[0.99] transition-all"
                   >
-                    {q.icon}
+                    <span className="text-orange-400">{q.icon}</span>
                     {q.text}
                   </button>
                 ))}
@@ -262,36 +272,37 @@ export default function AiChatPanel({ isOpen, onClose }) {
         </div>
 
         {/* 입력 영역 */}
-        <div className="relative z-10 px-5 py-3">
-          <div className="flex items-end gap-2 bg-white border border-slate-200/80 rounded-2xl px-4 py-2 shadow-sm focus-within:border-orange-300 focus-within:shadow-md focus-within:shadow-orange-100/40 transition-all duration-200">
-            <textarea
-              ref={textareaRef}
-              value={inputValue}
-              onChange={handleInput}
-              onKeyDown={handleKeyDown}
-              placeholder="제주 여행에 대해 물어보세요..."
-              rows={1}
-              className="flex-1 resize-none bg-transparent text-[13.5px] py-1.5 focus:outline-none placeholder:text-slate-300 max-h-[100px] text-slate-700"
-            />
+        <div className="px-4 py-3 border-t border-gray-100 bg-white">
+          <div className="flex items-end gap-2">
+            <div className="flex-1 bg-gray-50 rounded-xl px-3.5 py-2 border border-gray-100 focus-within:border-orange-300 focus-within:bg-white transition-all">
+              <textarea
+                ref={textareaRef}
+                value={inputValue}
+                onChange={handleInput}
+                onKeyDown={handleKeyDown}
+                placeholder="메시지를 입력하세요..."
+                rows={1}
+                className="w-full resize-none bg-transparent text-[13px] leading-relaxed focus:outline-none placeholder:text-gray-300 max-h-[100px] text-gray-700"
+              />
+            </div>
             <button
               onClick={() => handleSend()}
               disabled={!inputValue.trim() || sendMutation.isPending}
-              className={`p-2 flex-shrink-0 rounded-xl transition-all duration-200 ${
+              className={`p-2.5 flex-shrink-0 rounded-xl transition-all ${
                 inputValue.trim() && !sendMutation.isPending
-                  ? 'bg-gradient-to-r from-orange-400 to-amber-400 text-white shadow-md shadow-orange-200/50 hover:shadow-lg hover:scale-105 active:scale-95'
-                  : 'text-slate-300'
+                  ? 'bg-orange-500 text-white hover:bg-orange-600 active:scale-95'
+                  : 'bg-gray-100 text-gray-300'
               }`}
             >
               <Send className="w-4 h-4" />
             </button>
           </div>
-
-          {/* 면책 조항 */}
-          <p className="text-[10px] text-slate-300 text-center mt-2 mb-1">
-            AI가 생성한 정보는 정확하지 않을 수 있습니다
+          <p className="text-[10px] text-gray-300 text-center mt-2">
+            AI 응답은 부정확할 수 있습니다
           </p>
         </div>
-      </div>
-    </>
+      </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

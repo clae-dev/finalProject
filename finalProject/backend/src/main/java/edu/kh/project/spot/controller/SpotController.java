@@ -24,7 +24,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * 명소 REST API Controller
+ * 명소 REST API 컨트롤러
+ *
+ * <p>메인 페이지 명소 갤러리 CRUD 및 관리자 전용 명소 관리 API를 제공한다.</p>
+ *
+ * <h3>API 목록</h3>
+ * <ul>
+ *   <li><b>GET /api/spot</b> – 활성화된 명소 목록 조회 (메인페이지용)</li>
+ *   <li><b>GET /api/spot/admin</b> – 전체 명소 목록 조회 (관리자용)</li>
+ *   <li><b>GET /api/spot/{spotNo}</b> – 명소 상세 조회</li>
+ *   <li><b>POST /api/spot</b> – 명소 등록 (multipart)</li>
+ *   <li><b>POST /api/spot/{spotNo}/update</b> – 명소 수정 (multipart)</li>
+ *   <li><b>DELETE /api/spot/{spotNo}</b> – 명소 삭제</li>
+ *   <li><b>PUT /api/spot/{spotNo}/status</b> – 명소 상태 변경</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @RestController
 @RequestMapping("/api/spot")

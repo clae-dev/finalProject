@@ -11,7 +11,10 @@ import java.time.LocalDateTime;
 
 /**
  * 제주 명소 DTO
- * - 메인 페이지 명소 갤러리용
+ *
+ * <p>메인 페이지 명소 갤러리 및 관리자 명소 관리에 사용되는 데이터 전송 객체이다.</p>
+ *
+ * @author HONDI
  */
 @Getter
 @Setter
@@ -21,15 +24,26 @@ import java.time.LocalDateTime;
 @ToString
 public class SpotDTO {
 
-    private int spotNo;              // 명소 번호 (PK)
-    private String spotTitle;        // 제목
-    private String spotDesc;         // 설명
-    private String spotLocation;     // 위치
-    private String spotImage;        // 이미지 URL
-    private String spotTag;          // 태그 (UNESCO 등)
-    private int spotOrder;           // 정렬 순서
-    private String spotSize;         // 크기 (large, small)
-    private String spotStatus;       // 상태 (ACTIVE, INACTIVE)
-    private LocalDateTime createdAt; // 등록일
-    private LocalDateTime updatedAt; // 수정일
+    /** 명소 번호 (PK) */
+    private int spotNo;
+    /** 제목 */
+    private String spotTitle;
+    /** 설명 */
+    private String spotDesc;
+    /** 위치 */
+    private String spotLocation;
+    /** 이미지 URL */
+    private String spotImage;
+    /** 태그 (UNESCO 등) */
+    private String spotTag;
+    /** 정렬 순서 */
+    private int spotOrder;
+    /** 크기 (large, small) */
+    private String spotSize;
+    /** 상태 (ACTIVE, INACTIVE) */
+    private String spotStatus;
+    /** 등록일 */
+    private LocalDateTime createdAt;
+    /** 수정일 */
+    private LocalDateTime updatedAt;
 }

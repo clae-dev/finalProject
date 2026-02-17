@@ -17,9 +17,16 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 기상청 초단기예보 API 호출 서비스
- * - 공공데이터포털: VilageFcstInfoService_2.0 / getUltraSrtFcst
- * - 제주시 격자좌표: nx=53, ny=38
- * - 서귀포시 격자좌표: nx=52, ny=33
+ *
+ * <p>공공데이터포털 VilageFcstInfoService_2.0 / getUltraSrtFcst를 호출하여
+ * 기온(T1H), 하늘상태(SKY), 강수형태(PTY), 습도(REH), 풍속(WSD) 등을 파싱한다.</p>
+ *
+ * <ul>
+ *   <li>제주시 격자좌표: nx=53, ny=38</li>
+ *   <li>서귀포시 격자좌표: nx=52, ny=33</li>
+ * </ul>
+ *
+ * @author HONDI
  */
 @Service
 @RequiredArgsConstructor
@@ -43,7 +50,10 @@ public class WeatherService {
 
     /**
      * 제주도 날씨 조회 (초단기예보)
+     *
      * @param city "jeju" 또는 "seogwipo"
+     * @return 기온, 하늘상태, 강수형태, 습도, 풍속 등을 담은 Map
+     * @throws RuntimeException API 호출 실패 시
      */
     public Map<String, Object> getWeather(String city) {
 
@@ -124,11 +134,13 @@ public class WeatherService {
         }
     }
 
+    /** 문자열을 double로 변환 (실패 시 0.0 반환) */
     private double parseDouble(String val) {
         try { return Double.parseDouble(val); }
         catch (Exception e) { return 0.0; }
     }
 
+    /** 문자열을 int로 변환 (실패 시 0 반환) */
     private int parseInt(String val) {
         try { return (int) Double.parseDouble(val); }
         catch (Exception e) { return 0; }

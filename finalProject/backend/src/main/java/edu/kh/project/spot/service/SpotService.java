@@ -7,7 +7,12 @@ import org.springframework.web.multipart.MultipartFile;
 import edu.kh.project.spot.dto.SpotDTO;
 
 /**
- * 명소 Service 인터페이스
+ * 명소 서비스 인터페이스
+ *
+ * <p>명소 CRUD, 이미지 업로드, 상태 관리 등 비즈니스 로직을 정의한다.</p>
+ *
+ * @author HONDI
+ * @see SpotServiceImpl
  */
 public interface SpotService {
 

@@ -9,7 +9,12 @@ import edu.kh.project.member.dto.MemberDTO;
 import edu.kh.project.member.dto.SignupRequestDTO;
 
 /**
- * 회원 Service 인터페이스
+ * 회원 서비스 인터페이스
+ *
+ * <p>회원가입, 로그인, 회원 정보 수정, 아이디/비밀번호 찾기,
+ * 토큰 갱신, 활동 내역 조회 등 회원 관련 비즈니스 로직을 정의한다.</p>
+ *
+ * @author HONDI
  */
 public interface MemberService {
     

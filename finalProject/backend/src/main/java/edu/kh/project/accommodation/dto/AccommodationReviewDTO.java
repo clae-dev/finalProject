@@ -9,7 +9,11 @@ import java.util.List;
 
 /**
  * 숙소 후기 DTO
- * - ACCOMMODATION_REVIEW 테이블과 매핑
+ *
+ * <p>ACCOMMODATION_REVIEW 테이블과 매핑되는 후기 데이터 객체.
+ * 별점, 체크인/아웃 날짜, 추천 대상, 첨부 이미지 목록, 작성자 정보를 포함한다.</p>
+ *
+ * @author HONDI
  */
 @Data
 @NoArgsConstructor

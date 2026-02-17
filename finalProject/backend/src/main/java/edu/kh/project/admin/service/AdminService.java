@@ -5,6 +5,15 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 관리자 서비스 인터페이스
+ *
+ * <p>관리자 대시보드 통계, 회원/동행/후기/숙소/신고/인증 관리 등
+ * 관리자 전용 비즈니스 로직을 정의한다.</p>
+ *
+ * @author HONDI
+ * @see AdminServiceImpl
+ */
 public interface AdminService {
 
     // 대시보드 통계

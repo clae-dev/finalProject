@@ -10,6 +10,11 @@ import java.util.Map;
 
 /**
  * 숙소 후기 MyBatis Mapper
+ *
+ * <p>ACCOMMODATION_REVIEW, REVIEW_IMAGE 테이블에 대한 SQL 매핑 인터페이스.
+ * 후기 CRUD, 이미지 관리, 요약 통계, 인증 리뷰어 확인 쿼리를 정의한다.</p>
+ *
+ * @author HONDI
  */
 @Mapper
 public interface AccommodationReviewMapper {

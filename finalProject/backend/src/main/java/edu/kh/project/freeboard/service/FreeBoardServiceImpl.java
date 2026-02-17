@@ -17,6 +17,14 @@ import edu.kh.project.freeboard.mapper.FreeBoardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 자유게시판 서비스 구현체
+ *
+ * <p>게시글 CRUD, 댓글(대댓글), 좋아요 토글, 이미지 업로드 등
+ * 자유게시판 관련 비즈니스 로직을 구현한다.</p>
+ *
+ * @author HONDI
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional

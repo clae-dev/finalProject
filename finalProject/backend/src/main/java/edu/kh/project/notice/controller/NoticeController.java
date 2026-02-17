@@ -23,6 +23,23 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 공지사항 API 컨트롤러
+ *
+ * <p>사용자용 공지사항 조회와 관리자용 공지사항 CRUD를 처리하는 REST 컨트롤러.</p>
+ *
+ * <h3>API 엔드포인트</h3>
+ * <ul>
+ *   <li>GET    /api/notices                  - 사용자용 공지 목록 (페이징)</li>
+ *   <li>GET    /api/notices/{boardNo}        - 공지 상세 + 조회수 증가</li>
+ *   <li>GET    /api/admin/notices            - 관리자용 공지 목록</li>
+ *   <li>POST   /api/admin/notices            - 공지 작성</li>
+ *   <li>PUT    /api/admin/notices/{boardNo}  - 공지 수정</li>
+ *   <li>DELETE /api/admin/notices/{boardNo}  - 공지 삭제</li>
+ * </ul>
+ *
+ * @author HONDI
+ */
 @RestController
 @RequiredArgsConstructor
 @Slf4j

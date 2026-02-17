@@ -17,6 +17,11 @@ import java.util.UUID;
 
 /**
  * 숙소 후기 서비스 구현체
+ *
+ * <p>인증 리뷰어 검증, 후기 작성(이미지 업로드 포함),
+ * 목록 조회, 요약 통계, 삭제 등의 비즈니스 로직을 구현한다.</p>
+ *
+ * @author HONDI
  */
 @Service
 @Transactional

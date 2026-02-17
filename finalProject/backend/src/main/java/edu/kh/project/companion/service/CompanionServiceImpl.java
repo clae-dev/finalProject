@@ -16,15 +16,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * 동행 모집 서비스 구현체
+ *
+ * <p>동행 모집 게시글의 CRUD, 이미지 파일 관리, 참여 관리,
+ * 알림 연동을 포함한 비즈니스 로직을 구현한다.</p>
+ *
+ * <h3>주요 기능</h3>
+ * <ul>
+ *   <li>게시글 목록/상세 조회 (페이징, 태그 필터)</li>
+ *   <li>게시글 작성 (썸네일 + 본문 이미지 업로드)</li>
+ *   <li>참여 신청/취소/승인/거절 + 알림 전송</li>
+ * </ul>
+ *
+ * @author HONDI
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class CompanionServiceImpl implements CompanionService {
 
+    /** 동행 MyBatis Mapper */
     private final CompanionMapper companionMapper;
+
+    /** 알림 서비스 (참여 신청/승인 시 알림 전송) */
     private final NotificationService notificationService;
 
+    // ==================== 조회 ====================
+
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public List<CompanionDTO> getCompanionList(int page, int size, String tag) {
@@ -32,35 +53,46 @@ public class CompanionServiceImpl implements CompanionService {
         return companionMapper.selectCompanionList(offset, size, tag);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public int getCompanionCount(String tag) {
         return companionMapper.selectCompanionCount(tag);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public CompanionDTO getCompanionDetail(int companionNo) {
         return companionMapper.selectCompanionDetail(companionNo);
     }
 
+    /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
     public List<CompanionJoinDTO> getJoinList(int companionNo) {
         return companionMapper.selectJoinList(companionNo);
     }
 
+    // ==================== 게시글 작성/삭제 ====================
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>이미지 파일을 UUID 기반으로 리네임하여 서버에 저장하고,
+     * 웹 경로를 DTO에 설정한 후 DB에 삽입한다.</p>
+     */
     @Override
     public int createCompanion(CompanionDTO companion, MultipartFile thumbnail,
                                List<MultipartFile> contentImages,
                                String webPath, String folderPath) {
 
-        // 폴더 생성
+        // 업로드 폴더 생성
         File dir = new File(folderPath);
         if (!dir.exists()) dir.mkdirs();
 
         try {
-            // 썸네일 저장
+            // 썸네일 이미지 저장
             if (thumbnail != null && !thumbnail.isEmpty()) {
                 String rename = UUID.randomUUID().toString()
                         + getFileExtension(thumbnail.getOriginalFilename());
@@ -92,16 +124,31 @@ public class CompanionServiceImpl implements CompanionService {
         return companionMapper.insertCompanion(companion);
     }
 
+    /**
+     * 파일명에서 확장자를 추출한다.
+     *
+     * @param fileName 원본 파일명
+     * @return 확장자 문자열 (예: ".jpg"), 없으면 빈 문자열
+     */
     private String getFileExtension(String fileName) {
         if (fileName == null || !fileName.contains(".")) return "";
         return fileName.substring(fileName.lastIndexOf("."));
     }
 
+    /** {@inheritDoc} */
     @Override
     public int deleteCompanion(int companionNo, int memberNo) {
         return companionMapper.deleteCompanion(companionNo, memberNo);
     }
 
+    // ==================== 참여 관리 ====================
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>중복 신청을 확인한 후 참여를 등록하고,
+     * 게시글 작성자에게 COMPANION_JOIN 알림을 전송한다.</p>
+     */
     @Override
     public int joinCompanion(int companionNo, int memberNo) {
         // 중복 신청 체크
@@ -111,7 +158,7 @@ public class CompanionServiceImpl implements CompanionService {
         }
         int result = companionMapper.insertJoin(companionNo, memberNo);
 
-        // 알림: 게시글 작성자에게 COMPANION_JOIN 알림
+        // 게시글 작성자에게 참여 신청 알림 전송
         if (result > 0) {
             try {
                 CompanionDTO companion = companionMapper.selectCompanionDetail(companionNo);
@@ -135,16 +182,22 @@ public class CompanionServiceImpl implements CompanionService {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int cancelJoin(int companionNo, int memberNo) {
         return companionMapper.deleteJoin(companionNo, memberNo);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>승인("A") 시 신청자에게 COMPANION_ACCEPTED 알림을 전송한다.</p>
+     */
     @Override
     public int updateJoinStatus(int joinNo, String status, int memberNo) {
         int result = companionMapper.updateJoinStatus(joinNo, status, memberNo);
 
-        // 알림: 승인 시 신청자에게 COMPANION_ACCEPTED 알림
+        // 승인 시 신청자에게 알림 전송
         if (result > 0 && "A".equals(status)) {
             try {
                 CompanionJoinDTO join = companionMapper.selectJoinByJoinNo(joinNo);

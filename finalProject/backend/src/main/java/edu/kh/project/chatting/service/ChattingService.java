@@ -8,6 +8,11 @@ import edu.kh.project.chatting.dto.MessageDTO;
 
 /**
  * 채팅 서비스 인터페이스
+ *
+ * <p>1:1 채팅방 생성, 채팅방 목록 조회, 메시지 저장,
+ * 읽음 처리 등 실시간 채팅 관련 비즈니스 로직을 정의한다.</p>
+ *
+ * @author HONDI
  */
 public interface ChattingService {
 
