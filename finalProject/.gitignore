@@ -14,6 +14,7 @@ Thumbs.db
 
 # Claude Code
 fronted/.claude/
+fronted/.vscode/
 
 # Troubleshooting
 TROUBLESHOOTING.md
