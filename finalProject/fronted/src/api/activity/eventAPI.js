@@ -1,3 +1,6 @@
+/**
+ * 공공 행사/레포츠 API 호출 함수 (TourAPI 프록시)
+ */
 import { axiosApi } from "../core/axiosAPI";
 
 // 공공 행사 목록 조회 (TourAPI 프록시)

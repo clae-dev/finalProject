@@ -1,3 +1,6 @@
+/**
+ * 마이페이지 컴포넌트 - 프로필, 활동 통계, 배지, 인증, 프로필 수정 모달
+ */
 import React, { useContext, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';

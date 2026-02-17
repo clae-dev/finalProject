@@ -1,3 +1,6 @@
+/**
+ * 메인 홈페이지 컴포넌트 - 히어로, 명소, 동행, 숙소, 후기 섹션 구성
+ */
 import React from 'react';
 import Header from './common/Header';
 import HeroSection from './main/HeroSection';

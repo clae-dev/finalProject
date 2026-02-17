@@ -18,6 +18,9 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * AI 창식이 채팅 API 컨트롤러
+ */
 @RestController
 @RequestMapping("/api/ai")
 @RequiredArgsConstructor

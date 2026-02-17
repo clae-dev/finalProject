@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * 관리자 서비스 구현체
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional

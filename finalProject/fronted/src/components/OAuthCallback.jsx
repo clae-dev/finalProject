@@ -1,3 +1,6 @@
+/**
+ * OAuth 로그인 콜백 처리 컴포넌트 - URL 파라미터에서 토큰/유저 정보 추출 후 로그인 완료
+ */
 import { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';

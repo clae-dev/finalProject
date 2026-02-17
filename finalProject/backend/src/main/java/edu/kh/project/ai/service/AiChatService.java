@@ -18,6 +18,9 @@ import edu.kh.project.ai.mapper.AiContextMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * AI 창식이 채팅 서비스 (OpenAI API 연동 + DB 컨텍스트 주입)
+ */
 @Service
 @RequiredArgsConstructor
 @PropertySource("classpath:/config.properties")
