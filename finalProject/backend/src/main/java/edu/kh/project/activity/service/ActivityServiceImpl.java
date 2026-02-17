@@ -17,6 +17,9 @@ import edu.kh.project.activity.mapper.ActivityMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 행사/액티비티 게시판 서비스 구현체
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional

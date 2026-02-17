@@ -26,6 +26,9 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 행사/액티비티 게시판 API 컨트롤러
+ */
 @RestController
 @RequestMapping("/api/activities")
 @RequiredArgsConstructor

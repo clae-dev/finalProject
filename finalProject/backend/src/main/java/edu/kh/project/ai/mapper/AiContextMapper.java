@@ -5,6 +5,9 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
+/**
+ * AI 채팅용 DB 컨텍스트 조회 Mapper
+ */
 @Mapper
 public interface AiContextMapper {
 

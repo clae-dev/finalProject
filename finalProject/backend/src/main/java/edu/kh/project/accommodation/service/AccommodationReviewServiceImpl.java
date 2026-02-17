@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * 숙소 후기 서비스 구현체
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor

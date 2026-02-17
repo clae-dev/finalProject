@@ -1,3 +1,6 @@
+/**
+ * AI 창식이 채팅 슬라이드 패널 컴포넌트 - 실시간 대화 UI, 빠른 질문, 타이핑 인디케이터
+ */
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, RotateCcw, AlertCircle, User, Palmtree, MapPin, UtensilsCrossed, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';

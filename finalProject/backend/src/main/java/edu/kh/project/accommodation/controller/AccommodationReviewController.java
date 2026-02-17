@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 숙소 후기 API 컨트롤러
+ */
 @RestController
 @RequestMapping("/api/accommodations/{accommodationNo}/reviews")
 @RequiredArgsConstructor

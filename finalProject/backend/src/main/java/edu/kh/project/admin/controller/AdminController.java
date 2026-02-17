@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 관리자 API 컨트롤러 (대시보드, 회원/숙소/동행/후기/신고/인증 관리)
+ */
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor

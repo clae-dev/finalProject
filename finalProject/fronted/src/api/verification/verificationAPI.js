@@ -1,3 +1,6 @@
+/**
+ * 회원 인증 서류 API 호출 함수 (제출, 상태 조회)
+ */
 import { axiosApi } from "../core/axiosAPI";
 
 // 인증서류 제출

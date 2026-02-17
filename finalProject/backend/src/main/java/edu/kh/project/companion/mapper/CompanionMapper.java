@@ -7,44 +7,57 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 동행 모집 MyBatis Mapper
+ */
 @Mapper
 public interface CompanionMapper {
 
+    /** 동행 목록 조회 (페이징 + 태그 필터) */
     List<CompanionDTO> selectCompanionList(
         @Param("offset") int offset,
         @Param("limit") int limit,
         @Param("tag") String tag
     );
 
+    /** 동행 총 수 */
     int selectCompanionCount(@Param("tag") String tag);
 
+    /** 동행 상세 조회 */
     CompanionDTO selectCompanionDetail(@Param("companionNo") int companionNo);
 
+    /** 동행 참가 신청 목록 조회 */
     List<CompanionJoinDTO> selectJoinList(@Param("companionNo") int companionNo);
 
+    /** 동행 게시글 등록 */
     int insertCompanion(CompanionDTO companion);
 
+    /** 동행 게시글 삭제 (작성자) */
     int deleteCompanion(
         @Param("companionNo") int companionNo,
         @Param("memberNo") int memberNo
     );
 
+    /** 동행 참가 신청 */
     int insertJoin(
         @Param("companionNo") int companionNo,
         @Param("memberNo") int memberNo
     );
 
+    /** 동행 참가 신청 취소 */
     int deleteJoin(
         @Param("companionNo") int companionNo,
         @Param("memberNo") int memberNo
     );
 
+    /** 참가 신청 상태 변경 (수락/거절) */
     int updateJoinStatus(
         @Param("joinNo") int joinNo,
         @Param("status") String status,
         @Param("memberNo") int memberNo
     );
 
+    /** 참가 신청 여부 확인 */
     int selectJoinCheck(
         @Param("companionNo") int companionNo,
         @Param("memberNo") int memberNo
