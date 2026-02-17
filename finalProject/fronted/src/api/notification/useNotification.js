@@ -6,6 +6,7 @@ import {
   markAllAsRead,
   deleteNotification,
 } from './notificationAPI';
+import { getToken } from '../core/tokenStorage';
 
 /**
  * 알림 목록 조회 훅
@@ -14,6 +15,7 @@ export const useNotifications = (page = 1, size = 20) => {
   return useQuery({
     queryKey: ['notifications', page, size],
     queryFn: () => getNotifications(page, size),
+    enabled: !!getToken('accessToken'),
   });
 };
 
@@ -24,6 +26,7 @@ export const useUnreadCount = () => {
   return useQuery({
     queryKey: ['notifications', 'unreadCount'],
     queryFn: () => getUnreadCount(),
+    enabled: !!getToken('accessToken'),
     refetchInterval: 30000, // 30초마다 폴링 (WebSocket 보완용)
   });
 };

@@ -42,8 +42,12 @@
                 V.ADMIN_COMMENT,
                 TO_CHAR(V.SUBMITTED_AT, 'YYYY-MM-DD HH24:MI') AS SUBMITTED_AT,
                 TO_CHAR(V.PROCESSED_AT, 'YYYY-MM-DD HH24:MI') AS PROCESSED_AT,
-                V.PROCESSED_BY
+                V.PROCESSED_BY,
+                M.NICKNAME,
+                M.EMAIL,
+                M.PROFILE_IMAGE
             FROM MEMBER_VERIFICATION V
+            JOIN MEMBER M ON V.MEMBER_NO = M.MEMBER_NO
             WHERE V.MEMBER_NO = #{memberNo}
             ORDER BY V.SUBMITTED_AT DESC
         )
