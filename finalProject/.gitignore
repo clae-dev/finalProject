@@ -12,5 +12,7 @@ Thumbs.db
 .settings/
 .classpath
 
+fronted/.vscode/
+
 # Troubleshooting
 TROUBLESHOOTING.md
