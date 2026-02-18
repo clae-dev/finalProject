@@ -306,8 +306,7 @@ export default function CompanionWrite() {
               <div className="grid grid-cols-2 gap-4 mb-5">
                 <div>
                   <label className="block text-sm font-semibold text-slate-600 mb-2">여행 일자</label>
-                  <input type="text" name="travelDate" value={form.travelDate} onChange={handleChange}
-                    placeholder="예: 2.15(토)"
+                  <input type="date" name="travelDate" value={form.travelDate} onChange={handleChange}
                     className="w-full px-4 py-3.5 rounded-xl bg-sky-50/50 border border-sky-100 focus:bg-white focus:border-sky-400 focus:ring-2 focus:ring-sky-100 outline-none transition-all text-sm font-medium placeholder-slate-300"
                   />
                 </div>
@@ -468,7 +467,7 @@ export default function CompanionWrite() {
                     </div>
                     <div className="text-right">
                       <p className="text-lg font-bold bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">0/{form.maxMembers}</p>
-                      <p className="text-xs text-slate-400">{form.travelDate || '미정'}</p>
+                      <p className="text-xs text-slate-400">{formatTravelDate(form.travelDate) || '미정'}</p>
                     </div>
                   </div>
                 </div>
@@ -523,14 +522,33 @@ export default function CompanionWrite() {
 
 function getDday(travelDate) {
   if (!travelDate) return null;
-  const match = travelDate.match(/(\d{1,2})\.(\d{1,2})/);
-  if (!match) return null;
+  let target;
+  const isoMatch = travelDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    target = new Date(parseInt(isoMatch[1]), parseInt(isoMatch[2]) - 1, parseInt(isoMatch[3]));
+  } else {
+    const match = travelDate.match(/(\d{1,2})\.(\d{1,2})/);
+    if (!match) return null;
+    const now = new Date();
+    const year = now.getFullYear();
+    target = new Date(year, parseInt(match[1]) - 1, parseInt(match[2]));
+    if (target < now) target.setFullYear(year + 1);
+  }
   const now = new Date();
-  const year = now.getFullYear();
-  const target = new Date(year, parseInt(match[1]) - 1, parseInt(match[2]));
-  if (target < now) target.setFullYear(year + 1);
+  now.setHours(0, 0, 0, 0);
   const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
   if (diff === 0) return 'D-Day';
   if (diff > 0) return `D-${diff}`;
   return null;
+}
+
+function formatTravelDate(travelDate) {
+  if (!travelDate) return '';
+  const isoMatch = travelDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const d = new Date(parseInt(isoMatch[1]), parseInt(isoMatch[2]) - 1, parseInt(isoMatch[3]));
+    return `${d.getMonth() + 1}.${d.getDate()}(${days[d.getDay()]})`;
+  }
+  return travelDate;
 }

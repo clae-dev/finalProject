@@ -11,6 +11,17 @@ import {
   useDeleteAdminAccommodationReview,
 } from '../../api/admin/useAdmin';
 
+function formatTravelDate(travelDate) {
+  if (!travelDate) return '';
+  const isoMatch = travelDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const d = new Date(parseInt(isoMatch[1]), parseInt(isoMatch[2]) - 1, parseInt(isoMatch[3]));
+    return `${d.getMonth() + 1}.${d.getDate()}(${days[d.getDay()]})`;
+  }
+  return travelDate;
+}
+
 const SUB_TABS = [
   { key: 'companions', label: '동행 게시글' },
   { key: 'reviews', label: '동행 후기' },
@@ -109,7 +120,7 @@ function CompanionTable() {
                   <td className="px-6 py-3 text-sm text-slate-500">{item.companionNo}</td>
                   <td className="px-6 py-3 text-sm font-semibold text-slate-700 max-w-[200px] truncate">{item.title}</td>
                   <td className="px-6 py-3 text-sm text-slate-500">{item.authorNickname}</td>
-                  <td className="px-6 py-3 text-sm text-slate-400">{item.travelDate || '-'}</td>
+                  <td className="px-6 py-3 text-sm text-slate-400">{formatTravelDate(item.travelDate) || '-'}</td>
                   <td className="px-6 py-3 text-sm text-slate-500">{item.currentMembers}/{item.maxMembers}</td>
                   <td className="px-6 py-3">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
