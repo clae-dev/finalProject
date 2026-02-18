@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, ShieldCheck, LayoutDashboard, Users, FileText, Building2, MapPin, MessageCircleQuestion, Megaphone, Flag } from 'lucide-react';
+import { Shield, ShieldCheck, LayoutDashboard, Users, FileText, Building2, MapPin, MessageCircleQuestion, Megaphone, Flag, Mail } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import AdminDashboard from '../../components/admin/AdminDashboard';
@@ -13,6 +13,7 @@ import AdminFaq from '../../components/admin/AdminFaq';
 import AdminNotices from '../../components/admin/AdminNotices';
 import AdminReports from '../../components/admin/AdminReports';
 import AdminVerifications from '../../components/admin/AdminVerifications';
+import AdminInquiry from '../../components/admin/AdminInquiry';
 import { AuthContext } from '../../components/AuthContext';
 import adminHeroBg from '../../assets/images/admin/admin-hero.png';
 
@@ -26,6 +27,7 @@ const TABS = [
   { key: 'notices', label: '공지 관리', icon: Megaphone },
   { key: 'verifications', label: '인증 관리', icon: ShieldCheck },
   { key: 'reports', label: '신고 관리', icon: Flag },
+  { key: 'inquiry', label: '문의 관리', icon: Mail },
 ];
 
 export default function AdminPage() {
@@ -155,6 +157,7 @@ export default function AdminPage() {
             {activeTab === 'notices' && <AdminNotices />}
             {activeTab === 'verifications' && <AdminVerifications />}
             {activeTab === 'reports' && <AdminReports />}
+            {activeTab === 'inquiry' && <AdminInquiry />}
           </motion.div>
         </AnimatePresence>
       </div>

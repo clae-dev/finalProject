@@ -18,7 +18,7 @@ const communityLinks = [
 
 const supportLinks = [
   { name: '자주 묻는 질문', path: '/faq' },
-  { name: '문의하기', path: '#' },
+  { name: '문의하기', path: '/inquiry' },
   { name: '이용약관', path: '/terms' },
   { name: '개인정보처리방침', path: '/privacy' },
 ];

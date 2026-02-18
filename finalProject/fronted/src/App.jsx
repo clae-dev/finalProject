@@ -39,6 +39,7 @@ import ActivityWrite from './pages/activity/ActivityWrite';
 import Flights from './pages/flight/Flights';
 import PrivacyPolicy from './pages/privacy/PrivacyPolicy';
 import TermsOfService from './pages/terms/TermsOfService';
+import InquiryPage from './pages/inquiry/InquiryPage';
 import AiChatBubble from './components/ai/AiChatBubble';
 import WeatherWidget from './components/main/WeatherSection';
 import LandingPage from './pages/landing/LandingPage';
@@ -86,6 +87,7 @@ function AnimatedRoutes() {
         <Route path="/notices/:boardNo" element={<PageTransition><NoticeDetail /></PageTransition>} />
         <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
         <Route path="/terms" element={<PageTransition><TermsOfService /></PageTransition>} />
+        <Route path="/inquiry" element={<PageTransition><InquiryPage /></PageTransition>} />
         <Route path="/admin" element={<PageTransition><AdminPage /></PageTransition>} />
         <Route path="/error/500" element={<PageTransition><ServerError /></PageTransition>} />
         <Route path="/error/403" element={<PageTransition><Forbidden /></PageTransition>} />
