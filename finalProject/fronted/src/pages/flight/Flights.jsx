@@ -230,7 +230,7 @@ export default function Flights() {
       <Header />
 
       {/* 히어로 배너 */}
-      <div className="relative h-[520px] overflow-hidden">
+      <div className="relative h-[520px] overflow-hidden mt-8">
         {/* 배경 이미지 */}
         <motion.div
           className="absolute inset-0"

@@ -337,7 +337,7 @@ export default function PrivacyPolicy() {
       <Header />
 
       {/* 히어로 배너 */}
-      <div className="relative h-[320px] overflow-hidden bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900">
+      <div className="relative h-[320px] overflow-hidden mt-8 bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900">
         <motion.div
           className="absolute top-16 left-[8%] w-56 h-56 bg-sky-400/10 rounded-full blur-3xl"
           animate={{ y: [0, -20, 0], opacity: [0.3, 0.5, 0.3] }}

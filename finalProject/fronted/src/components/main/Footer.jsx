@@ -27,8 +27,8 @@ export default function Footer() {
   return (
     <footer className="relative overflow-hidden">
       {/* 상단 웨이브 디바이더 */}
-      <div className="bg-transparent">
-        <svg className="w-full h-12 sm:h-16" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <div className="bg-transparent leading-[0]">
+        <svg className="block w-full h-12 sm:h-16" viewBox="0 0 1440 60" preserveAspectRatio="none">
           <path
             fill="#0f172a"
             d="M0,40 C300,10 600,50 900,25 C1100,10 1300,40 1440,20 L1440,60 L0,60 Z"
@@ -36,7 +36,7 @@ export default function Footer() {
         </svg>
       </div>
 
-      <div className="bg-slate-900">
+      <div className="bg-slate-900 -mt-px">
         {/* 장식 블러 원 */}
         <div className="absolute top-20 left-10 w-80 h-80 bg-sky-500/5 rounded-full blur-3xl" />
         <div className="absolute bottom-10 right-10 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl" />
