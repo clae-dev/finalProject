@@ -24,6 +24,7 @@
         <result property="reviewCount" column="REVIEW_COUNT" />
         <result property="companionCount" column="COMPANION_COUNT" />
         <result property="likeCount" column="LIKE_COUNT" />
+        <result property="accommReviewCount" column="ACCOMM_REVIEW_COUNT" />
     </resultMap>
 
     <!-- 이메일로 회원 조회 (로그인용 - 비밀번호 포함) -->
@@ -66,7 +67,8 @@
             (SELECT COUNT(*) FROM BOARD B WHERE B.MEMBER_NO = M.MEMBER_NO AND B.STATUS = 'A') AS POST_COUNT,
             (SELECT COUNT(*) FROM COMPANION_REVIEW R WHERE R.MEMBER_NO = M.MEMBER_NO AND R.STATUS = 'Y') AS REVIEW_COUNT,
             (SELECT COUNT(*) FROM COMPANION_JOIN J WHERE J.MEMBER_NO = M.MEMBER_NO AND J.STATUS IN ('W', 'A')) AS COMPANION_COUNT,
-            (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.MEMBER_NO = M.MEMBER_NO) AS LIKE_COUNT
+            (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.MEMBER_NO = M.MEMBER_NO) AS LIKE_COUNT,
+            (SELECT COUNT(*) FROM ACCOMMODATION_REVIEW AR WHERE AR.MEMBER_NO = M.MEMBER_NO AND AR.STATUS = 'A') AS ACCOMM_REVIEW_COUNT
         FROM MEMBER M
         WHERE M.MEMBER_NO = #{memberNo}
     </select>
