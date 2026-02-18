@@ -261,7 +261,7 @@ export default function AccommodationsSection() {
                   </linearGradient>
                 </defs>
               </svg>
-              .STAY
+              STAY
             </motion.span>
             <h2 className="text-3xl md:text-5xl font-black text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
               혼행에 딱 맞는 <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">숙소</span>
