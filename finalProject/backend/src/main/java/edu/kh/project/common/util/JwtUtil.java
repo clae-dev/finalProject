@@ -54,8 +54,6 @@ public class JwtUtil {
         this.refreshTokenValidity = refreshTokenValidity;
     }
 
-    // ==================== 토큰 생성 ====================
-
     /**
      * Access Token을 생성한다.
      *
@@ -104,8 +102,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // ==================== 토큰 정보 추출 ====================
-
     /**
      * JWT 토큰에서 회원 번호를 추출한다.
      *
@@ -141,8 +137,6 @@ public class JwtUtil {
         Claims claims = parseClaims(token);
         return claims.get("role", String.class);
     }
-
-    // ==================== 토큰 검증 ====================
 
     /**
      * JWT 토큰의 유효성을 검증한다.
@@ -186,8 +180,6 @@ public class JwtUtil {
             return true;
         }
     }
-
-    // ==================== 내부 헬퍼 ====================
 
     /**
      * JWT 토큰을 파싱하여 Claims(페이로드)를 추출한다.

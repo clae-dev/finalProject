@@ -30,8 +30,6 @@ public class CompanionReviewServiceImpl implements CompanionReviewService {
     /** 후기 MyBatis Mapper */
     private final CompanionReviewMapper reviewMapper;
 
-    // ==================== 조회 ====================
-
     /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
@@ -60,8 +58,6 @@ public class CompanionReviewServiceImpl implements CompanionReviewService {
     public List<CompanionReviewDTO> getRecentReviews(int limit) {
         return reviewMapper.selectRecentReviews(limit);
     }
-
-    // ==================== 작성/삭제 ====================
 
     /**
      * {@inheritDoc}

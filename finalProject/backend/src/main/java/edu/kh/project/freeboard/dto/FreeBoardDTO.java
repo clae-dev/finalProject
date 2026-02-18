@@ -25,37 +25,22 @@ import lombok.ToString;
 @ToString
 public class FreeBoardDTO {
 
-    /** 게시글 번호 (PK) */
     private int boardNo;
-    /** 작성자 번호 (FK → MEMBER) */
     private int memberNo;
     /** 게시판 유형 번호 (2: 자유게시판) */
     private int boardTypeNo;
-    /** 제목 */
     private String boardTitle;
-    /** 내용 */
     private String boardContent;
-    /** 조회수 */
     private int readCount;
     /** 삭제 여부 (N:정상, Y:삭제) */
     private String boardDelFl;
-    /** 작성일 */
     private String createdAt;
-    /** 수정일 */
     private String updatedAt;
 
-    // ==================== JOIN 파생 필드 ====================
-
-    /** 작성자 닉네임 */
     private String memberNickname;
-    /** 작성자 프로필 이미지 */
     private String memberProfile;
 
-    // ==================== 집계 필드 ====================
-
-    /** 댓글 수 */
     private int commentCount;
-    /** 좋아요 수 */
     private int likeCount;
     /** 현재 사용자 좋아요 여부 (0/1) */
     private int isLiked;

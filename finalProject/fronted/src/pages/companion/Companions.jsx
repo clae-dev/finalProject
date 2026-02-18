@@ -6,8 +6,8 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useCompanions } from '../../api/companion/useCompanion';
 import { AuthContext } from '../../components/AuthContext';
-import heroStar from '../../assets/images/comapanion/별.png';
-import heroFriends from '../../assets/images/comapanion/친구.png';
+import heroStar from '../../assets/images/companion/별.png';
+import heroFriends from '../../assets/images/companion/친구.png';
 
 const heroSlides = [heroStar, heroFriends];
 

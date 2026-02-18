@@ -667,8 +667,6 @@ public class AdminController {
         }
     }
 
-    // ===== 회원 인증 관리 =====
-
     // 인증 요청 목록
     @GetMapping("/verifications")
     public ResponseEntity<Map<String, Object>> getVerifications(
@@ -773,8 +771,6 @@ public class AdminController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
-    // ===== 숙소 후기 관리 =====
 
     // 숙소 후기 목록
     @GetMapping("/accommodation-reviews")
