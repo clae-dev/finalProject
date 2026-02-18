@@ -17,6 +17,17 @@ const STATUS_COLOR = {
   R: 'bg-red-50 text-red-500 border border-red-200',
 };
 
+function formatTravelDate(travelDate) {
+  if (!travelDate) return '';
+  const isoMatch = travelDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const d = new Date(parseInt(isoMatch[1]), parseInt(isoMatch[2]) - 1, parseInt(isoMatch[3]));
+    return `${d.getMonth() + 1}.${d.getDate()}(${days[d.getDay()]})`;
+  }
+  return travelDate;
+}
+
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (i = 0) => ({
@@ -236,7 +247,7 @@ export default function CompanionDetail() {
           {/* 여행 정보 */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { icon: Calendar, label: '여행 일자', value: companion.travelDate || '미정', gradient: 'from-sky-400 to-cyan-400' },
+              { icon: Calendar, label: '여행 일자', value: formatTravelDate(companion.travelDate) || '미정', gradient: 'from-sky-400 to-cyan-400' },
               { icon: Users, label: '모집 현황', value: `${companion.currentMembers}/${companion.maxMembers}명`, gradient: 'from-cyan-400 to-teal-400' },
               { icon: MapPin, label: '상태', value: companion.status === 'Y' ? '모집중' : '마감', gradient: 'from-teal-400 to-emerald-400' },
             ].map(({ icon: Icon, label, value, gradient }, i) => (

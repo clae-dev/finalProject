@@ -51,8 +51,8 @@ public class AiChatService {
     @Value("${openai.api.key}")
     private String apiKey;
 
-    /** OpenAI 사용 모델명 (기본값: gpt-4o-mini) */
-    @Value("${openai.api.model:gpt-4o-mini}")
+    /** OpenAI 사용 모델명 (기본값: gpt-5-mini) */
+    @Value("${openai.api.model:gpt-5-mini}")
     private String model;
 
     /** OpenAI Chat Completions API 엔드포인트 URL */
