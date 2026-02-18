@@ -61,7 +61,7 @@ export default function Activities() {
       <Header />
 
       {/* 히어로 배너 */}
-      <div className="relative h-[480px] overflow-hidden bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500">
+      <div className="relative h-[480px] overflow-hidden mt-8 bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500">
         <motion.div
           className="absolute top-20 left-[10%] w-48 h-48 bg-white/10 rounded-full blur-3xl"
           animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
