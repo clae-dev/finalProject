@@ -114,7 +114,7 @@ export default function AdminPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.5 }}
-          className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 p-2 flex justify-center gap-1.5 overflow-x-auto"
+          className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 p-2.5 flex flex-wrap justify-center gap-1.5"
         >
           {TABS.map((tab) => {
             const Icon = tab.icon;
