@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Loader2, Flag, X, Eye } from 'lucide-react';
 import { useAdminReports, useAdminReportDetail, useUpdateReportStatus } from '../../api/admin/useAdmin';
 
+/** 신고 대상 유형 필터 탭 — 댓글(COMMENT) 포함 */
 const TARGET_TYPE_TABS = [
   { key: '', label: '전체' },
   { key: 'FREEBOARD', label: '자유게시판' },
   { key: 'COMPANION', label: '동행' },
   { key: 'REVIEW', label: '후기' },
+  { key: 'COMMENT', label: '댓글' },
 ];
 
 const STATUS_FILTERS = [
@@ -33,10 +35,12 @@ const REPORT_TYPE_LABEL = {
   ETC: '기타',
 };
 
+/** 신고 대상 유형 → 한글 라벨 매핑 */
 const TARGET_TYPE_LABEL = {
   FREEBOARD: '자유게시판',
   COMPANION: '동행',
   REVIEW: '후기',
+  COMMENT: '댓글',
 };
 
 export default function AdminReports() {

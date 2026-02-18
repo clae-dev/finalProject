@@ -5,7 +5,8 @@ import { ArrowLeft, Eye, Calendar, User, Heart, MessageCircle, Trash2, Edit3, Lo
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useFreeBoardDetail, useDeleteFreeBoard, useCommentList, useCreateComment, useDeleteComment, useToggleLike } from '../../api/freeboard/useFreeboard';
-import { useCheckReport, useSubmitReport } from '../../api/report/useReport';
+import { useCheckReport } from '../../api/report/useReport';
+import { submitReport } from '../../api/report/reportAPI';
 import { AuthContext } from '../../components/AuthContext';
 
 const fadeUp = {
@@ -33,12 +34,21 @@ export default function FreeboardDetail() {
   const [replyInput, setReplyInput] = useState('');
   const [lightboxImg, setLightboxImg] = useState(null);
 
-  // 신고
-  const [showReportModal, setShowReportModal] = useState(false);
-  const [reportType, setReportType] = useState('');
-  const [reportReason, setReportReason] = useState('');
+  // ── 신고 관련 상태 ──
+  const [showReportModal, setShowReportModal] = useState(false);   // 신고 모달 표시 여부
+  const [reportType, setReportType] = useState('');                // 선택된 신고 유형 (SPAM, ABUSE 등)
+  const [reportReason, setReportReason] = useState('');            // 상세 신고 사유 (선택 입력)
+
+  /**
+   * reportTarget: 현재 신고 대상 정보
+   * - targetType: 'FREEBOARD'(게시글) 또는 'COMMENT'(댓글/대댓글)
+   * - targetNo: 게시글 번호 또는 댓글 번호
+   * 신고 버튼 클릭 시 해당 대상으로 설정된 후 모달이 열림
+   */
+  const [reportTarget, setReportTarget] = useState({ targetType: 'FREEBOARD', targetNo: Number(boardNo) });
+
+  /** 게시글 레벨 중복 신고 확인 (버튼 비활성화용) */
   const { data: reportCheckData } = useCheckReport(user ? 'FREEBOARD' : null, user ? Number(boardNo) : null);
-  const reportMutation = useSubmitReport('FREEBOARD', Number(boardNo));
   const alreadyReported = reportCheckData?.reported === true;
 
   const board = data?.success ? data.data : null;
@@ -86,13 +96,36 @@ export default function FreeboardDetail() {
     try { await deleteCommentMutation.mutateAsync(commentNo); } catch { alert('댓글 삭제 중 오류가 발생했습니다.'); }
   };
 
+  /**
+   * 신고 접수 핸들러
+   * - reportTarget 상태의 targetType/targetNo를 기반으로 신고 API 호출
+   * - 게시글 신고와 댓글/대댓글 신고 모두 이 핸들러를 공유
+   * - 중복 신고(409) 시 별도 안내 메시지 표시
+   */
+  const [reportSubmitting, setReportSubmitting] = useState(false); // 신고 접수 진행 중 여부
   const handleReportSubmit = async () => {
     if (!reportType) { alert('신고 유형을 선택해주세요.'); return; }
+    setReportSubmitting(true);
     try {
-      const r = await reportMutation.mutateAsync({ reportType, detailReason: reportReason });
-      if (r.success) { alert('신고가 접수되었습니다.'); setShowReportModal(false); setReportType(''); setReportReason(''); }
-      else alert(r.message);
-    } catch { alert('신고 접수 중 오류가 발생했습니다.'); }
+      const r = await submitReport(reportTarget.targetType, reportTarget.targetNo, reportType, reportReason);
+      if (r.success) {
+        alert('신고가 접수되었습니다.');
+        setShowReportModal(false);
+        setReportType('');
+        setReportReason('');
+      } else {
+        alert(r.message);
+      }
+    } catch (err) {
+      // 409 CONFLICT: 이미 신고한 대상
+      if (err.response?.data?.message) {
+        alert(err.response.data.message);
+      } else {
+        alert('신고 접수 중 오류가 발생했습니다.');
+      }
+    } finally {
+      setReportSubmitting(false);
+    }
   };
 
   if (isLoading) {
@@ -270,11 +303,16 @@ export default function FreeboardDetail() {
               좋아요 {board.likeCount}
             </motion.button>
 
+            {/* 게시글 신고 버튼 — 로그인 상태 + 본인 게시글이 아닌 경우만 표시 */}
             {user && !isAuthor && (
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.9 }}
-                onClick={() => alreadyReported ? null : setShowReportModal(true)}
+                onClick={() => {
+                  if (alreadyReported) return;
+                  setReportTarget({ targetType: 'FREEBOARD', targetNo: Number(boardNo) });
+                  setShowReportModal(true);
+                }}
                 disabled={alreadyReported}
                 className={`inline-flex items-center gap-2 px-5 py-3 rounded-2xl font-bold text-sm transition-all duration-300 shadow-md ${
                   alreadyReported
@@ -358,7 +396,9 @@ export default function FreeboardDetail() {
                         <p className="text-sm text-slate-600 leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
                           {comment.content}
                         </p>
+                        {/* 부모 댓글 액션 버튼: 답글 / 삭제 / 신고 */}
                         <div className="flex items-center gap-3 mt-2">
+                          {/* 답글 버튼 — 로그인 시 표시 */}
                           {user && (
                             <button
                               onClick={() => { setReplyTo(replyTo === comment.commentNo ? null : comment.commentNo); setReplyInput(''); }}
@@ -367,12 +407,28 @@ export default function FreeboardDetail() {
                               답글
                             </button>
                           )}
+                          {/* 삭제 버튼 — 본인 댓글인 경우만 표시 */}
                           {user && Number(user.memberNo) === Number(comment.memberNo) && (
                             <button
                               onClick={() => handleDeleteComment(comment.commentNo)}
                               className="text-xs text-slate-400 hover:text-red-500 font-semibold transition-colors"
                             >
                               삭제
+                            </button>
+                          )}
+                          {/* 댓글 신고 버튼 — 로그인 + 본인 댓글이 아닌 경우만 표시 */}
+                          {user && Number(user.memberNo) !== Number(comment.memberNo) && (
+                            <button
+                              onClick={() => {
+                                setReportTarget({ targetType: 'COMMENT', targetNo: comment.commentNo });
+                                setReportType('');
+                                setReportReason('');
+                                setShowReportModal(true);
+                              }}
+                              className="text-xs text-slate-400 hover:text-orange-500 font-semibold transition-colors inline-flex items-center gap-0.5"
+                            >
+                              <Flag className="w-3 h-3" />
+                              신고
                             </button>
                           )}
                         </div>
@@ -427,14 +483,33 @@ export default function FreeboardDetail() {
                               <p className="text-xs text-slate-500 leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
                                 {reply.content}
                               </p>
-                              {user && Number(user.memberNo) === Number(reply.memberNo) && (
-                                <button
-                                  onClick={() => handleDeleteComment(reply.commentNo)}
-                                  className="text-[10px] text-slate-400 hover:text-red-500 font-semibold mt-1 transition-colors"
-                                >
-                                  삭제
-                                </button>
-                              )}
+                              {/* 대댓글 액션 버튼: 삭제 / 신고 */}
+                              <div className="flex items-center gap-2 mt-1">
+                                {/* 삭제 버튼 — 본인 대댓글인 경우만 표시 */}
+                                {user && Number(user.memberNo) === Number(reply.memberNo) && (
+                                  <button
+                                    onClick={() => handleDeleteComment(reply.commentNo)}
+                                    className="text-[10px] text-slate-400 hover:text-red-500 font-semibold transition-colors"
+                                  >
+                                    삭제
+                                  </button>
+                                )}
+                                {/* 대댓글 신고 버튼 — 로그인 + 본인 대댓글이 아닌 경우만 표시 */}
+                                {user && Number(user.memberNo) !== Number(reply.memberNo) && (
+                                  <button
+                                    onClick={() => {
+                                      setReportTarget({ targetType: 'COMMENT', targetNo: reply.commentNo });
+                                      setReportType('');
+                                      setReportReason('');
+                                      setShowReportModal(true);
+                                    }}
+                                    className="text-[10px] text-slate-400 hover:text-orange-500 font-semibold transition-colors inline-flex items-center gap-0.5"
+                                  >
+                                    <Flag className="w-2.5 h-2.5" />
+                                    신고
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -474,7 +549,7 @@ export default function FreeboardDetail() {
         )}
       </AnimatePresence>
 
-      {/* 신고 모달 */}
+      {/* 신고 모달 — 게시글/댓글/대댓글 공용 (reportTarget 상태에 따라 제목 동적 변경) */}
       <AnimatePresence>
         {showReportModal && (
           <motion.div
@@ -495,7 +570,10 @@ export default function FreeboardDetail() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Flag className="w-5 h-5 text-orange-500" />
-                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>게시글 신고</h3>
+                  {/* 모달 제목: reportTarget.targetType에 따라 "게시글 신고" 또는 "댓글 신고" 표시 */}
+                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                    {reportTarget.targetType === 'COMMENT' ? '댓글 신고' : '게시글 신고'}
+                  </h3>
                 </div>
                 <button onClick={() => setShowReportModal(false)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                   <X className="w-5 h-5 text-slate-400" />
@@ -536,10 +614,10 @@ export default function FreeboardDetail() {
                 </button>
                 <button
                   onClick={handleReportSubmit}
-                  disabled={reportMutation.isPending}
+                  disabled={reportSubmitting}
                   className="flex-1 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold text-sm shadow-lg shadow-orange-200/50 hover:shadow-xl transition-all disabled:opacity-50"
                 >
-                  {reportMutation.isPending ? '접수 중...' : '신고 접수'}
+                  {reportSubmitting ? '접수 중...' : '신고 접수'}
                 </button>
               </div>
             </motion.div>
