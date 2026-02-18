@@ -1,13 +1,11 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { MessageSquareText, Search, Eye, Heart, MessageCircle, ChevronLeft, ChevronRight, Loader2, PenLine, ImageIcon } from 'lucide-react';
+import { MessageSquareText, Search, Eye, Heart, MessageCircle, ChevronLeft, ChevronRight, Loader2, PenLine } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useFreeBoardList } from '../../api/freeboard/useFreeboard';
 import { AuthContext } from '../../components/AuthContext';
-
-const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=400';
 
 export default function Freeboards() {
   const navigate = useNavigate();
@@ -15,7 +13,7 @@ export default function Freeboards() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
-  const size = 9;
+  const size = 15;
 
   const { data, isLoading } = useFreeBoardList(page, size, search);
 
@@ -160,81 +158,59 @@ export default function Freeboards() {
             </p>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {list.map((board, index) => (
-              <motion.div
-                key={board.boardNo}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => navigate(`/freeboard/${board.boardNo}`)}
-                className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-md shadow-sky-100/40 border border-sky-50 overflow-hidden cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
-              >
-                {/* 썸네일 */}
-                <div className="relative h-44 overflow-hidden bg-gradient-to-br from-sky-100 to-cyan-100">
-                  {board.imageUrls ? (
-                    <img
-                      src={board.imageUrls}
-                      alt=""
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                      <ImageIcon className="w-10 h-10 text-sky-300" />
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" />
-                </div>
-
-                {/* 카드 내용 */}
-                <div className="p-5">
-                  <h3
-                    className="font-bold text-slate-800 text-base mb-2 line-clamp-1 group-hover:text-sky-600 transition-colors"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-md shadow-sky-100/40 border border-sky-50 overflow-hidden">
+            <table className="w-full text-sm" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <thead>
+                <tr className="bg-gradient-to-r from-sky-50 to-cyan-50 border-b border-sky-100">
+                  <th className="py-3.5 px-4 text-center text-xs font-bold text-slate-500 w-16">번호</th>
+                  <th className="py-3.5 px-4 text-left text-xs font-bold text-slate-500">제목</th>
+                  <th className="py-3.5 px-4 text-center text-xs font-bold text-slate-500 w-24">작성자</th>
+                  <th className="py-3.5 px-4 text-center text-xs font-bold text-slate-500 w-16">조회</th>
+                  <th className="py-3.5 px-4 text-center text-xs font-bold text-slate-500 w-16">댓글</th>
+                  <th className="py-3.5 px-4 text-center text-xs font-bold text-slate-500 w-16">좋아요</th>
+                  <th className="py-3.5 px-4 text-center text-xs font-bold text-slate-500 w-28 whitespace-nowrap">작성일</th>
+                </tr>
+              </thead>
+              <tbody>
+                {list.map((board, index) => (
+                  <motion.tr
+                    key={board.boardNo}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: index * 0.02 }}
+                    onClick={() => navigate(`/freeboard/${board.boardNo}`)}
+                    className="border-b border-sky-50 last:border-b-0 cursor-pointer hover:bg-sky-50/60 transition-colors duration-200"
                   >
-                    {board.boardTitle}
-                  </h3>
-                  <p
-                    className="text-sm text-slate-400 line-clamp-2 mb-4 leading-relaxed"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
-                  >
-                    {board.boardContent}
-                  </p>
-
-                  {/* 작성자 + 메타 */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm overflow-hidden">
-                        {board.memberProfile ? (
-                          <img src={board.memberProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = board.memberNickname?.[0] || '?'; }} />
-                        ) : (
-                          board.memberNickname?.[0] || '?'
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold text-slate-600">{board.memberNickname}</p>
-                        <p className="text-[10px] text-slate-400">{board.createdAt}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-slate-400">
-                      <span className="flex items-center gap-1">
+                    <td className="py-3.5 px-4 text-center text-slate-400 font-medium">{totalCount - ((page - 1) * size) - index}</td>
+                    <td className="py-3.5 px-4">
+                      <span className="text-slate-700 font-medium hover:text-sky-600 transition-colors line-clamp-1">
+                        {board.boardTitle}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-center text-slate-500 truncate">{board.memberNickname}</td>
+                    <td className="py-3.5 px-4 text-center text-slate-400">
+                      <span className="inline-flex items-center gap-1">
                         <Eye className="w-3.5 h-3.5" />
                         {board.readCount}
                       </span>
-                      <span className="flex items-center gap-1">
+                    </td>
+                    <td className="py-3.5 px-4 text-center text-slate-400">
+                      <span className="inline-flex items-center gap-1">
                         <MessageCircle className="w-3.5 h-3.5" />
                         {board.commentCount}
                       </span>
-                      <span className="flex items-center gap-1">
+                    </td>
+                    <td className="py-3.5 px-4 text-center text-slate-400">
+                      <span className="inline-flex items-center gap-1">
                         <Heart className="w-3.5 h-3.5" />
                         {board.likeCount}
                       </span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                    </td>
+                    <td className="py-3.5 px-4 text-center text-slate-400 text-xs whitespace-nowrap">{board.createdAt}</td>
+                  </motion.tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
 
