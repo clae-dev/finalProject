@@ -431,19 +431,22 @@ export default function CompanionDetail() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Flag className="w-5 h-5 text-orange-500" />
-                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>게시글 신고</h3>
+                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>동행 신고</h3>
                 </div>
                 <button onClick={() => setShowReportModal(false)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                   <X className="w-5 h-5 text-slate-400" />
                 </button>
               </div>
 
+              {/* 동행 전용 신고 유형 — 실제 만남이 수반되므로 안전 관련 유형을 강화 */}
               <div className="space-y-3 mb-5">
                 {[
                   { value: 'SPAM', label: '스팸/광고' },
                   { value: 'ABUSE', label: '욕설/비방' },
-                  { value: 'FALSE_INFO', label: '허위정보' },
-                  { value: 'ADULT', label: '성인콘텐츠' },
+                  { value: 'FALSE_INFO', label: '허위 모집 정보' },
+                  { value: 'NO_SHOW', label: '노쇼/잠수' },
+                  { value: 'FRAUD', label: '사기/금전 요구' },
+                  { value: 'DANGEROUS', label: '위험 행위/안전 위협' },
                   { value: 'ETC', label: '기타' },
                 ].map((opt) => (
                   <label key={opt.value} className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all border ${reportType === opt.value ? 'bg-orange-50 border-orange-200' : 'bg-slate-50 border-transparent hover:bg-slate-100'}`}>
