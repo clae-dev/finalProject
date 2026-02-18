@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+       "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.kh.project.inquiry.mapper.InquiryMapper">
+
+    <resultMap id="inquiryResultMap" type="edu.kh.project.inquiry.dto.InquiryDTO">
+        <id property="inquiryNo" column="INQUIRY_NO" />
+        <result property="memberNo" column="MEMBER_NO" />
+        <result property="category" column="CATEGORY" />
+        <result property="title" column="TITLE" />
+        <result property="content" column="CONTENT" />
+        <result property="answer" column="ANSWER" />
+        <result property="status" column="STATUS" />
+        <result property="createdAt" column="CREATED_AT" />
+        <result property="answeredAt" column="ANSWERED_AT" />
+        <result property="memberNickname" column="MEMBER_NICKNAME" />
+        <result property="memberEmail" column="MEMBER_EMAIL" />
+    </resultMap>
+
+    <!-- 문의 등록 -->
+    <insert id="insertInquiry">
+        INSERT INTO INQUIRY (
+            INQUIRY_NO, MEMBER_NO, CATEGORY, TITLE, CONTENT
+        ) VALUES (
+            SEQ_INQUIRY_NO.NEXTVAL,
+            #{memberNo}, #{category}, #{title}, #{content}
+        )
+    </insert>
+
+    <!-- 내 문의 목록 (페이징) -->
+    <select id="selectMyInquiryList" resultMap="inquiryResultMap">
+        SELECT * FROM (
+            SELECT
+                I.INQUIRY_NO,
+                I.MEMBER_NO,
+                I.CATEGORY,
+                I.TITLE,
+                I.STATUS,
+                TO_CHAR(I.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
+                TO_CHAR(I.ANSWERED_AT, 'YYYY-MM-DD HH24:MI') AS ANSWERED_AT,
+                ROW_NUMBER() OVER (ORDER BY I.CREATED_AT DESC) AS RN
+            FROM INQUIRY I
+            WHERE I.MEMBER_NO = #{memberNo}
+              AND I.STATUS != 'D'
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 내 문의 수 -->
+    <select id="selectMyInquiryCount" resultType="int">
+        SELECT COUNT(*)
+        FROM INQUIRY
+        WHERE MEMBER_NO = #{memberNo}
+          AND STATUS != 'D'
+    </select>
+
+    <!-- 문의 상세 -->
+    <select id="selectInquiryDetail" resultMap="inquiryResultMap">
+        SELECT
+            I.INQUIRY_NO,
+            I.MEMBER_NO,
+            I.CATEGORY,
+            I.TITLE,
+            I.CONTENT,
+            I.ANSWER,
+            I.STATUS,
+            TO_CHAR(I.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
+            TO_CHAR(I.ANSWERED_AT, 'YYYY-MM-DD HH24:MI') AS ANSWERED_AT,
+            M.NICKNAME AS MEMBER_NICKNAME,
+            M.EMAIL AS MEMBER_EMAIL
+        FROM INQUIRY I
+        JOIN MEMBER M ON I.MEMBER_NO = M.MEMBER_NO
+        WHERE I.INQUIRY_NO = #{inquiryNo}
+          AND I.STATUS != 'D'
+    </select>
+
+    <!-- 관리자 문의 목록 (대기 우선 정렬, 페이징) -->
+    <select id="selectAdminInquiryList" resultMap="inquiryResultMap">
+        SELECT * FROM (
+            SELECT
+                I.INQUIRY_NO,
+                I.MEMBER_NO,
+                I.CATEGORY,
+                I.TITLE,
+                I.STATUS,
+                TO_CHAR(I.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
+                TO_CHAR(I.ANSWERED_AT, 'YYYY-MM-DD HH24:MI') AS ANSWERED_AT,
+                M.NICKNAME AS MEMBER_NICKNAME,
+                M.EMAIL AS MEMBER_EMAIL,
+                ROW_NUMBER() OVER (
+                    ORDER BY
+                        CASE WHEN I.STATUS = 'W' THEN 0 ELSE 1 END,
+                        I.CREATED_AT DESC
+                ) AS RN
+            FROM INQUIRY I
+            JOIN MEMBER M ON I.MEMBER_NO = M.MEMBER_NO
+            WHERE I.STATUS != 'D'
+            <if test="status != null and status != ''">
+                AND I.STATUS = #{status}
+            </if>
+        )
+        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+    </select>
+
+    <!-- 관리자 문의 수 -->
+    <select id="selectAdminInquiryCount" resultType="int">
+        SELECT COUNT(*)
+        FROM INQUIRY
+        WHERE STATUS != 'D'
+        <if test="status != null and status != ''">
+            AND STATUS = #{status}
+        </if>
+    </select>
+
+    <!-- 답변 등록 (대기 상태일 때만) -->
+    <update id="updateAnswer">
+        UPDATE INQUIRY
+        SET ANSWER = #{answer},
+            STATUS = 'A',
+            ANSWERED_AT = SYSDATE
+        WHERE INQUIRY_NO = #{inquiryNo}
+          AND STATUS = 'W'
+    </update>
+
+    <!-- 소프트 삭제 -->
+    <update id="softDeleteInquiry">
+        UPDATE INQUIRY
+        SET STATUS = 'D'
+        WHERE INQUIRY_NO = #{inquiryNo}
+    </update>
+
+</mapper>
