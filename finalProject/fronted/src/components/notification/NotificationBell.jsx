@@ -1,17 +1,19 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Check, CheckCheck, Trash2, Users, UserCheck } from 'lucide-react';
+import { Bell, Check, CheckCheck, Trash2, Users, UserCheck, MessageCircle } from 'lucide-react';
 import { useNotifications, useUnreadCount, useMarkAsRead, useMarkAllAsRead, useDeleteNotification } from '../../api/notification/useNotification';
 import useNotificationSocket from '../../lib/useNotificationSocket';
 
 const NOTIFICATION_ICONS = {
   COMPANION_JOIN: <Users className="w-4 h-4 text-amber-600" />,
   COMPANION_ACCEPTED: <UserCheck className="w-4 h-4 text-emerald-600" />,
+  CHAT_MESSAGE: <MessageCircle className="w-4 h-4 text-sky-600" />,
 };
 
 const NOTIFICATION_COLORS = {
   COMPANION_JOIN: 'bg-amber-50 border-amber-200',
   COMPANION_ACCEPTED: 'bg-emerald-50 border-emerald-200',
+  CHAT_MESSAGE: 'bg-sky-50 border-sky-200',
 };
 
 function timeAgo(dateStr) {
@@ -26,7 +28,7 @@ function timeAgo(dateStr) {
   return dateStr;
 }
 
-export default function NotificationBell() {
+export default function NotificationBell({ onOpenChat }) {
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
   const navigate = useNavigate();
@@ -65,7 +67,9 @@ export default function NotificationBell() {
       markAsRead.mutate(notif.notificationNo);
     }
     // 해당 페이지로 이동
-    if (notif.targetType === 'COMPANION' && notif.targetNo) {
+    if (notif.targetType === 'CHAT') {
+      onOpenChat?.();
+    } else if (notif.targetType === 'COMPANION' && notif.targetNo) {
       navigate(`/companions/${notif.targetNo}`);
     }
     setOpen(false);

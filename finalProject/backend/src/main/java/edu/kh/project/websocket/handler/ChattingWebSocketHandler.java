@@ -14,6 +14,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.kh.project.chatting.dto.MessageDTO;
 import edu.kh.project.chatting.service.ChattingService;
+import edu.kh.project.member.dto.MemberDTO;
+import edu.kh.project.member.service.MemberService;
+import edu.kh.project.notification.dto.NotificationDTO;
+import edu.kh.project.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +36,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ChattingWebSocketHandler extends TextWebSocketHandler {
 
     private final ChattingService chattingService;
+    private final NotificationService notificationService;
+    private final MemberService memberService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
@@ -74,6 +80,29 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
                         s.sendMessage(textMsg);
                     }
                 }
+            }
+
+            // 수신자에게 알림 전송
+            try {
+                MemberDTO sender = memberService.getMemberByNo(senderNo);
+                String preview = msg.getMessageContent();
+                if (preview.length() > 30) {
+                    preview = preview.substring(0, 30) + "...";
+                }
+
+                notificationService.createNotification(
+                    NotificationDTO.builder()
+                        .recipientNo(targetNo)
+                        .senderNo(senderNo)
+                        .notificationType("CHAT_MESSAGE")
+                        .targetType("CHAT")
+                        .targetNo(senderNo)
+                        .title("새 메시지")
+                        .content(sender.getMemberNickname() + ": " + preview)
+                        .build()
+                );
+            } catch (Exception e) {
+                log.warn("채팅 알림 전송 실패 - senderNo: {}, targetNo: {}", senderNo, targetNo, e);
             }
         }
     }

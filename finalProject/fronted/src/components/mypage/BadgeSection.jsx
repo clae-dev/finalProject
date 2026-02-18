@@ -7,7 +7,6 @@ import {
   MessageCircleHeart,
   ThumbsUp,
   UsersRound,
-  ShieldCheck,
   Trophy,
 } from 'lucide-react';
 
@@ -88,19 +87,19 @@ const badgeDefs = [
     current: (d) => d?.companionCount || 0,
   },
   {
-    key: 'verified',
-    label: '인증 리뷰어',
-    icon: ShieldCheck,
-    emoji: '🛡️',
+    key: 'reviewer',
+    label: '리뷰평론가',
+    icon: Award,
+    emoji: '📝',
     bg: 'bg-teal-100',
     ring: 'ring-teal-300',
     iconColor: 'text-teal-500',
     earnedBg: 'bg-gradient-to-br from-teal-400 to-emerald-500',
     shadow: 'shadow-teal-200/60',
-    condition: '리뷰어 인증 완료',
-    check: (d) => d?.verifiedReviewer === 'Y',
-    goal: 1,
-    current: (d) => (d?.verifiedReviewer === 'Y' ? 1 : 0),
+    condition: '숙소 리뷰 10개 작성',
+    check: (d) => (d?.accommReviewCount || 0) >= 10,
+    goal: 10,
+    current: (d) => d?.accommReviewCount || 0,
   },
   {
     key: 'master',
@@ -119,7 +118,7 @@ const badgeDefs = [
         (d?.reviewCount || 0) >= 10 &&
         (d?.likeCount || 0) >= 50 &&
         (d?.companionCount || 0) >= 5 &&
-        d?.verifiedReviewer === 'Y'
+        (d?.accommReviewCount || 0) >= 10
       );
     },
     goal: 6,
@@ -129,7 +128,7 @@ const badgeDefs = [
       if ((d?.reviewCount || 0) >= 10) count++;
       if ((d?.likeCount || 0) >= 50) count++;
       if ((d?.companionCount || 0) >= 5) count++;
-      if (d?.verifiedReviewer === 'Y') count++;
+      if ((d?.accommReviewCount || 0) >= 10) count++;
       return count;
     },
   },

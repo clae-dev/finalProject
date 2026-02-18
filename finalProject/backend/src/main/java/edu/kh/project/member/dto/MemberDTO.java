@@ -50,4 +50,5 @@ public class MemberDTO {
     private int reviewCount;                 // 작성 후기 수
     private int companionCount;              // 동행 참여 수
     private int likeCount;                   // 좋아요한 글 수
+    private int accommReviewCount;           // 숙소 리뷰 수
 }

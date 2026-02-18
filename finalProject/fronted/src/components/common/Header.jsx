@@ -193,7 +193,7 @@ export default function Header() {
                     )}
 
                     {/* 알림 아이콘 */}
-                    <NotificationBell />
+                    <NotificationBell onOpenChat={() => setChatOpen(true)} />
 
                     {/* 채팅 아이콘 */}
                     <button

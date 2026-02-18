@@ -46,7 +46,7 @@ export default function AdminPage() {
       <Header />
 
       {/* 히어로 배너 */}
-      <div className="relative h-[320px] overflow-hidden">
+      <div className="relative h-[320px] overflow-hidden mt-8">
         {/* 배경 이미지 */}
         <img
           src={adminHeroBg}
