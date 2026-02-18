@@ -27,11 +27,19 @@ const STATUS_BADGE = {
   R: { label: '반려', cls: 'bg-red-100 text-red-500' },
 };
 
+/**
+ * 신고 유형 → 한글 라벨 매핑
+ * - 공통: SPAM, ABUSE, FALSE_INFO, ADULT, ETC
+ * - 동행 전용: NO_SHOW(노쇼), FRAUD(사기), DANGEROUS(위험 행위)
+ */
 const REPORT_TYPE_LABEL = {
   SPAM: '스팸/광고',
   ABUSE: '욕설/비방',
   FALSE_INFO: '허위정보',
   ADULT: '성인콘텐츠',
+  NO_SHOW: '노쇼/잠수',
+  FRAUD: '사기/금전 요구',
+  DANGEROUS: '위험 행위/안전 위협',
   ETC: '기타',
 };
 
