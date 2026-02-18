@@ -310,7 +310,7 @@ function AccordionItem({ section, isOpen, onToggle, index }) {
               <div className="px-5 pb-5">
                 <div className="border-t border-sky-100 pt-4">
                   <pre
-                    className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap font-[inherit]"
+                    className="text-[13.5px] text-slate-700 font-medium leading-[1.85] whitespace-pre-wrap font-[inherit]"
                     style={{ fontFamily: "'Pretendard', sans-serif" }}
                   >
                     {section.content}
