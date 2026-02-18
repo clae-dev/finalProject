@@ -67,8 +67,6 @@ public class CompanionController {
         return jwtUtil.getMemberNo(token);
     }
 
-    // ==================== 게시글 CRUD ====================
-
     /**
      * 동행 모집 목록을 페이징 조회한다.
      *
@@ -238,8 +236,6 @@ public class CompanionController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
-    // ==================== 참여 관리 ====================
 
     /**
      * 동행에 참여를 신청한다.

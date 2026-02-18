@@ -34,8 +34,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @PropertySource("classpath:/config.properties")
 public class FileConfig implements WebMvcConfigurer {
 
-	// ==================== 게시판 이미지 경로 ====================
-
 	/** 게시판 이미지 웹 접근 경로 (예: /upload/board/) */
 	@Value("${board.image.web-path}")
 	private String boardImageWebPath;
@@ -43,8 +41,6 @@ public class FileConfig implements WebMvcConfigurer {
 	/** 게시판 이미지 서버 물리 경로 (예: C:/finalProject/upload/board/) */
 	@Value("${board.image.folder-path}")
 	private String boardImageFolderPath;
-
-	// ==================== 프로필 이미지 경로 ====================
 
 	/** 프로필 이미지 웹 접근 경로 */
 	@Value("${profile.image.web-path}")
@@ -54,8 +50,6 @@ public class FileConfig implements WebMvcConfigurer {
 	@Value("${profile.image.folder-path}")
 	private String profileImageFolderPath;
 
-	// ==================== 동행 이미지 경로 ====================
-
 	/** 동행 게시글 이미지 웹 접근 경로 */
 	@Value("${companion.image.web-path}")
 	private String companionImageWebPath;
@@ -63,8 +57,6 @@ public class FileConfig implements WebMvcConfigurer {
 	/** 동행 게시글 이미지 서버 물리 경로 */
 	@Value("${companion.image.folder-path}")
 	private String companionImageFolderPath;
-
-	// ==================== 후기 이미지 경로 ====================
 
 	/** 숙소 후기 이미지 웹 접근 경로 */
 	@Value("${review.image.web-path}")
@@ -74,8 +66,6 @@ public class FileConfig implements WebMvcConfigurer {
 	@Value("${review.image.folder-path}")
 	private String reviewImageFolderPath;
 
-	// ==================== 숙소 이미지 경로 ====================
-
 	/** 숙소 이미지 웹 접근 경로 */
 	@Value("${accommodation.image.web-path}")
 	private String accommodationImageWebPath;
@@ -83,8 +73,6 @@ public class FileConfig implements WebMvcConfigurer {
 	/** 숙소 이미지 서버 물리 경로 */
 	@Value("${accommodation.image.folder-path}")
 	private String accommodationImageFolderPath;
-
-	// ==================== 명소 이미지 경로 ====================
 
 	/** 관광 명소 이미지 웹 접근 경로 */
 	@Value("${spot.image.web-path}")
@@ -94,8 +82,6 @@ public class FileConfig implements WebMvcConfigurer {
 	@Value("${spot.image.folder-path}")
 	private String spotImageFolderPath;
 
-	// ==================== 인증서류 이미지 경로 ====================
-
 	/** 인증서류 이미지 웹 접근 경로 */
 	@Value("${verification.image.web-path}")
 	private String verificationImageWebPath;
@@ -103,8 +89,6 @@ public class FileConfig implements WebMvcConfigurer {
 	/** 인증서류 이미지 서버 물리 경로 */
 	@Value("${verification.image.folder-path}")
 	private String verificationImageFolderPath;
-
-	// ==================== 공통 파일 업로드 경로 ====================
 
 	/** 공통 파일 업로드 서버 물리 경로 */
 	@Value("${file.upload.path}")

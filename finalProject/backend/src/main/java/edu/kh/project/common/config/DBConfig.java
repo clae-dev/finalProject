@@ -42,8 +42,6 @@ public class DBConfig {
 	@Autowired
 	private ApplicationContext applicationContext;
 
-	// ==================== HikariCP 설정 ====================
-
 	/**
 	 * HikariCP 설정 객체를 생성한다.
 	 *
@@ -70,8 +68,6 @@ public class DBConfig {
 	public DataSource dataSource(HikariConfig config) {
 		return new HikariDataSource(config);
 	}
-
-	// ==================== MyBatis 설정 ====================
 
 	/**
 	 * MyBatis SqlSessionFactory를 생성한다.

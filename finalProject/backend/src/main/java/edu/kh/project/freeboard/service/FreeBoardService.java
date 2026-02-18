@@ -11,13 +11,6 @@ import edu.kh.project.freeboard.dto.FreeBoardDTO;
 /**
  * 자유게시판 서비스 인터페이스
  *
- * <p>게시글 CRUD, 댓글, 좋아요 등 자유게시판 비즈니스 로직을 정의한다.</p>
- *
- * @author HONDI
- */
-/**
- * 자유게시판 서비스 인터페이스
- *
  * <p>게시글 CRUD, 댓글(대댓글), 좋아요 토글 등 비즈니스 로직을 정의한다.</p>
  *
  * @author HONDI

@@ -65,8 +65,6 @@ public class CompanionReviewController {
         return jwtUtil.getMemberNo(token);
     }
 
-    // ==================== 후기 조회 ====================
-
     /**
      * 후기 목록을 페이징 조회한다.
      *
@@ -162,8 +160,6 @@ public class CompanionReviewController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-
-    // ==================== 후기 작성/삭제 ====================
 
     /**
      * 동행 후기를 작성한다 (multipart/form-data).

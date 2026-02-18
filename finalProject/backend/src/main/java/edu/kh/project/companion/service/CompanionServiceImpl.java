@@ -43,8 +43,6 @@ public class CompanionServiceImpl implements CompanionService {
     /** 알림 서비스 (참여 신청/승인 시 알림 전송) */
     private final NotificationService notificationService;
 
-    // ==================== 조회 ====================
-
     /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
@@ -73,8 +71,6 @@ public class CompanionServiceImpl implements CompanionService {
     public List<CompanionJoinDTO> getJoinList(int companionNo) {
         return companionMapper.selectJoinList(companionNo);
     }
-
-    // ==================== 게시글 작성/삭제 ====================
 
     /**
      * {@inheritDoc}
@@ -140,8 +136,6 @@ public class CompanionServiceImpl implements CompanionService {
     public int deleteCompanion(int companionNo, int memberNo) {
         return companionMapper.deleteCompanion(companionNo, memberNo);
     }
-
-    // ==================== 참여 관리 ====================
 
     /**
      * {@inheritDoc}

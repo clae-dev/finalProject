@@ -58,8 +58,6 @@ public class AiChatService {
     /** OpenAI Chat Completions API 엔드포인트 URL */
     private static final String OPENAI_URL = "https://api.openai.com/v1/chat/completions";
 
-    // ===== DB 컨텍스트 캐시 =====
-
     /** 캐싱된 DB 컨텍스트 문자열 */
     private String cachedDbContext = null;
 
@@ -69,12 +67,8 @@ public class AiChatService {
     /** 캐시 유효 시간: 5분 (밀리초) */
     private static final long CACHE_TTL_MS = 5 * 60 * 1000;
 
-    // ===== 대화 히스토리 제한 =====
-
     /** 대화 히스토리 최대 보관 건수 */
     private static final int MAX_HISTORY_SIZE = 20;
-
-    // ===== OpenAI 요청 파라미터 =====
 
     /** AI 응답 최대 토큰 수 */
     private static final int MAX_TOKENS = 800;
@@ -187,8 +181,6 @@ public class AiChatService {
         "- 가격 범위는 '보통 비수기 편도 3~5만원대, 성수기 7~15만원대' 정도로 일반적 경향만 안내해.\n" +
         "- 사용자의 출발지를 먼저 확인하고, 해당 도시에서 제주행 편이 있는지 안내해.\n" +
         "- LCC vs FSC 장단점을 간단히 비교해주면 좋아.";
-
-    // ==================== DB 컨텍스트 관리 ====================
 
     /**
      * DB 컨텍스트를 캐시와 함께 반환한다 (5분 TTL).
@@ -398,8 +390,6 @@ public class AiChatService {
         }
         sb.append("\n");
     }
-
-    // ==================== AI 채팅 핵심 로직 ====================
 
     /**
      * OpenAI API를 호출하여 AI 응답을 생성한다.

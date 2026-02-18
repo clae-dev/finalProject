@@ -23,27 +23,17 @@ import lombok.ToString;
 @ToString
 public class NoticeDTO {
 
-    /** 게시글 번호 (PK) */
     private int boardNo;
-    /** 제목 */
     private String boardTitle;
-    /** 내용 */
     private String boardContent;
-    /** 조회수 */
     private int readCount;
     /** 삭제 여부 (N:정상, Y:삭제) */
     private String boardDelFl;
-    /** 작성자 번호 (FK → MEMBER) */
     private int memberNo;
     /** 게시판 유형 번호 (1: 공지사항) */
     private int boardTypeNo;
-    /** 작성일 */
     private String createdAt;
-    /** 수정일 */
     private String updatedAt;
 
-    // ==================== JOIN 파생 필드 ====================
-
-    /** 작성자 닉네임 */
     private String memberNickname;
 }
