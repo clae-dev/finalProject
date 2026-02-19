@@ -46,7 +46,7 @@ export default function FaqPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-cyan-50">
+    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-cyan-50 flex flex-col">
       <Header />
 
       {/* 히어로 배너 */}
@@ -100,7 +100,7 @@ export default function FaqPage() {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-5 py-10">
+      <div className="max-w-4xl mx-auto px-5 py-10 flex-1">
         {/* 카테고리 탭 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
