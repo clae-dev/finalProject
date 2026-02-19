@@ -18,6 +18,7 @@
         <result property="memberStatus" column="STATUS" />
         <result property="emailVerified" column="EMAIL_VERIFIED" />
         <result property="verifiedReviewer" column="VERIFIED_REVIEWER" />
+        <result property="loginType" column="LOGIN_TYPE" />
         <result property="createdAt" column="CREATED_AT" />
         <result property="updatedAt" column="UPDATED_AT" />
         <result property="postCount" column="POST_COUNT" />
@@ -107,7 +108,8 @@
             BIRTH_DATE,
             MEMBER_TYPE,
             STATUS,
-            EMAIL_VERIFIED
+            EMAIL_VERIFIED,
+            LOGIN_TYPE
         ) VALUES (
             SEQ_MEMBER_NO.NEXTVAL,
             #{memberEmail},
@@ -121,7 +123,8 @@
             TO_DATE(#{memberBirthDate}, 'YYYY-MM-DD'),
             'U',
             'A',
-            'Y'
+            'Y',
+            #{loginType}
         )
     </insert>
 

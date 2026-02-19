@@ -132,6 +132,7 @@ public class OAuthService {
             signupRequest.setMemberPw(passwordEncoder.encode(UUID.randomUUID().toString()));
             signupRequest.setMemberNickname(tempNickname);
             signupRequest.setMemberName(nickname);
+            signupRequest.setLoginType("KAKAO");
 
             memberMapper.insertMember(signupRequest);
 
@@ -346,6 +347,7 @@ public class OAuthService {
             signupRequest.setMemberPw(passwordEncoder.encode(UUID.randomUUID().toString()));
             signupRequest.setMemberNickname(tempNickname);
             signupRequest.setMemberName(displayName);
+            signupRequest.setLoginType("NAVER");
 
             memberMapper.insertMember(signupRequest);
 
@@ -551,6 +553,7 @@ public class OAuthService {
             signupRequest.setMemberPw(passwordEncoder.encode(UUID.randomUUID().toString()));
             signupRequest.setMemberNickname(tempNickname);
             signupRequest.setMemberName(displayName);
+            signupRequest.setLoginType("GOOGLE");
 
             memberMapper.insertMember(signupRequest);
 

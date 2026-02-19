@@ -31,4 +31,5 @@ public class SignupRequestDTO {
     private String memberAgeGroup;           // 연령대
     private String memberProfileImg;         // 프로필 이미지 (DiceBear URL)
     private String memberBirthDate;          // 생년월일 (YYYY-MM-DD)
+    private String loginType;                // 로그인 유형 (NULL=일반, KAKAO, NAVER, GOOGLE)
 }

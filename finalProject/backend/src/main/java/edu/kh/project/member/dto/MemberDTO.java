@@ -44,6 +44,7 @@ public class MemberDTO {
     private LocalDateTime withdrawnAt;       // 탈퇴일
     
     private String verifiedReviewer;         // 인증 리뷰어 여부 (Y/N)
+    private String loginType;               // 로그인 유형 (NULL=일반, KAKAO, NAVER, GOOGLE)
 
     // 추가 필드 (조회 시 필요한 정보)
     private int postCount;                   // 작성 글 수
