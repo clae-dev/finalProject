@@ -42,24 +42,13 @@ import TermsOfService from './pages/terms/TermsOfService';
 import InquiryPage from './pages/inquiry/InquiryPage';
 import AiChatBubble from './components/ai/AiChatBubble';
 import WeatherWidget from './components/main/WeatherSection';
-import LandingPage from './pages/landing/LandingPage';
-
-function LandingGuard() {
-  const visited = localStorage.getItem('hondi_visited');
-  if (visited) {
-    return <Navigate to="/home" replace />;
-  }
-  localStorage.setItem('hondi_visited', 'true');
-  return <PageTransition><LandingPage /></PageTransition>;
-}
-
 function AnimatedRoutes() {
   const location = useLocation();
 
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<LandingGuard />} />
+        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/home" element={<PageTransition><Main /></PageTransition>} />
         <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
         <Route path="/signup" element={<PageTransition><Signup /></PageTransition>} />
