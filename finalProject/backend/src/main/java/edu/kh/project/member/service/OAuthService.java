@@ -123,7 +123,7 @@ public class OAuthService {
             String tempNickname = nickname;
 
             // 닉네임 중복 시 랜덤 접미사 추가
-            if (memberMapper.checkNicknameDuplicate(tempNickname) > 0) {
+            if (memberMapper.checkNicknameDuplicate(tempNickname, null) > 0) {
                 tempNickname = nickname + "_" + UUID.randomUUID().toString().substring(0, 4);
             }
 
@@ -337,7 +337,7 @@ public class OAuthService {
             String tempNickname = nickname != null ? nickname : displayName;
 
             // 닉네임 중복 시 랜덤 접미사 추가
-            if (memberMapper.checkNicknameDuplicate(tempNickname) > 0) {
+            if (memberMapper.checkNicknameDuplicate(tempNickname, null) > 0) {
                 tempNickname = tempNickname + "_" + UUID.randomUUID().toString().substring(0, 4);
             }
 
@@ -542,7 +542,7 @@ public class OAuthService {
             String tempNickname = displayName;
 
             // 닉네임 중복 시 랜덤 접미사 추가
-            if (memberMapper.checkNicknameDuplicate(tempNickname) > 0) {
+            if (memberMapper.checkNicknameDuplicate(tempNickname, null) > 0) {
                 tempNickname = displayName + "_" + UUID.randomUUID().toString().substring(0, 4);
             }
 
