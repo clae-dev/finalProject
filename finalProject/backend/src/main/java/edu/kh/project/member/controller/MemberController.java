@@ -114,17 +114,19 @@ public class MemberController {
     /**
      * 닉네임 중복 확인
      * @param memberNickname
+     * @param memberNo 본인 회원번호 (전달 시 본인 제외 중복 체크)
      * @return 사용 가능 여부
      */
     @GetMapping("/check-nickname")
     public ResponseEntity<Map<String, Object>> checkNickname(
-            @RequestParam("memberNickname") String memberNickname) {
-        
+            @RequestParam("memberNickname") String memberNickname,
+            @RequestParam(value = "memberNo", required = false) Integer memberNo) {
+
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
-            int count = memberService.checkNickname(memberNickname);
-            
+            int count = memberService.checkNickname(memberNickname, memberNo);
+
             if (count == 0) {
                 response.put("success", true);
                 response.put("message", "사용 가능한 닉네임입니다.");
@@ -134,7 +136,7 @@ public class MemberController {
                 response.put("message", "이미 사용 중인 닉네임입니다.");
                 return ResponseEntity.ok(response);
             }
-            
+
         } catch (Exception e) {
             log.error("닉네임 중복 확인 실패", e);
             response.put("success", false);
