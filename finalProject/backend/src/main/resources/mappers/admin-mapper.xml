@@ -23,6 +23,7 @@
                 PROFILE_IMAGE AS "memberProfileImg",
                 MEMBER_TYPE AS "memberRole",
                 STATUS AS "memberStatus",
+                LOGIN_TYPE AS "loginType",
                 TO_CHAR(CREATED_AT, 'YYYY-MM-DD') AS "createdAt"
             FROM MEMBER
             WHERE STATUS = 'A'
@@ -43,6 +44,7 @@
                 PROFILE_IMAGE AS "memberProfileImg",
                 MEMBER_TYPE AS "memberRole",
                 STATUS AS "memberStatus",
+                LOGIN_TYPE AS "loginType",
                 TO_CHAR(CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
                 ROW_NUMBER() OVER (ORDER BY MEMBER_NO ASC) AS RN
             FROM MEMBER

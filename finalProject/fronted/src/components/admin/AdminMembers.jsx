@@ -95,6 +95,7 @@ export default function AdminMembers() {
                 <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">프로필</th>
                 <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">닉네임</th>
                 <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">이메일</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">로그인</th>
                 <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">가입일</th>
                 <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">상태</th>
                 <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">관리</th>
@@ -115,6 +116,19 @@ export default function AdminMembers() {
                   </td>
                   <td className="px-6 py-3 text-sm font-semibold text-slate-700">{member.memberNickname}</td>
                   <td className="px-6 py-3 text-sm text-slate-500">{member.memberEmail}</td>
+                  <td className="px-6 py-3">
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                      member.loginType === 'KAKAO'
+                        ? 'bg-yellow-100 text-yellow-700'
+                        : member.loginType === 'NAVER'
+                        ? 'bg-green-100 text-green-700'
+                        : member.loginType === 'GOOGLE'
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-slate-100 text-slate-500'
+                    }`}>
+                      {member.loginType === 'KAKAO' ? '카카오' : member.loginType === 'NAVER' ? '네이버' : member.loginType === 'GOOGLE' ? '구글' : '일반'}
+                    </span>
+                  </td>
                   <td className="px-6 py-3 text-sm text-slate-400">{member.createdAt ? String(member.createdAt).substring(0, 10) : ''}</td>
                   <td className="px-6 py-3">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
@@ -146,7 +160,7 @@ export default function AdminMembers() {
               ))}
               {members.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-slate-400 text-sm">검색 결과가 없습니다.</td>
+                  <td colSpan={8} className="text-center py-12 text-slate-400 text-sm">검색 결과가 없습니다.</td>
                 </tr>
               )}
             </tbody>
