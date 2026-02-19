@@ -81,12 +81,15 @@
           AND STATUS != 'W'
     </select>
 
-    <!-- 닉네임 중복 확인 -->
+    <!-- 닉네임 중복 확인 (memberNo 전달 시 본인 제외) -->
     <select id="checkNicknameDuplicate" resultType="int">
         SELECT COUNT(*)
         FROM MEMBER
         WHERE NICKNAME = #{memberNickname}
           AND STATUS != 'W'
+          <if test="memberNo != null">
+              AND MEMBER_NO != #{memberNo}
+          </if>
     </select>
 
     <!-- 회원가입 -->

@@ -44,11 +44,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     /**
-     * 닉네임 중복 확인
+     * 닉네임 중복 확인 (memberNo 전달 시 본인 제외)
      */
     @Override
-    public int checkNickname(String memberNickname) {
-        return memberMapper.checkNicknameDuplicate(memberNickname);
+    public int checkNickname(String memberNickname, Integer memberNo) {
+        return memberMapper.checkNicknameDuplicate(memberNickname, memberNo);
     }
 
     /**

@@ -30,10 +30,14 @@ export const withdrawMember = async (memberNo, memberPw) => {
   return response.data;
 };
 
-// 닉네임 중복 체크
-export const checkNickname = async (nickname) => {
+// 닉네임 중복 체크 (memberNo 전달 시 본인 제외)
+export const checkNickname = async (nickname, memberNo) => {
+  const params = { memberNickname: nickname };
+  if (memberNo) {
+    params.memberNo = memberNo;
+  }
   const response = await axiosApi.get("/api/member/check-nickname", {
-    params: { memberNickname: nickname }
+    params,
   });
   return response.data;
 };

@@ -28,9 +28,10 @@ public interface MemberService {
     /**
      * 닉네임 중복 확인
      * @param memberNickname
+     * @param memberNo 본인 회원번호 (null이면 전체 대상 체크)
      * @return 중복 개수 (0: 사용 가능, 1 이상: 중복)
      */
-    int checkNickname(String memberNickname);
+    int checkNickname(String memberNickname, Integer memberNo);
     
     /**
      * 회원가입

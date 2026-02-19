@@ -42,11 +42,13 @@ public interface MemberMapper {
     int checkEmailDuplicate(@Param("memberEmail") String memberEmail);
     
     /**
-     * 닉네임 중복 확인
+     * 닉네임 중복 확인 (memberNo 전달 시 본인 제외)
      * @param memberNickname 닉네임
+     * @param memberNo 본인 회원번호 (null이면 전체 대상)
      * @return 중복 개수 (0: 사용 가능, 1 이상: 중복)
      */
-    int checkNicknameDuplicate(@Param("memberNickname") String memberNickname);
+    int checkNicknameDuplicate(@Param("memberNickname") String memberNickname,
+                               @Param("memberNo") Integer memberNo);
     
     /**
      * 회원가입 (INSERT)

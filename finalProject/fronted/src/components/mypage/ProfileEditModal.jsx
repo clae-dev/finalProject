@@ -268,8 +268,19 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
       });
       setOriginalNickname(memberData.memberNickname || '');
       setNicknameStatus(null);
+
+      // OAuth 사용자의 기존 닉네임 중복 여부 자동 체크
+      if (isOpen && memberData.memberNickname && user?.memberNo) {
+        checkNickname(memberData.memberNickname, user.memberNo)
+          .then((result) => {
+            if (!result.success) {
+              setNicknameStatus('duplicate');
+            }
+          })
+          .catch(() => {});
+      }
     }
-  }, [memberData]);
+  }, [memberData, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -332,14 +343,10 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
   const handleCheckNickname = async () => {
     const nickname = form.memberNickname.trim();
     if (!nickname) return;
-    if (nickname === originalNickname) {
-      setNicknameStatus('available');
-      return;
-    }
     setNicknameStatus('checking');
     try {
-      const result = await checkNickname(nickname);
-      setNicknameStatus(result.data ? 'duplicate' : 'available');
+      const result = await checkNickname(nickname, user?.memberNo);
+      setNicknameStatus(result.success ? 'available' : 'duplicate');
     } catch {
       setNicknameStatus(null);
       alert('닉네임 확인 중 오류가 발생했습니다.');
@@ -353,8 +360,10 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
       alert('닉네임을 입력해주세요.');
       return;
     }
-    if (nickname !== originalNickname && nicknameStatus !== 'available') {
-      alert('닉네임 중복 확인을 해주세요.');
+    if (nicknameStatus !== 'available') {
+      alert(nicknameStatus === 'duplicate'
+        ? '이미 사용 중인 닉네임입니다. 다른 닉네임으로 변경해주세요.'
+        : '닉네임 중복 확인을 해주세요.');
       return;
     }
 
