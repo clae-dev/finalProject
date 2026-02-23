@@ -78,11 +78,13 @@ export const AuthProvider = ({ children }) => {
           } else {
             clearAllAuth();
             setUser(null);
+            alert("인증이 만료되어 자동 로그아웃 되었습니다. 다시 로그인해 주세요.");
           }
         })
         .catch(() => {
           clearAllAuth();
           setUser(null);
+          alert("인증이 만료되어 자동 로그아웃 되었습니다. 다시 로그인해 주세요.");
         });
     }
   }, []);

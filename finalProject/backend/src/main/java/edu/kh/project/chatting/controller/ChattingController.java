@@ -157,17 +157,24 @@ public class ChattingController {
      */
     @GetMapping("/messages")
     public ResponseEntity<Map<String, Object>> getMessages(
+            @RequestHeader("Authorization") String authHeader,
             @RequestParam int chattingRoomNo) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
+            extractMemberNo(authHeader); // JWT 인증 검증
             List<MessageDTO> messages = chattingService.selectMessageList(chattingRoomNo);
 
             response.put("success", true);
             response.put("data", messages);
             return ResponseEntity.ok(response);
 
+        } catch (JwtException e) {
+            log.warn("메시지 목록 조회 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         } catch (Exception e) {
             log.error("메시지 목록 조회 실패", e);
             response.put("success", false);
