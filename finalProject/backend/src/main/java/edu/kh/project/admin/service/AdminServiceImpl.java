@@ -188,6 +188,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public int approveVerification(int verificationNo, int adminMemberNo) {
         // 인증 요청에서 memberNo 가져오기 위해 상태 업데이트 후 회원 상태도 업데이트
         int result = verificationMapper.updateVerificationStatus(verificationNo, "Y", null, adminMemberNo);

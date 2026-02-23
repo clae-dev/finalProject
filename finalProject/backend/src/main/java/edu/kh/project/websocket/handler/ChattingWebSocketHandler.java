@@ -44,8 +44,14 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        Object memberNoObj = session.getAttributes().get("memberNo");
+        if (memberNoObj == null) {
+            log.warn("WebSocket 연결 거부 - memberNo 없음: {}", session.getId());
+            session.close(CloseStatus.NOT_ACCEPTABLE);
+            return;
+        }
         sessions.add(session);
-        int memberNo = (int) session.getAttributes().get("memberNo");
+        int memberNo = (int) memberNoObj;
         log.info("WebSocket 연결됨 - memberNo: {}, sessionId: {}", memberNo, session.getId());
     }
 
@@ -56,7 +62,12 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
         MessageDTO msg = objectMapper.readValue(message.getPayload(), MessageDTO.class);
 
         // 발신자 번호를 WebSocket 세션에서 가져옴 (조작 방지)
-        int senderNo = (int) session.getAttributes().get("memberNo");
+        Object senderNoObj = session.getAttributes().get("memberNo");
+        if (senderNoObj == null) {
+            session.close(CloseStatus.NOT_ACCEPTABLE);
+            return;
+        }
+        int senderNo = (int) senderNoObj;
         msg.setSenderNo(senderNo);
 
         // DB 저장
@@ -73,7 +84,9 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
                 for (WebSocketSession s : sessions) {
                     if (!s.isOpen()) continue;
 
-                    int sessionMemberNo = (int) s.getAttributes().get("memberNo");
+                    Object sessionMemberNoObj = s.getAttributes().get("memberNo");
+                    if (sessionMemberNoObj == null) continue;
+                    int sessionMemberNo = (int) sessionMemberNoObj;
 
                     // 같은 채팅방의 발신자 또는 수신자에게만 전송
                     if (sessionMemberNo == senderNo || sessionMemberNo == targetNo) {

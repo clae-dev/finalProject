@@ -24,7 +24,7 @@ function Login() {
     }
   }, []);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:80';
+  const API_URL = import.meta.env.VITE_API_URL || '';
 
   const handleSocialLogin = (provider) => {
     window.location.href = `${API_URL}/oauth2/authorization/${provider}`;

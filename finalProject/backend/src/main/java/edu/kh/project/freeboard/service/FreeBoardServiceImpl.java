@@ -36,7 +36,7 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     @Override
     @Transactional(readOnly = true)
     public List<FreeBoardDTO> getFreeBoardList(int page, int size, String search) {
-        int offset = (page - 1) * size;
+        int offset = Math.max(0, (page - 1) * size);
         return freeBoardMapper.selectFreeBoardList(offset, size, search);
     }
 
