@@ -29,5 +29,3 @@ dist-ssr
 # Claude
 .claude/
 
-# Images
-src/assets/images/
