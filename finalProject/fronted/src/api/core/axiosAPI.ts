@@ -46,9 +46,28 @@ const forceLogout = (): void => {
   window.location.href = "/";
 };
 
+// http:// → https:// 변환 (Mixed Content 방지)
+const upgradeHttpUrls = (data: unknown): unknown => {
+  if (typeof data === 'string') {
+    return data.startsWith('http://') ? data.replace('http://', 'https://') : data;
+  }
+  if (Array.isArray(data)) {
+    return data.map(upgradeHttpUrls);
+  }
+  if (data && typeof data === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(data)) {
+      result[key] = upgradeHttpUrls(value);
+    }
+    return result;
+  }
+  return data;
+};
+
 // Response 인터셉터: 401 시 Refresh Token으로 자동 갱신
 axiosApi.interceptors.response.use(
   (response: AxiosResponse) => {
+    response.data = upgradeHttpUrls(response.data);
     return response;
   },
   async (error) => {
