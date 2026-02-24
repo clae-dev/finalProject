@@ -10,6 +10,7 @@ export default function KakaoMap({
   height = '220px',
   onMarkerClick,
   panToMarker,   // { lat, lng, name } — 변경 시 해당 위치로 지도 이동 + InfoWindow 열기
+  onMapReady,    // (mapInstance) — 맵 초기화 완료 시 콜백
 }) {
   const mapRef      = useRef(null);
   const mapInstance = useRef(null);
@@ -83,6 +84,7 @@ export default function KakaoMap({
         }
 
         setStatus('ready');
+        if (onMapReady) onMapReady(map);
       } catch (err) {
         console.error('[KakaoMap] 초기화 실패:', err);
         setStatus('error');
