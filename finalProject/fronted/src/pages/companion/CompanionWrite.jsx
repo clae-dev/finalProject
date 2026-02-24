@@ -77,7 +77,7 @@ export default function CompanionWrite() {
     const file = e.target.files[0];
     if (!file) return;
     if (!validateFile(file)) return;
-    const compressed = await compressImage(file, 800, 0.75);
+    const compressed = await compressImage(file, 800, 0.70);
     setThumbnail(compressed);
     setThumbnailPreview(URL.createObjectURL(compressed));
   };
@@ -93,7 +93,7 @@ export default function CompanionWrite() {
     const remaining = MAX_CONTENT_IMAGES - contentImages.length;
     if (remaining <= 0) { alert(`본문 이미지는 최대 ${MAX_CONTENT_IMAGES}장까지 가능합니다.`); return; }
     const valid = files.slice(0, remaining).filter(validateFile);
-    const compressed = await Promise.all(valid.map(f => compressImage(f, 1200, 0.80)));
+    const compressed = await Promise.all(valid.map(f => compressImage(f, 1024, 0.72)));
     setContentImages(prev => [...prev, ...compressed]);
     setContentPreviews(prev => [...prev, ...compressed.map(f => URL.createObjectURL(f))]);
   };

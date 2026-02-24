@@ -6,6 +6,7 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useCreateActivity, useUpdateActivity, useActivityDetail } from '../../api/activity/useActivity';
 import { AuthContext } from '../../components/AuthContext';
+import { compressImage } from '../../lib/imageUtils';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_IMAGES = 5;
@@ -75,13 +76,14 @@ export default function ActivityWrite() {
     return true;
   };
 
-  const handleImagesChange = (e) => {
+  const handleImagesChange = async (e) => {
     const files = Array.from(e.target.files);
     const remaining = MAX_IMAGES - images.length;
     if (remaining <= 0) { alert(`이미지는 최대 ${MAX_IMAGES}장까지 가능합니다.`); return; }
     const valid = files.slice(0, remaining).filter(validateFile);
-    setImages(prev => [...prev, ...valid]);
-    setPreviews(prev => [...prev, ...valid.map(f => URL.createObjectURL(f))]);
+    const compressed = await Promise.all(valid.map(f => compressImage(f, 1024, 0.72)));
+    setImages(prev => [...prev, ...compressed]);
+    setPreviews(prev => [...prev, ...compressed.map(f => URL.createObjectURL(f))]);
   };
 
   const removeImage = (index) => {

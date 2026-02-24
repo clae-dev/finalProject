@@ -5,6 +5,21 @@
  * @param quality  JPEG/WebP 품질 0~1
  * @returns        압축된 File (동일 name, 타입은 webp or jpeg)
  */
+
+// WebP 지원 여부를 한 번만 확인해 캐싱
+const supportsWebP: boolean = (() => {
+  try {
+    const c = document.createElement('canvas');
+    c.width = 1; c.height = 1;
+    return c.toDataURL('image/webp').startsWith('data:image/webp');
+  } catch {
+    return false;
+  }
+})();
+
+const MIME_TYPE = supportsWebP ? 'image/webp' : 'image/jpeg';
+const EXT      = supportsWebP ? 'webp' : 'jpg';
+
 export async function compressImage(
   file: File,
   maxWidth: number,
@@ -23,16 +38,13 @@ export async function compressImage(
       canvas.height = h;
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(img, 0, 0, w, h);
-      const mimeType = canvas.toDataURL('image/webp').startsWith('data:image/webp')
-        ? 'image/webp' : 'image/jpeg';
       canvas.toBlob(
         (blob) => {
           if (!blob) { reject(new Error('압축 실패')); return; }
-          const ext = mimeType === 'image/webp' ? 'webp' : 'jpg';
-          const name = file.name.replace(/\.[^.]+$/, `.${ext}`);
-          resolve(new File([blob], name, { type: mimeType }));
+          const name = file.name.replace(/\.[^.]+$/, `.${EXT}`);
+          resolve(new File([blob], name, { type: MIME_TYPE }));
         },
-        mimeType,
+        MIME_TYPE,
         quality
       );
     };

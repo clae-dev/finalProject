@@ -47,7 +47,7 @@ export default function AccommodationReviewWrite() {
       return true;
     });
 
-    const compressed = await Promise.all(valid.map(f => compressImage(f, 1200, 0.80)));
+    const compressed = await Promise.all(valid.map(f => compressImage(f, 1024, 0.72)));
     const newImages = [...images, ...compressed].slice(0, 5);
     const newPreviews = newImages.map(f => URL.createObjectURL(f));
 
