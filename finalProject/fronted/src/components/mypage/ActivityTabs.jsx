@@ -1,20 +1,23 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, MessageSquare, Heart, Inbox, MessageCircle, ThumbsUp, Star } from 'lucide-react';
+import { FileText, MessageSquare, Heart, Inbox, MessageCircle, ThumbsUp, Star, Bookmark, Building2, Users } from 'lucide-react';
 import { AuthContext } from '../AuthContext';
 import { useMyActivity } from '../../api/member/useMember';
+import { useMyWishlists } from '../../api/wishlist/useWishlist';
 
 const tabs = [
   { key: 'posts', label: '내 글', icon: FileText },
   { key: 'reviews', label: '내 후기', icon: MessageSquare },
   { key: 'likes', label: '좋아요', icon: Heart },
+  { key: 'wishlists', label: '저장한 목록', icon: Bookmark },
 ];
 
 const emptyMessages = {
   posts: '아직 작성한 글이 없어요',
   reviews: '아직 작성한 후기가 없어요',
   likes: '좋아요한 글이 없어요',
+  wishlists: '저장한 항목이 없어요',
 };
 
 const tabContentVariants = {
@@ -29,8 +32,13 @@ export default function ActivityTabs() {
   const { data: activityResponse, isLoading } = useMyActivity(user?.memberNo);
   const activityData = activityResponse?.data || { posts: [], reviews: [], likes: [] };
 
+  const { data: wishlistResponse, isLoading: wishlistLoading } = useMyWishlists(!!user);
+  const wishlistData = wishlistResponse?.data || { accommodations: [], companions: [], reviews: [] };
+
   const [activeTab, setActiveTab] = useState('posts');
-  const items = activityData[activeTab] || [];
+  const [wishlistSubTab, setWishlistSubTab] = useState('accommodations');
+
+  const items = activeTab === 'wishlists' ? [] : (activityData[activeTab] || []);
 
   const handleItemClick = (item) => {
     if (activeTab === 'posts' || activeTab === 'likes') {
@@ -38,6 +46,13 @@ export default function ActivityTabs() {
     } else if (activeTab === 'reviews') {
       navigate(`/review/${item.reviewNo}`);
     }
+  };
+
+  const wishlistItems = wishlistData[wishlistSubTab] || [];
+  const handleWishlistItemClick = (item) => {
+    if (wishlistSubTab === 'accommodations') navigate(`/accommodations/${item.accommodationNo}`);
+    else if (wishlistSubTab === 'companions') navigate(`/companions/${item.companionNo}`);
+    else if (wishlistSubTab === 'reviews') navigate(`/reviews/${item.reviewNo}`);
   };
 
   return (
@@ -94,7 +109,108 @@ export default function ActivityTabs() {
             animate="center"
             exit="exit"
           >
-            {isLoading ? (
+            {/* 저장한 목록 탭 */}
+            {activeTab === 'wishlists' ? (
+              <div>
+                {/* 서브탭: 숙소 / 동행 / 후기 */}
+                <div className="flex gap-2 mb-4">
+                  {[
+                    { key: 'accommodations', label: '숙소', icon: Building2 },
+                    { key: 'companions', label: '동행', icon: Users },
+                    { key: 'reviews', label: '후기', icon: Star },
+                  ].map(({ key, label, icon: Icon }) => (
+                    <button
+                      key={key}
+                      onClick={() => setWishlistSubTab(key)}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                        wishlistSubTab === key
+                          ? 'bg-rose-500 text-white shadow-md shadow-rose-200/50'
+                          : 'bg-white text-slate-500 hover:text-rose-500 hover:bg-rose-50 border border-rose-100'
+                      }`}
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      {label}
+                      <span className="ml-0.5 text-xs opacity-70">
+                        {(wishlistData[key] || []).length}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {wishlistLoading ? (
+                  <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-12 shadow-lg shadow-sky-100 border border-sky-50 text-center">
+                    <div className="w-10 h-10 border-4 border-rose-300 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                    <p className="text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>로딩 중...</p>
+                  </div>
+                ) : wishlistItems.length === 0 ? (
+                  <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-12 shadow-lg shadow-sky-100 border border-sky-50 text-center">
+                    <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-5">
+                      <Bookmark className="w-10 h-10 text-rose-300" />
+                    </div>
+                    <p className="text-lg text-slate-400 font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                      저장한 항목이 없어요
+                    </p>
+                    <p className="text-sm text-slate-300 mt-2">♡ 버튼으로 마음에 드는 항목을 저장해보세요</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {wishlistItems.map((item, index) => (
+                      <motion.div
+                        key={item.accommodationNo || item.companionNo || item.reviewNo || index}
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05, duration: 0.3 }}
+                        whileHover={{ y: -2, transition: { duration: 0.15 } }}
+                        onClick={() => handleWishlistItemClick(item)}
+                        className="bg-white/80 backdrop-blur-xl rounded-2xl p-5 shadow-md shadow-sky-100 border border-sky-50 hover:shadow-lg hover:shadow-rose-100 transition-shadow cursor-pointer group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            {/* 썸네일 */}
+                            {(item.thumbnailUrl || item.imageUrl) && (
+                              <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
+                                <img
+                                  src={item.thumbnailUrl || item.imageUrl}
+                                  alt=""
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => { e.target.parentElement.style.display = 'none'; }}
+                                />
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <h4
+                                className="text-base font-semibold text-slate-700 truncate group-hover:text-rose-500 transition-colors"
+                                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                              >
+                                {item.name || item.title}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-1">
+                                {item.region && (
+                                  <span className="text-xs text-slate-400">{item.region}</span>
+                                )}
+                                {item.rating && (
+                                  <span className="inline-flex items-center gap-0.5 text-xs text-amber-500">
+                                    <Star className="w-3 h-3 fill-current" /> {item.rating}
+                                  </span>
+                                )}
+                                {item.accommodationType && (
+                                  <span className="px-2 py-0.5 bg-sky-50 text-sky-500 rounded-full text-xs font-medium">{item.accommodationType}</span>
+                                )}
+                                {item.travelDate && (
+                                  <span className="text-xs text-slate-400">{item.travelDate}</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          <Heart className="w-4 h-4 text-rose-400 fill-rose-400 flex-shrink-0 ml-3" />
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : isLoading ? (
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-12 shadow-lg shadow-sky-100 border border-sky-50 text-center">
                 <div className="w-10 h-10 border-4 border-sky-300 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                 <p className="text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>로딩 중...</p>

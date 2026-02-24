@@ -1,12 +1,16 @@
 import React, { useContext, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Calendar, Users, MapPin, Loader2, Check, X, Trash2, Heart, Share2, ImageIcon, Flag } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, MapPin, Loader2, Check, X, Trash2, ImageIcon, Flag, Map } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useCompanionDetail, useJoinCompanion, useCancelJoin, useUpdateJoinStatus, useDeleteCompanion } from '../../api/companion/useCompanion';
 import { useCheckReport, useSubmitReport } from '../../api/report/useReport';
 import { AuthContext } from '../../components/AuthContext';
+import WishlistButton from '../../components/common/WishlistButton';
+import ImageLightbox from '../../components/common/ImageLightbox';
+import ShareButtons from '../../components/common/ShareButtons';
+import KakaoMap from '../../components/common/KakaoMap';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800';
 
@@ -40,7 +44,7 @@ export default function CompanionDetail() {
   const { companionNo } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext) || {};
-  const [lightboxImg, setLightboxImg] = useState(null);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportType, setReportType] = useState('');
@@ -245,7 +249,7 @@ export default function CompanionDetail() {
           </div>
 
           {/* 여행 정보 */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3 mb-5">
             {[
               { icon: Calendar, label: '여행 일자', value: formatTravelDate(companion.travelDate) || '미정', gradient: 'from-sky-400 to-cyan-400' },
               { icon: Users, label: '모집 현황', value: `${companion.currentMembers}/${companion.maxMembers}명`, gradient: 'from-cyan-400 to-teal-400' },
@@ -261,6 +265,16 @@ export default function CompanionDetail() {
                 <p className="text-base font-bold text-slate-700 mt-0.5">{value}</p>
               </motion.div>
             ))}
+          </div>
+
+          {/* 찜 + 공유 버튼 */}
+          <div className="flex items-center gap-3 pt-4 border-t border-sky-50">
+            <WishlistButton type="companion" targetNo={Number(companionNo)} size="md" />
+            <ShareButtons
+              title={companion.title}
+              description={`${formatTravelDate(companion.travelDate)} · ${companion.currentMembers}/${companion.maxMembers}명`}
+              imageUrl={companion.imageUrl}
+            />
           </div>
         </motion.div>
 
@@ -288,7 +302,7 @@ export default function CompanionDetail() {
                   key={idx}
                   whileHover={{ scale: 1.02 }}
                   className={`relative rounded-2xl overflow-hidden cursor-pointer group shadow-md shadow-sky-100/30 ${contentImageList.length === 1 ? 'aspect-video' : 'aspect-square'}`}
-                  onClick={() => setLightboxImg(imgUrl)}
+                  onClick={() => setLightboxIndex(idx)}
                 >
                   <img
                     src={imgUrl}
@@ -393,33 +407,37 @@ export default function CompanionDetail() {
             </div>
           </motion.div>
         )}
+
+        {/* 제주 여행 지역 지도 */}
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={6}
+          className="bg-white rounded-3xl shadow-xl shadow-sky-100/40 p-7 border border-sky-50">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 bg-gradient-to-br from-teal-400 to-cyan-400 rounded-lg flex items-center justify-center">
+              <Map className="w-4 h-4 text-white" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-800">여행 지역</h3>
+          </div>
+          <KakaoMap
+            lat={33.3617}
+            lng={126.5292}
+            level={10}
+            name="제주도"
+            height="200px"
+          />
+          <p className="text-xs text-slate-400 mt-2 text-center" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            제주도 전체 지역에서 함께할 동행을 모집 중입니다
+          </p>
+        </motion.div>
       </div>
 
       {/* 이미지 라이트박스 */}
-      <AnimatePresence>
-        {lightboxImg && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-5"
-            onClick={() => setLightboxImg(null)}
-          >
-            <motion.img
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              src={lightboxImg}
-              alt=""
-              className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl"
-            />
-            <button className="absolute top-6 right-6 w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/20 transition-colors">
-              <X className="w-6 h-6" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {lightboxIndex !== null && (
+        <ImageLightbox
+          images={contentImageList}
+          initialIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
 
       {/* 신고 모달 */}
       <AnimatePresence>

@@ -7,6 +7,9 @@ import Footer from '../../components/main/Footer';
 import { useReviewDetail, useDeleteReview } from '../../api/review/useReview';
 import { useCheckReport, useSubmitReport } from '../../api/report/useReport';
 import { AuthContext } from '../../components/AuthContext';
+import WishlistButton from '../../components/common/WishlistButton';
+import ImageLightbox from '../../components/common/ImageLightbox';
+import ShareButtons from '../../components/common/ShareButtons';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800';
 
@@ -34,7 +37,7 @@ export default function ReviewDetail() {
   const { reviewNo } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext) || {};
-  const [lightboxImg, setLightboxImg] = useState(null);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
 
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportType, setReportType] = useState('');
@@ -238,6 +241,16 @@ export default function ReviewDetail() {
               )}
             </motion.div>
           </div>
+
+          {/* 찜 + 공유 버튼 */}
+          <div className="flex items-center gap-3 mt-5 pt-5 border-t border-sky-50">
+            <WishlistButton type="review" targetNo={Number(reviewNo)} size="md" />
+            <ShareButtons
+              title={review.title}
+              description={`별점 ${review.rating}점`}
+              imageUrl={review.imageUrl}
+            />
+          </div>
         </motion.div>
 
         {/* 본문 내용 */}
@@ -264,7 +277,7 @@ export default function ReviewDetail() {
                   key={idx}
                   whileHover={{ scale: 1.02 }}
                   className={`relative rounded-2xl overflow-hidden cursor-pointer group shadow-md shadow-sky-100/30 ${contentImageList.length === 1 ? 'aspect-video' : 'aspect-square'}`}
-                  onClick={() => setLightboxImg(imgUrl)}
+                  onClick={() => setLightboxIndex(idx)}
                 >
                   <img
                     src={imgUrl}
@@ -282,27 +295,12 @@ export default function ReviewDetail() {
 
       {/* 이미지 라이트박스 */}
       <AnimatePresence>
-        {lightboxImg && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-5"
-            onClick={() => setLightboxImg(null)}
-          >
-            <motion.img
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              src={lightboxImg}
-              alt=""
-              className="max-w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl"
-            />
-            <button className="absolute top-6 right-6 w-11 h-11 rounded-2xl bg-white/10 backdrop-blur-xl flex items-center justify-center text-white hover:bg-white/20 transition-colors">
-              <X className="w-6 h-6" />
-            </button>
-          </motion.div>
+        {lightboxIndex !== null && (
+          <ImageLightbox
+            images={contentImageList}
+            initialIndex={lightboxIndex}
+            onClose={() => setLightboxIndex(null)}
+          />
         )}
       </AnimatePresence>
 
