@@ -20,7 +20,7 @@ import {
   Banknote, Eye, Compass, Sparkles, ExternalLink, Check, Search,
   Wifi, Coffee, Mountain, Waves, Sun, TreePalm, Navigation,
   Shield, Calendar, Tag, ArrowLeft, Bookmark, MessageCircle,
-  CircleDollarSign, Map, PhoneCall, Globe, Megaphone, Pencil
+  CircleDollarSign, Map, PhoneCall, Globe, Megaphone, Pencil, Heart
 } from 'lucide-react';
 
 export default function AccommodationDetail() {

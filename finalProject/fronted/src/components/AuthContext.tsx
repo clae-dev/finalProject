@@ -126,7 +126,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         alert("장시간 활동이 없어 자동 로그아웃 되었습니다.");
         clearAllAuth();
         setUser(null);
-        window.location.href = "/home";
+        window.location.href = "/";
       }
     }, CHECK_INTERVAL);
 
@@ -189,7 +189,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setPassword("");
 
       // 홈 페이지로 이동
-      window.location.href = "/home";
+      window.location.href = "/";
 
     } catch (error: unknown) {
       console.error("로그인 실패:", error);
@@ -275,7 +275,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setEmail("");
     setPassword("");
     // 홈으로 이동
-    window.location.href = "/home";
+    window.location.href = "/";
   };
 
   // 자식 컴포넌트에게 전달할 데이터를 하나로 묶기
