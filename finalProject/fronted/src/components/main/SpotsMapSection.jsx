@@ -316,6 +316,15 @@ function SpotDetailModal({ spot, onClose }) {
   );
 }
 
+/* ─── 카테고리 목록 ─── */
+const CATEGORIES = [
+  { code: 'FD6', label: '맛집',   emoji: '🍜' },
+  { code: 'CE7', label: '카페',   emoji: '☕' },
+  { code: 'AT4', label: '관광명소', emoji: '🏖' },
+  { code: 'AD5', label: '숙박',   emoji: '🏨' },
+  { code: 'CT1', label: '문화시설', emoji: '🎭' },
+];
+
 /* ─── 검색 결과 카드 ─── */
 function SearchResultCard({ place, selected, onClick }) {
   return (
@@ -376,6 +385,7 @@ export default function SpotsMapSection() {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedResult, setSelectedResult] = useState(null);
+  const [activeCategory, setActiveCategory] = useState(null);
 
   // 맵 인스턴스 및 검색 마커 ref
   const mapInstanceRef = useRef(null);
@@ -452,7 +462,62 @@ export default function SpotsMapSection() {
     setIsSearchMode(false);
     setSearchQuery('');
     setSelectedResult(null);
+    setActiveCategory(null);
   }, []);
+
+  // 카테고리 검색
+  const handleCategorySearch = useCallback((code) => {
+    if (!mapInstanceRef.current || !window.kakao?.maps?.services?.Places) return;
+
+    // 같은 카테고리 재클릭 시 초기화
+    if (activeCategory === code) { clearSearch(); return; }
+
+    setActiveCategory(code);
+    setIsSearching(true);
+    setSearchQuery('');
+
+    const ps = new window.kakao.maps.services.Places();
+    ps.categorySearch(
+      code,
+      (data, status) => {
+        setIsSearching(false);
+        if (status !== window.kakao.maps.services.Status.OK) {
+          setSearchResults([]);
+          return;
+        }
+
+        searchMarkersRef.current.forEach(m => m.setMap(null));
+        searchMarkersRef.current = [];
+
+        const map = mapInstanceRef.current;
+        const bounds = new window.kakao.maps.LatLngBounds();
+
+        data.slice(0, 10).forEach((place) => {
+          const pos = new window.kakao.maps.LatLng(Number(place.y), Number(place.x));
+          const marker = new window.kakao.maps.Marker({ position: pos, map });
+          const iw = new window.kakao.maps.InfoWindow({
+            content: `<div style="padding:4px 8px;font-size:11px;font-weight:bold;white-space:nowrap;">${place.place_name}</div>`,
+          });
+          window.kakao.maps.event.addListener(marker, 'click', () => {
+            iw.open(map, marker);
+            setSelectedResult(place);
+          });
+          searchMarkersRef.current.push(marker);
+          bounds.extend(pos);
+        });
+
+        if (data.length > 0) map.setBounds(bounds, 60);
+        setSearchResults(data.slice(0, 10));
+        setIsSearchMode(true);
+        setSelectedResult(null);
+      },
+      {
+        location: new window.kakao.maps.LatLng(33.3617, 126.5292),
+        radius: 50000,
+        sort: window.kakao.maps.services.SortBy.ACCURACY,
+      }
+    );
+  }, [activeCategory, clearSearch]);
 
   // 검색 결과 마커 클릭 시 지도 이동
   const handleResultClick = useCallback((place) => {
@@ -734,6 +799,27 @@ export default function SpotsMapSection() {
                     </button>
                   )}
                 </form>
+
+                {/* 카테고리 버튼 */}
+                <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-hide">
+                  {CATEGORIES.map(({ code, label, emoji }) => (
+                    <button
+                      key={code}
+                      type="button"
+                      onClick={() => handleCategorySearch(code)}
+                      disabled={isSearching}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border flex-shrink-0 transition-all ${
+                        activeCategory === code
+                          ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-200'
+                      }`}
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    >
+                      <span>{emoji}</span>
+                      {label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* 지도 */}
