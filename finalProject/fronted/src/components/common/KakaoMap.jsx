@@ -9,13 +9,27 @@ export default function KakaoMap({
   markers = [],
   height = '220px',
   onMarkerClick,
+  panToMarker,   // { lat, lng, name } — 변경 시 해당 위치로 지도 이동 + InfoWindow 열기
 }) {
   const mapRef      = useRef(null);
   const mapInstance = useRef(null);
   const callbackRef = useRef(onMarkerClick);
+  const markerObjs  = useRef([]); // [{ marker, iw, data }]
   const [status, setStatus] = useState('loading'); // 'loading' | 'ready' | 'error'
 
   useEffect(() => { callbackRef.current = onMarkerClick; }, [onMarkerClick]);
+
+  // panToMarker 변경 시 지도 이동 + InfoWindow 열기
+  useEffect(() => {
+    if (!panToMarker || !mapInstance.current || !window.kakao?.maps?.LatLng) return;
+    const map = mapInstance.current;
+    const pos = new window.kakao.maps.LatLng(panToMarker.lat, panToMarker.lng);
+    map.panTo(pos);
+    const found = markerObjs.current.find(obj => obj.data.name === panToMarker.name);
+    if (found?.iw && found?.marker) {
+      found.iw.open(map, found.marker);
+    }
+  }, [panToMarker?.lat, panToMarker?.lng, panToMarker?.name]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const el = mapRef.current;
@@ -35,6 +49,7 @@ export default function KakaoMap({
           level,
         });
         mapInstance.current = map;
+        markerObjs.current = [];
 
         if (hasCoords && !hasMarkers) {
           // 단일 마커
@@ -53,8 +68,9 @@ export default function KakaoMap({
           markers.forEach((m) => {
             const pos    = new window.kakao.maps.LatLng(m.lat, m.lng);
             const marker = new window.kakao.maps.Marker({ position: pos, map });
+            let iw = null;
             if (m.name) {
-              const iw = new window.kakao.maps.InfoWindow({
+              iw = new window.kakao.maps.InfoWindow({
                 content: `<div style="padding:4px 8px;font-size:11px;font-weight:bold;white-space:nowrap;">${m.name}</div>`,
               });
               window.kakao.maps.event.addListener(marker, 'click', () => {
@@ -62,6 +78,7 @@ export default function KakaoMap({
                 if (callbackRef.current) callbackRef.current(m);
               });
             }
+            markerObjs.current.push({ marker, iw, data: m });
           });
         }
 
@@ -98,7 +115,7 @@ export default function KakaoMap({
     }, 200);
 
     return () => clearInterval(timer);
-  // markers는 MapSection 기본값이 module-level 상수이므로 안정적
+  // markers는 module-level 상수이므로 안정적
   }, [lat, lng, level, name]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const hasCoords  = lat != null && lng != null;
