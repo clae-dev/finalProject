@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin } from 'lucide-react';
+import { MapPin, Search, X } from 'lucide-react';
 import { useActiveSpots } from '../../api/spot/useSpot';
 import KakaoMap from '../common/KakaoMap';
 
@@ -316,11 +316,70 @@ function SpotDetailModal({ spot, onClose }) {
   );
 }
 
+/* ─── 검색 결과 카드 ─── */
+function SearchResultCard({ place, selected, onClick }) {
+  return (
+    <motion.div
+      onClick={onClick}
+      whileHover={{ x: 4 }}
+      transition={{ duration: 0.2 }}
+      className={`flex gap-3 p-3.5 rounded-2xl cursor-pointer border-2 transition-all duration-200 ${
+        selected
+          ? 'border-sky-400 bg-white shadow-lg shadow-sky-100/80'
+          : 'border-transparent bg-white/70 hover:bg-white hover:shadow-md hover:border-sky-200'
+      }`}
+    >
+      <div className="w-9 h-9 flex-shrink-0 bg-sky-100 rounded-xl flex items-center justify-center mt-0.5">
+        <MapPin className="w-4 h-4 text-sky-500" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <h3
+          className={`font-black text-sm truncate transition-colors ${selected ? 'text-sky-700' : 'text-slate-800'}`}
+          style={{ fontFamily: "'GmarketSans', sans-serif" }}
+        >
+          {place.place_name}
+        </h3>
+        <p className="text-xs text-slate-500 truncate mt-0.5">
+          {place.road_address_name || place.address_name}
+        </p>
+        {place.category_group_name && (
+          <span className="inline-block text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full mt-1 border border-sky-100">
+            {place.category_group_name}
+          </span>
+        )}
+        {place.phone && (
+          <p className="text-[10px] text-slate-400 mt-1">{place.phone}</p>
+        )}
+      </div>
+      <a
+        href={place.place_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={(e) => e.stopPropagation()}
+        className="flex-shrink-0 self-center px-2.5 py-1.5 bg-[#FEE500] hover:bg-[#FDD800] rounded-xl text-[10px] font-bold text-[#3C1E1E] transition-colors"
+      >
+        지도
+      </a>
+    </motion.div>
+  );
+}
+
 /* ─── 메인 컴포넌트 ─── */
 export default function SpotsMapSection() {
   const { data } = useActiveSpots();
   const [selectedSpot, setSelectedSpot] = useState(null);
   const [modalSpot, setModalSpot] = useState(null);
+
+  // 검색 관련 상태
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearchMode, setIsSearchMode] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [selectedResult, setSelectedResult] = useState(null);
+
+  // 맵 인스턴스 및 검색 마커 ref
+  const mapInstanceRef = useRef(null);
+  const searchMarkersRef = useRef([]);
 
   // API 데이터 or 기본값
   const rawSpots = data?.success && data.data?.length > 0 ? data.data : [];
@@ -335,9 +394,73 @@ export default function SpotsMapSection() {
   const spots = apiSpots.length > 0 ? apiSpots.slice(0, 5) : DEFAULT_SPOTS;
   const markers = spots.map(s => ({ lat: s.lat, lng: s.lng, name: s.spotTitle, info: s.spotTag }));
 
-  const panToMarker = selectedSpot
+  const panToMarker = (!isSearchMode && selectedSpot)
     ? { lat: selectedSpot.lat, lng: selectedSpot.lng, name: selectedSpot.spotTitle }
     : null;
+
+  // 검색 실행
+  const handleSearch = useCallback(() => {
+    const q = searchQuery.trim();
+    if (!q || !mapInstanceRef.current || !window.kakao?.maps?.services?.Places) return;
+
+    setIsSearching(true);
+    const ps = new window.kakao.maps.services.Places();
+    ps.keywordSearch(
+      `${q} 제주`,
+      (data, status) => {
+        setIsSearching(false);
+        if (status !== window.kakao.maps.services.Status.OK) {
+          setSearchResults([]);
+          return;
+        }
+
+        // 기존 검색 마커 제거
+        searchMarkersRef.current.forEach(m => m.setMap(null));
+        searchMarkersRef.current = [];
+
+        const map = mapInstanceRef.current;
+        const bounds = new window.kakao.maps.LatLngBounds();
+
+        data.slice(0, 8).forEach((place) => {
+          const pos = new window.kakao.maps.LatLng(Number(place.y), Number(place.x));
+          const marker = new window.kakao.maps.Marker({ position: pos, map });
+          const iw = new window.kakao.maps.InfoWindow({
+            content: `<div style="padding:4px 8px;font-size:11px;font-weight:bold;white-space:nowrap;">${place.place_name}</div>`,
+          });
+          window.kakao.maps.event.addListener(marker, 'click', () => {
+            iw.open(map, marker);
+            setSelectedResult(place);
+          });
+          searchMarkersRef.current.push(marker);
+          bounds.extend(pos);
+        });
+
+        map.setBounds(bounds, 60);
+        setSearchResults(data.slice(0, 8));
+        setIsSearchMode(true);
+        setSelectedResult(null);
+      },
+      { location: new window.kakao.maps.LatLng(33.3617, 126.5292), radius: 50000 }
+    );
+  }, [searchQuery]);
+
+  // 검색 초기화
+  const clearSearch = useCallback(() => {
+    searchMarkersRef.current.forEach(m => m.setMap(null));
+    searchMarkersRef.current = [];
+    setSearchResults([]);
+    setIsSearchMode(false);
+    setSearchQuery('');
+    setSelectedResult(null);
+  }, []);
+
+  // 검색 결과 마커 클릭 시 지도 이동
+  const handleResultClick = useCallback((place) => {
+    setSelectedResult(place);
+    if (!mapInstanceRef.current) return;
+    const pos = new window.kakao.maps.LatLng(Number(place.y), Number(place.x));
+    mapInstanceRef.current.panTo(pos);
+  }, []);
 
   return (
     <section className="relative pt-16 pb-72 overflow-hidden">
@@ -422,40 +545,89 @@ export default function SpotsMapSection() {
           transition={{ duration: 0.7, delay: 0.15 }}
           className="grid grid-cols-1 lg:grid-cols-5 gap-5"
         >
-          {/* ─── 좌측: 명소 카드 리스트 ─── */}
+          {/* ─── 좌측: 명소 카드 리스트 or 검색 결과 ─── */}
           <div className="lg:col-span-2 flex flex-col gap-3">
             {/* 리스트 제목 */}
-            <div className="flex items-center gap-2 px-1">
-              <div className="w-1 h-5 bg-gradient-to-b from-sky-400 to-cyan-400 rounded-full" />
-              <span className="text-sm font-bold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-                인기 명소 {spots.length}곳
-              </span>
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-5 bg-gradient-to-b from-sky-400 to-cyan-400 rounded-full" />
+                <span className="text-sm font-bold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  {isSearchMode
+                    ? `검색 결과 ${searchResults.length}곳`
+                    : `인기 명소 ${spots.length}곳`}
+                </span>
+              </div>
+              {isSearchMode && (
+                <button
+                  onClick={clearSearch}
+                  className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <X className="w-3.5 h-3.5" /> 초기화
+                </button>
+              )}
             </div>
 
             {/* 카드 리스트 */}
-            <div className="space-y-2.5">
-              {spots.map((spot, idx) => (
-                <motion.div
-                  key={spot.spotNo}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: idx * 0.08 }}
-                >
-                  <SpotCard
-                    spot={spot}
-                    selected={selectedSpot?.spotNo === spot.spotNo}
-                    onClick={() => setSelectedSpot(
-                      selectedSpot?.spotNo === spot.spotNo ? null : spot
-                    )}
-                  />
-                </motion.div>
-              ))}
-            </div>
-
-            {/* 선택된 명소 상세 패널 */}
             <AnimatePresence mode="wait">
-              {selectedSpot && (
+              {!isSearchMode ? (
+                <motion.div
+                  key="spots"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-2.5"
+                >
+                  {spots.map((spot, idx) => (
+                    <motion.div
+                      key={spot.spotNo}
+                      initial={{ opacity: 0, x: -20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 0.5, delay: idx * 0.08 }}
+                    >
+                      <SpotCard
+                        spot={spot}
+                        selected={selectedSpot?.spotNo === spot.spotNo}
+                        onClick={() => setSelectedSpot(
+                          selectedSpot?.spotNo === spot.spotNo ? null : spot
+                        )}
+                      />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="results"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-2.5"
+                >
+                  {searchResults.length === 0 ? (
+                    <div className="py-10 text-center text-sm text-slate-400">검색 결과가 없습니다</div>
+                  ) : (
+                    searchResults.map((place, idx) => (
+                      <motion.div
+                        key={place.id}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3, delay: idx * 0.05 }}
+                      >
+                        <SearchResultCard
+                          place={place}
+                          selected={selectedResult?.id === place.id}
+                          onClick={() => handleResultClick(place)}
+                        />
+                      </motion.div>
+                    ))
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* 선택된 명소 상세 패널 (명소 모드) */}
+            <AnimatePresence mode="wait">
+              {!isSearchMode && selectedSpot && (
                 <motion.div
                   key={selectedSpot.spotNo}
                   initial={{ opacity: 0, y: 8 }}
@@ -490,28 +662,78 @@ export default function SpotsMapSection() {
           {/* ─── 우측: 카카오맵 ─── */}
           <div className="lg:col-span-3">
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl shadow-sky-200/30 border border-white/80 overflow-hidden">
-              {/* 맵 헤더 */}
-              <div className="px-5 pt-4 pb-3 flex items-center justify-between border-b border-sky-50">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-xl bg-sky-500 flex items-center justify-center shadow-sm">
-                    <MapPin className="w-4 h-4 text-white" />
+              {/* 맵 헤더 + 검색바 */}
+              <div className="px-4 pt-4 pb-3 border-b border-sky-50 space-y-3">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-sky-500 flex items-center justify-center shadow-sm">
+                      <MapPin className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-slate-700" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+                        제주 명소 지도
+                      </p>
+                      <p className="text-[10px] text-slate-400">마커를 클릭하면 명소 정보를 볼 수 있어요</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-black text-slate-700" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
-                      제주 명소 지도
-                    </p>
-                    <p className="text-[10px] text-slate-400">마커를 클릭하면 명소 정보를 볼 수 있어요</p>
-                  </div>
+                  {!isSearchMode && selectedSpot && (
+                    <motion.span
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100"
+                    >
+                      📍 {selectedSpot.spotTitle}
+                    </motion.span>
+                  )}
                 </div>
-                {selectedSpot && (
-                  <motion.span
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100"
+
+                {/* 검색바 */}
+                <form
+                  onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+                  className="flex gap-2"
+                >
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="제주 맛집, 카페, 관광지 검색..."
+                      className="w-full pl-9 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent transition-all"
+                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={!searchQuery.trim() || isSearching}
+                    className="px-4 py-2.5 bg-sky-500 hover:bg-sky-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition-colors flex items-center gap-1.5 flex-shrink-0"
                   >
-                    📍 {selectedSpot.spotTitle}
-                  </motion.span>
-                )}
+                    {isSearching ? (
+                      <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <Search className="w-4 h-4" />
+                    )}
+                    검색
+                  </button>
+                  {isSearchMode && (
+                    <button
+                      type="button"
+                      onClick={clearSearch}
+                      className="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold rounded-xl transition-colors flex-shrink-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </form>
               </div>
 
               {/* 지도 */}
@@ -523,7 +745,9 @@ export default function SpotsMapSection() {
                   markers={markers}
                   height="420px"
                   panToMarker={panToMarker}
+                  onMapReady={(map) => { mapInstanceRef.current = map; }}
                   onMarkerClick={(m) => {
+                    if (isSearchMode) return;
                     const found = spots.find(s => s.spotTitle === m.name);
                     setSelectedSpot(found || null);
                   }}
