@@ -20,9 +20,16 @@ export default function KakaoMap({
 
   useEffect(() => { callbackRef.current = onMarkerClick; }, [onMarkerClick]);
 
-  // panToMarker 변경 시 지도 이동 + InfoWindow 열기
+  // panToMarker 변경 시 지도 이동 + InfoWindow 열기 / null이면 모두 닫기
   useEffect(() => {
-    if (!panToMarker || !mapInstance.current || !window.kakao?.maps?.LatLng) return;
+    if (!mapInstance.current || !window.kakao?.maps?.LatLng) return;
+
+    if (!panToMarker) {
+      // 선택 해제 → 모든 InfoWindow 닫기
+      markerObjs.current.forEach(obj => obj.iw?.close());
+      return;
+    }
+
     const map = mapInstance.current;
     const pos = new window.kakao.maps.LatLng(panToMarker.lat, panToMarker.lng);
     map.panTo(pos);
