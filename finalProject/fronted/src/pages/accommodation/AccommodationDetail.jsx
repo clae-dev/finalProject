@@ -9,24 +9,25 @@ import { AuthContext } from '../../components/AuthContext';
 import { useAccommodationReviews, useReviewSummary, useDeleteAccommodationReview } from '../../api/accommodation/useAccommodationReview';
 import AccommodationReviewCard from '../../components/accommodation/AccommodationReviewCard';
 import { Button } from '@/components/ui/button';
+import WishlistButton from '../../components/common/WishlistButton';
+import ImageLightbox from '../../components/common/ImageLightbox';
+import ShareButtons from '../../components/common/ShareButtons';
+import KakaoMap from '../../components/common/KakaoMap';
 import {
-  Star, Heart, MapPin, Clock, ChevronLeft, ChevronRight,
-  Phone, Share2, Loader2, AlertCircle, Car, UtensilsCrossed,
+  Star, MapPin, Clock, ChevronLeft, ChevronRight,
+  Phone, Loader2, AlertCircle, Car, UtensilsCrossed,
   Dumbbell, Bath, Flame, Building2, DoorOpen, DoorClosed,
   Banknote, Eye, Compass, Sparkles, ExternalLink, Check, Search,
   Wifi, Coffee, Mountain, Waves, Sun, TreePalm, Navigation,
   Shield, Calendar, Tag, ArrowLeft, Bookmark, MessageCircle,
-  CircleDollarSign, Map, PhoneCall, Globe, Copy, Megaphone, Pencil
+  CircleDollarSign, Map, PhoneCall, Globe, Megaphone, Pencil
 } from 'lucide-react';
 
 export default function AccommodationDetail() {
   const { accommodationNo } = useParams();
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const mapRef = useRef(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   const { user } = useContext(AuthContext);
@@ -135,56 +136,6 @@ export default function AccommodationDetail() {
     return tips.slice(0, 5);
   };
 
-  // 카카오맵 초기화 (SDK 로딩 대기)
-  useEffect(() => {
-    if (!accommodation?.latitude || !accommodation?.longitude) return;
-    if (!mapRef.current) return;
-
-    const initMap = () => {
-      const lat = accommodation.latitude;
-      const lng = accommodation.longitude;
-      const position = new window.kakao.maps.LatLng(lat, lng);
-
-      const map = new window.kakao.maps.Map(mapRef.current, {
-        center: position,
-        level: 3,
-      });
-
-      const marker = new window.kakao.maps.Marker({ position });
-      marker.setMap(map);
-
-      const infowindow = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:5px 10px;font-size:12px;font-weight:bold;white-space:nowrap;">${accommodation.name}</div>`,
-      });
-      infowindow.open(map, marker);
-
-      setMapLoaded(true);
-    };
-
-    if (window.kakao?.maps?.Map) {
-      initMap();
-      return;
-    }
-
-    if (window.kakao?.maps?.load) {
-      window.kakao.maps.load(initMap);
-      return;
-    }
-
-    let retryCount = 0;
-    const interval = setInterval(() => {
-      retryCount++;
-      if (window.kakao?.maps?.load) {
-        clearInterval(interval);
-        window.kakao.maps.load(initMap);
-      } else if (retryCount > 20) {
-        clearInterval(interval);
-        console.warn('카카오맵 SDK 로드 실패');
-      }
-    }, 300);
-
-    return () => clearInterval(interval);
-  }, [accommodation]);
 
   // 예약 문의
   const handleReservation = () => {
@@ -201,30 +152,6 @@ export default function AccommodationDetail() {
     window.open(`https://search.naver.com/search.naver?query=${query}`, '_blank');
   };
 
-  const handleShare = async () => {
-    const shareData = {
-      title: accommodation?.name,
-      text: `${accommodation?.name} - ${accommodation?.region || '제주'} ${accommodation?.accommodationType || '숙소'}`,
-      url: window.location.href,
-    };
-
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch (e) {
-        if (e.name !== 'AbortError') copyToClipboard();
-      }
-    } else {
-      copyToClipboard();
-    }
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
 
   if (isLoading) {
     return (
@@ -293,7 +220,8 @@ export default function AccommodationDetail() {
             <img
               src={images[currentImageIndex]}
               alt={accommodation.name}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in"
+              onClick={() => setLightboxIndex(currentImageIndex)}
               onError={(e) => { e.target.src = defaultImage; }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
@@ -331,18 +259,10 @@ export default function AccommodationDetail() {
                   <Pencil className="w-4 h-4 text-white" />
                 </button>
               )}
-              <button
-                onClick={handleShare}
-                className="w-10 h-10 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg transition-all"
-              >
-                {copied ? <Check className="w-4 h-4 text-emerald-500" /> : <Share2 className="w-4 h-4 text-slate-600" />}
-              </button>
-              <button
-                onClick={() => setIsFavorite(!isFavorite)}
-                className="w-10 h-10 bg-white/80 hover:bg-white backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg transition-all"
-              >
-                <Heart className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-red-500 text-red-500' : 'text-slate-600'}`} />
-              </button>
+              <WishlistButton
+                type="accommodation"
+                targetNo={Number(accommodationNo)}
+              />
             </div>
 
             <div className="absolute bottom-4 right-4 px-3 py-1.5 bg-black/40 backdrop-blur-sm rounded-full text-white text-xs font-medium">
@@ -559,16 +479,13 @@ export default function AccommodationDetail() {
                     <ExternalLink className="w-4 h-4" />
                     네이버에서 검색
                   </button>
-                  <button
-                    onClick={handleShare}
-                    className="w-full h-10 border-2 border-slate-200 hover:border-sky-300 hover:bg-sky-50 rounded-xl font-semibold text-slate-500 transition-all flex items-center justify-center gap-2 text-sm"
-                  >
-                    {copied ? (
-                      <><Check className="w-4 h-4 text-emerald-500" /><span className="text-emerald-500">복사 완료!</span></>
-                    ) : (
-                      <><Copy className="w-4 h-4" /> 링크 공유</>
-                    )}
-                  </button>
+                  <div className="w-full">
+                    <ShareButtons
+                      title={accommodation?.name}
+                      description={`${accommodation?.region || '제주'} ${accommodation?.accommodationType || '숙소'}`}
+                      imageUrl={images[0]}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -602,65 +519,13 @@ export default function AccommodationDetail() {
                   <Map className="w-[18px] h-[18px] text-teal-500" />
                   위치
                 </h3>
-
-                {accommodation.latitude && accommodation.longitude ? (
-                  <>
-                    <div
-                      ref={mapRef}
-                      className="h-48 rounded-xl overflow-hidden border border-slate-200"
-                      style={{ width: '100%' }}
-                    />
-
-                    {!mapLoaded && !window.kakao?.maps && (
-                      <a
-                        href={`https://map.kakao.com/link/map/${encodeURIComponent(accommodation.name)},${accommodation.latitude},${accommodation.longitude}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block h-48 bg-gradient-to-br from-cyan-50 to-sky-100 rounded-xl relative group cursor-pointer border border-sky-100 -mt-48"
-                      >
-                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                          <MapPin className="w-8 h-8 text-sky-500 mb-2" />
-                          <span className="text-sm font-semibold text-sky-700">카카오맵에서 보기</span>
-                        </div>
-                      </a>
-                    )}
-
-                    <div className="flex gap-2 mt-2.5">
-                      <a
-                        href={`https://map.kakao.com/link/to/${encodeURIComponent(accommodation.name)},${accommodation.latitude},${accommodation.longitude}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-[#FEE500] hover:bg-[#FDD800] rounded-xl text-xs font-bold text-[#3C1E1E] transition-colors shadow-sm"
-                      >
-                        <Navigation className="w-3.5 h-3.5" /> 길찾기
-                      </a>
-                      <a
-                        href={`https://map.naver.com/p/search/${encodeURIComponent(accommodation.name)}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 bg-[#03C75A] hover:bg-[#02b350] rounded-xl text-xs font-bold text-white transition-colors shadow-sm"
-                      >
-                        <Map className="w-3.5 h-3.5" /> 네이버지도
-                      </a>
-                    </div>
-                  </>
-                ) : (
-                  <a
-                    href={`https://map.kakao.com/link/search/${encodeURIComponent(accommodation.name + ' ' + (accommodation.address || '제주'))}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block h-48 bg-gradient-to-br from-cyan-50 to-sky-100 rounded-xl overflow-hidden relative group cursor-pointer border border-sky-100 hover:border-sky-300 transition-all"
-                  >
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <div className="w-14 h-14 bg-white rounded-2xl shadow-lg flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                        <Search className="w-7 h-7 text-sky-500" />
-                      </div>
-                      <span className="text-sm font-semibold text-sky-700">카카오맵에서 검색</span>
-                      <span className="text-[10px] text-sky-400 mt-0.5">클릭하면 지도가 열립니다</span>
-                    </div>
-                  </a>
-                )}
-
+                <KakaoMap
+                  lat={accommodation.latitude}
+                  lng={accommodation.longitude}
+                  level={3}
+                  name={accommodation.name}
+                  height="192px"
+                />
                 <div className="mt-3 text-xs text-slate-500 flex items-start gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-slate-400 mt-0.5 flex-shrink-0" />
                   <span>{accommodation.address}</span>
@@ -673,6 +538,15 @@ export default function AccommodationDetail() {
       </div>
 
       <Footer />
+
+      {/* 이미지 라이트박스 */}
+      {lightboxIndex !== null && (
+        <ImageLightbox
+          images={images}
+          initialIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
 
       {/* 관리자 수정 모달 */}
       {isAdmin && (

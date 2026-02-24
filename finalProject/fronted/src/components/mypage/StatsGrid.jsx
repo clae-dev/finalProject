@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, MessageSquare, Bookmark, Users } from 'lucide-react';
+import { FileText, MessageSquare, Heart, Users } from 'lucide-react';
 
 const getStats = (memberData) => [
   { label: '작성글', icon: FileText, value: memberData?.postCount || 0, bg: 'bg-sky-50', text: 'text-sky-600' },
   { label: '후기', icon: MessageSquare, value: memberData?.reviewCount || 0, bg: 'bg-emerald-50', text: 'text-emerald-600' },
-  { label: '스크랩', icon: Bookmark, value: memberData?.scrapCount || 0, bg: 'bg-amber-50', text: 'text-amber-600' },
+  { label: '저장', icon: Heart, value: memberData?.wishlistCount ?? memberData?.scrapCount ?? 0, bg: 'bg-rose-50', text: 'text-rose-500' },
   { label: '동행 참여', icon: Users, value: memberData?.companionCount || 0, bg: 'bg-violet-50', text: 'text-violet-600' },
 ];
 

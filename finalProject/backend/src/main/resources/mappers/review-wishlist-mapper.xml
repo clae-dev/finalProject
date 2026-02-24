@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.kh.project.companion.mapper.ReviewWishlistMapper">
+
+    <select id="checkWishlist" resultType="int">
+        SELECT COUNT(*)
+        FROM REVIEW_WISHLIST
+        WHERE REVIEW_NO = #{reviewNo}
+          AND MEMBER_NO = #{memberNo}
+    </select>
+
+    <insert id="insertWishlist">
+        INSERT INTO REVIEW_WISHLIST (WISHLIST_NO, REVIEW_NO, MEMBER_NO)
+        VALUES (SEQ_REVIEW_WISHLIST_NO.NEXTVAL, #{reviewNo}, #{memberNo})
+    </insert>
+
+    <delete id="deleteWishlist">
+        DELETE FROM REVIEW_WISHLIST
+        WHERE REVIEW_NO = #{reviewNo}
+          AND MEMBER_NO = #{memberNo}
+    </delete>
+
+    <select id="selectWishlistByMember" resultType="java.util.HashMap">
+        SELECT
+            R.REVIEW_NO     AS "reviewNo",
+            R.TITLE         AS "title",
+            R.RATING        AS "rating",
+            R.IMAGE_URL     AS "imageUrl",
+            W.CREATED_AT    AS "createdAt"
+        FROM REVIEW_WISHLIST W
+        JOIN COMPANION_REVIEW R ON W.REVIEW_NO = R.REVIEW_NO
+        WHERE W.MEMBER_NO = #{memberNo}
+        ORDER BY W.CREATED_AT DESC
+    </select>
+
+</mapper>

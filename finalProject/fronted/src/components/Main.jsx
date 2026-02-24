@@ -9,6 +9,7 @@ import WaveDivider from './main/WaveDivider';
 import CompanionsSection from './main/CompanionsSection';
 import AccommodationsSection from './main/AccommodationsSection';
 import ReviewsSection from './main/ReviewsSection';
+import MapSection from './main/MapSection';
 import CTASection from './main/CTASection';
 import Footer from './main/Footer';
 
@@ -18,6 +19,7 @@ export default function Main() {
       <Header />
       <HeroSection />
       <SpotsSection />
+      <MapSection />
       <CompanionsSection />
       <AccommodationsSection />
       <ReviewsSection />

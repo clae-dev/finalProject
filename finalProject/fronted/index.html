@@ -16,7 +16,15 @@
   <body>
     <div id="root"></div>
     <script>var global = globalThis;</script>
+    <!-- Kakao Maps SDK -->
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d9dd19e9fb95ab8245e1a46f41ba4b5a&autoload=false"></script>
+    <!-- Kakao JS SDK (공유 기능) -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
+    <script>
+      if (window.Kakao && !window.Kakao.isInitialized()) {
+        window.Kakao.init('d9dd19e9fb95ab8245e1a46f41ba4b5a');
+      }
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.kh.project.accommodation.mapper.AccommodationWishlistMapper">
+
+    <!-- 찜 여부 확인 -->
+    <select id="checkWishlist" resultType="int">
+        SELECT COUNT(*)
+        FROM ACCOM_WISHLIST
+        WHERE ACCOMMODATION_NO = #{accommodationNo}
+          AND MEMBER_NO = #{memberNo}
+    </select>
+
+    <!-- 찜 추가 -->
+    <insert id="insertWishlist">
+        INSERT INTO ACCOM_WISHLIST (WISHLIST_NO, ACCOMMODATION_NO, MEMBER_NO)
+        VALUES (SEQ_ACCOM_WISHLIST_NO.NEXTVAL, #{accommodationNo}, #{memberNo})
+    </insert>
+
+    <!-- 찜 삭제 -->
+    <delete id="deleteWishlist">
+        DELETE FROM ACCOM_WISHLIST
+        WHERE ACCOMMODATION_NO = #{accommodationNo}
+          AND MEMBER_NO = #{memberNo}
+    </delete>
+
+    <!-- 회원 찜 목록 조회 -->
+    <select id="selectWishlistByMember" resultType="java.util.HashMap">
+        SELECT
+            A.ACCOMMODATION_NO    AS "accommodationNo",
+            A.NAME                AS "name",
+            A.REGION              AS "region",
+            A.ACCOMMODATION_TYPE  AS "accommodationType",
+            A.THUMBNAIL_URL       AS "thumbnailUrl",
+            A.PRICE_MIN           AS "priceMin",
+            W.CREATED_AT          AS "createdAt"
+        FROM ACCOM_WISHLIST W
+        JOIN ACCOMMODATION A ON W.ACCOMMODATION_NO = A.ACCOMMODATION_NO
+        WHERE W.MEMBER_NO = #{memberNo}
+        ORDER BY W.CREATED_AT DESC
+    </select>
+
+</mapper>
