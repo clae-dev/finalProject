@@ -6,6 +6,14 @@ import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import './index.css';
 
+// 모든 <img> src에서 http:// → https:// 자동 변환 (Mixed Content 방지)
+const _srcDesc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+Object.defineProperty(HTMLImageElement.prototype, 'src', {
+  get() { return _srcDesc.get.call(this); },
+  set(v) { _srcDesc.set.call(this, typeof v === 'string' && v.startsWith('http://') ? v.replace('http://', 'https://') : v); },
+  configurable: true, enumerable: true,
+});
+
 // 이미지 로드 실패 시 기본 placeholder로 대체 (404 방지)
 document.addEventListener('error', (e) => {
   if (e.target.tagName === 'IMG' && !e.target.dataset.fallback) {

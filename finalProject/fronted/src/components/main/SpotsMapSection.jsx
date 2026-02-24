@@ -513,7 +513,7 @@ export default function SpotsMapSection() {
       },
       {
         location: new window.kakao.maps.LatLng(33.3617, 126.5292),
-        radius: 50000,
+        radius: 20000,
         sort: window.kakao.maps.services.SortBy.ACCURACY,
       }
     );
