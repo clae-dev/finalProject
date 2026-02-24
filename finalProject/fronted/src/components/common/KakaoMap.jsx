@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { MapPin, Navigation } from 'lucide-react';
 
 /**
@@ -23,6 +23,12 @@ export default function KakaoMap({
 }) {
   const mapRef = useRef(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const onMarkerClickRef = useRef(onMarkerClick);
+
+  // 콜백을 ref로 보관 → 변경돼도 useEffect 재실행 없음
+  useEffect(() => {
+    onMarkerClickRef.current = onMarkerClick;
+  }, [onMarkerClick]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -32,53 +38,55 @@ export default function KakaoMap({
     if (!hasCoords && !hasMarkers) return;
 
     const initMap = () => {
-      // 중심 좌표: props lat/lng 또는 markers 첫번째
-      const centerLat = lat || (hasMarkers ? markers[0].lat : 33.36);
-      const centerLng = lng || (hasMarkers ? markers[0].lng : 126.53);
+      try {
+        const centerLat = lat || (hasMarkers ? markers[0].lat : 33.36);
+        const centerLng = lng || (hasMarkers ? markers[0].lng : 126.53);
 
-      const position = new window.kakao.maps.LatLng(centerLat, centerLng);
-      const map = new window.kakao.maps.Map(mapRef.current, {
-        center: position,
-        level,
-      });
-
-      // 단일 마커 (lat/lng 직접 지정)
-      if (hasCoords && !hasMarkers) {
-        const marker = new window.kakao.maps.Marker({ position });
-        marker.setMap(map);
-        if (name) {
-          const infowindow = new window.kakao.maps.InfoWindow({
-            content: `<div style="padding:5px 10px;font-size:12px;font-weight:bold;white-space:nowrap;">${name}</div>`,
-          });
-          infowindow.open(map, marker);
-        }
-      }
-
-      // 다중 마커
-      if (hasMarkers) {
-        markers.forEach((m) => {
-          const pos = new window.kakao.maps.LatLng(m.lat, m.lng);
-          const marker = new window.kakao.maps.Marker({ position: pos, map });
-          if (m.name) {
-            const infowindow = new window.kakao.maps.InfoWindow({
-              content: `<div style="padding:4px 8px;font-size:11px;font-weight:bold;white-space:nowrap;">${m.name}</div>`,
-            });
-            window.kakao.maps.event.addListener(marker, 'click', () => {
-              infowindow.open(map, marker);
-              if (onMarkerClick) onMarkerClick(m);
-            });
-          }
+        const position = new window.kakao.maps.LatLng(centerLat, centerLng);
+        const map = new window.kakao.maps.Map(mapRef.current, {
+          center: position,
+          level,
         });
 
-        // 모든 마커가 보이도록 bounds 조정
-        if (markers.length > 1) {
-          const bounds = new window.kakao.maps.LatLngBounds();
-          markers.forEach((m) => bounds.extend(new window.kakao.maps.LatLng(m.lat, m.lng)));
-          map.setBounds(bounds);
+        // 단일 마커
+        if (hasCoords && !hasMarkers) {
+          const marker = new window.kakao.maps.Marker({ position });
+          marker.setMap(map);
+          if (name) {
+            const infowindow = new window.kakao.maps.InfoWindow({
+              content: `<div style="padding:5px 10px;font-size:12px;font-weight:bold;white-space:nowrap;">${name}</div>`,
+            });
+            infowindow.open(map, marker);
+          }
         }
-      }
 
-      setMapLoaded(true);
+        // 다중 마커
+        if (hasMarkers) {
+          markers.forEach((m) => {
+            const pos = new window.kakao.maps.LatLng(m.lat, m.lng);
+            const marker = new window.kakao.maps.Marker({ position: pos, map });
+            if (m.name) {
+              const infowindow = new window.kakao.maps.InfoWindow({
+                content: `<div style="padding:4px 8px;font-size:11px;font-weight:bold;white-space:nowrap;">${m.name}</div>`,
+              });
+              window.kakao.maps.event.addListener(marker, 'click', () => {
+                infowindow.open(map, marker);
+                if (onMarkerClickRef.current) onMarkerClickRef.current(m);
+              });
+            }
+          });
+
+          if (markers.length > 1) {
+            const bounds = new window.kakao.maps.LatLngBounds();
+            markers.forEach((m) => bounds.extend(new window.kakao.maps.LatLng(m.lat, m.lng)));
+            map.setBounds(bounds);
+          }
+        }
+      } catch (e) {
+        console.error('카카오맵 초기화 오류', e);
+      } finally {
+        setMapLoaded(true);
+      }
     };
 
     if (window.kakao?.maps?.Map) {
@@ -93,22 +101,26 @@ export default function KakaoMap({
     let retryCount = 0;
     const interval = setInterval(() => {
       retryCount++;
-      if (window.kakao?.maps?.load) {
+      if (window.kakao?.maps?.Map) {
+        clearInterval(interval);
+        initMap();
+      } else if (window.kakao?.maps?.load) {
         clearInterval(interval);
         window.kakao.maps.load(initMap);
       } else if (retryCount > 20) {
         clearInterval(interval);
+        setMapLoaded(true); // SDK 로드 실패 시 로딩 상태 해제
       }
     }, 300);
 
     return () => clearInterval(interval);
-  }, [lat, lng, level, name, markers, onMarkerClick]);
+  // onMarkerClick 제외 – ref로 처리
+  }, [lat, lng, level, name, markers]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const hasCoords = lat && lng;
   const hasMarkers = markers && markers.length > 0;
 
   if (!hasCoords && !hasMarkers) {
-    // 좌표 없음: 카카오맵 검색 링크
     return (
       <a
         href={`https://map.kakao.com/link/search/${encodeURIComponent(name + ' 제주')}`}
@@ -126,23 +138,25 @@ export default function KakaoMap({
 
   return (
     <div>
-      <div
-        ref={mapRef}
-        className="rounded-xl overflow-hidden border border-slate-200"
-        style={{ width: '100%', height }}
-      />
-      {!mapLoaded && (
+      {/* position:relative 래퍼로 로딩 오버레이를 절대 위치로 처리 */}
+      <div style={{ position: 'relative', width: '100%', height }}>
         <div
-          className="flex items-center justify-center bg-slate-50 rounded-xl border border-slate-200 -mt-[var(--h)]"
-          style={{ height, marginTop: `-${height}` }}
-        >
-          <div className="text-center">
-            <MapPin className="w-8 h-8 text-slate-300 mx-auto mb-1" />
-            <p className="text-xs text-slate-400">지도 불러오는 중...</p>
+          ref={mapRef}
+          className="rounded-xl overflow-hidden border border-slate-200"
+          style={{ width: '100%', height: '100%' }}
+        />
+        {!mapLoaded && (
+          <div
+            className="absolute inset-0 flex items-center justify-center bg-slate-50 rounded-xl border border-slate-200"
+          >
+            <div className="text-center">
+              <MapPin className="w-8 h-8 text-slate-300 mx-auto mb-1" />
+              <p className="text-xs text-slate-400">지도 불러오는 중...</p>
+            </div>
           </div>
-        </div>
-      )}
-      {/* 길찾기 / 네이버지도 버튼 */}
+        )}
+      </div>
+      {/* 길찾기 버튼 (단일 마커일 때만) */}
       {hasCoords && name && (
         <div className="flex gap-2 mt-2">
           <a
