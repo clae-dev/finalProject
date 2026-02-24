@@ -660,7 +660,7 @@ export default function SpotsMapSection() {
           </div>
 
           {/* ─── 우측: 카카오맵 ─── */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 lg:mt-10">
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl shadow-sky-200/30 border border-white/80 overflow-hidden">
               {/* 맵 헤더 + 검색바 */}
               <div className="px-4 pt-4 pb-3 border-b border-sky-50 space-y-3">
