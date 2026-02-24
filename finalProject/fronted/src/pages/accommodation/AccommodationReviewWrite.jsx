@@ -5,6 +5,9 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useCreateAccommodationReview } from '../../api/accommodation/useAccommodationReview';
 import { AuthContext } from '../../components/AuthContext';
+import { compressImage } from '../../lib/imageUtils';
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 const RECOMMEND_OPTIONS = ['혼행러', '커플', '가족', '친구', '비즈니스'];
 
@@ -25,14 +28,27 @@ export default function AccommodationReviewWrite() {
 
   const createMutation = useCreateAccommodationReview(Number(accommodationNo));
 
-  const handleImageAdd = (e) => {
+  const handleImageAdd = async (e) => {
     const files = Array.from(e.target.files);
     if (images.length + files.length > 5) {
       alert('이미지는 최대 5장까지 첨부할 수 있습니다.');
       return;
     }
 
-    const newImages = [...images, ...files].slice(0, 5);
+    const valid = files.filter(file => {
+      if (!file.type.startsWith('image/')) {
+        alert(`이미지 파일만 업로드 가능합니다. (${file.name})`);
+        return false;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        alert(`파일 크기는 10MB 이하만 가능합니다. (${file.name})`);
+        return false;
+      }
+      return true;
+    });
+
+    const compressed = await Promise.all(valid.map(f => compressImage(f, 1200, 0.80)));
+    const newImages = [...images, ...compressed].slice(0, 5);
     const newPreviews = newImages.map(f => URL.createObjectURL(f));
 
     setImages(newImages);

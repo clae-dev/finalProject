@@ -8,6 +8,7 @@ import { useCreateReview } from '../../api/review/useReview';
 import { AuthContext } from '../../components/AuthContext';
 import heroStar from '../../assets/images/companion/별.png';
 import heroFriends from '../../assets/images/companion/친구.png';
+import { compressImage } from '../../lib/imageUtils';
 
 const heroSlides = [heroStar, heroFriends];
 
@@ -97,12 +98,13 @@ export default function ReviewWrite() {
     return true;
   };
 
-  const handleThumbnailChange = (e) => {
+  const handleThumbnailChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
     if (!validateFile(file)) return;
-    setThumbnail(file);
-    setThumbnailPreview(URL.createObjectURL(file));
+    const compressed = await compressImage(file, 800, 0.75);
+    setThumbnail(compressed);
+    setThumbnailPreview(URL.createObjectURL(compressed));
   };
 
   const removeThumbnail = () => {
@@ -111,13 +113,14 @@ export default function ReviewWrite() {
     setThumbnailPreview(null);
   };
 
-  const handleContentImagesChange = (e) => {
+  const handleContentImagesChange = async (e) => {
     const files = Array.from(e.target.files);
     const remaining = MAX_CONTENT_IMAGES - contentImages.length;
     if (remaining <= 0) { alert(`본문 이미지는 최대 ${MAX_CONTENT_IMAGES}장까지 가능합니다.`); return; }
     const valid = files.slice(0, remaining).filter(validateFile);
-    setContentImages(prev => [...prev, ...valid]);
-    setContentPreviews(prev => [...prev, ...valid.map(f => URL.createObjectURL(f))]);
+    const compressed = await Promise.all(valid.map(f => compressImage(f, 1200, 0.80)));
+    setContentImages(prev => [...prev, ...compressed]);
+    setContentPreviews(prev => [...prev, ...compressed.map(f => URL.createObjectURL(f))]);
   };
 
   const removeContentImage = (index) => {

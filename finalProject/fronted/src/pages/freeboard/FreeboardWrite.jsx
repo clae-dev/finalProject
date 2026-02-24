@@ -6,6 +6,7 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useCreateFreeBoard, useUpdateFreeBoard, useFreeBoardDetail } from '../../api/freeboard/useFreeboard';
 import { AuthContext } from '../../components/AuthContext';
+import { compressImage } from '../../lib/imageUtils';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_IMAGES = 5;
@@ -76,13 +77,14 @@ export default function FreeboardWrite() {
     return true;
   };
 
-  const handleImagesChange = (e) => {
+  const handleImagesChange = async (e) => {
     const files = Array.from(e.target.files);
     const remaining = MAX_IMAGES - images.length;
     if (remaining <= 0) { alert(`이미지는 최대 ${MAX_IMAGES}장까지 가능합니다.`); return; }
     const valid = files.slice(0, remaining).filter(validateFile);
-    setImages(prev => [...prev, ...valid]);
-    setPreviews(prev => [...prev, ...valid.map(f => URL.createObjectURL(f))]);
+    const compressed = await Promise.all(valid.map(f => compressImage(f, 1200, 0.80)));
+    setImages(prev => [...prev, ...compressed]);
+    setPreviews(prev => [...prev, ...compressed.map(f => URL.createObjectURL(f))]);
   };
 
   const removeImage = (index) => {

@@ -5,6 +5,7 @@ import { AuthContext } from '../AuthContext';
 import { useUpdateMember } from '../../api/member/useMember';
 import { checkNickname, uploadProfileImage } from '../../api/member/memberAPI';
 import { saveToken } from '../../api/core/tokenStorage';
+import { compressImage } from '../../lib/imageUtils';
 
 const AVATAR_STYLES = ['adventurer', 'fun-emoji', 'avataaars', 'bottts', 'pixel-art', 'lorelei'];
 
@@ -326,7 +327,8 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
     }
     setUploading(true);
     try {
-      const result = await uploadProfileImage(file);
+      const compressed = await compressImage(file, 400, 0.80);
+      const result = await uploadProfileImage(compressed);
       if (result.success) {
         setForm(prev => ({ ...prev, memberProfileImg: result.imageUrl }));
       } else {
