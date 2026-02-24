@@ -66,11 +66,13 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 허용할 Origin (프론트엔드 개발 서버 주소)
+        // 허용할 Origin (프론트엔드 개발 서버 + 배포 도메인)
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:5173",
             "http://localhost:3000",
-            "http://127.0.0.1:5173"
+            "http://127.0.0.1:5173",
+            "https://hondi.site",
+            "https://www.hondi.site"
         ));
 
         // 허용할 HTTP 메서드
