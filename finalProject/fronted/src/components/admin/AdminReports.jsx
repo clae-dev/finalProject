@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Loader2, Flag, X, Eye } from 'lucide-react';
 import { useAdminReports, useAdminReportDetail, useUpdateReportStatus } from '../../api/admin/useAdmin';
@@ -80,6 +80,16 @@ export default function AdminReports() {
     setEditStatus('');
     setEditResult('');
   };
+
+  // 모달 열릴 때 body 스크롤 잠금
+  useEffect(() => {
+    if (selectedReportNo) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [selectedReportNo]);
 
   const handleUpdateStatus = async () => {
     if (!editStatus) return;
