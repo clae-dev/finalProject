@@ -22,7 +22,7 @@ export default function AccommodationReviewCard({ review, currentUserNo, onDelet
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-100 to-cyan-100 overflow-hidden flex items-center justify-center">
             {review.authorProfileImg ? (
-              <img src={review.authorProfileImg} alt="" className="w-full h-full object-cover" />
+              <img src={review.authorProfileImg} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
             ) : (
               <span className="text-sm font-bold text-sky-600">
                 {review.authorNickname?.charAt(0)}

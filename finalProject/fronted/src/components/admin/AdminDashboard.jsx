@@ -151,7 +151,7 @@ export default function AdminDashboard() {
                   <td className="px-6 py-3">
                     <div className="w-9 h-9 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow-sm overflow-hidden">
                       {member.memberProfileImg ? (
-                        <img src={member.memberProfileImg} alt="" className="w-full h-full object-cover" />
+                        <img src={member.memberProfileImg} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
                       ) : (
                         member.memberNickname?.[0] || '?'
                       )}
