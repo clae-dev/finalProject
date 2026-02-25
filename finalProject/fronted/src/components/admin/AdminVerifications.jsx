@@ -76,9 +76,7 @@ export default function AdminVerifications() {
   return (
     <div className="space-y-6">
       {/* 상태 필터 */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 p-4 flex flex-wrap items-center gap-2"
       >
         <span className="text-xs font-bold text-slate-500 mr-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>상태:</span>
@@ -97,16 +95,13 @@ export default function AdminVerifications() {
           </button>
         ))}
         <span className="ml-auto text-sm text-slate-400">총 {totalCount}건</span>
-      </motion.div>
+      </div>
 
       {/* 목록 */}
       {list.length === 0 ? (
         <div className="text-center py-12 text-slate-400 text-sm">인증 요청이 없습니다.</div>
       ) : (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+        <div
           className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg shadow-sky-100 border border-sky-50 overflow-hidden"
         >
           <div className="overflow-x-auto">
@@ -176,7 +171,7 @@ export default function AdminVerifications() {
               </tbody>
             </table>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* 페이지네이션 */}

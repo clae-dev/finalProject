@@ -104,9 +104,7 @@ export default function AdminReports() {
   return (
     <div className="space-y-6">
       {/* 필터 */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 p-4 space-y-3"
       >
         {/* 대상 유형 필터 */}
@@ -145,13 +143,10 @@ export default function AdminReports() {
             </button>
           ))}
         </div>
-      </motion.div>
+      </div>
 
       {/* 테이블 */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
+      <div
         className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg shadow-sky-100 border border-sky-50 overflow-hidden"
       >
         <div className="overflow-x-auto">
@@ -212,7 +207,7 @@ export default function AdminReports() {
             </tbody>
           </table>
         </div>
-      </motion.div>
+      </div>
 
       {/* 페이지네이션 */}
       {totalPages > 1 && (
