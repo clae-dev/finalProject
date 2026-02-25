@@ -27,7 +27,7 @@
             CB.TITLE            AS "title",
             CB.TRAVEL_DATE      AS "travelDate",
             CB.MAX_MEMBERS      AS "maxMembers",
-            CB.CURRENT_MEMBERS  AS "currentMembers",
+            (SELECT COUNT(*) FROM COMPANION_JOIN J WHERE J.COMPANION_NO = CB.COMPANION_NO AND J.STATUS IN ('W', 'A')) AS "currentMembers",
             CB.IMAGE_URL        AS "imageUrl",
             W.CREATED_AT        AS "createdAt"
         FROM COMPANION_WISHLIST W
