@@ -105,6 +105,7 @@ public class AdminController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String searchType) {
 
+        size = Math.min(size, 100);
         Map<String, Object> response = new HashMap<>();
 
         try {
