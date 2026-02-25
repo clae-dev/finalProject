@@ -337,18 +337,11 @@ finalProject/
 
 ## 주요 화면
 
-<!--
-  영상 업로드 방법:
-  1. GitHub Issue 또는 PR 댓글 창에서 mp4 파일을 드래그 앤 드롭
-  2. 생성된 URL(https://github.com/user-attachments/assets/...)을 아래 src에 붙여넣기
-  3. 댓글은 저장하지 않아도 URL은 유효함
--->
-
 ### 메인 페이지
 > Framer Motion 애니메이션 · 숙소/동행/후기 하이라이트 · 반응형 레이아웃
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/MAIN_VIDEO_ID" width="800" autoplay loop muted playsinline />
+  <video src="https://github.com/user-attachments/assets/8893a548-7f66-46f9-b4c8-18a82070cac7" width="800" autoplay loop muted playsinline />
 </div>
 
 <br />
@@ -357,7 +350,7 @@ finalProject/
 > WebSocket (STOMP / SockJS) 기반 실시간 채팅 · 메시지 읽음 처리
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/CHAT_VIDEO_ID" width="800" autoplay loop muted playsinline />
+  <video src="https://github.com/user-attachments/assets/9c580144-0558-4f4a-b3c3-140ba03d60c4" width="800" autoplay loop muted playsinline />
 </div>
 
 <br />
@@ -366,7 +359,7 @@ finalProject/
 > 일정·지역·태그 기반 동행 모집 · 신청 및 수락/거절 플로우
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/COMPANION_VIDEO_ID" width="800" autoplay loop muted playsinline />
+  <video src="https://github.com/user-attachments/assets/f5278b0b-c4f5-4da5-8fbc-79dd4731ecda" width="800" autoplay loop muted playsinline />
 </div>
 
 <br />
@@ -375,7 +368,7 @@ finalProject/
 > Kakao Maps SDK · Places API 카테고리 검색 (맛집·카페·관광지)
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/MAP_VIDEO_ID" width="800" autoplay loop muted playsinline />
+  <video src="https://github.com/user-attachments/assets/bbd5fd3d-54e3-4612-afbd-d63477fbbf21" width="800" autoplay loop muted playsinline />
 </div>
 
 <br />
@@ -384,7 +377,7 @@ finalProject/
 > SSE(Server-Sent Events) 기반 알림 · 동행 신청·댓글·채팅 알림 배지
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/NOTIFICATION_VIDEO_ID" width="800" autoplay loop muted playsinline />
+  <video src="https://github.com/user-attachments/assets/75cf7dc0-97ab-4a4b-bc90-cc99d15ac22d" width="800" autoplay loop muted playsinline />
 </div>
 
 <br />
@@ -393,7 +386,7 @@ finalProject/
 > Kakao OAuth 2.0 인증 · JWT 토큰 발급
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/LOGIN_VIDEO_ID" width="800" autoplay loop muted playsinline />
+  <video src="https://github.com/user-attachments/assets/8f3a24aa-c363-4f35-8d61-0d6be69ea18c" width="800" autoplay loop muted playsinline />
 </div>
 
 <br />
@@ -402,7 +395,7 @@ finalProject/
 > 회원·게시글·신고·문의·공지 통합 관리 · 권한(ROLE) 기반 접근 제어
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/ADMIN_VIDEO_ID" width="800" autoplay loop muted playsinline />
+  <video src="https://github.com/user-attachments/assets/a3cad3cc-d734-4cb1-bafe-bdf39f309b89" width="800" autoplay loop muted playsinline />
 </div>
 
 ---
