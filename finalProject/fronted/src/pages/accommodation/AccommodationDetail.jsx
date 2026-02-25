@@ -55,11 +55,11 @@ export default function AccommodationDetail() {
     return `${priceMax.toLocaleString()}`;
   };
 
-  // 편의시설 파싱 (쉼표 + 슬래시 모두 분리)
+  // 편의시설 파싱 (쉼표 기준 분리, 슬래시는 항목 내 구분으로 유지)
   const parseFacilities = (facilities) => {
     if (!facilities) return [];
     return facilities
-      .split(/[,/]/)
+      .split(',')
       .map(f => f.trim())
       .filter(f => f && f.length > 0 && f !== '등');
   };
@@ -407,9 +407,17 @@ export default function AccommodationDetail() {
                   <Compass className="w-[18px] h-[18px] text-rose-400" />
                   숙소 소개
                 </h2>
-                <p className="text-[13px] text-slate-600 leading-relaxed bg-slate-50 p-4 rounded-lg whitespace-pre-line">
-                  {accommodation.recommendationReason}
-                </p>
+                <ul className="space-y-2.5 bg-slate-50 p-5 rounded-lg">
+                  {accommodation.recommendationReason
+                    .split(/[.]\s*/)
+                    .filter(s => s.trim())
+                    .map((sentence, idx) => (
+                      <li key={idx} className="flex items-start gap-2.5 text-[13px] text-slate-600 leading-relaxed">
+                        <Check className="w-4 h-4 text-sky-500 flex-shrink-0 mt-0.5" />
+                        <span>{sentence.trim()}</span>
+                      </li>
+                    ))}
+                </ul>
               </div>
             )}
 
