@@ -124,7 +124,7 @@ export default function Header() {
           <div className="max-w-7xl mx-auto px-6">
             <div className="flex items-center justify-between h-18 relative">
               {/* 로고 - 왼쪽 */}
-              <Link to="/home" className="cursor-pointer flex items-center gap-3 group">
+              <Link to="/" className="cursor-pointer flex items-center gap-3 group">
                 <img src={logo} alt="혼디" className="h-14 group-hover:scale-105 transition-transform duration-300" />
                 <div className="flex flex-col leading-tight">
                   <span
@@ -210,7 +210,7 @@ export default function Header() {
                     >
                       <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-sky-500 font-bold text-sm shadow-md shadow-sky-200/50 overflow-hidden">
                         {user.memberProfileImg ? (
-                          <img src={user.memberProfileImg} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = user.memberNickname?.[0] || '?'; }} />
+                          <img src={user.memberProfileImg} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = user.memberNickname?.[0] || '?'; }} />
                         ) : (
                           user.memberNickname?.[0] || '?'
                         )}
