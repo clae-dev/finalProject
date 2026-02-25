@@ -635,9 +635,9 @@ export default function SpotsMapSection() {
             className="text-3xl md:text-5xl font-black text-slate-800"
             style={{ fontFamily: "'GmarketSans', sans-serif" }}
           >
-            혼행러들이 사랑한{' '}
+            혼행러들이 궁금해하는{' '}
             <span className="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">
-              명소
+              제주도
             </span>
           </h2>
           <p className="text-slate-500 mt-3 text-base" style={{ fontFamily: "'Pretendard', sans-serif" }}>
@@ -645,221 +645,256 @@ export default function SpotsMapSection() {
           </p>
         </motion.div>
 
-        {/* 스플릿 레이아웃 */}
+        {/* ─── 통합 검색 카드 ─── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="grid grid-cols-1 lg:grid-cols-5 gap-5"
+          className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl shadow-sky-200/30 border border-white/80 overflow-hidden"
         >
-          {/* ─── 좌측: 검색 결과 리스트 ─── */}
-          <div className="lg:col-span-2 flex flex-col gap-3">
-            {/* 리스트 제목 */}
-            <div className="flex items-center justify-between px-1">
-              <div className="flex items-center gap-2">
-                <div className="w-1 h-5 bg-gradient-to-b from-sky-400 to-cyan-400 rounded-full" />
-                <span className="text-sm font-bold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-                  {searchResults.length > 0
-                    ? `검색 결과 ${searchResults.length}곳`
-                    : '장소 검색'}
-                </span>
+          {/* 상단: 검색바 + 카테고리 */}
+          <div className="px-5 pt-5 pb-4 border-b border-sky-50 space-y-3">
+            <form
+              onSubmit={(e) => { e.preventDefault(); handleSearch(1); }}
+              className="flex gap-2"
+            >
+              <div className="relative flex-1">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="맛집, 카페, 관광지, 주소 검색..."
+                  className="w-full pl-10 pr-10 py-3 text-sm bg-slate-50/80 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent transition-all"
+                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                />
+                {searchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
               </div>
+              <button
+                type="submit"
+                disabled={!searchQuery.trim() || isSearching}
+                className="px-5 py-3 bg-sky-500 hover:bg-sky-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-2xl transition-colors flex items-center gap-1.5 flex-shrink-0"
+              >
+                {isSearching ? (
+                  <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Search className="w-4 h-4" />
+                )}
+                검색
+              </button>
               {searchResults.length > 0 && (
                 <button
+                  type="button"
                   onClick={clearSearch}
-                  className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+                  className="px-3 py-3 bg-slate-100 hover:bg-slate-200 text-slate-500 text-sm font-bold rounded-2xl transition-colors flex-shrink-0"
+                  title="초기화"
                 >
-                  <X className="w-3.5 h-3.5" /> 초기화
+                  <X className="w-4 h-4" />
                 </button>
               )}
+            </form>
+
+            {/* 카테고리 + 추천 검색어 */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-0.5 scrollbar-hide">
+              {CATEGORIES.map(({ code, label, emoji }) => (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => handleCategorySearch(code)}
+                  disabled={isSearching}
+                  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold border flex-shrink-0 transition-all ${
+                    activeCategory === code
+                      ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-200'
+                  }`}
+                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                >
+                  <span>{emoji}</span>
+                  {label}
+                </button>
+              ))}
+              <div className="w-px h-5 bg-slate-200 flex-shrink-0 mx-1" />
+              {SUGGEST_KEYWORDS.map((kw) => (
+                <button
+                  key={kw}
+                  onClick={() => handleSearch(1, kw)}
+                  className="px-3 py-2 bg-sky-50/80 hover:bg-sky-100 text-[11px] font-semibold text-sky-500 rounded-full border border-sky-100/80 hover:border-sky-200 transition-all flex-shrink-0"
+                >
+                  {kw}
+                </button>
+              ))}
             </div>
-
-            {/* 카드 리스트 */}
-            <AnimatePresence mode="wait">
-              {searchResults.length === 0 ? (
-                <motion.div
-                  key="empty"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="py-8 px-4 text-center bg-white/60 backdrop-blur-sm rounded-2xl border border-sky-100"
-                >
-                  <div className="w-14 h-14 mx-auto mb-3 bg-sky-100 rounded-2xl flex items-center justify-center">
-                    <Search className="w-7 h-7 text-sky-400" />
-                  </div>
-                  <p className="text-sm font-bold text-slate-600 mb-1" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
-                    제주도 어디든 검색해보세요
-                  </p>
-                  <p className="text-xs text-slate-400 mb-4">맛집, 카페, 관광지, 주소 등 자유롭게 검색!</p>
-                  <div className="flex flex-wrap justify-center gap-1.5">
-                    {SUGGEST_KEYWORDS.map((kw) => (
-                      <button
-                        key={kw}
-                        onClick={() => handleSearch(1, kw)}
-                        className="px-3 py-1.5 bg-sky-50 hover:bg-sky-100 text-xs font-semibold text-sky-600 rounded-full border border-sky-100 hover:border-sky-200 transition-all"
-                      >
-                        {kw}
-                      </button>
-                    ))}
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="results"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="space-y-2.5"
-                >
-                  {searchResults.map((place, idx) => (
-                    <motion.div
-                      key={`${place.id}-${idx}`}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3, delay: Math.min(idx * 0.05, 0.5) }}
-                    >
-                      <SearchResultCard
-                        place={place}
-                        selected={selectedResult?.id === place.id}
-                        onClick={() => handleResultClick(place)}
-                      />
-                    </motion.div>
-                  ))}
-                  {hasMoreResults && (
-                    <button
-                      onClick={handleLoadMore}
-                      disabled={isSearching}
-                      className="w-full py-3 text-sm font-bold text-sky-600 bg-sky-50 hover:bg-sky-100 rounded-2xl border border-sky-200 transition-colors flex items-center justify-center gap-2"
-                    >
-                      {isSearching ? (
-                        <div className="w-4 h-4 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <>더보기</>
-                      )}
-                    </button>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* 선택된 검색 결과 상세 패널 */}
-            <AnimatePresence mode="wait">
-              {selectedResult && (
-                <PlaceDetailPanel place={selectedResult} onClose={() => setSelectedResult(null)} />
-              )}
-            </AnimatePresence>
           </div>
 
-          {/* ─── 우측: 카카오맵 ─── */}
-          <div className="lg:col-span-3 lg:mt-10">
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl shadow-sky-200/30 border border-white/80 overflow-hidden">
-              {/* 맵 헤더 + 검색바 */}
-              <div className="px-4 pt-4 pb-3 border-b border-sky-50 space-y-3">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-sky-500 flex items-center justify-center shadow-sm">
-                      <MapPin className="w-4 h-4 text-white" />
+          {/* 메인: 지도 + 결과 패널 */}
+          <div className="relative">
+            {/* 지도 (항상 전체 너비) */}
+            <div className="p-3">
+              <KakaoMap
+                lat={33.3617}
+                lng={126.5292}
+                level={10}
+                height="520px"
+                onMapReady={(map) => { mapInstanceRef.current = map; }}
+              />
+            </div>
+
+            {/* 검색 결과 없을 때: 지도 위 안내 오버레이 */}
+            {searchResults.length === 0 && !isSearching && (
+              <div className="absolute top-6 left-6 pointer-events-none">
+                <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg px-5 py-4 border border-white/80 pointer-events-auto">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-sky-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Search className="w-5 h-5 text-sky-400" />
                     </div>
                     <div>
-                      <p className="text-sm font-black text-slate-700" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
-                        제주 명소 지도
+                      <p className="text-sm font-bold text-slate-700" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+                        제주도 어디든 검색해보세요
                       </p>
-                      <p className="text-[10px] text-slate-400">마커를 클릭하면 명소 정보를 볼 수 있어요</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">위 검색창에 장소를 입력하거나 카테고리를 선택하세요</p>
                     </div>
                   </div>
-                  {selectedResult && (
-                    <motion.span
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100 truncate max-w-[140px]"
-                    >
-                      📍 {selectedResult.place_name}
-                    </motion.span>
-                  )}
                 </div>
+              </div>
+            )}
 
-                {/* 검색바 */}
-                <form
-                  onSubmit={(e) => { e.preventDefault(); handleSearch(1); }}
-                  className="flex gap-2"
+            {/* 검색 결과 있을 때: 좌측 플로팅 패널 */}
+            <AnimatePresence>
+              {searchResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute top-5 left-5 bottom-5 w-[320px] hidden lg:flex flex-col bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-white/80 overflow-hidden z-[5]"
                 >
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="장소, 주소, 키워드로 검색..."
-                      className="w-full pl-9 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent transition-all"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
-                    />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => setSearchQuery('')}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  {/* 패널 헤더 */}
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 flex-shrink-0">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1 h-4 bg-gradient-to-b from-sky-400 to-cyan-400 rounded-full" />
+                      <span className="text-sm font-bold text-slate-700">
+                        검색 결과 <span className="text-sky-500">{searchResults.length}</span>곳
+                      </span>
+                    </div>
+                    <button
+                      onClick={clearSearch}
+                      className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-600 transition-colors"
+                    >
+                      <X className="w-3 h-3" /> 닫기
+                    </button>
+                  </div>
+
+                  {/* 스크롤 가능한 결과 리스트 */}
+                  <div className="flex-1 overflow-y-auto p-2.5 space-y-1.5 scrollbar-hide">
+                    {searchResults.map((place, idx) => (
+                      <motion.div
+                        key={`${place.id}-${idx}`}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.2, delay: Math.min(idx * 0.03, 0.3) }}
                       >
-                        <X className="w-3.5 h-3.5" />
+                        <SearchResultCard
+                          place={place}
+                          selected={selectedResult?.id === place.id}
+                          onClick={() => handleResultClick(place)}
+                        />
+                      </motion.div>
+                    ))}
+                    {hasMoreResults && (
+                      <button
+                        onClick={handleLoadMore}
+                        disabled={isSearching}
+                        className="w-full py-2.5 text-xs font-bold text-sky-600 bg-sky-50 hover:bg-sky-100 rounded-xl border border-sky-200 transition-colors flex items-center justify-center gap-2 mt-1"
+                      >
+                        {isSearching ? (
+                          <div className="w-3.5 h-3.5 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <>더보기</>
+                        )}
                       </button>
                     )}
                   </div>
-                  <button
-                    type="submit"
-                    disabled={!searchQuery.trim() || isSearching}
-                    className="px-4 py-2.5 bg-sky-500 hover:bg-sky-600 disabled:bg-slate-200 disabled:text-slate-400 text-white text-sm font-bold rounded-xl transition-colors flex items-center gap-1.5 flex-shrink-0"
-                  >
-                    {isSearching ? (
-                      <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
-                    ) : (
-                      <Search className="w-4 h-4" />
+
+                  {/* 선택된 장소 상세정보 */}
+                  <AnimatePresence mode="wait">
+                    {selectedResult && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.25 }}
+                        className="flex-shrink-0 border-t border-sky-100 overflow-hidden"
+                      >
+                        <PlaceDetailPanel place={selectedResult} onClose={() => setSelectedResult(null)} />
+                      </motion.div>
                     )}
-                    검색
-                  </button>
-                  {searchResults.length > 0 && (
-                    <button
-                      type="button"
-                      onClick={clearSearch}
-                      className="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold rounded-xl transition-colors flex-shrink-0"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                </form>
+                  </AnimatePresence>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-                {/* 카테고리 버튼 */}
-                <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-hide">
-                  {CATEGORIES.map(({ code, label, emoji }) => (
-                    <button
-                      key={code}
-                      type="button"
-                      onClick={() => handleCategorySearch(code)}
-                      disabled={isSearching}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border flex-shrink-0 transition-all ${
-                        activeCategory === code
-                          ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
-                          : 'bg-white text-slate-600 border-slate-200 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-200'
-                      }`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
-                    >
-                      <span>{emoji}</span>
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* 지도 */}
-              <div className="p-3">
-                <KakaoMap
-                  lat={33.3617}
-                  lng={126.5292}
-                  level={10}
-                  height="420px"
-                  onMapReady={(map) => { mapInstanceRef.current = map; }}
-                />
-              </div>
-            </div>
+            {/* 모바일: 하단 결과 시트 */}
+            <AnimatePresence>
+              {searchResults.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="lg:hidden mt-0 p-3 pt-0"
+                >
+                  <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-white/80 overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                      <span className="text-sm font-bold text-slate-700">
+                        검색 결과 <span className="text-sky-500">{searchResults.length}</span>곳
+                      </span>
+                      <button
+                        onClick={clearSearch}
+                        className="flex items-center gap-1 text-[11px] text-slate-400 hover:text-slate-600"
+                      >
+                        <X className="w-3 h-3" /> 초기화
+                      </button>
+                    </div>
+                    <div className="max-h-[280px] overflow-y-auto p-2.5 space-y-1.5 scrollbar-hide">
+                      {searchResults.map((place, idx) => (
+                        <SearchResultCard
+                          key={`${place.id}-${idx}`}
+                          place={place}
+                          selected={selectedResult?.id === place.id}
+                          onClick={() => handleResultClick(place)}
+                        />
+                      ))}
+                      {hasMoreResults && (
+                        <button
+                          onClick={handleLoadMore}
+                          disabled={isSearching}
+                          className="w-full py-2.5 text-xs font-bold text-sky-600 bg-sky-50 hover:bg-sky-100 rounded-xl border border-sky-200 transition-colors flex items-center justify-center gap-2"
+                        >
+                          {isSearching ? (
+                            <div className="w-3.5 h-3.5 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <>더보기</>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                    <AnimatePresence mode="wait">
+                      {selectedResult && (
+                        <PlaceDetailPanel place={selectedResult} onClose={() => setSelectedResult(null)} />
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       </div>
