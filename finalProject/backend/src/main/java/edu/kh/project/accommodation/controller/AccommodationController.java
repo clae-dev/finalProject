@@ -75,9 +75,10 @@ public class AccommodationController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String region) {
-        
+
+        size = Math.min(size, 100);
         Map<String, Object> response = new HashMap<>();
-        
+
         try {
             List<AccommodationDTO> list = accommodationService.getAccommodationList(page, size, region);
             int totalCount = accommodationService.getTotalCount(region);

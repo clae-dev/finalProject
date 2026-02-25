@@ -71,6 +71,7 @@ public class FreeBoardController {
             @RequestParam(defaultValue = "9") int size,
             @RequestParam(required = false) String search) {
 
+        size = Math.min(size, 100);
         Map<String, Object> response = new HashMap<>();
 
         try {

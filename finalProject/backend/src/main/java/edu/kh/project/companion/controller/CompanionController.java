@@ -81,6 +81,7 @@ public class CompanionController {
             @RequestParam(defaultValue = "9") int size,
             @RequestParam(required = false) String tag) {
 
+        size = Math.min(size, 100);
         Map<String, Object> response = new HashMap<>();
 
         try {
