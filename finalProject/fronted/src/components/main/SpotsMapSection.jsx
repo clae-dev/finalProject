@@ -1,42 +1,10 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Search, X } from 'lucide-react';
-import { useActiveSpots } from '../../api/spot/useSpot';
+import { MapPin, Search, X, Phone, Navigation, ExternalLink, Copy, Check } from 'lucide-react';
 import KakaoMap from '../common/KakaoMap';
 
-/* ─── 기본 명소 데이터 (좌표 포함) ─── */
-const DEFAULT_SPOTS = [
-  {
-    spotNo: 1, spotTitle: '월정리 해변', spotDesc: '에메랄드빛 투명한 바다',
-    spotLocation: '제주시 구좌읍 월정리',
-    spotImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800',
-    spotTag: '🔥 인기', lat: 33.4500, lng: 126.9275,
-  },
-  {
-    spotNo: 2, spotTitle: '협재해수욕장', spotDesc: '새하얀 모래와 옥빛 바다',
-    spotLocation: '제주시 한림읍 협재리',
-    spotImage: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=600',
-    spotTag: '🏖 해변', lat: 33.4474, lng: 126.3233,
-  },
-  {
-    spotNo: 3, spotTitle: '성산일출봉', spotDesc: '장엄한 일출 명소',
-    spotLocation: '서귀포시 성산읍',
-    spotImage: 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?w=600',
-    spotTag: '🌅 일출', lat: 33.5597, lng: 126.9331,
-  },
-  {
-    spotNo: 4, spotTitle: '우도', spotDesc: '섬 속의 작은 섬',
-    spotLocation: '제주시 우도면',
-    spotImage: 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=600',
-    spotTag: '🚲 우도', lat: 33.5437, lng: 126.8697,
-  },
-  {
-    spotNo: 5, spotTitle: '한라산 백록담', spotDesc: '제주의 지붕, 신비로운 분화구',
-    spotLocation: '제주시 해안동',
-    spotImage: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=600',
-    spotTag: '🌴 자연', lat: 33.3617, lng: 126.5292,
-  },
-];
+/* ─── 추천 검색어 ─── */
+const SUGGEST_KEYWORDS = ['흑돼지', '해물라면', '오름', '올레길', '감귤체험', '서핑'];
 
 /* ─── SVG 캐릭터들 (해변 씬) ─── */
 function KiteChild() {
@@ -168,154 +136,6 @@ function PalmTree() {
   );
 }
 
-/* ─── 명소 카드 (좌측 리스트) ─── */
-function SpotCard({ spot, selected, onClick }) {
-  return (
-    <motion.div
-      onClick={onClick}
-      whileHover={{ x: 4 }}
-      transition={{ duration: 0.2 }}
-      className={`flex gap-3 p-3.5 rounded-2xl cursor-pointer border-2 transition-all duration-200 ${
-        selected
-          ? 'border-sky-400 bg-white shadow-lg shadow-sky-100/80'
-          : 'border-transparent bg-white/70 hover:bg-white hover:shadow-md hover:border-sky-200'
-      }`}
-    >
-      {/* 썸네일 */}
-      <div className="relative w-[72px] h-[72px] flex-shrink-0">
-        <img
-          src={spot.spotImage}
-          alt={spot.spotTitle}
-          className="w-full h-full object-cover rounded-xl"
-        />
-        {selected && (
-          <div className="absolute inset-0 rounded-xl ring-2 ring-sky-400 ring-offset-1" />
-        )}
-      </div>
-
-      {/* 텍스트 */}
-      <div className="flex-1 min-w-0 py-0.5">
-        <span className="inline-block text-[10px] font-bold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-full mb-1 border border-sky-100">
-          {spot.spotTag}
-        </span>
-        <h3
-          className={`font-black text-sm truncate transition-colors ${selected ? 'text-sky-700' : 'text-slate-800'}`}
-          style={{ fontFamily: "'GmarketSans', sans-serif" }}
-        >
-          {spot.spotTitle}
-        </h3>
-        <p className="text-xs text-slate-500 truncate mt-0.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-          {spot.spotDesc}
-        </p>
-        <div className="flex items-center gap-1 mt-1.5">
-          <MapPin className="w-2.5 h-2.5 text-slate-400 flex-shrink-0" />
-          <span className="text-[10px] text-slate-400 truncate" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-            {spot.spotLocation}
-          </span>
-        </div>
-      </div>
-
-      {/* 선택 화살표 */}
-      <div className={`flex items-center flex-shrink-0 transition-opacity ${selected ? 'opacity-100' : 'opacity-0'}`}>
-        <div className="w-6 h-6 rounded-full bg-sky-500 flex items-center justify-center">
-          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ─── 상세 모달 ─── */
-function SpotDetailModal({ spot, onClose }) {
-  if (!spot) return null;
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 30 }}
-          transition={{ type: 'spring', duration: 0.5 }}
-          onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden"
-        >
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-black/30 backdrop-blur-md rounded-full text-white hover:bg-black/50 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-          <div className="relative h-72 sm:h-80">
-            <img src={spot.spotImage} alt={spot.spotTitle} className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute top-4 left-4">
-              <span className="px-4 py-2 bg-white/95 backdrop-blur-sm rounded-full text-sm font-bold text-slate-700 shadow-lg">
-                {spot.spotTag}
-              </span>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <h3 className="text-3xl md:text-4xl font-black text-white drop-shadow-lg"
-                style={{ fontFamily: "'GmarketSans', sans-serif" }}>
-                {spot.spotTitle}
-              </h3>
-            </div>
-          </div>
-          <div className="p-6 sm:p-8 space-y-5">
-            <p className="text-slate-600 text-base leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-              {spot.spotDesc || '제주도의 아름다운 명소입니다.'}
-            </p>
-            <div className="grid grid-cols-2 gap-3">
-              {spot.spotLocation && (
-                <div className="flex items-center gap-3 p-4 bg-sky-50/80 rounded-2xl">
-                  <div className="w-10 h-10 flex items-center justify-center bg-sky-100 rounded-xl">
-                    <MapPin className="w-5 h-5 text-sky-500" />
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-slate-400 font-medium">위치</p>
-                    <p className="text-sm text-slate-700 font-bold">{spot.spotLocation}</p>
-                  </div>
-                </div>
-              )}
-              <div className="flex items-center gap-3 p-4 bg-amber-50/80 rounded-2xl">
-                <div className="w-10 h-10 flex items-center justify-center bg-amber-100 rounded-xl">
-                  <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-[11px] text-slate-400 font-medium">카테고리</p>
-                  <p className="text-sm text-slate-700 font-bold">{spot.spotTag}</p>
-                </div>
-              </div>
-            </div>
-            <div className="p-4 bg-gradient-to-r from-sky-50 to-cyan-50 rounded-2xl border border-sky-100/50">
-              <div className="flex items-start gap-3">
-                <span className="text-xl mt-0.5">💡</span>
-                <div>
-                  <p className="text-sm font-bold text-sky-700 mb-1">혼디 추천</p>
-                  <p className="text-sm text-slate-500 leading-relaxed">
-                    혼자 여행하기 좋은 명소예요. 여유롭게 산책하며 제주의 자연을 느껴보세요.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
-}
-
 /* ─── 카테고리 목록 ─── */
 const CATEGORIES = [
   { code: 'FD6', label: '맛집',   emoji: '🍜' },
@@ -373,96 +193,309 @@ function SearchResultCard({ place, selected, onClick }) {
   );
 }
 
+/* ─── 검색 결과 상세 패널 ─── */
+function PlaceDetailPanel({ place, onClose }) {
+  const [copied, setCopied] = React.useState(false);
+  const category = place.category_name ? place.category_name.split(' > ').slice(-1)[0] : '';
+  const addr = place.road_address_name || place.address_name || '';
+
+  const handleCopyAddress = () => {
+    if (!addr) return;
+    navigator.clipboard.writeText(addr).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    });
+  };
+
+  return (
+    <motion.div
+      key={place.id}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.25 }}
+      className="mt-2 bg-white rounded-2xl border border-sky-200 shadow-lg overflow-hidden"
+    >
+      {/* 헤더 */}
+      <div className="p-4 pb-3">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
+              <span className="text-[10px] font-bold text-sky-600">장소 상세정보</span>
+            </div>
+            <h4 className="font-black text-base text-slate-800 leading-tight" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+              {place.place_name}
+            </h4>
+            {category && (
+              <span className="inline-block mt-1.5 text-[10px] font-bold text-sky-600 bg-sky-50 px-2.5 py-0.5 rounded-full border border-sky-100">
+                {category}
+              </span>
+            )}
+          </div>
+          <button
+            onClick={onClose}
+            className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* 정보 */}
+      <div className="px-4 pb-3 space-y-2">
+        {addr && (
+          <div className="flex items-center gap-2.5 group">
+            <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+            <span className="text-xs text-slate-600 flex-1">{addr}</span>
+            <button
+              onClick={handleCopyAddress}
+              className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-slate-100"
+              title="주소 복사"
+            >
+              {copied
+                ? <Check className="w-3 h-3 text-green-500" />
+                : <Copy className="w-3 h-3 text-slate-400" />
+              }
+            </button>
+          </div>
+        )}
+        {place.address_name && place.road_address_name && (
+          <div className="flex items-center gap-2.5 pl-6">
+            <span className="text-[10px] text-slate-400">(지번) {place.address_name}</span>
+          </div>
+        )}
+        {place.phone && (
+          <div className="flex items-center gap-2.5">
+            <Phone className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+            <a href={`tel:${place.phone}`} className="text-xs text-sky-600 font-semibold hover:underline">
+              {place.phone}
+            </a>
+          </div>
+        )}
+        {place.distance && (
+          <div className="flex items-center gap-2.5">
+            <Navigation className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
+            <span className="text-xs text-slate-500">
+              {Number(place.distance) >= 1000
+                ? `${(Number(place.distance) / 1000).toFixed(1)}km`
+                : `${place.distance}m`
+              }
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* 액션 버튼 */}
+      <div className="flex border-t border-slate-100">
+        <a
+          href={`https://map.kakao.com/link/to/${encodeURIComponent(place.place_name)},${place.y},${place.x}`}
+          target="_blank" rel="noopener noreferrer"
+          className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-[#FEE500] hover:bg-[#FDD800] text-xs font-bold text-[#3C1E1E] transition-colors"
+        >
+          <Navigation className="w-3.5 h-3.5" /> 길찾기
+        </a>
+        <a
+          href={place.place_url}
+          target="_blank" rel="noopener noreferrer"
+          className="flex-1 flex items-center justify-center gap-1.5 py-3 bg-sky-500 hover:bg-sky-600 text-xs font-bold text-white transition-colors"
+        >
+          <ExternalLink className="w-3.5 h-3.5" /> 카카오맵에서 보기
+        </a>
+      </div>
+    </motion.div>
+  );
+}
+
 /* ─── 메인 컴포넌트 ─── */
 export default function SpotsMapSection() {
-  const { data } = useActiveSpots();
-  const [selectedSpot, setSelectedSpot] = useState(null);
-  const [modalSpot, setModalSpot] = useState(null);
-
   // 검색 관련 상태
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const [isSearchMode, setIsSearchMode] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [selectedResult, setSelectedResult] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
+  const [searchPage, setSearchPage] = useState(1);
+  const [hasMoreResults, setHasMoreResults] = useState(false);
 
   // 맵 인스턴스 및 검색 마커 ref
   const mapInstanceRef = useRef(null);
   const searchMarkersRef = useRef([]);
 
-  // API 데이터 or 기본값
-  const rawSpots = data?.success && data.data?.length > 0 ? data.data : [];
-  const apiSpots = rawSpots
-    .filter(s => s.spotLat && s.spotLng)
-    .map(s => ({
-      spotNo: s.spotNo, spotTitle: s.spotTitle, spotDesc: s.spotDesc,
-      spotLocation: s.spotLocation, spotImage: s.spotImage, spotTag: s.spotTag,
-      lat: s.spotLat, lng: s.spotLng,
-    }));
+  // 현재 열린 커스텀 오버레이 ref
+  const activeOverlayRef = useRef(null);
 
-  const spots = apiSpots.length > 0 ? apiSpots.slice(0, 5) : DEFAULT_SPOTS;
-  const markers = spots.map(s => ({ lat: s.lat, lng: s.lng, name: s.spotTitle, info: s.spotTag }));
+  // 커스텀 오버레이 HTML 생성
+  const buildOverlayContent = useCallback((place) => {
+    const category = place.category_name ? place.category_name.split(' > ').slice(-1)[0] : '';
+    const addr = place.road_address_name || place.address_name || '';
+    return `
+      <div style="
+        position:relative;min-width:260px;max-width:320px;
+        background:#fff;border-radius:16px;
+        box-shadow:0 8px 30px rgba(0,0,0,.18);
+        font-family:'Pretendard',sans-serif;overflow:hidden;
+      ">
+        <div style="padding:16px 16px 12px;">
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:15px;font-weight:800;color:#1e293b;line-height:1.3;font-family:'GmarketSans',sans-serif;">
+                ${place.place_name}
+              </div>
+              ${category ? `<span style="display:inline-block;margin-top:4px;padding:2px 8px;background:#f0f9ff;color:#0284c7;font-size:11px;font-weight:700;border-radius:20px;border:1px solid #e0f2fe;">${category}</span>` : ''}
+            </div>
+            <button onclick="this.closest('[data-overlay-wrap]').remove()" style="
+              width:28px;height:28px;border-radius:50%;border:none;
+              background:#f1f5f9;cursor:pointer;display:flex;align-items:center;justify-content:center;
+              font-size:16px;color:#94a3b8;flex-shrink:0;
+            ">&times;</button>
+          </div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px;">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span style="font-size:12px;color:#64748b;">${addr}</span>
+            </div>
+            ${place.phone ? `
+            <div style="display:flex;align-items:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <a href="tel:${place.phone}" style="font-size:12px;color:#0284c7;text-decoration:none;font-weight:600;">${place.phone}</a>
+            </div>` : ''}
+          </div>
+        </div>
+        <div style="display:flex;border-top:1px solid #f1f5f9;">
+          <a href="https://map.kakao.com/link/to/${encodeURIComponent(place.place_name)},${place.y},${place.x}"
+             target="_blank" rel="noopener noreferrer"
+             style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;
+                    padding:10px;font-size:12px;font-weight:700;color:#3C1E1E;
+                    background:#FEE500;text-decoration:none;border-bottom-left-radius:16px;
+                    transition:background .15s;"
+             onmouseover="this.style.background='#FDD800'" onmouseout="this.style.background='#FEE500'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
+            길찾기
+          </a>
+          <a href="${place.place_url}" target="_blank" rel="noopener noreferrer"
+             style="flex:1;display:flex;align-items:center;justify-content:center;gap:4px;
+                    padding:10px;font-size:12px;font-weight:700;color:#fff;
+                    background:#0ea5e9;text-decoration:none;border-bottom-right-radius:16px;
+                    transition:background .15s;"
+             onmouseover="this.style.background='#0284c7'" onmouseout="this.style.background='#0ea5e9'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            상세보기
+          </a>
+        </div>
+        <div style="position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);
+                     width:16px;height:16px;background:#fff;
+                     transform:translateX(-50%) rotate(45deg);
+                     box-shadow:4px 4px 8px rgba(0,0,0,.08);"></div>
+      </div>
+    `;
+  }, []);
 
-  const panToMarker = (!isSearchMode && selectedSpot)
-    ? { lat: selectedSpot.lat, lng: selectedSpot.lng, name: selectedSpot.spotTitle }
-    : null;
+  // 검색 마커 추가 헬퍼
+  const addSearchMarkers = useCallback((places, fitBounds = true) => {
+    const map = mapInstanceRef.current;
+    if (!map) return;
+    const bounds = fitBounds ? new window.kakao.maps.LatLngBounds() : null;
 
-  // 검색 실행
-  const handleSearch = useCallback(() => {
-    const q = searchQuery.trim();
+    places.forEach((place) => {
+      const pos = new window.kakao.maps.LatLng(Number(place.y), Number(place.x));
+      const marker = new window.kakao.maps.Marker({ position: pos, map });
+
+      window.kakao.maps.event.addListener(marker, 'click', () => {
+        // 기존 오버레이 닫기
+        if (activeOverlayRef.current) activeOverlayRef.current.setMap(null);
+
+        const wrap = document.createElement('div');
+        wrap.setAttribute('data-overlay-wrap', '');
+        wrap.innerHTML = buildOverlayContent(place);
+
+        // 닫기 버튼 이벤트 재연결 (innerHTML 후)
+        const closeBtn = wrap.querySelector('button');
+        if (closeBtn) {
+          closeBtn.onclick = () => {
+            overlay.setMap(null);
+            activeOverlayRef.current = null;
+          };
+        }
+
+        const overlay = new window.kakao.maps.CustomOverlay({
+          content: wrap,
+          position: pos,
+          yAnchor: 1.15,
+          zIndex: 10,
+        });
+        overlay.setMap(map);
+        activeOverlayRef.current = overlay;
+
+        map.panTo(pos);
+        setSelectedResult(place);
+      });
+
+      searchMarkersRef.current.push(marker);
+      if (bounds) bounds.extend(pos);
+    });
+
+    if (bounds && places.length > 0) map.setBounds(bounds, 60);
+  }, [buildOverlayContent]);
+
+  // 검색 실행 (page 파라미터로 페이지네이션, keyword로 직접 검색어 전달 가능)
+  const handleSearch = useCallback((page = 1, keyword) => {
+    const q = (keyword || searchQuery).trim();
     if (!q || !mapInstanceRef.current || !window.kakao?.maps?.services?.Places) return;
+    if (keyword) setSearchQuery(keyword);
 
     setIsSearching(true);
     const ps = new window.kakao.maps.services.Places();
+
     ps.keywordSearch(
-      `${q} 제주`,
-      (data, status) => {
+      q,
+      (data, status, pagination) => {
         setIsSearching(false);
         if (status !== window.kakao.maps.services.Status.OK) {
-          setSearchResults([]);
+          if (page === 1) setSearchResults([]);
+          setHasMoreResults(false);
           return;
         }
 
-        // 기존 검색 마커 제거
-        searchMarkersRef.current.forEach(m => m.setMap(null));
-        searchMarkersRef.current = [];
+        if (page === 1) {
+          searchMarkersRef.current.forEach(m => m.setMap(null));
+          searchMarkersRef.current = [];
+          addSearchMarkers(data, true);
+          setSearchResults(data);
+        } else {
+          addSearchMarkers(data, false);
+          setSearchResults(prev => [...prev, ...data]);
+        }
 
-        const map = mapInstanceRef.current;
-        const bounds = new window.kakao.maps.LatLngBounds();
+        setSearchPage(page);
+        setHasMoreResults(pagination.hasNextPage);
 
-        data.slice(0, 8).forEach((place) => {
-          const pos = new window.kakao.maps.LatLng(Number(place.y), Number(place.x));
-          const marker = new window.kakao.maps.Marker({ position: pos, map });
-          const iw = new window.kakao.maps.InfoWindow({
-            content: `<div style="padding:4px 8px;font-size:11px;font-weight:bold;white-space:nowrap;">${place.place_name}</div>`,
-          });
-          window.kakao.maps.event.addListener(marker, 'click', () => {
-            iw.open(map, marker);
-            setSelectedResult(place);
-          });
-          searchMarkersRef.current.push(marker);
-          bounds.extend(pos);
-        });
-
-        map.setBounds(bounds, 60);
-        setSearchResults(data.slice(0, 8));
-        setIsSearchMode(true);
         setSelectedResult(null);
       },
-      { location: new window.kakao.maps.LatLng(33.3617, 126.5292), radius: 50000 }
+      {
+        rect: '126.08,33.10,127.00,33.62',
+        page,
+      }
     );
-  }, [searchQuery]);
+  }, [searchQuery, addSearchMarkers]);
+
+  // 더보기
+  const handleLoadMore = useCallback(() => {
+    handleSearch(searchPage + 1);
+  }, [handleSearch, searchPage]);
 
   // 검색 초기화
   const clearSearch = useCallback(() => {
     searchMarkersRef.current.forEach(m => m.setMap(null));
     searchMarkersRef.current = [];
+    if (activeOverlayRef.current) { activeOverlayRef.current.setMap(null); activeOverlayRef.current = null; }
     setSearchResults([]);
-    setIsSearchMode(false);
+
     setSearchQuery('');
     setSelectedResult(null);
     setActiveCategory(null);
+    setSearchPage(1);
+    setHasMoreResults(false);
   }, []);
 
   // 카테고리 검색
@@ -489,43 +522,53 @@ export default function SpotsMapSection() {
         searchMarkersRef.current.forEach(m => m.setMap(null));
         searchMarkersRef.current = [];
 
-        const map = mapInstanceRef.current;
-        const bounds = new window.kakao.maps.LatLngBounds();
+        addSearchMarkers(data, true);
+        setSearchResults(data);
 
-        data.slice(0, 10).forEach((place) => {
-          const pos = new window.kakao.maps.LatLng(Number(place.y), Number(place.x));
-          const marker = new window.kakao.maps.Marker({ position: pos, map });
-          const iw = new window.kakao.maps.InfoWindow({
-            content: `<div style="padding:4px 8px;font-size:11px;font-weight:bold;white-space:nowrap;">${place.place_name}</div>`,
-          });
-          window.kakao.maps.event.addListener(marker, 'click', () => {
-            iw.open(map, marker);
-            setSelectedResult(place);
-          });
-          searchMarkersRef.current.push(marker);
-          bounds.extend(pos);
-        });
-
-        if (data.length > 0) map.setBounds(bounds, 60);
-        setSearchResults(data.slice(0, 10));
-        setIsSearchMode(true);
         setSelectedResult(null);
+        setHasMoreResults(false);
       },
       {
-        location: new window.kakao.maps.LatLng(33.3617, 126.5292),
-        radius: 20000,
+        rect: '126.08,33.10,127.00,33.62',
         sort: window.kakao.maps.services.SortBy.ACCURACY,
       }
     );
-  }, [activeCategory, clearSearch]);
+  }, [activeCategory, clearSearch, addSearchMarkers]);
 
-  // 검색 결과 마커 클릭 시 지도 이동
+  // 검색 결과 클릭 시 지도 이동 + 커스텀 오버레이
   const handleResultClick = useCallback((place) => {
     setSelectedResult(place);
     if (!mapInstanceRef.current) return;
+
+    const map = mapInstanceRef.current;
     const pos = new window.kakao.maps.LatLng(Number(place.y), Number(place.x));
-    mapInstanceRef.current.panTo(pos);
-  }, []);
+    map.panTo(pos);
+
+    // 기존 오버레이 닫기
+    if (activeOverlayRef.current) activeOverlayRef.current.setMap(null);
+
+    const wrap = document.createElement('div');
+    wrap.setAttribute('data-overlay-wrap', '');
+    wrap.innerHTML = buildOverlayContent(place);
+
+    const overlay = new window.kakao.maps.CustomOverlay({
+      content: wrap,
+      position: pos,
+      yAnchor: 1.15,
+      zIndex: 10,
+    });
+
+    const closeBtn = wrap.querySelector('button');
+    if (closeBtn) {
+      closeBtn.onclick = () => {
+        overlay.setMap(null);
+        activeOverlayRef.current = null;
+      };
+    }
+
+    overlay.setMap(map);
+    activeOverlayRef.current = overlay;
+  }, [buildOverlayContent]);
 
   return (
     <section className="relative pt-16 pb-72 overflow-hidden">
@@ -598,7 +641,7 @@ export default function SpotsMapSection() {
             </span>
           </h2>
           <p className="text-slate-500 mt-3 text-base" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-            명소를 클릭하면 지도에서 위치를 확인할 수 있어요
+            제주도의 맛집, 카페, 관광지를 자유롭게 검색해보세요
           </p>
         </motion.div>
 
@@ -610,19 +653,19 @@ export default function SpotsMapSection() {
           transition={{ duration: 0.7, delay: 0.15 }}
           className="grid grid-cols-1 lg:grid-cols-5 gap-5"
         >
-          {/* ─── 좌측: 명소 카드 리스트 or 검색 결과 ─── */}
+          {/* ─── 좌측: 검색 결과 리스트 ─── */}
           <div className="lg:col-span-2 flex flex-col gap-3">
             {/* 리스트 제목 */}
             <div className="flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
                 <div className="w-1 h-5 bg-gradient-to-b from-sky-400 to-cyan-400 rounded-full" />
                 <span className="text-sm font-bold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-                  {isSearchMode
+                  {searchResults.length > 0
                     ? `검색 결과 ${searchResults.length}곳`
-                    : `인기 명소 ${spots.length}곳`}
+                    : '장소 검색'}
                 </span>
               </div>
-              {isSearchMode && (
+              {searchResults.length > 0 && (
                 <button
                   onClick={clearSearch}
                   className="flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 transition-colors"
@@ -634,31 +677,32 @@ export default function SpotsMapSection() {
 
             {/* 카드 리스트 */}
             <AnimatePresence mode="wait">
-              {!isSearchMode ? (
+              {searchResults.length === 0 ? (
                 <motion.div
-                  key="spots"
+                  key="empty"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="space-y-2.5"
+                  className="py-8 px-4 text-center bg-white/60 backdrop-blur-sm rounded-2xl border border-sky-100"
                 >
-                  {spots.map((spot, idx) => (
-                    <motion.div
-                      key={spot.spotNo}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: idx * 0.08 }}
-                    >
-                      <SpotCard
-                        spot={spot}
-                        selected={selectedSpot?.spotNo === spot.spotNo}
-                        onClick={() => setSelectedSpot(
-                          selectedSpot?.spotNo === spot.spotNo ? null : spot
-                        )}
-                      />
-                    </motion.div>
-                  ))}
+                  <div className="w-14 h-14 mx-auto mb-3 bg-sky-100 rounded-2xl flex items-center justify-center">
+                    <Search className="w-7 h-7 text-sky-400" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-600 mb-1" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+                    제주도 어디든 검색해보세요
+                  </p>
+                  <p className="text-xs text-slate-400 mb-4">맛집, 카페, 관광지, 주소 등 자유롭게 검색!</p>
+                  <div className="flex flex-wrap justify-center gap-1.5">
+                    {SUGGEST_KEYWORDS.map((kw) => (
+                      <button
+                        key={kw}
+                        onClick={() => handleSearch(1, kw)}
+                        className="px-3 py-1.5 bg-sky-50 hover:bg-sky-100 text-xs font-semibold text-sky-600 rounded-full border border-sky-100 hover:border-sky-200 transition-all"
+                      >
+                        {kw}
+                      </button>
+                    ))}
+                  </div>
                 </motion.div>
               ) : (
                 <motion.div
@@ -668,58 +712,41 @@ export default function SpotsMapSection() {
                   exit={{ opacity: 0 }}
                   className="space-y-2.5"
                 >
-                  {searchResults.length === 0 ? (
-                    <div className="py-10 text-center text-sm text-slate-400">검색 결과가 없습니다</div>
-                  ) : (
-                    searchResults.map((place, idx) => (
-                      <motion.div
-                        key={place.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.3, delay: idx * 0.05 }}
-                      >
-                        <SearchResultCard
-                          place={place}
-                          selected={selectedResult?.id === place.id}
-                          onClick={() => handleResultClick(place)}
-                        />
-                      </motion.div>
-                    ))
+                  {searchResults.map((place, idx) => (
+                    <motion.div
+                      key={`${place.id}-${idx}`}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: Math.min(idx * 0.05, 0.5) }}
+                    >
+                      <SearchResultCard
+                        place={place}
+                        selected={selectedResult?.id === place.id}
+                        onClick={() => handleResultClick(place)}
+                      />
+                    </motion.div>
+                  ))}
+                  {hasMoreResults && (
+                    <button
+                      onClick={handleLoadMore}
+                      disabled={isSearching}
+                      className="w-full py-3 text-sm font-bold text-sky-600 bg-sky-50 hover:bg-sky-100 rounded-2xl border border-sky-200 transition-colors flex items-center justify-center gap-2"
+                    >
+                      {isSearching ? (
+                        <div className="w-4 h-4 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <>더보기</>
+                      )}
+                    </button>
                   )}
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* 선택된 명소 상세 패널 (명소 모드) */}
+            {/* 선택된 검색 결과 상세 패널 */}
             <AnimatePresence mode="wait">
-              {!isSearchMode && selectedSpot && (
-                <motion.div
-                  key={selectedSpot.spotNo}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: 0.25 }}
-                  className="mt-1 p-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-sky-200 shadow-md"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1.5">
-                        <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
-                        <span className="text-xs font-bold text-sky-600">지도에서 선택됨</span>
-                      </div>
-                      <p className="font-black text-slate-800 text-sm" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
-                        {selectedSpot.spotTitle}
-                      </p>
-                      <p className="text-xs text-slate-500 mt-0.5">{selectedSpot.spotDesc}</p>
-                    </div>
-                    <button
-                      onClick={() => setModalSpot(selectedSpot)}
-                      className="flex-shrink-0 px-3 py-1.5 bg-sky-500 hover:bg-sky-600 text-white text-xs font-bold rounded-xl transition-colors"
-                    >
-                      자세히 보기
-                    </button>
-                  </div>
-                </motion.div>
+              {selectedResult && (
+                <PlaceDetailPanel place={selectedResult} onClose={() => setSelectedResult(null)} />
               )}
             </AnimatePresence>
           </div>
@@ -741,20 +768,20 @@ export default function SpotsMapSection() {
                       <p className="text-[10px] text-slate-400">마커를 클릭하면 명소 정보를 볼 수 있어요</p>
                     </div>
                   </div>
-                  {!isSearchMode && selectedSpot && (
+                  {selectedResult && (
                     <motion.span
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100"
+                      className="text-xs font-bold text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100 truncate max-w-[140px]"
                     >
-                      📍 {selectedSpot.spotTitle}
+                      📍 {selectedResult.place_name}
                     </motion.span>
                   )}
                 </div>
 
                 {/* 검색바 */}
                 <form
-                  onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+                  onSubmit={(e) => { e.preventDefault(); handleSearch(1); }}
                   className="flex gap-2"
                 >
                   <div className="relative flex-1">
@@ -763,7 +790,7 @@ export default function SpotsMapSection() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="제주 맛집, 카페, 관광지 검색..."
+                      placeholder="장소, 주소, 키워드로 검색..."
                       className="w-full pl-9 pr-3 py-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent transition-all"
                       style={{ fontFamily: "'Pretendard', sans-serif" }}
                     />
@@ -789,7 +816,7 @@ export default function SpotsMapSection() {
                     )}
                     검색
                   </button>
-                  {isSearchMode && (
+                  {searchResults.length > 0 && (
                     <button
                       type="button"
                       onClick={clearSearch}
@@ -828,39 +855,9 @@ export default function SpotsMapSection() {
                   lat={33.3617}
                   lng={126.5292}
                   level={10}
-                  markers={markers}
                   height="420px"
-                  panToMarker={panToMarker}
                   onMapReady={(map) => { mapInstanceRef.current = map; }}
-                  onMarkerClick={(m) => {
-                    if (isSearchMode) return;
-                    const found = spots.find(s => s.spotTitle === m.name);
-                    setSelectedSpot(found || null);
-                  }}
                 />
-              </div>
-
-              {/* 하단 명소 태그 */}
-              <div className="px-4 pb-4">
-                <div className="flex flex-wrap gap-1.5">
-                  {spots.map((spot) => (
-                    <button
-                      key={spot.spotNo}
-                      onClick={() => setSelectedSpot(
-                        selectedSpot?.spotNo === spot.spotNo ? null : spot
-                      )}
-                      className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ${
-                        selectedSpot?.spotNo === spot.spotNo
-                          ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
-                          : 'bg-slate-50 text-slate-600 border-slate-100 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-200'
-                      }`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
-                    >
-                      <MapPin className="w-2.5 h-2.5" />
-                      {spot.spotTitle}
-                    </button>
-                  ))}
-                </div>
               </div>
             </div>
           </div>
@@ -965,10 +962,6 @@ export default function SpotsMapSection() {
         </svg>
       </motion.div>
 
-      {/* 상세 모달 */}
-      {modalSpot && (
-        <SpotDetailModal spot={modalSpot} onClose={() => setModalSpot(null)} />
-      )}
     </section>
   );
 }
