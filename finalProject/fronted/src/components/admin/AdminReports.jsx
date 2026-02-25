@@ -81,14 +81,25 @@ export default function AdminReports() {
     setEditResult('');
   };
 
-  // 모달 열릴 때 body 스크롤 잠금
+  // 모달 열릴 때 body 스크롤 완전 잠금 (위치 고정)
   useEffect(() => {
     if (selectedReportNo) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+      const scrollY = window.scrollY;
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+      return () => {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.paddingRight = '';
+        window.scrollTo(0, scrollY);
+      };
     }
-    return () => { document.body.style.overflow = ''; };
   }, [selectedReportNo]);
 
   const handleUpdateStatus = async () => {
