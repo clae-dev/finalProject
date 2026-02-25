@@ -21,6 +21,8 @@ import {
   rejectVerification,
   getAdminAccommodationReviews,
   deleteAdminAccommodationReview,
+  approveAccommodationReview,
+  rejectAccommodationReview,
 } from './adminAPI';
 
 /** 대시보드 통계 */
@@ -230,6 +232,28 @@ export const useDeleteAdminAccommodationReview = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (reviewNo: number | string) => deleteAdminAccommodationReview(reviewNo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'accommodationReviews'] });
+    },
+  });
+};
+
+/** 숙소 후기 승인 (관리자) */
+export const useApproveAccommodationReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (reviewNo: number | string) => approveAccommodationReview(reviewNo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'accommodationReviews'] });
+    },
+  });
+};
+
+/** 숙소 후기 거부 (관리자) */
+export const useRejectAccommodationReview = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (reviewNo: number | string) => rejectAccommodationReview(reviewNo),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'accommodationReviews'] });
     },

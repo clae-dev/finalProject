@@ -48,6 +48,12 @@ public class AccommodationReviewController {
     @Value("${review.image.folder-path}")
     private String reviewFolderPath;
 
+    @Value("${verification.image.web-path}")
+    private String verificationWebPath;
+
+    @Value("${verification.image.folder-path}")
+    private String verificationFolderPath;
+
     // 후기 목록 (공개)
     @GetMapping
     public ResponseEntity<Map<String, Object>> getReviews(
@@ -94,7 +100,7 @@ public class AccommodationReviewController {
         }
     }
 
-    // 후기 작성 (인증뱃지 필수)
+    // 후기 작성 (인증서류 함께 제출)
     @PostMapping
     public ResponseEntity<Map<String, Object>> createReview(
             @PathVariable("accommodationNo") int accommodationNo,
@@ -104,7 +110,8 @@ public class AccommodationReviewController {
             @RequestParam(value = "checkInDate", required = false) String checkInDate,
             @RequestParam(value = "checkOutDate", required = false) String checkOutDate,
             @RequestParam(value = "recommendedFor", required = false) String recommendedFor,
-            @RequestParam(value = "images", required = false) List<MultipartFile> images) {
+            @RequestParam(value = "images", required = false) List<MultipartFile> images,
+            @RequestParam(value = "verificationFile", required = false) MultipartFile verificationFile) {
 
         Map<String, Object> response = new HashMap<>();
 
@@ -122,16 +129,14 @@ public class AccommodationReviewController {
                     .recommendedFor(recommendedFor)
                     .build();
 
-            int result = reviewService.createReview(dto, images, reviewWebPath, reviewFolderPath);
+            int result = reviewService.createReview(dto, images, verificationFile,
+                    reviewWebPath, reviewFolderPath,
+                    verificationWebPath, verificationFolderPath);
 
             response.put("success", result > 0);
-            response.put("message", result > 0 ? "후기가 등록되었습니다." : "후기 등록에 실패했습니다.");
+            response.put("message", result > 0 ? "후기가 등록되었습니다. 관리자 승인 후 공개됩니다." : "후기 등록에 실패했습니다.");
             return ResponseEntity.ok(response);
 
-        } catch (SecurityException e) {
-            response.put("success", false);
-            response.put("message", "인증된 리뷰어만 후기를 작성할 수 있습니다.");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
         } catch (Exception e) {
             log.error("후기 등록 실패", e);
             response.put("success", false);

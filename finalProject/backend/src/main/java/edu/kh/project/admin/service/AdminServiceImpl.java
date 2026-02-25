@@ -3,6 +3,8 @@ package edu.kh.project.admin.service;
 import edu.kh.project.accommodation.mapper.AccommodationMapper;
 import edu.kh.project.admin.mapper.AdminMapper;
 import edu.kh.project.member.mapper.MemberVerificationMapper;
+import edu.kh.project.notification.dto.NotificationDTO;
+import edu.kh.project.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ public class AdminServiceImpl implements AdminService {
     private final AdminMapper adminMapper;
     private final AccommodationMapper accommodationMapper;
     private final MemberVerificationMapper verificationMapper;
+    private final NotificationService notificationService;
 
     @Override
     public Map<String, Object> getDashboardStats() {
@@ -225,6 +228,45 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public int deleteAccommodationReview(int reviewNo) {
         return adminMapper.deleteAccommodationReview(reviewNo);
+    }
+
+    @Override
+    public int approveAccommodationReview(int reviewNo) {
+        int result = adminMapper.approveAccommodationReview(reviewNo);
+        if (result > 0) {
+            int memberNo = adminMapper.selectMemberNoByReviewNo(reviewNo);
+            int accommodationNo = adminMapper.selectAccommodationNoByReviewNo(reviewNo);
+            verificationMapper.updateMemberVerifiedReviewer(memberNo, "Y");
+
+            notificationService.createNotification(NotificationDTO.builder()
+                    .recipientNo(memberNo)
+                    .notificationType("ACCOM_REVIEW_APPROVED")
+                    .targetType("ACCOMMODATION")
+                    .targetNo(accommodationNo)
+                    .title("숙소 후기 승인")
+                    .content("작성하신 숙소 후기가 승인되어 공개되었습니다.")
+                    .build());
+        }
+        return result;
+    }
+
+    @Override
+    public int rejectAccommodationReview(int reviewNo) {
+        int result = adminMapper.rejectAccommodationReview(reviewNo);
+        if (result > 0) {
+            int memberNo = adminMapper.selectMemberNoByReviewNo(reviewNo);
+            int accommodationNo = adminMapper.selectAccommodationNoByReviewNo(reviewNo);
+
+            notificationService.createNotification(NotificationDTO.builder()
+                    .recipientNo(memberNo)
+                    .notificationType("ACCOM_REVIEW_REJECTED")
+                    .targetType("ACCOMMODATION")
+                    .targetNo(accommodationNo)
+                    .title("숙소 후기 거부")
+                    .content("작성하신 숙소 후기가 거부되었습니다.")
+                    .build());
+        }
+        return result;
     }
 
     @Override

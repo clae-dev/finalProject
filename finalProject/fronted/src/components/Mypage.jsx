@@ -13,7 +13,6 @@ import StatsGrid from './mypage/StatsGrid';
 import ActivityTabs from './mypage/ActivityTabs';
 import QuickActions from './mypage/QuickActions';
 import BadgeSection from './mypage/BadgeSection';
-import VerificationSection from './mypage/VerificationSection';
 import ProfileEditModal from './mypage/ProfileEditModal';
 
 export default function MyPage() {
@@ -65,9 +64,6 @@ export default function MyPage() {
       <StatsGrid memberData={memberData} />
       <ActivityTabs />
       <BadgeSection memberData={memberData} />
-      <div className="max-w-4xl mx-auto px-5 pb-4">
-        <VerificationSection />
-      </div>
       <QuickActions memberData={memberData} memberNo={user.memberNo} />
       <Footer />
       <ProfileEditModal

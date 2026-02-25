@@ -394,7 +394,7 @@
         WHERE VERIFICATION_NO = #{verificationNo}
     </select>
 
-    <!-- 숙소 후기 목록 (관리자용) -->
+    <!-- 숙소 후기 목록 (관리자용 - 인증서류 정보 포함) -->
     <select id="selectAdminAccommodationReviewList" resultType="map">
         SELECT * FROM (
             SELECT
@@ -407,6 +407,10 @@
                 M.MEMBER_NO AS "memberNo",
                 A.NAME AS "accommodationName",
                 A.ACCOMMODATION_NO AS "accommodationNo",
+                (SELECT V.VERIFICATION_FILE FROM MEMBER_VERIFICATION V
+                 WHERE V.MEMBER_NO = R.MEMBER_NO
+                 ORDER BY V.SUBMITTED_AT DESC
+                 FETCH FIRST 1 ROW ONLY) AS "verificationFile",
                 ROW_NUMBER() OVER (ORDER BY R.CREATED_AT DESC) AS RN
             FROM ACCOMMODATION_REVIEW R
             JOIN MEMBER M ON R.MEMBER_NO = M.MEMBER_NO
@@ -441,5 +445,35 @@
         SET STATUS = 'D', UPDATED_AT = SYSDATE
         WHERE REVIEW_NO = #{reviewNo}
     </update>
+
+    <!-- 숙소 후기 승인 (W → A) -->
+    <update id="approveAccommodationReview">
+        UPDATE ACCOMMODATION_REVIEW
+        SET STATUS = 'A', UPDATED_AT = SYSDATE
+        WHERE REVIEW_NO = #{reviewNo}
+          AND STATUS = 'W'
+    </update>
+
+    <!-- 숙소 후기 거부 (W → R) -->
+    <update id="rejectAccommodationReview">
+        UPDATE ACCOMMODATION_REVIEW
+        SET STATUS = 'R', UPDATED_AT = SYSDATE
+        WHERE REVIEW_NO = #{reviewNo}
+          AND STATUS = 'W'
+    </update>
+
+    <!-- 후기 번호로 작성자 회원번호 조회 -->
+    <select id="selectMemberNoByReviewNo" resultType="int">
+        SELECT MEMBER_NO
+        FROM ACCOMMODATION_REVIEW
+        WHERE REVIEW_NO = #{reviewNo}
+    </select>
+
+    <!-- 후기 번호로 숙소번호 조회 -->
+    <select id="selectAccommodationNoByReviewNo" resultType="int">
+        SELECT ACCOMMODATION_NO
+        FROM ACCOMMODATION_REVIEW
+        WHERE REVIEW_NO = #{reviewNo}
+    </select>
 
 </mapper>

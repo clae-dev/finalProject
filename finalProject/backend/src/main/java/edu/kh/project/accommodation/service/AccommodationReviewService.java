@@ -45,7 +45,9 @@ public interface AccommodationReviewService {
      * @return 생성된 후기 번호
      */
     int createReview(AccommodationReviewDTO dto, List<MultipartFile> images,
-                     String webPath, String folderPath);
+                     MultipartFile verificationFile,
+                     String webPath, String folderPath,
+                     String verificationWebPath, String verificationFolderPath);
 
     /**
      * 숙소 후기를 삭제한다 (작성자만 가능).
