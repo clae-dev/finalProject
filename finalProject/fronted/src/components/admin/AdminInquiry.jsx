@@ -200,9 +200,7 @@ export default function AdminInquiry() {
   return (
     <div className="space-y-6">
       {/* 필터 */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 p-4 flex items-center gap-3"
       >
         <div className="flex items-center gap-2 flex-1">
@@ -224,12 +222,10 @@ export default function AdminInquiry() {
         <span className="text-sm text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>
           총 {totalCount}건
         </span>
-      </motion.div>
+      </div>
 
       {/* 테이블 */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
         className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg shadow-sky-100 border border-sky-50 overflow-hidden"
       >
         <div className="overflow-x-auto">
@@ -302,7 +298,7 @@ export default function AdminInquiry() {
             </tbody>
           </table>
         </div>
-      </motion.div>
+      </div>
 
       {/* 페이지네이션 */}
       {totalPages > 1 && (
