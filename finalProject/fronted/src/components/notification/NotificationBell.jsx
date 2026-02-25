@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Check, CheckCheck, Trash2, Users, UserCheck, MessageCircle, HelpCircle } from 'lucide-react';
+import { Bell, Check, CheckCheck, Trash2, Users, UserCheck, MessageCircle, HelpCircle, ShieldCheck, ShieldX } from 'lucide-react';
 import { useNotifications, useUnreadCount, useMarkAsRead, useMarkAllAsRead, useDeleteNotification } from '../../api/notification/useNotification';
 import useNotificationSocket from '../../lib/useNotificationSocket';
 
@@ -9,6 +9,8 @@ const NOTIFICATION_ICONS = {
   COMPANION_ACCEPTED: <UserCheck className="w-4 h-4 text-emerald-600" />,
   CHAT_MESSAGE: <MessageCircle className="w-4 h-4 text-sky-600" />,
   INQUIRY_ANSWERED: <HelpCircle className="w-4 h-4 text-violet-600" />,
+  ACCOM_REVIEW_APPROVED: <ShieldCheck className="w-4 h-4 text-emerald-600" />,
+  ACCOM_REVIEW_REJECTED: <ShieldX className="w-4 h-4 text-red-600" />,
 };
 
 const NOTIFICATION_COLORS = {
@@ -16,6 +18,8 @@ const NOTIFICATION_COLORS = {
   COMPANION_ACCEPTED: 'bg-emerald-50 border-emerald-200',
   CHAT_MESSAGE: 'bg-sky-50 border-sky-200',
   INQUIRY_ANSWERED: 'bg-violet-50 border-violet-200',
+  ACCOM_REVIEW_APPROVED: 'bg-emerald-50 border-emerald-200',
+  ACCOM_REVIEW_REJECTED: 'bg-red-50 border-red-200',
 };
 
 function timeAgo(dateStr) {
@@ -75,6 +79,8 @@ export default function NotificationBell({ onOpenChat }) {
       navigate(`/companions/${notif.targetNo}`);
     } else if (notif.targetType === 'INQUIRY') {
       navigate('/inquiry');
+    } else if (notif.targetType === 'ACCOMMODATION' && notif.targetNo) {
+      navigate(`/accommodations/${notif.targetNo}`);
     }
     setOpen(false);
   };

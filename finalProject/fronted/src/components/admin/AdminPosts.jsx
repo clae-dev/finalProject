@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Trash2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { Search, Trash2, ChevronLeft, ChevronRight, Loader2, CheckCircle2, XCircle, Eye } from 'lucide-react';
 import { Star } from 'lucide-react';
 import {
   useAdminCompanions,
@@ -9,6 +9,8 @@ import {
   useDeleteAdminReview,
   useAdminAccommodationReviews,
   useDeleteAdminAccommodationReview,
+  useApproveAccommodationReview,
+  useRejectAccommodationReview,
 } from '../../api/admin/useAdmin';
 
 function formatTravelDate(travelDate) {
@@ -250,10 +252,13 @@ function AccommodationReviewTable() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
+  const [viewingFile, setViewingFile] = useState(null);
   const size = 10;
 
   const { data, isLoading } = useAdminAccommodationReviews(page, size, search);
   const deleteMutation = useDeleteAdminAccommodationReview();
+  const approveMutation = useApproveAccommodationReview();
+  const rejectMutation = useRejectAccommodationReview();
 
   const list = data?.success ? (data.list || []) : [];
   const totalCount = data?.success ? (data.totalCount || 0) : 0;
@@ -268,6 +273,25 @@ function AccommodationReviewTable() {
   const handleDelete = (item) => {
     if (!confirm(`이 숙소 후기를 삭제하시겠습니까?`)) return;
     deleteMutation.mutate(item.reviewNo);
+  };
+
+  const handleApprove = (item) => {
+    if (!confirm(`이 후기를 승인하시겠습니까? 작성자에게 인증 리뷰어 배지가 부여됩니다.`)) return;
+    approveMutation.mutate(item.reviewNo);
+  };
+
+  const handleReject = (item) => {
+    if (!confirm(`이 후기를 거부하시겠습니까?`)) return;
+    rejectMutation.mutate(item.reviewNo);
+  };
+
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'W': return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-600">대기</span>;
+      case 'A': return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-600">공개</span>;
+      case 'R': return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600">거부</span>;
+      default: return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500">{status}</span>;
+    }
   };
 
   if (isLoading) {
@@ -293,43 +317,77 @@ function AccommodationReviewTable() {
           <table className="w-full">
             <thead>
               <tr className="bg-sky-50/80">
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">번호</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">숙소</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">내용</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">작성자</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">별점</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">등록일</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600">삭제</th>
+                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">번호</th>
+                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">숙소</th>
+                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">내용</th>
+                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">작성자</th>
+                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">별점</th>
+                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">상태</th>
+                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">등록일</th>
+                <th className="text-left px-5 py-3 text-sm font-semibold text-slate-600">관리</th>
               </tr>
             </thead>
             <tbody>
               {list.map((item) => (
                 <tr key={item.reviewNo} className="border-t border-sky-50 hover:bg-sky-50/50 transition-colors">
-                  <td className="px-6 py-3 text-sm text-slate-500">{item.reviewNo}</td>
-                  <td className="px-6 py-3 text-sm font-semibold text-slate-700 max-w-[150px] truncate">{item.accommodationName}</td>
-                  <td className="px-6 py-3 text-sm text-slate-500 max-w-[200px] truncate">{item.content}</td>
-                  <td className="px-6 py-3 text-sm text-slate-500">{item.authorNickname}</td>
-                  <td className="px-6 py-3">
+                  <td className="px-5 py-3 text-sm text-slate-500">{item.reviewNo}</td>
+                  <td className="px-5 py-3 text-sm font-semibold text-slate-700 max-w-[130px] truncate">{item.accommodationName}</td>
+                  <td className="px-5 py-3 text-sm text-slate-500 max-w-[180px] truncate">{item.content}</td>
+                  <td className="px-5 py-3 text-sm text-slate-500">{item.authorNickname}</td>
+                  <td className="px-5 py-3">
                     <div className="flex items-center gap-1">
                       <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
                       <span className="text-sm font-bold text-amber-500">{item.rating}</span>
                     </div>
                   </td>
-                  <td className="px-6 py-3 text-sm text-slate-400">{item.createdAt || '-'}</td>
-                  <td className="px-6 py-3">
-                    <button
-                      onClick={() => handleDelete(item)}
-                      disabled={deleteMutation.isPending}
-                      className="p-2 rounded-xl text-red-400 hover:bg-red-50 hover:text-red-500 transition-all"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                  <td className="px-5 py-3">{getStatusBadge(item.status)}</td>
+                  <td className="px-5 py-3 text-sm text-slate-400">{item.createdAt || '-'}</td>
+                  <td className="px-5 py-3">
+                    <div className="flex items-center gap-1">
+                      {item.status === 'W' && (
+                        <>
+                          {item.verificationFile && (
+                            <button
+                              onClick={() => setViewingFile(item.verificationFile)}
+                              className="p-1.5 rounded-lg text-sky-400 hover:bg-sky-50 hover:text-sky-600 transition-all"
+                              title="인증서류 보기"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleApprove(item)}
+                            disabled={approveMutation.isPending}
+                            className="p-1.5 rounded-lg text-emerald-400 hover:bg-emerald-50 hover:text-emerald-600 transition-all"
+                            title="승인"
+                          >
+                            <CheckCircle2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleReject(item)}
+                            disabled={rejectMutation.isPending}
+                            className="p-1.5 rounded-lg text-amber-400 hover:bg-amber-50 hover:text-amber-600 transition-all"
+                            title="거부"
+                          >
+                            <XCircle className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
+                      <button
+                        onClick={() => handleDelete(item)}
+                        disabled={deleteMutation.isPending}
+                        className="p-1.5 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-500 transition-all"
+                        title="삭제"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
               {list.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-slate-400 text-sm">숙소 후기가 없습니다.</td>
+                  <td colSpan={8} className="text-center py-12 text-slate-400 text-sm">숙소 후기가 없습니다.</td>
                 </tr>
               )}
             </tbody>
@@ -338,6 +396,24 @@ function AccommodationReviewTable() {
       </motion.div>
 
       <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+
+      {/* 인증서류 미리보기 모달 */}
+      {viewingFile && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setViewingFile(null)}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl p-4 max-w-2xl max-h-[80vh] overflow-auto shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-slate-700">인증서류</h3>
+              <button onClick={() => setViewingFile(null)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
+            </div>
+            <img src={viewingFile} alt="인증서류" className="max-w-full rounded-lg" />
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

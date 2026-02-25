@@ -1,6 +1,6 @@
 import React, { useState, useRef, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Star, Upload, X, Loader2, ArrowLeft, Calendar, Users, FileImage } from 'lucide-react';
+import { Star, Upload, X, Loader2, ArrowLeft, Calendar, Users, FileImage, ShieldCheck } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useCreateAccommodationReview } from '../../api/accommodation/useAccommodationReview';
@@ -25,6 +25,9 @@ export default function AccommodationReviewWrite() {
   const [recommendedFor, setRecommendedFor] = useState('');
   const [images, setImages] = useState([]);
   const [previews, setPreviews] = useState([]);
+  const [verificationFile, setVerificationFile] = useState(null);
+  const [verificationPreview, setVerificationPreview] = useState(null);
+  const verificationInputRef = useRef(null);
 
   const createMutation = useCreateAccommodationReview(Number(accommodationNo));
 
@@ -60,11 +63,31 @@ export default function AccommodationReviewWrite() {
     setPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleVerificationFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+    if (file.size > MAX_FILE_SIZE) {
+      alert('파일 크기는 10MB 이하만 가능합니다.');
+      return;
+    }
+    setVerificationFile(file);
+    setVerificationPreview(URL.createObjectURL(file));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!content.trim()) {
       alert('후기 내용을 입력해주세요.');
+      return;
+    }
+
+    if (!verificationFile) {
+      alert('인증서류(예약 확인서)를 첨부해주세요.');
       return;
     }
 
@@ -75,22 +98,19 @@ export default function AccommodationReviewWrite() {
     if (checkOutDate) formData.append('checkOutDate', checkOutDate);
     if (recommendedFor) formData.append('recommendedFor', recommendedFor);
     images.forEach(img => formData.append('images', img));
+    formData.append('verificationFile', verificationFile);
 
     createMutation.mutate(formData, {
       onSuccess: (res) => {
         if (res.success) {
-          alert('후기가 등록되었습니다.');
+          alert('후기가 등록되었습니다. 관리자 승인 후 공개됩니다.');
           navigate(`/accommodations/${accommodationNo}`);
         } else {
           alert(res.message || '후기 등록에 실패했습니다.');
         }
       },
-      onError: (err) => {
-        if (err.response?.status === 403) {
-          alert('인증된 리뷰어만 후기를 작성할 수 있습니다. 마이페이지에서 인증서류를 제출해주세요.');
-        } else {
-          alert('후기 등록 중 오류가 발생했습니다.');
-        }
+      onError: () => {
+        alert('후기 등록 중 오류가 발생했습니다.');
       },
     });
   };
@@ -257,6 +277,49 @@ export default function AccommodationReviewWrite() {
                 accept="image/*"
                 multiple
                 onChange={handleImageAdd}
+                className="hidden"
+              />
+            </div>
+
+            {/* 인증서류 (예약 확인서) */}
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                인증서류 (예약 확인서) <span className="text-red-400">*</span>
+              </label>
+              <p className="text-xs text-slate-400 mb-3">숙박 예약확인서, 영수증 등 실제 이용을 증명할 수 있는 서류를 첨부해주세요.</p>
+              <div
+                onClick={() => verificationInputRef.current?.click()}
+                className="border-2 border-dashed border-slate-200 hover:border-emerald-300 rounded-xl p-5 text-center cursor-pointer transition-colors"
+              >
+                {verificationPreview ? (
+                  <div className="relative inline-block">
+                    <img src={verificationPreview} alt="인증서류 미리보기" className="max-h-40 mx-auto rounded-lg" />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setVerificationFile(null);
+                        setVerificationPreview(null);
+                      }}
+                      className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center"
+                    >
+                      <X className="w-3.5 h-3.5 text-white" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <ShieldCheck className="w-8 h-8 text-slate-300 mx-auto" />
+                    <p className="text-sm text-slate-500">클릭하여 인증서류 이미지를 선택하세요</p>
+                    <p className="text-xs text-slate-400">JPG, PNG (최대 10MB)</p>
+                  </div>
+                )}
+              </div>
+              <input
+                ref={verificationInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleVerificationFileChange}
                 className="hidden"
               />
             </div>

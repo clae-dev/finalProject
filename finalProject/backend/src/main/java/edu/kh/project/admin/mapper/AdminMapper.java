@@ -140,4 +140,16 @@ public interface AdminMapper {
 
     /** 숙소 후기 삭제 */
     int deleteAccommodationReview(@Param("reviewNo") int reviewNo);
+
+    /** 숙소 후기 승인 (W → A) */
+    int approveAccommodationReview(@Param("reviewNo") int reviewNo);
+
+    /** 숙소 후기 거부 (W → R) */
+    int rejectAccommodationReview(@Param("reviewNo") int reviewNo);
+
+    /** 후기 번호로 작성자 회원번호 조회 */
+    int selectMemberNoByReviewNo(@Param("reviewNo") int reviewNo);
+
+    /** 후기 번호로 숙소번호 조회 */
+    int selectAccommodationNoByReviewNo(@Param("reviewNo") int reviewNo);
 }

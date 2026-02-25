@@ -200,3 +200,15 @@ export const deleteAdminAccommodationReview = async (reviewNo: number | string):
   const response = await axiosApi.delete(`/api/admin/accommodation-reviews/${reviewNo}`);
   return response.data;
 };
+
+// 숙소 후기 승인
+export const approveAccommodationReview = async (reviewNo: number | string): Promise<ApiResponse<unknown>> => {
+  const response = await axiosApi.put(`/api/admin/accommodation-reviews/${reviewNo}/approve`);
+  return response.data;
+};
+
+// 숙소 후기 거부
+export const rejectAccommodationReview = async (reviewNo: number | string): Promise<ApiResponse<unknown>> => {
+  const response = await axiosApi.put(`/api/admin/accommodation-reviews/${reviewNo}/reject`);
+  return response.data;
+};

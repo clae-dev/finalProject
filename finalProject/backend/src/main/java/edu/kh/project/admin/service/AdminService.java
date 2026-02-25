@@ -57,6 +57,8 @@ public interface AdminService {
     List<Map<String, Object>> getAccommodationReviewList(int page, int size, String search);
     int getAccommodationReviewCount(String search);
     int deleteAccommodationReview(int reviewNo);
+    int approveAccommodationReview(int reviewNo);
+    int rejectAccommodationReview(int reviewNo);
 
     // 신고 관리
     List<Map<String, Object>> getReportList(int page, int size, String status, String targetType);

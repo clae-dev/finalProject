@@ -82,7 +82,7 @@
         ) VALUES (
             SEQ_REVIEW_NO.NEXTVAL, #{accommodationNo}, #{memberNo}, #{rating}, #{content},
             TO_DATE(#{checkInDate}, 'YYYY-MM-DD'), TO_DATE(#{checkOutDate}, 'YYYY-MM-DD'),
-            #{recommendedFor}, 'A', SYSDATE
+            #{recommendedFor}, 'W', SYSDATE
         )
     </insert>
 
