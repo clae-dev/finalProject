@@ -47,4 +47,7 @@ public interface NotificationMapper {
         @Param("notificationNo") int notificationNo,
         @Param("recipientNo") int recipientNo
     );
+
+    /** 알림 전체 삭제 */
+    int deleteAllNotifications(@Param("recipientNo") int recipientNo);
 }
