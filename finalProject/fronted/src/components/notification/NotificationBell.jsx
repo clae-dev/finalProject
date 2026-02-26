@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Check, CheckCheck, Trash2, Users, UserCheck, MessageCircle, HelpCircle, ShieldCheck, ShieldX } from 'lucide-react';
+import { Bell, Check, CheckCheck, Trash2, Users, UserCheck, UserPlus, MessageCircle, HelpCircle, ShieldCheck, ShieldX, Flag } from 'lucide-react';
 import { useNotifications, useUnreadCount, useMarkAsRead, useMarkAllAsRead, useDeleteNotification } from '../../api/notification/useNotification';
 import useNotificationSocket from '../../lib/useNotificationSocket';
 
@@ -11,6 +11,9 @@ const NOTIFICATION_ICONS = {
   INQUIRY_ANSWERED: <HelpCircle className="w-4 h-4 text-violet-600" />,
   ACCOM_REVIEW_APPROVED: <ShieldCheck className="w-4 h-4 text-emerald-600" />,
   ACCOM_REVIEW_REJECTED: <ShieldX className="w-4 h-4 text-red-600" />,
+  ACCOM_REVIEW_SUBMITTED: <ShieldCheck className="w-4 h-4 text-sky-600" />,
+  REPORT_SUBMITTED: <Flag className="w-4 h-4 text-red-600" />,
+  NEW_MEMBER: <UserPlus className="w-4 h-4 text-cyan-600" />,
 };
 
 const NOTIFICATION_COLORS = {
@@ -20,6 +23,9 @@ const NOTIFICATION_COLORS = {
   INQUIRY_ANSWERED: 'bg-violet-50 border-violet-200',
   ACCOM_REVIEW_APPROVED: 'bg-emerald-50 border-emerald-200',
   ACCOM_REVIEW_REJECTED: 'bg-red-50 border-red-200',
+  ACCOM_REVIEW_SUBMITTED: 'bg-sky-50 border-sky-200',
+  REPORT_SUBMITTED: 'bg-red-50 border-red-200',
+  NEW_MEMBER: 'bg-cyan-50 border-cyan-200',
 };
 
 function timeAgo(dateStr) {
@@ -81,6 +87,12 @@ export default function NotificationBell({ onOpenChat }) {
       navigate('/inquiry');
     } else if (notif.targetType === 'ACCOMMODATION' && notif.targetNo) {
       navigate(`/accommodations/${notif.targetNo}`);
+    } else if (notif.targetType === 'ADMIN_ACCOM_REVIEW') {
+      navigate('/admin');
+    } else if (notif.targetType === 'ADMIN_REPORT') {
+      navigate('/admin');
+    } else if (notif.targetType === 'ADMIN_MEMBER') {
+      navigate('/admin');
     }
     setOpen(false);
   };
