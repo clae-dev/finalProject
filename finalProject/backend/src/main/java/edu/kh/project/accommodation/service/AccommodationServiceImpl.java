@@ -296,8 +296,11 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public AccommodationDTO getAccommodationDetail(long accommodationNo) {
+        // 조회수 증가
+        accommodationMapper.incrementViewCount(accommodationNo);
+
         AccommodationDTO dto = accommodationMapper.selectAccommodationByNo(accommodationNo);
         if (dto != null && dto.getImageUrlsRaw() != null && !dto.getImageUrlsRaw().isEmpty()) {
             List<String> urls = Arrays.stream(dto.getImageUrlsRaw().split("\\|\\|"))

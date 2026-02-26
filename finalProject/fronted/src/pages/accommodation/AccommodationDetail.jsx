@@ -35,6 +35,7 @@ export default function AccommodationDetail() {
   const updateAccom = useUpdateAccommodation();
 
   const { data, isLoading, isError } = useAccommodationDetail(accommodationNo);
+  const { data: sidebarSummary } = useReviewSummary(Number(accommodationNo));
 
   const accommodation = data?.success ? data.data : null;
   const errorMessage = isError ? '서버와 연결할 수 없습니다.' : (data && !data.success ? (data.message || '숙소 정보를 불러오는데 실패했습니다.') : null);
@@ -461,8 +462,8 @@ export default function AccommodationDetail() {
                     {accommodation.priceMin && <span className="text-sm font-normal text-slate-400">/ 박</span>}
                   </div>
                   <div className="flex items-center gap-1.5 mt-1.5 text-sm text-slate-500">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    <span className="font-bold text-slate-700">4.5</span>
+                    <Star className={`w-4 h-4 ${(sidebarSummary?.data?.avgRating || 0) > 0 ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
+                    <span className="font-bold text-slate-700">{sidebarSummary?.data?.avgRating || 0}</span>
                     <span className="text-slate-300">|</span>
                     <Eye className="w-3.5 h-3.5 text-slate-400" />
                     <span>{accommodation.viewCount || 0}회</span>
