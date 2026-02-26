@@ -35,6 +35,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  // ── 미활동 제한 시간 (30분) ──
+  const INACTIVITY_LIMIT = 30 * 60 * 1000;
+
   // 앱 시작 시 토큰 유효성 검증 및 만료된 accessToken 능동적 갱신
   useEffect(() => {
     const token = getToken("accessToken");
@@ -43,6 +46,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // userData 자체가 없으면 로그인 상태가 아님
     if (!storedUser) return;
+
+    // 마지막 활동 시간 체크 — 브라우저를 닫았다가 돌아온 경우 대응
+    const lastActivity = parseInt(localStorage.getItem("lastActivity") || "0", 10);
+    if (lastActivity > 0 && Date.now() - lastActivity >= INACTIVITY_LIMIT) {
+      clearAllAuth();
+      localStorage.removeItem("lastActivity");
+      setUser(null);
+      alert("장시간 활동이 없어 자동 로그아웃 되었습니다.");
+      return;
+    }
 
     // accessToken 만료 여부 확인
     let isExpired = false;
@@ -101,8 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // ── 30분 미활동 자동 로그아웃 ──
-  const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30분
+  // ── 30분 미활동 자동 로그아웃 (탭이 열려 있는 동안) ──
   const CHECK_INTERVAL   = 60 * 1000;      // 1분마다 체크
   const logoutTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
