@@ -41,8 +41,8 @@ public class ReportServiceImpl implements ReportService {
                         .notificationType("REPORT_SUBMITTED")
                         .targetType("ADMIN_REPORT")
                         .targetNo(0)
-                        .title("새 신고 접수")
-                        .content("새로운 신고가 접수되었습니다. 확인해주세요.")
+                        .title("신고 접수")
+                        .content("새 신고가 접수되었습니다.")
                         .build());
             }
         }

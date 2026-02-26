@@ -79,7 +79,7 @@ public class MemberServiceImpl implements MemberService {
                         .targetType("ADMIN_MEMBER")
                         .targetNo(0)
                         .title("새 회원 가입")
-                        .content("새로운 회원이 가입했습니다: " + signupRequest.getMemberNickname())
+                        .content(signupRequest.getMemberNickname() + " 님이 가입했습니다.")
                         .build());
             }
         }

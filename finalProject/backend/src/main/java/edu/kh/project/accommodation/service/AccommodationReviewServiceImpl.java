@@ -118,8 +118,8 @@ public class AccommodationReviewServiceImpl implements AccommodationReviewServic
                         .notificationType("ACCOM_REVIEW_SUBMITTED")
                         .targetType("ADMIN_ACCOM_REVIEW")
                         .targetNo(dto.getReviewNo())
-                        .title("새 숙소 후기 승인 요청")
-                        .content("새로운 숙소 후기가 등록되어 승인 대기 중입니다.")
+                        .title("숙소 후기 승인 요청")
+                        .content("새 숙소 후기가 접수되었습니다.")
                         .build());
             }
         }

@@ -244,7 +244,7 @@ public class AdminServiceImpl implements AdminService {
                     .targetType("ACCOMMODATION")
                     .targetNo(accommodationNo)
                     .title("숙소 후기 승인")
-                    .content("작성하신 숙소 후기가 승인되어 공개되었습니다.")
+                    .content("숙소 후기가 승인되었습니다.")
                     .build());
         }
         return result;
@@ -263,7 +263,7 @@ public class AdminServiceImpl implements AdminService {
                     .targetType("ACCOMMODATION")
                     .targetNo(accommodationNo)
                     .title("숙소 후기 거부")
-                    .content("작성하신 숙소 후기가 거부되었습니다.")
+                    .content("숙소 후기가 거부되었습니다.")
                     .build());
         }
         return result;
