@@ -21,6 +21,8 @@ export const useToggleWishlist = (type: WishlistType, targetNo: number | string)
   return useMutation({
     mutationFn: () => toggleWishlist(type, targetNo),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['wishlist', type, targetNo] });
+      queryClient.invalidateQueries({ queryKey: ['wishlist', type, Number(targetNo)] });
       queryClient.invalidateQueries({ queryKey: ['wishlist', type, String(targetNo)] });
       queryClient.invalidateQueries({ queryKey: ['myWishlists'] });
     },
