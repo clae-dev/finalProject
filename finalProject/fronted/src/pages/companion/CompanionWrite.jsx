@@ -1,9 +1,10 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Upload, X, ImagePlus, ArrowLeft, Loader2, Camera, FileText, Tag, CalendarDays, Users, Sparkles } from 'lucide-react';
+import { X, ImagePlus, ArrowLeft, Loader2, FileText, Tag, CalendarDays, Users, Sparkles, MapPin, Search } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
+import KakaoMap from '../../components/common/KakaoMap';
 import { useCreateCompanion } from '../../api/companion/useCompanion';
 import { AuthContext } from '../../components/AuthContext';
 import heroStar from '../../assets/images/companion/별.png';
@@ -14,8 +15,6 @@ const heroSlides = [heroStar, heroFriends];
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_CONTENT_IMAGES = 5;
-
-const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=400';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -31,16 +30,75 @@ export default function CompanionWrite() {
   const createMutation = useCreateCompanion();
 
   const [form, setForm] = useState({ title: '', content: '', travelDate: '', maxMembers: 4, tags: '' });
-  const [thumbnail, setThumbnail] = useState(null);
-  const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [contentImages, setContentImages] = useState([]);
   const [contentPreviews, setContentPreviews] = useState([]);
   const [heroSlide, setHeroSlide] = useState(0);
+
+  // 장소 검색 state
+  const [placeQuery, setPlaceQuery] = useState('');
+  const [placeResults, setPlaceResults] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(null); // { lat, lng, name }
+  const [searching, setSearching] = useState(false);
+  const psRef = useRef(null);
 
   useEffect(() => {
     const timer = setInterval(() => setHeroSlide(prev => (prev + 1) % heroSlides.length), 5000);
     return () => clearInterval(timer);
   }, []);
+
+  // 카카오 장소 검색 서비스 초기화
+  const getPlacesService = useCallback(() => {
+    if (psRef.current) return psRef.current;
+    if (window.kakao?.maps?.services?.Places) {
+      psRef.current = new window.kakao.maps.services.Places();
+      return psRef.current;
+    }
+    if (window.kakao?.maps?.load) {
+      window.kakao.maps.load(() => {
+        if (window.kakao.maps.services?.Places) {
+          psRef.current = new window.kakao.maps.services.Places();
+        }
+      });
+    }
+    return psRef.current;
+  }, []);
+
+  const handlePlaceSearch = useCallback(() => {
+    const query = placeQuery.trim();
+    if (!query) return;
+    const ps = getPlacesService();
+    if (!ps) {
+      alert('카카오맵 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+    setSearching(true);
+    // 제주도 중심 좌표로 검색 편향
+    ps.keywordSearch(query + ' 제주', (data, status) => {
+      setSearching(false);
+      if (status === window.kakao.maps.services.Status.OK) {
+        setPlaceResults(data.slice(0, 5).map(p => ({
+          name: p.place_name,
+          address: p.address_name,
+          lat: parseFloat(p.y),
+          lng: parseFloat(p.x),
+        })));
+      } else {
+        setPlaceResults([]);
+      }
+    });
+  }, [placeQuery, getPlacesService]);
+
+  const handlePlaceSelect = (place) => {
+    setSelectedPlace({ lat: place.lat, lng: place.lng, name: place.name });
+    setPlaceResults([]);
+    setPlaceQuery(place.name);
+  };
+
+  const removePlace = () => {
+    setSelectedPlace(null);
+    setPlaceQuery('');
+    setPlaceResults([]);
+  };
 
   if (!user) {
     return (
@@ -73,21 +131,6 @@ export default function CompanionWrite() {
     return true;
   };
 
-  const handleThumbnailChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (!validateFile(file)) return;
-    const compressed = await compressImage(file, 800, 0.70);
-    setThumbnail(compressed);
-    setThumbnailPreview(URL.createObjectURL(compressed));
-  };
-
-  const removeThumbnail = () => {
-    setThumbnail(null);
-    if (thumbnailPreview) URL.revokeObjectURL(thumbnailPreview);
-    setThumbnailPreview(null);
-  };
-
   const handleContentImagesChange = async (e) => {
     const files = Array.from(e.target.files);
     const remaining = MAX_CONTENT_IMAGES - contentImages.length;
@@ -113,7 +156,11 @@ export default function CompanionWrite() {
     if (form.travelDate) formData.append('travelDate', form.travelDate);
     formData.append('maxMembers', form.maxMembers);
     if (form.tags) formData.append('tags', form.tags);
-    if (thumbnail) formData.append('thumbnail', thumbnail);
+    if (selectedPlace) {
+      formData.append('latitude', selectedPlace.lat);
+      formData.append('longitude', selectedPlace.lng);
+      formData.append('placeName', selectedPlace.name);
+    }
     contentImages.forEach(file => formData.append('contentImages', file));
     try {
       const result = await createMutation.mutateAsync(formData);
@@ -231,38 +278,99 @@ export default function CompanionWrite() {
         <div className="grid lg:grid-cols-5 gap-8">
           {/* 폼 영역 - 좌측 3칸 */}
           <form onSubmit={handleSubmit} className="lg:col-span-3 space-y-6">
-            {/* 썸네일 */}
+            {/* 장소 검색 */}
             <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0}
               className="bg-white rounded-3xl shadow-xl shadow-sky-100/40 p-7 border border-sky-50">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-lg flex items-center justify-center">
-                  <Camera className="w-4 h-4 text-white" />
+                  <MapPin className="w-4 h-4 text-white" />
                 </div>
-                <h3 className="font-bold text-slate-800">썸네일 이미지</h3>
+                <h3 className="font-bold text-slate-800">여행 장소</h3>
               </div>
-              {thumbnailPreview ? (
-                <div className="relative w-full h-60 rounded-2xl overflow-hidden group">
-                  <img src={thumbnailPreview} alt="썸네일" className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              {/* 검색 입력 */}
+              <div className="relative mb-3">
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input
+                      type="text"
+                      value={placeQuery}
+                      onChange={(e) => setPlaceQuery(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handlePlaceSearch(); } }}
+                      placeholder="장소를 검색하세요 (예: 성산일출봉, 우도)"
+                      className="w-full pl-10 pr-4 py-3.5 rounded-xl bg-sky-50/50 border border-sky-100 focus:bg-white focus:border-sky-400 focus:ring-2 focus:ring-sky-100 outline-none transition-all text-sm font-medium placeholder-slate-300"
+                    />
+                  </div>
                   <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     type="button"
-                    onClick={removeThumbnail}
-                    className="absolute top-3 right-3 w-9 h-9 bg-red-500 text-white rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={handlePlaceSearch}
+                    disabled={searching}
+                    className="px-5 py-3.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-bold rounded-xl text-sm shadow-md shadow-sky-200/50 disabled:opacity-50 transition-all"
                   >
-                    <X className="w-4 h-4" />
+                    {searching ? <Loader2 className="w-4 h-4 animate-spin" /> : '검색'}
                   </motion.button>
                 </div>
+              </div>
+
+              {/* 검색 결과 목록 */}
+              {placeResults.length > 0 && !selectedPlace && (
+                <div className="bg-sky-50/50 rounded-xl border border-sky-100 overflow-hidden mb-3">
+                  {placeResults.map((place, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handlePlaceSelect(place)}
+                      className="w-full flex items-start gap-3 px-4 py-3 hover:bg-sky-100/60 transition-colors text-left border-b border-sky-100/60 last:border-b-0"
+                    >
+                      <MapPin className="w-4 h-4 text-sky-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold text-slate-700">{place.name}</p>
+                        <p className="text-xs text-slate-400">{place.address}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* 선택된 장소 + 지도 미리보기 */}
+              {selectedPlace ? (
+                <div>
+                  <div className="flex items-center justify-between bg-gradient-to-r from-sky-50 to-cyan-50 rounded-xl px-4 py-3 mb-3 border border-sky-100">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-sky-500" />
+                      <span className="text-sm font-semibold text-slate-700">{selectedPlace.name}</span>
+                    </div>
+                    <motion.button
+                      type="button"
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={removePlace}
+                      className="w-7 h-7 bg-red-100 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-200 transition-colors"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </motion.button>
+                  </div>
+                  <div className="rounded-2xl overflow-hidden">
+                    <KakaoMap
+                      lat={selectedPlace.lat}
+                      lng={selectedPlace.lng}
+                      level={4}
+                      name={selectedPlace.name}
+                      height="200px"
+                    />
+                  </div>
+                </div>
               ) : (
-                <label className="flex flex-col items-center justify-center w-full h-60 rounded-2xl border-2 border-dashed border-sky-200 bg-gradient-to-br from-sky-50/50 to-cyan-50/50 cursor-pointer hover:border-sky-400 hover:from-sky-50 hover:to-cyan-50 transition-all duration-300 group">
+                <div className="flex flex-col items-center justify-center h-48 rounded-2xl border-2 border-dashed border-sky-200 bg-gradient-to-br from-sky-50/50 to-cyan-50/50">
                   <motion.div animate={{ y: [0, -5, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}>
-                    <Upload className="w-12 h-12 text-sky-300 group-hover:text-sky-400 transition-colors mb-3" />
+                    <MapPin className="w-12 h-12 text-sky-300 mb-3" />
                   </motion.div>
-                  <span className="text-sm font-semibold text-slate-400 group-hover:text-sky-500 transition-colors">클릭하여 썸네일을 업로드하세요</span>
-                  <span className="text-xs text-slate-300 mt-1">JPG, PNG (최대 10MB)</span>
-                  <input type="file" accept="image/*" onChange={handleThumbnailChange} className="hidden" />
-                </label>
+                  <span className="text-sm font-semibold text-slate-400">장소를 검색하여 선택하세요</span>
+                  <span className="text-xs text-slate-300 mt-1">카카오맵에서 장소를 검색합니다</span>
+                </div>
               )}
             </motion.div>
 
@@ -426,26 +534,34 @@ export default function CompanionWrite() {
             <div className="sticky top-8">
               <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 pl-1">미리보기</p>
               <div className="bg-white rounded-3xl overflow-hidden shadow-xl shadow-sky-100/40 border border-sky-50">
-                {/* 카드 이미지 */}
+                {/* 카드 이미지 → 지도 미리보기 */}
                 <div className="relative h-48 overflow-hidden bg-gradient-to-br from-sky-100 to-cyan-100">
-                  {thumbnailPreview ? (
-                    <img src={thumbnailPreview} alt="" className="w-full h-full object-cover" />
+                  {selectedPlace ? (
+                    <KakaoMap
+                      lat={selectedPlace.lat}
+                      lng={selectedPlace.lng}
+                      level={5}
+                      name={selectedPlace.name}
+                      height="192px"
+                    />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center gap-2">
-                      <Camera className="w-10 h-10 text-sky-300" />
-                      <span className="text-xs text-sky-400 font-medium">썸네일 미리보기</span>
+                      <MapPin className="w-10 h-10 text-sky-300" />
+                      <span className="text-xs text-sky-400 font-medium">장소 미리보기</span>
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/10 to-transparent" />
+                  {!selectedPlace && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/10 to-transparent" />
+                  )}
                   {form.travelDate && (() => {
                     const d = getDday(form.travelDate);
                     return d ? (
-                      <span className="absolute top-4 right-4 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-xs font-bold text-sky-500 shadow-lg">
+                      <span className="absolute top-4 right-4 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-xs font-bold text-sky-500 shadow-lg z-10">
                         {d}
                       </span>
                     ) : null;
                   })()}
-                  <div className="absolute bottom-4 left-4 flex gap-2">
+                  <div className="absolute bottom-4 left-4 flex gap-2 z-10">
                     {tagList.slice(0, 3).map((tag, i) => (
                       <span key={i} className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-semibold text-slate-600 shadow-sm">
                         #{tag}
@@ -492,7 +608,7 @@ export default function CompanionWrite() {
                       <span className="text-white text-[10px] font-bold">1</span>
                     </span>
                     <p className="text-[13px] text-slate-600 font-medium leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-                      매력적인 <span className="text-sky-500 font-semibold">썸네일</span>이 참여율을 높여요
+                      <span className="text-sky-500 font-semibold">장소</span>를 검색하면 지도로 보여져요
                     </p>
                   </li>
                   <li className="flex items-start gap-3 group">

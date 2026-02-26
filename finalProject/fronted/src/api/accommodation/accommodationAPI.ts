@@ -26,9 +26,3 @@ export const getAccommodationDetail = async (
   const response = await axiosApi.get(`/api/accommodations/${accommodationNo}`);
   return response.data;
 };
-
-// 숙소 데이터 동기화 (관리자용)
-export const syncAccommodations = async (): Promise<ApiResponse<unknown>> => {
-  const response = await axiosApi.post("/api/accommodations/sync");
-  return response.data;
-};

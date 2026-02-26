@@ -43,9 +43,4 @@ public interface AccommodationReviewMapper {
     /** 후기 삭제 (본인) */
     int deleteReview(@Param("reviewNo") int reviewNo, @Param("memberNo") int memberNo);
 
-    /** 후기 삭제 (관리자) */
-    int deleteReviewByAdmin(@Param("reviewNo") int reviewNo);
-
-    /** 인증 리뷰어 여부 조회 */
-    String selectMemberVerifiedReviewer(@Param("memberNo") int memberNo);
 }

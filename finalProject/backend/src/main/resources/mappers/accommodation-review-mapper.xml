@@ -111,18 +111,5 @@
           AND MEMBER_NO = #{memberNo}
     </update>
 
-    <!-- 후기 삭제 (관리자) -->
-    <update id="deleteReviewByAdmin">
-        UPDATE ACCOMMODATION_REVIEW
-        SET STATUS = 'D', UPDATED_AT = SYSDATE
-        WHERE REVIEW_NO = #{reviewNo}
-    </update>
-
-    <!-- 회원 인증 상태 조회 -->
-    <select id="selectMemberVerifiedReviewer" resultType="string">
-        SELECT NVL(VERIFIED_REVIEWER, 'N')
-        FROM MEMBER
-        WHERE MEMBER_NO = #{memberNo}
-    </select>
 
 </mapper>

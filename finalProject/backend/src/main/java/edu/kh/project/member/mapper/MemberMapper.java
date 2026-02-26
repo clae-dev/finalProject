@@ -72,13 +72,6 @@ public interface MemberMapper {
     int withdrawMember(@Param("memberNo") int memberNo);
     
     /**
-     * 이메일 인증 완료 처리
-     * @param memberEmail 이메일
-     * @return 수정된 행 수
-     */
-    int updateEmailVerified(@Param("memberEmail") String memberEmail);
-    
-    /**
      * 아이디 찾기 (이름 + 이메일)
      * @param memberName 회원 이름
      * @param memberEmail 회원 이메일
