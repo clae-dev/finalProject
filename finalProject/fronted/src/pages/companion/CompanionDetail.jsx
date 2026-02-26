@@ -1,9 +1,11 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Calendar, Users, MapPin, Loader2, Check, X, Trash2, ImageIcon, Flag, Map } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
+import heroStar from '../../assets/images/companion/별.png';
+import heroFriends from '../../assets/images/companion/친구.png';
 import { useCompanionDetail, useJoinCompanion, useCancelJoin, useUpdateJoinStatus, useDeleteCompanion } from '../../api/companion/useCompanion';
 import { useCheckReport, useSubmitReport } from '../../api/report/useReport';
 import { AuthContext } from '../../components/AuthContext';
@@ -13,6 +15,7 @@ import ShareButtons from '../../components/common/ShareButtons';
 import KakaoMap from '../../components/common/KakaoMap';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=800';
+const heroSlides = [heroStar, heroFriends];
 
 const STATUS_LABEL = { W: '대기중', A: '승인됨', R: '거절됨' };
 const STATUS_COLOR = {
@@ -46,9 +49,15 @@ export default function CompanionDetail() {
   const { user } = useContext(AuthContext) || {};
   const [lightboxIndex, setLightboxIndex] = useState(null);
 
+  const [heroSlide, setHeroSlide] = useState(0);
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportType, setReportType] = useState('');
   const [reportReason, setReportReason] = useState('');
+
+  useEffect(() => {
+    const timer = setInterval(() => setHeroSlide(prev => (prev + 1) % heroSlides.length), 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   const { data, isLoading } = useCompanionDetail(companionNo);
   const joinMutation = useJoinCompanion();
@@ -60,9 +69,9 @@ export default function CompanionDetail() {
   const alreadyReported = reportCheckData?.reported === true;
 
   const companion = data?.success ? data.data : null;
-  const joinList = data?.success ? (data.joinList || []) : [];
-
   const isAuthor = user && companion && Number(user.memberNo) === Number(companion.memberNo);
+  const joinListRaw = data?.success ? (data.joinList || []) : [];
+  const joinList = joinListRaw.filter(j => j.status !== 'R');
   const myJoin = user ? joinList.find(j => Number(j.memberNo) === Number(user.memberNo)) : null;
   const hasJoined = !!myJoin && myJoin.status !== 'R';
 
@@ -162,80 +171,114 @@ export default function CompanionDetail() {
     <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-cyan-50">
       <Header />
 
-      {/* 히어로 이미지 / 지도 */}
-      <div className="relative h-[350px] md:h-[450px] overflow-hidden">
-        {companion.latitude && companion.longitude ? (
-          <div className="w-full h-full">
-            <KakaoMap
-              lat={companion.latitude}
-              lng={companion.longitude}
-              level={4}
-              name={companion.placeName || '여행 장소'}
-              height="100%"
+      {/* 히어로 (메인과 동일) */}
+      <div className="relative h-[480px] overflow-hidden">
+        {heroSlides.map((img, idx) => (
+          <div key={idx} className={`absolute inset-0 transition-opacity duration-[1500ms] ${heroSlide === idx ? 'opacity-100' : 'opacity-0'}`}>
+            <motion.img
+              src={img} alt=""
+              className="w-full h-full object-cover"
+              animate={{ scale: heroSlide === idx ? 1.05 : 1 }}
+              transition={{ duration: 8, ease: 'linear' }}
             />
           </div>
-        ) : (
-          <>
-            <motion.img
-              initial={{ scale: 1.1 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 1.2, ease: 'easeOut' }}
-              src={companion.imageUrl || DEFAULT_IMAGE}
-              alt=""
-              className="w-full h-full object-cover"
-              onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-sky-950/80 via-slate-900/20 to-slate-900/10" />
-          </>
-        )}
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-b from-sky-900/40 via-cyan-900/20 to-slate-900/70" />
 
-        {/* 뒤로가기 */}
-        <motion.button
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
-          onClick={() => navigate('/companions')}
-          className="absolute top-6 left-6 w-11 h-11 rounded-2xl bg-white/90 backdrop-blur-xl flex items-center justify-center shadow-lg hover:bg-white hover:shadow-xl transition-all"
-        >
-          <ArrowLeft className="w-5 h-5 text-slate-700" />
-        </motion.button>
+        <motion.div
+          className="absolute top-20 left-[10%] w-32 h-32 bg-cyan-400/20 rounded-full blur-3xl"
+          animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        />
+        <motion.div
+          className="absolute bottom-20 right-[10%] w-40 h-40 bg-sky-400/20 rounded-full blur-3xl"
+          animate={{ y: [0, 20, 0], opacity: [0.3, 0.5, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        />
 
-        {/* 히어로 하단 그라데이션 (지도일 때도 텍스트 가독성 확보) */}
-        {(companion.latitude && companion.longitude) && (
-          <div className="absolute inset-0 bg-gradient-to-t from-sky-950/80 via-transparent to-transparent pointer-events-none" />
-        )}
-
-        {/* 히어로 하단 정보 */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 z-10">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}>
-            {tagList.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-4">
-                {tagList.map(tag => (
-                  <span key={tag} className="px-3 py-1 bg-white/20 backdrop-blur-sm text-white/90 rounded-full text-xs font-semibold border border-white/10">
-                    #{tag}
-                  </span>
-                ))}
-                {companion.status === 'C' && (
-                  <span className="px-3 py-1 bg-red-500/80 backdrop-blur-sm text-white rounded-full text-xs font-bold">마감</span>
-                )}
-              </div>
-            )}
-            <h1 className="text-2xl md:text-4xl font-black text-white drop-shadow-lg" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
-              {companion.title}
-            </h1>
+        <div className="relative h-full flex flex-col items-center justify-center text-white px-5">
+          <motion.p
+            initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.6 }}
+            className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            Jeju Companion
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.5, type: 'spring' }}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg shadow-cyan-500/10"
+          >
+            <Users className="w-4 h-4 text-cyan-300" />
+            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>제주 동행 찾기</span>
           </motion.div>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg"
+            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+          >
+            <span className="text-white">함께라서 더 특별한 </span>
+            <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-teal-300 bg-clip-text text-transparent">제주</span>
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="text-lg text-white/70 text-center max-w-md leading-relaxed"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            혼자여도 괜찮아요. 같은 길을 걷는 동행을 만나보세요.
+          </motion.p>
         </div>
 
-        {/* 하단 웨이브 */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+          {heroSlides.map((_, idx) => (
+            <button key={idx} onClick={() => setHeroSlide(idx)}
+              className={`h-1.5 rounded-full transition-all duration-500 ${heroSlide === idx ? 'w-10 bg-white' : 'w-2 bg-white/40'}`}
+            />
+          ))}
+        </div>
+
         <div className="absolute -bottom-1 left-0 right-0">
-          <svg viewBox="0 0 1440 60" className="w-full" preserveAspectRatio="none">
-            <path fill="rgb(240 249 255)" d="M0,30 C360,55 720,10 1080,35 C1260,47 1380,25 1440,30 L1440,60 L0,60 Z" />
+          <svg viewBox="0 0 1440 80" className="w-full" preserveAspectRatio="none">
+            <path fill="rgb(240 249 255)" d="M0,50 C300,80 600,20 900,50 C1100,70 1300,30 1440,45 L1440,80 L0,80 Z" />
           </svg>
         </div>
       </div>
 
       {/* 본문 */}
       <div className="relative max-w-4xl mx-auto px-5 pt-4 pb-16">
+        {/* 뒤로가기 */}
+        <motion.button
+          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+          onClick={() => navigate('/companions')}
+          className="inline-flex items-center gap-2 text-slate-400 hover:text-sky-500 mb-6 transition-colors font-medium"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          목록으로 돌아가기
+        </motion.button>
+
+        {/* 제목 + 태그 카드 */}
+        <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0}
+          className="bg-white rounded-3xl shadow-xl shadow-sky-100/40 p-7 mb-6 border border-sky-50">
+          <h1 className="text-2xl md:text-3xl font-black text-slate-800 mb-4" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+            {companion.title}
+          </h1>
+          {(tagList.length > 0 || companion.status === 'C') && (
+            <div className="flex flex-wrap gap-2">
+              {tagList.map(tag => (
+                <span key={tag} className="px-3.5 py-1.5 bg-gradient-to-r from-sky-50 to-cyan-50 text-sky-600 rounded-full text-xs font-semibold border border-sky-100">
+                  #{tag}
+                </span>
+              ))}
+              {companion.status === 'C' && (
+                <span className="px-3.5 py-1.5 bg-red-50 text-red-500 rounded-full text-xs font-bold border border-red-100">마감</span>
+              )}
+            </div>
+          )}
+        </motion.div>
+
         {/* 장식 */}
         <div className="absolute top-20 right-0 w-60 h-60 bg-cyan-100/30 rounded-full blur-3xl -z-10" />
         <div className="absolute bottom-40 left-0 w-48 h-48 bg-sky-100/30 rounded-full blur-3xl -z-10" />
@@ -355,33 +398,6 @@ export default function CompanionDetail() {
           </motion.div>
         )}
 
-        {/* 참여 버튼 */}
-        {!isAuthor && companion.status === 'Y' && (
-          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={4} className="mb-6">
-            {hasJoined ? (
-              <motion.button
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleCancelJoin}
-                disabled={cancelMutation.isPending}
-                className="w-full py-4 bg-white text-slate-600 font-bold rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all shadow-sm"
-              >
-                {cancelMutation.isPending ? '처리 중...' : '참여 취소'}
-              </motion.button>
-            ) : (
-              <motion.button
-                whileHover={{ scale: 1.01, boxShadow: '0 20px 40px -10px rgba(14, 165, 233, 0.3)' }}
-                whileTap={{ scale: 0.98 }}
-                onClick={handleJoin}
-                disabled={joinMutation.isPending}
-                className="w-full py-4 bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-400 text-white font-bold text-lg rounded-2xl shadow-lg shadow-sky-200/50 transition-all"
-              >
-                {joinMutation.isPending ? '처리 중...' : '참여 신청하기'}
-              </motion.button>
-            )}
-          </motion.div>
-        )}
-
         {/* 참여자 목록 */}
         {joinList.length > 0 && (
           <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={5}
@@ -473,6 +489,33 @@ export default function CompanionDetail() {
               : '제주도 전체 지역에서 함께할 동행을 모집 중입니다'}
           </p>
         </motion.div>
+
+        {/* 참여 버튼 */}
+        {!isAuthor && companion.status === 'Y' && (
+          <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={7} className="mt-6">
+            {hasJoined ? (
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleCancelJoin}
+                disabled={cancelMutation.isPending}
+                className="w-full py-4 bg-white text-slate-600 font-bold rounded-2xl border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all shadow-sm"
+              >
+                {cancelMutation.isPending ? '처리 중...' : '참여 취소'}
+              </motion.button>
+            ) : (
+              <motion.button
+                whileHover={{ scale: 1.01, boxShadow: '0 20px 40px -10px rgba(14, 165, 233, 0.3)' }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleJoin}
+                disabled={joinMutation.isPending}
+                className="w-full py-5 bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-400 text-white font-bold text-lg rounded-2xl shadow-lg shadow-sky-200/50 transition-all"
+              >
+                {joinMutation.isPending ? '처리 중...' : '참여 신청하기'}
+              </motion.button>
+            )}
+          </motion.div>
+        )}
       </div>
 
       {/* 이미지 라이트박스 */}

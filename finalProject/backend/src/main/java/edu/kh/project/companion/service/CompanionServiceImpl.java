@@ -191,27 +191,33 @@ public class CompanionServiceImpl implements CompanionService {
     public int updateJoinStatus(int joinNo, String status, int memberNo) {
         int result = companionMapper.updateJoinStatus(joinNo, status, memberNo);
 
-        // 승인 시 신청자에게 알림 전송
-        if (result > 0 && "A".equals(status)) {
+        // 승인/거절 시 신청자에게 알림 전송
+        if (result > 0 && ("A".equals(status) || "R".equals(status))) {
             try {
                 CompanionJoinDTO join = companionMapper.selectJoinByJoinNo(joinNo);
                 if (join != null) {
                     CompanionDTO companion = companionMapper.selectCompanionDetail(join.getCompanionNo());
                     if (companion != null) {
+                        String type = "A".equals(status) ? "COMPANION_ACCEPTED" : "COMPANION_REJECTED";
+                        String title = "A".equals(status) ? "동행 신청 승인" : "동행 신청 거절";
+                        String content = "A".equals(status)
+                                ? "'" + companion.getTitle() + "' 동행 신청이 승인되었습니다."
+                                : "'" + companion.getTitle() + "' 동행 신청이 거절되었습니다.";
+
                         NotificationDTO notification = NotificationDTO.builder()
                                 .recipientNo(join.getMemberNo())
                                 .senderNo(memberNo)
-                                .notificationType("COMPANION_ACCEPTED")
+                                .notificationType(type)
                                 .targetType("COMPANION")
                                 .targetNo(join.getCompanionNo())
-                                .title("동행 신청 승인")
-                                .content("'" + companion.getTitle() + "' 동행 신청이 승인되었습니다.")
+                                .title(title)
+                                .content(content)
                                 .build();
                         notificationService.createNotification(notification);
                     }
                 }
             } catch (Exception e) {
-                log.warn("동행 승인 알림 전송 실패", e);
+                log.warn("동행 승인/거절 알림 전송 실패", e);
             }
         }
 

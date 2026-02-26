@@ -5,6 +5,7 @@ import {
   markAsRead,
   markAllAsRead,
   deleteNotification,
+  deleteAllNotifications,
 } from './notificationAPI';
 import { getToken } from '../core/tokenStorage';
 
@@ -65,6 +66,19 @@ export const useDeleteNotification = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (notificationNo: number | string) => deleteNotification(notificationNo),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+};
+
+/**
+ * 알림 전체 삭제 훅
+ */
+export const useDeleteAllNotifications = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => deleteAllNotifications(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },

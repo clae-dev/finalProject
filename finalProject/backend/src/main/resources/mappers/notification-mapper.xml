@@ -102,4 +102,12 @@
           AND RECIPIENT_NO = #{recipientNo}
     </update>
 
+    <!-- 알림 전체 삭제 (소프트 삭제) -->
+    <update id="deleteAllNotifications">
+        UPDATE NOTIFICATION
+        SET STATUS = 'D'
+        WHERE RECIPIENT_NO = #{recipientNo}
+          AND STATUS = 'A'
+    </update>
+
 </mapper>

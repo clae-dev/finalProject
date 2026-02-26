@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Check, CheckCheck, Trash2, Users, UserCheck, UserPlus, MessageCircle, HelpCircle, ShieldCheck, ShieldX, Flag } from 'lucide-react';
-import { useNotifications, useUnreadCount, useMarkAsRead, useMarkAllAsRead, useDeleteNotification } from '../../api/notification/useNotification';
+import { Bell, Check, CheckCheck, Trash2, Users, UserCheck, UserX, UserPlus, MessageCircle, HelpCircle, ShieldCheck, ShieldX, Flag } from 'lucide-react';
+import { useNotifications, useUnreadCount, useMarkAsRead, useMarkAllAsRead, useDeleteNotification, useDeleteAllNotifications } from '../../api/notification/useNotification';
 import useNotificationSocket from '../../lib/useNotificationSocket';
 
 const NOTIFICATION_ICONS = {
   COMPANION_JOIN: <Users className="w-4 h-4 text-amber-600" />,
   COMPANION_ACCEPTED: <UserCheck className="w-4 h-4 text-emerald-600" />,
+  COMPANION_REJECTED: <UserX className="w-4 h-4 text-red-600" />,
   CHAT_MESSAGE: <MessageCircle className="w-4 h-4 text-sky-600" />,
   INQUIRY_ANSWERED: <HelpCircle className="w-4 h-4 text-violet-600" />,
   ACCOM_REVIEW_APPROVED: <ShieldCheck className="w-4 h-4 text-emerald-600" />,
@@ -19,6 +20,7 @@ const NOTIFICATION_ICONS = {
 const NOTIFICATION_COLORS = {
   COMPANION_JOIN: 'bg-amber-50 border-amber-200',
   COMPANION_ACCEPTED: 'bg-emerald-50 border-emerald-200',
+  COMPANION_REJECTED: 'bg-red-50 border-red-200',
   CHAT_MESSAGE: 'bg-sky-50 border-sky-200',
   INQUIRY_ANSWERED: 'bg-violet-50 border-violet-200',
   ACCOM_REVIEW_APPROVED: 'bg-emerald-50 border-emerald-200',
@@ -50,6 +52,7 @@ export default function NotificationBell({ onOpenChat }) {
   const markAsRead = useMarkAsRead();
   const markAllAsRead = useMarkAllAsRead();
   const deleteNotification = useDeleteNotification();
+  const deleteAllNotifications = useDeleteAllNotifications();
 
   const unreadCount = unreadData?.count || 0;
   const notifications = notifData?.list || [];
@@ -107,6 +110,13 @@ export default function NotificationBell({ onOpenChat }) {
     deleteNotification.mutate(notificationNo);
   };
 
+  const handleDeleteAll = (e) => {
+    e.stopPropagation();
+    if (confirm('알림을 모두 삭제하시겠습니까?')) {
+      deleteAllNotifications.mutate();
+    }
+  };
+
   return (
     <div className="relative" ref={panelRef}>
       {/* 벨 아이콘 버튼 */}
@@ -143,16 +153,28 @@ export default function NotificationBell({ onOpenChat }) {
                 </span>
               )}
             </h3>
-            {unreadCount > 0 && (
-              <button
-                onClick={handleMarkAllRead}
-                className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
-              >
-                <CheckCheck className="w-3.5 h-3.5" />
-                모두 읽음
-              </button>
-            )}
+            <div className="flex items-center gap-2">
+              {unreadCount > 0 && (
+                <button
+                  onClick={handleMarkAllRead}
+                  className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors"
+                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                >
+                  <CheckCheck className="w-3.5 h-3.5" />
+                  모두 읽음
+                </button>
+              )}
+              {notifications.length > 0 && (
+                <button
+                  onClick={handleDeleteAll}
+                  className="flex items-center gap-1 text-xs text-red-400 hover:text-red-500 font-medium transition-colors"
+                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  모두 삭제
+                </button>
+              )}
+            </div>
           </div>
 
           {/* 알림 목록 */}

@@ -39,3 +39,9 @@ export const deleteNotification = async (notificationNo: number | string): Promi
   const response = await axiosApi.delete(`/api/notifications/${notificationNo}`);
   return response.data;
 };
+
+// 알림 전체 삭제
+export const deleteAllNotifications = async (): Promise<ApiResponse<unknown>> => {
+  const response = await axiosApi.delete('/api/notifications/all');
+  return response.data;
+};

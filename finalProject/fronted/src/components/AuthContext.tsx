@@ -101,8 +101,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  // ── 1시간 미활동 자동 로그아웃 ──
-  const INACTIVITY_LIMIT = 60 * 60 * 1000; // 1시간
+  // ── 30분 미활동 자동 로그아웃 ──
+  const INACTIVITY_LIMIT = 30 * 60 * 1000; // 30분
   const CHECK_INTERVAL   = 60 * 1000;      // 1분마다 체크
   const logoutTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 

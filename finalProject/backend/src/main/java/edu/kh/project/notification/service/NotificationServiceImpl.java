@@ -76,4 +76,9 @@ public class NotificationServiceImpl implements NotificationService {
     public int deleteNotification(int notificationNo, int recipientNo) {
         return notificationMapper.deleteNotification(notificationNo, recipientNo);
     }
+
+    @Override
+    public int deleteAllNotifications(int recipientNo) {
+        return notificationMapper.deleteAllNotifications(recipientNo);
+    }
 }

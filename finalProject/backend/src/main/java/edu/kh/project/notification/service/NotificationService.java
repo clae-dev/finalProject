@@ -34,4 +34,7 @@ public interface NotificationService {
 
     /** 알림 삭제 */
     int deleteNotification(int notificationNo, int recipientNo);
+
+    /** 알림 전체 삭제 */
+    int deleteAllNotifications(int recipientNo);
 }

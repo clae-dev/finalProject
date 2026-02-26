@@ -161,6 +161,33 @@ public class NotificationController {
         }
     }
 
+    /** 알림 전체 삭제 */
+    @DeleteMapping("/all")
+    public ResponseEntity<Map<String, Object>> deleteAllNotifications(
+            @RequestHeader("Authorization") String authHeader) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            int memberNo = extractMemberNo(authHeader);
+            notificationService.deleteAllNotifications(memberNo);
+
+            response.put("success", true);
+
+            return ResponseEntity.ok(response);
+
+        } catch (JwtException e) {
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("알림 전체 삭제 실패", e);
+            response.put("success", false);
+            response.put("message", "알림 삭제 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     /** 알림 삭제 */
     @DeleteMapping("/{notificationNo}")
     public ResponseEntity<Map<String, Object>> deleteNotification(
