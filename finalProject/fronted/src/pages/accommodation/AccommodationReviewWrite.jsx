@@ -200,7 +200,10 @@ export default function AccommodationReviewWrite() {
                 <input
                   type="date"
                   value={checkInDate}
-                  onChange={(e) => setCheckInDate(e.target.value)}
+                  onChange={(e) => {
+                    setCheckInDate(e.target.value);
+                    if (checkOutDate && e.target.value > checkOutDate) setCheckOutDate('');
+                  }}
                   className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
                 />
               </div>
@@ -212,6 +215,7 @@ export default function AccommodationReviewWrite() {
                 <input
                   type="date"
                   value={checkOutDate}
+                  min={checkInDate || undefined}
                   onChange={(e) => setCheckOutDate(e.target.value)}
                   className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
                 />
