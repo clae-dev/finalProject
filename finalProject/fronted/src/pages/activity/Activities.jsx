@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CalendarDays, Search, Eye, Heart, MessageCircle, ChevronLeft, ChevronRight, Loader2, PenLine, ImageIcon, MapPin, Phone, Bike } from 'lucide-react';
@@ -6,6 +6,12 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useActivityList, useEventList, useLeisureList } from '../../api/activity/useActivity';
 import { AuthContext } from '../../components/AuthContext';
+import heroImg1 from '../../assets/images/Activity/KakaoTalk_20260226_135519289.jpg';
+import heroImg2 from '../../assets/images/Activity/KakaoTalk_20260226_135519289_01.jpg';
+import heroImg3 from '../../assets/images/Activity/KakaoTalk_20260226_135519289_02.jpg';
+import heroImg4 from '../../assets/images/Activity/KakaoTalk_20260226_135519289_03.jpg';
+
+const heroSlides = [heroImg1, heroImg2, heroImg3, heroImg4];
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400';
 
@@ -28,7 +34,13 @@ export default function Activities() {
   const [communityPage, setCommunityPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
+  const [heroSlide, setHeroSlide] = useState(0);
   const size = 9;
+
+  useEffect(() => {
+    const timer = setInterval(() => setHeroSlide(prev => (prev + 1) % heroSlides.length), 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   const { data: eventData, isLoading: eventLoading } = useEventList(eventPage, size);
   const { data: leisureData, isLoading: leisureLoading } = useLeisureList(leisurePage, size);
@@ -61,7 +73,19 @@ export default function Activities() {
       <Header />
 
       {/* 히어로 배너 */}
-      <div className="relative h-[480px] overflow-hidden mt-8 bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-500">
+      <div className="relative h-[480px] overflow-hidden mt-8">
+        {heroSlides.map((img, idx) => (
+          <div key={idx} className={`absolute inset-0 transition-opacity duration-[1500ms] ${heroSlide === idx ? 'opacity-100' : 'opacity-0'}`}>
+            <motion.img
+              src={img} alt=""
+              className="w-full h-full object-cover object-[center_40%]"
+              animate={{ scale: heroSlide === idx ? 1.05 : 1 }}
+              transition={{ duration: 8, ease: 'linear' }}
+            />
+          </div>
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-black/10 to-black/50" />
+
         <motion.div
           className="absolute top-20 left-[10%] w-48 h-48 bg-white/10 rounded-full blur-3xl"
           animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
@@ -71,11 +95,6 @@ export default function Activities() {
           className="absolute bottom-20 right-[10%] w-56 h-56 bg-amber-300/10 rounded-full blur-3xl"
           animate={{ y: [0, 20, 0], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="absolute top-1/3 right-[30%] w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl"
-          animate={{ x: [0, 15, 0], opacity: [0.2, 0.4, 0.2] }}
-          transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
         />
 
         <div className="relative h-full flex flex-col items-center justify-center text-white px-5">
@@ -116,6 +135,15 @@ export default function Activities() {
           >
             제주에서 열리는 축제, 이벤트, 체험활동을 확인하세요
           </motion.p>
+        </div>
+
+        {/* 인디케이터 */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+          {heroSlides.map((_, idx) => (
+            <button key={idx} onClick={() => setHeroSlide(idx)}
+              className={`h-1.5 rounded-full transition-all duration-500 ${heroSlide === idx ? 'w-10 bg-white' : 'w-2 bg-white/40'}`}
+            />
+          ))}
         </div>
 
         <div className="absolute -bottom-1 left-0 right-0">
