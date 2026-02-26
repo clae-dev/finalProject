@@ -2,12 +2,13 @@ import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Search, MapPin, Heart, Phone, Clock, Loader2, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
+import { Search, MapPin, Phone, Clock, Loader2, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../components/AuthContext';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useAccommodations } from '../../api/accommodation/useAccommodation';
+import WishlistButton from '../../components/common/WishlistButton';
 import heroImg1 from '../../assets/images/accommodation/월정리.png';
 import heroImg2 from '../../assets/images/accommodation/협재2.png';
 
@@ -374,12 +375,7 @@ export default function Accommodations() {
                       />
 
                       {/* 찜 버튼 */}
-                      <button
-                        onClick={(e) => e.stopPropagation()}
-                        className="absolute top-3 right-3 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-colors"
-                      >
-                        <Heart className="w-4 h-4 text-slate-400 hover:text-rose-500 transition-colors" />
-                      </button>
+                      <WishlistButton type="accommodation" targetNo={acc.accommodationNo} size="sm" className="absolute top-3 right-3" />
 
                       {/* 숙소 유형 배지 */}
                       {acc.accommodationType && (
