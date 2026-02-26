@@ -46,34 +46,51 @@ export default function CompanionWrite() {
     return () => clearInterval(timer);
   }, []);
 
-  // 카카오 장소 검색 서비스 초기화
+  // 카카오 장소 검색 서비스 초기화 (비동기)
   const getPlacesService = useCallback(() => {
-    if (psRef.current) return psRef.current;
-    if (window.kakao?.maps?.services?.Places) {
-      psRef.current = new window.kakao.maps.services.Places();
-      return psRef.current;
-    }
-    if (window.kakao?.maps?.load) {
-      window.kakao.maps.load(() => {
-        if (window.kakao.maps.services?.Places) {
+    return new Promise((resolve) => {
+      if (psRef.current) { resolve(psRef.current); return; }
+      if (window.kakao?.maps?.services?.Places) {
+        psRef.current = new window.kakao.maps.services.Places();
+        resolve(psRef.current);
+        return;
+      }
+      if (window.kakao?.maps?.load) {
+        window.kakao.maps.load(() => {
+          if (window.kakao.maps.services?.Places) {
+            psRef.current = new window.kakao.maps.services.Places();
+          }
+          resolve(psRef.current);
+        });
+        return;
+      }
+      // SDK 아직 로드 안 됨 → 폴링
+      let tries = 0;
+      const timer = setInterval(() => {
+        tries++;
+        if (window.kakao?.maps?.services?.Places) {
+          clearInterval(timer);
           psRef.current = new window.kakao.maps.services.Places();
+          resolve(psRef.current);
+        } else if (tries >= 20) {
+          clearInterval(timer);
+          resolve(null);
         }
-      });
-    }
-    return psRef.current;
+      }, 200);
+    });
   }, []);
 
-  const handlePlaceSearch = useCallback(() => {
+  const handlePlaceSearch = useCallback(async () => {
     const query = placeQuery.trim();
     if (!query) return;
-    const ps = getPlacesService();
+    setSearching(true);
+    const ps = await getPlacesService();
     if (!ps) {
-      alert('카카오맵 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      setSearching(false);
+      alert('카카오맵 서비스를 불러올 수 없습니다. 페이지를 새로고침 해주세요.');
       return;
     }
-    setSearching(true);
-    // 제주도 중심 좌표로 검색 편향
-    ps.keywordSearch(query + ' 제주', (data, status) => {
+    ps.keywordSearch(query, (data, status) => {
       setSearching(false);
       if (status === window.kakao.maps.services.Status.OK) {
         setPlaceResults(data.slice(0, 5).map(p => ({
@@ -85,6 +102,11 @@ export default function CompanionWrite() {
       } else {
         setPlaceResults([]);
       }
+    }, {
+      bounds: new window.kakao.maps.LatLngBounds(
+        new window.kakao.maps.LatLng(32.8, 125.8),
+        new window.kakao.maps.LatLng(34.0, 127.4)
+      ),
     });
   }, [placeQuery, getPlacesService]);
 
@@ -335,24 +357,9 @@ export default function CompanionWrite() {
                 </div>
               )}
 
-              {/* 선택된 장소 + 지도 미리보기 */}
+              {/* 선택된 장소 지도 미리보기 */}
               {selectedPlace ? (
                 <div>
-                  <div className="flex items-center justify-between bg-gradient-to-r from-sky-50 to-cyan-50 rounded-xl px-4 py-3 mb-3 border border-sky-100">
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-sky-500" />
-                      <span className="text-sm font-semibold text-slate-700">{selectedPlace.name}</span>
-                    </div>
-                    <motion.button
-                      type="button"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                      onClick={removePlace}
-                      className="w-7 h-7 bg-red-100 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-200 transition-colors"
-                    >
-                      <X className="w-3.5 h-3.5" />
-                    </motion.button>
-                  </div>
                   <div className="rounded-2xl overflow-hidden">
                     <KakaoMap
                       lat={selectedPlace.lat}
@@ -576,8 +583,12 @@ export default function CompanionWrite() {
                   </h3>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-sky-200/50">
-                        {user?.memberNickname?.[0] || '?'}
+                      <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-sky-200/50 overflow-hidden">
+                        {user?.memberProfileImg ? (
+                          <img src={user.memberProfileImg} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = user?.memberNickname?.[0] || '?'; }} />
+                        ) : (
+                          user?.memberNickname?.[0] || '?'
+                        )}
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-slate-700">{user?.memberNickname || '나'}</p>
