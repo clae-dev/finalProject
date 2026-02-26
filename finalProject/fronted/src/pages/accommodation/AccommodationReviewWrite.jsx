@@ -29,6 +29,7 @@ export default function AccommodationReviewWrite() {
   const [verificationPreview, setVerificationPreview] = useState(null);
   const verificationInputRef = useRef(null);
 
+  const today = new Date().toISOString().split('T')[0];
   const createMutation = useCreateAccommodationReview(Number(accommodationNo));
 
   const handleImageAdd = async (e) => {
@@ -86,11 +87,6 @@ export default function AccommodationReviewWrite() {
       return;
     }
 
-    if (!verificationFile) {
-      alert('인증서류(예약 확인서)를 첨부해주세요.');
-      return;
-    }
-
     const formData = new FormData();
     formData.append('rating', rating);
     formData.append('content', content);
@@ -98,12 +94,14 @@ export default function AccommodationReviewWrite() {
     if (checkOutDate) formData.append('checkOutDate', checkOutDate);
     if (recommendedFor) formData.append('recommendedFor', recommendedFor);
     images.forEach(img => formData.append('images', img));
-    formData.append('verificationFile', verificationFile);
+    if (verificationFile) formData.append('verificationFile', verificationFile);
 
     createMutation.mutate(formData, {
       onSuccess: (res) => {
         if (res.success) {
-          alert('후기가 등록되었습니다. 관리자 승인 후 공개됩니다.');
+          alert(verificationFile
+            ? '후기가 등록되었습니다. 인증서류 검토 후 인증 뱃지가 부여됩니다.'
+            : '후기가 등록되었습니다.');
           navigate(`/accommodations/${accommodationNo}`);
         } else {
           alert(res.message || '후기 등록에 실패했습니다.');
@@ -200,6 +198,7 @@ export default function AccommodationReviewWrite() {
                 <input
                   type="date"
                   value={checkInDate}
+                  max={today}
                   onChange={(e) => {
                     setCheckInDate(e.target.value);
                     if (checkOutDate && e.target.value > checkOutDate) setCheckOutDate('');
@@ -216,6 +215,7 @@ export default function AccommodationReviewWrite() {
                   type="date"
                   value={checkOutDate}
                   min={checkInDate || undefined}
+                  max={today}
                   onChange={(e) => setCheckOutDate(e.target.value)}
                   className="w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
                 />
@@ -289,9 +289,9 @@ export default function AccommodationReviewWrite() {
             <div>
               <label className="block text-sm font-bold text-slate-700 mb-2 flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                인증서류 (예약 확인서) <span className="text-red-400">*</span>
+                인증서류 (예약 확인서) <span className="text-slate-400 font-normal">(선택)</span>
               </label>
-              <p className="text-xs text-slate-400 mb-3">숙박 예약확인서, 영수증 등 실제 이용을 증명할 수 있는 서류를 첨부해주세요.</p>
+              <p className="text-xs text-slate-400 mb-3">인증서류를 첨부하면 인증 리뷰어 뱃지를 받을 수 있습니다.</p>
               <div
                 onClick={() => verificationInputRef.current?.click()}
                 className="border-2 border-dashed border-slate-200 hover:border-emerald-300 rounded-xl p-5 text-center cursor-pointer transition-colors"

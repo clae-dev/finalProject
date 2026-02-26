@@ -276,20 +276,18 @@ function AccommodationReviewTable() {
   };
 
   const handleApprove = (item) => {
-    if (!confirm(`이 후기를 승인하시겠습니까? 작성자에게 인증 리뷰어 배지가 부여됩니다.`)) return;
+    if (!confirm(`인증서류를 승인하시겠습니까? 작성자에게 인증 리뷰어 뱃지가 부여됩니다.`)) return;
     approveMutation.mutate(item.reviewNo);
   };
 
   const handleReject = (item) => {
-    if (!confirm(`이 후기를 거부하시겠습니까?`)) return;
+    if (!confirm(`인증서류를 반려하시겠습니까?`)) return;
     rejectMutation.mutate(item.reviewNo);
   };
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'W': return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-600">대기</span>;
       case 'A': return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-600">공개</span>;
-      case 'R': return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600">거부</span>;
       default: return <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500">{status}</span>;
     }
   };
@@ -344,22 +342,23 @@ function AccommodationReviewTable() {
                   <td className="px-5 py-3 text-sm text-slate-400">{item.createdAt || '-'}</td>
                   <td className="px-5 py-3">
                     <div className="flex items-center gap-1">
-                      {item.status === 'W' && (
+                      {item.verifiedReviewer === 'Y' && (
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-600">인증됨</span>
+                      )}
+                      {item.verificationFile && item.verifiedReviewer !== 'Y' && (
                         <>
-                          {item.verificationFile && (
-                            <button
-                              onClick={() => setViewingFile(item.verificationFile)}
-                              className="p-1.5 rounded-lg text-sky-400 hover:bg-sky-50 hover:text-sky-600 transition-all"
-                              title="인증서류 보기"
-                            >
-                              <Eye className="w-4 h-4" />
-                            </button>
-                          )}
+                          <button
+                            onClick={() => setViewingFile(item.verificationFile)}
+                            className="p-1.5 rounded-lg text-sky-400 hover:bg-sky-50 hover:text-sky-600 transition-all"
+                            title="인증서류 보기"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
                           <button
                             onClick={() => handleApprove(item)}
                             disabled={approveMutation.isPending}
                             className="p-1.5 rounded-lg text-emerald-400 hover:bg-emerald-50 hover:text-emerald-600 transition-all"
-                            title="승인"
+                            title="인증 승인"
                           >
                             <CheckCircle2 className="w-4 h-4" />
                           </button>
@@ -367,7 +366,7 @@ function AccommodationReviewTable() {
                             onClick={() => handleReject(item)}
                             disabled={rejectMutation.isPending}
                             className="p-1.5 rounded-lg text-amber-400 hover:bg-amber-50 hover:text-amber-600 transition-all"
-                            title="거부"
+                            title="인증 반려"
                           >
                             <XCircle className="w-4 h-4" />
                           </button>

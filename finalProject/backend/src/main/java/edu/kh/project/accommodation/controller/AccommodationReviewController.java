@@ -134,7 +134,7 @@ public class AccommodationReviewController {
                     verificationWebPath, verificationFolderPath);
 
             response.put("success", result > 0);
-            response.put("message", result > 0 ? "후기가 등록되었습니다. 관리자 승인 후 공개됩니다." : "후기 등록에 실패했습니다.");
+            response.put("message", result > 0 ? "후기가 등록되었습니다." : "후기 등록에 실패했습니다.");
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {

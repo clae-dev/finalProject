@@ -407,6 +407,7 @@
                 M.MEMBER_NO AS "memberNo",
                 A.NAME AS "accommodationName",
                 A.ACCOMMODATION_NO AS "accommodationNo",
+                M.VERIFIED_REVIEWER AS "verifiedReviewer",
                 (SELECT V.VERIFICATION_FILE FROM MEMBER_VERIFICATION V
                  WHERE V.MEMBER_NO = R.MEMBER_NO
                  ORDER BY V.SUBMITTED_AT DESC

@@ -72,7 +72,7 @@ public class AccommodationReviewServiceImpl implements AccommodationReviewServic
                             String webPath, String folderPath,
                             String verificationWebPath, String verificationFolderPath) {
 
-        // 후기 등록 (STATUS = 'W' 대기 상태)
+        // 후기 등록 (STATUS = 'A' 즉시 공개)
         int result = reviewMapper.insertReview(dto);
 
         if (result > 0 && images != null && !images.isEmpty()) {
@@ -109,21 +109,6 @@ public class AccommodationReviewServiceImpl implements AccommodationReviewServic
             }
         }
 
-        // 관리자에게 알림 발송
-        if (result > 0) {
-            for (int adminNo : adminMapper.selectAdminMemberNos()) {
-                notificationService.createNotification(NotificationDTO.builder()
-                        .recipientNo(adminNo)
-                        .senderNo(dto.getMemberNo())
-                        .notificationType("ACCOM_REVIEW_SUBMITTED")
-                        .targetType("ADMIN_ACCOM_REVIEW")
-                        .targetNo(dto.getReviewNo())
-                        .title("숙소 후기 승인 요청")
-                        .content("새 숙소 후기가 접수되었습니다.")
-                        .build());
-            }
-        }
-
         // 인증서류 파일 저장
         if (result > 0 && verificationFile != null && !verificationFile.isEmpty()) {
             try {
@@ -146,6 +131,19 @@ public class AccommodationReviewServiceImpl implements AccommodationReviewServic
                         .build();
 
                 verificationMapper.insertVerification(vDto);
+
+                // 인증서류가 있을 때만 관리자에게 알림 발송
+                for (int adminNo : adminMapper.selectAdminMemberNos()) {
+                    notificationService.createNotification(NotificationDTO.builder()
+                            .recipientNo(adminNo)
+                            .senderNo(dto.getMemberNo())
+                            .notificationType("ACCOM_REVIEW_SUBMITTED")
+                            .targetType("ADMIN_ACCOM_REVIEW")
+                            .targetNo(dto.getReviewNo())
+                            .title("숙소 후기 인증 요청")
+                            .content("인증서류가 접수되었습니다.")
+                            .build());
+                }
             } catch (Exception e) {
                 log.error("인증서류 저장 실패", e);
             }

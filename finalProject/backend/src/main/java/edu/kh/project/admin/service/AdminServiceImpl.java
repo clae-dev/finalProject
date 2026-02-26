@@ -232,41 +232,35 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public int approveAccommodationReview(int reviewNo) {
-        int result = adminMapper.approveAccommodationReview(reviewNo);
-        if (result > 0) {
-            int memberNo = adminMapper.selectMemberNoByReviewNo(reviewNo);
-            int accommodationNo = adminMapper.selectAccommodationNoByReviewNo(reviewNo);
-            verificationMapper.updateMemberVerifiedReviewer(memberNo, "Y");
+        int memberNo = adminMapper.selectMemberNoByReviewNo(reviewNo);
+        int accommodationNo = adminMapper.selectAccommodationNoByReviewNo(reviewNo);
+        verificationMapper.updateMemberVerifiedReviewer(memberNo, "Y");
 
-            notificationService.createNotification(NotificationDTO.builder()
-                    .recipientNo(memberNo)
-                    .notificationType("ACCOM_REVIEW_APPROVED")
-                    .targetType("ACCOMMODATION")
-                    .targetNo(accommodationNo)
-                    .title("숙소 후기 승인")
-                    .content("숙소 후기가 승인되었습니다.")
-                    .build());
-        }
-        return result;
+        notificationService.createNotification(NotificationDTO.builder()
+                .recipientNo(memberNo)
+                .notificationType("ACCOM_REVIEW_APPROVED")
+                .targetType("ACCOMMODATION")
+                .targetNo(accommodationNo)
+                .title("인증 뱃지 부여")
+                .content("인증서류가 승인되어 인증 리뷰어 뱃지가 부여되었습니다.")
+                .build());
+        return 1;
     }
 
     @Override
     public int rejectAccommodationReview(int reviewNo) {
-        int result = adminMapper.rejectAccommodationReview(reviewNo);
-        if (result > 0) {
-            int memberNo = adminMapper.selectMemberNoByReviewNo(reviewNo);
-            int accommodationNo = adminMapper.selectAccommodationNoByReviewNo(reviewNo);
+        int memberNo = adminMapper.selectMemberNoByReviewNo(reviewNo);
+        int accommodationNo = adminMapper.selectAccommodationNoByReviewNo(reviewNo);
 
-            notificationService.createNotification(NotificationDTO.builder()
-                    .recipientNo(memberNo)
-                    .notificationType("ACCOM_REVIEW_REJECTED")
-                    .targetType("ACCOMMODATION")
-                    .targetNo(accommodationNo)
-                    .title("숙소 후기 거부")
-                    .content("숙소 후기가 거부되었습니다.")
-                    .build());
-        }
-        return result;
+        notificationService.createNotification(NotificationDTO.builder()
+                .recipientNo(memberNo)
+                .notificationType("ACCOM_REVIEW_REJECTED")
+                .targetType("ACCOMMODATION")
+                .targetNo(accommodationNo)
+                .title("인증서류 반려")
+                .content("인증서류가 반려되었습니다. 다시 제출해주세요.")
+                .build());
+        return 1;
     }
 
     @Override
