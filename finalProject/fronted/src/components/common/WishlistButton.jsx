@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
+import { Bookmark } from 'lucide-react';
 import { AuthContext } from '../AuthContext';
 import { useCheckWishlist, useToggleWishlist } from '../../api/wishlist/useWishlist';
 
@@ -47,12 +47,12 @@ export default function WishlistButton({ type, targetNo, className = '', size = 
       disabled={toggleMutation.isPending}
       className={`${sizeClass} rounded-full flex items-center justify-center transition-all ${
         isWishlisted
-          ? 'bg-rose-500 shadow-lg shadow-rose-200/50'
+          ? 'bg-sky-500 shadow-lg shadow-sky-200/50'
           : 'bg-white/80 hover:bg-white backdrop-blur-sm shadow-lg'
       } ${className}`}
-      title={isWishlisted ? '찜 해제' : '찜하기'}
+      title={isWishlisted ? '저장 해제' : '저장하기'}
     >
-      <Heart
+      <Bookmark
         className={`${size === 'sm' ? 'w-4 h-4' : 'w-4 h-4'} transition-colors ${
           isWishlisted ? 'fill-white text-white' : 'text-slate-600'
         }`}
