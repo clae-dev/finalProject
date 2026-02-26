@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, MapPin, Heart, Phone, Clock, Loader2, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../components/AuthContext';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useAccommodations } from '../../api/accommodation/useAccommodation';
@@ -24,6 +25,7 @@ const cardVariants = {
 
 export default function Accommodations() {
   const navigate = useNavigate();
+  const { user } = useContext(AuthContext) || {};
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     region: 'all',
@@ -355,7 +357,10 @@ export default function Accommodations() {
                     initial="hidden"
                     animate="visible"
                     whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                    onClick={() => navigate(`/accommodations/${acc.accommodationNo}`)}
+                    onClick={() => {
+                      if (!user) { alert('로그인 후 이용할 수 있습니다.'); navigate('/login'); return; }
+                      navigate(`/accommodations/${acc.accommodationNo}`);
+                    }}
                     className="bg-white rounded-xl overflow-hidden border border-slate-200/80 hover:border-slate-300 hover:shadow-lg transition-all duration-200 cursor-pointer group"
                     style={{ fontFamily: "'Pretendard', 'Noto Sans KR', sans-serif" }}
                   >
