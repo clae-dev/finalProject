@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Users, Plus, ChevronLeft, ChevronRight, Loader2, Search, Sparkles } from 'lucide-react';
+import { Users, Plus, ChevronLeft, ChevronRight, Loader2, Search, Sparkles, MapPin } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useCompanions } from '../../api/companion/useCompanion';
@@ -293,14 +293,22 @@ export default function Companions() {
                     onClick={() => navigate(`/companions/${comp.companionNo}`)}
                     className="bg-white rounded-3xl overflow-hidden shadow-lg shadow-sky-100/50 hover:shadow-2xl hover:shadow-sky-200/60 transition-shadow duration-300 cursor-pointer group border border-sky-50"
                   >
-                    {/* 이미지 */}
+                    {/* 이미지 / 장소 */}
                     <div className="relative h-48 overflow-hidden">
-                      <img
-                        src={comp.imageUrl || DEFAULT_IMAGE}
-                        alt=""
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                        onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
-                      />
+                      {comp.latitude && comp.longitude ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-sky-100 to-cyan-100 gap-2">
+                          <MapPin className="w-10 h-10 text-sky-400" />
+                          <span className="text-sm font-semibold text-sky-600">{comp.placeName || '장소 지정됨'}</span>
+                          <span className="text-xs text-sky-400">지도에서 보기</span>
+                        </div>
+                      ) : (
+                        <img
+                          src={comp.imageUrl || DEFAULT_IMAGE}
+                          alt=""
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                          onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
+                        />
+                      )}
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/10 to-transparent" />
 
                       {/* D-day 배지 */}

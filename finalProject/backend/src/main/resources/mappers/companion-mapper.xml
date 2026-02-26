@@ -22,6 +22,9 @@
         <result property="authorAgeRange" column="AUTHOR_AGE_RANGE" />
         <result property="currentMembers" column="CURRENT_MEMBERS" />
         <result property="contentImages" column="CONTENT_IMAGES" />
+        <result property="latitude" column="LATITUDE" />
+        <result property="longitude" column="LONGITUDE" />
+        <result property="placeName" column="PLACE_NAME" />
     </resultMap>
 
     <!-- 참여자 ResultMap -->
@@ -48,6 +51,9 @@
                 C.TAGS,
                 C.STATUS,
                 C.MEMBER_NO,
+                C.LATITUDE,
+                C.LONGITUDE,
+                C.PLACE_NAME,
                 TO_CHAR(C.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
                 M.NICKNAME AS AUTHOR_NICKNAME,
                 M.PROFILE_IMAGE AS AUTHOR_PROFILE,
@@ -91,6 +97,9 @@
             C.STATUS,
             C.MEMBER_NO,
             C.CONTENT_IMAGES,
+            C.LATITUDE,
+            C.LONGITUDE,
+            C.PLACE_NAME,
             TO_CHAR(C.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
             TO_CHAR(C.UPDATED_AT, 'YYYY-MM-DD HH24:MI') AS UPDATED_AT,
             M.NICKNAME AS AUTHOR_NICKNAME,
@@ -128,11 +137,13 @@
     <insert id="insertCompanion">
         INSERT INTO COMPANION_BOARD (
             COMPANION_NO, TITLE, CONTENT, IMAGE_URL,
-            TRAVEL_DATE, MAX_MEMBERS, TAGS, MEMBER_NO, CONTENT_IMAGES
+            TRAVEL_DATE, MAX_MEMBERS, TAGS, MEMBER_NO, CONTENT_IMAGES,
+            LATITUDE, LONGITUDE, PLACE_NAME
         ) VALUES (
             SEQ_COMPANION_NO.NEXTVAL,
             #{title}, #{content}, #{imageUrl},
-            #{travelDate}, #{maxMembers}, #{tags}, #{memberNo}, #{contentImages}
+            #{travelDate}, #{maxMembers}, #{tags}, #{memberNo}, #{contentImages},
+            #{latitude}, #{longitude}, #{placeName}
         )
     </insert>
 

@@ -165,7 +165,10 @@ public class CompanionController {
             @RequestParam(value = "maxMembers", defaultValue = "4") int maxMembers,
             @RequestParam(value = "tags", required = false) String tags,
             @RequestParam(value = "thumbnail", required = false) MultipartFile thumbnail,
-            @RequestParam(value = "contentImages", required = false) List<MultipartFile> contentImages) {
+            @RequestParam(value = "contentImages", required = false) List<MultipartFile> contentImages,
+            @RequestParam(value = "latitude", required = false) Double latitude,
+            @RequestParam(value = "longitude", required = false) Double longitude,
+            @RequestParam(value = "placeName", required = false) String placeName) {
 
         Map<String, Object> response = new HashMap<>();
 
@@ -179,6 +182,9 @@ public class CompanionController {
             companion.setMaxMembers(maxMembers);
             companion.setTags(tags);
             companion.setMemberNo(memberNo);
+            companion.setLatitude(latitude);
+            companion.setLongitude(longitude);
+            companion.setPlaceName(placeName);
 
             int result = companionService.createCompanion(
                     companion, thumbnail, contentImages,

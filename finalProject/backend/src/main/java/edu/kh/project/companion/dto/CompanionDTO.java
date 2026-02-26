@@ -30,6 +30,9 @@ public class CompanionDTO {
     private String createdAt;      // 작성일
     private String updatedAt;      // 수정일
     private String contentImages;  // 본문 내 이미지 URL 목록
+    private Double latitude;       // 장소 위도
+    private Double longitude;      // 장소 경도
+    private String placeName;      // 장소명
 
     // JOIN 파생 필드 (작성자 정보)
     private String authorNickname; // 작성자 닉네임

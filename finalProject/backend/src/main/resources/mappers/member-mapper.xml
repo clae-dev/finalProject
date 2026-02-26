@@ -149,13 +149,6 @@
         WHERE MEMBER_NO = #{memberNo}
     </update>
 
-    <!-- 이메일 인증 완료 처리 -->
-    <update id="updateEmailVerified">
-        UPDATE MEMBER
-        SET EMAIL_VERIFIED = 'Y'
-        WHERE EMAIL = #{memberEmail}
-    </update>
-
     <!-- 아이디 찾기 (이름 + 이메일) -->
     <select id="findId" resultMap="memberResultMap">
         SELECT

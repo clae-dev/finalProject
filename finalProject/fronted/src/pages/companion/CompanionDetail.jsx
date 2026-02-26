@@ -162,18 +162,32 @@ export default function CompanionDetail() {
     <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-cyan-50">
       <Header />
 
-      {/* 히어로 이미지 */}
+      {/* 히어로 이미지 / 지도 */}
       <div className="relative h-[350px] md:h-[450px] overflow-hidden">
-        <motion.img
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-          src={companion.imageUrl || DEFAULT_IMAGE}
-          alt=""
-          className="w-full h-full object-cover"
-          onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-sky-950/80 via-slate-900/20 to-slate-900/10" />
+        {companion.latitude && companion.longitude ? (
+          <div className="w-full h-full">
+            <KakaoMap
+              lat={companion.latitude}
+              lng={companion.longitude}
+              level={4}
+              name={companion.placeName || '여행 장소'}
+              height="100%"
+            />
+          </div>
+        ) : (
+          <>
+            <motion.img
+              initial={{ scale: 1.1 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 1.2, ease: 'easeOut' }}
+              src={companion.imageUrl || DEFAULT_IMAGE}
+              alt=""
+              className="w-full h-full object-cover"
+              onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-sky-950/80 via-slate-900/20 to-slate-900/10" />
+          </>
+        )}
 
         {/* 뒤로가기 */}
         <motion.button
@@ -186,8 +200,13 @@ export default function CompanionDetail() {
           <ArrowLeft className="w-5 h-5 text-slate-700" />
         </motion.button>
 
+        {/* 히어로 하단 그라데이션 (지도일 때도 텍스트 가독성 확보) */}
+        {(companion.latitude && companion.longitude) && (
+          <div className="absolute inset-0 bg-gradient-to-t from-sky-950/80 via-transparent to-transparent pointer-events-none" />
+        )}
+
         {/* 히어로 하단 정보 */}
-        <div className="absolute bottom-0 left-0 right-0 p-8">
+        <div className="absolute bottom-0 left-0 right-0 p-8 z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}>
             {tagList.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-4">
@@ -427,7 +446,7 @@ export default function CompanionDetail() {
           </motion.div>
         )}
 
-        {/* 제주 여행 지역 지도 */}
+        {/* 여행 지역 지도 */}
         <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={6}
           className="bg-white rounded-3xl shadow-xl shadow-sky-100/40 p-7 border border-sky-50">
           <div className="flex items-center gap-2 mb-4">
@@ -435,16 +454,23 @@ export default function CompanionDetail() {
               <Map className="w-4 h-4 text-white" />
             </div>
             <h3 className="text-lg font-bold text-slate-800">여행 지역</h3>
+            {companion.placeName && (
+              <span className="px-3 py-1 bg-sky-50 text-sky-600 rounded-full text-xs font-semibold border border-sky-100">
+                {companion.placeName}
+              </span>
+            )}
           </div>
           <KakaoMap
-            lat={33.3617}
-            lng={126.5292}
-            level={10}
-            name="제주도"
+            lat={companion.latitude || 33.3617}
+            lng={companion.longitude || 126.5292}
+            level={companion.latitude ? 4 : 10}
+            name={companion.placeName || '제주도'}
             height="200px"
           />
           <p className="text-xs text-slate-400 mt-2 text-center" style={{ fontFamily: "'Pretendard', sans-serif" }}>
-            제주도 전체 지역에서 함께할 동행을 모집 중입니다
+            {companion.placeName
+              ? `${companion.placeName}에서 함께할 동행을 모집 중입니다`
+              : '제주도 전체 지역에서 함께할 동행을 모집 중입니다'}
           </p>
         </motion.div>
       </div>
