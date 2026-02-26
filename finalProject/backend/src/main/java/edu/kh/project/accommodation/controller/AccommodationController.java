@@ -76,7 +76,7 @@ public class AccommodationController {
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(required = false) String region) {
 
-        size = Math.min(size, 100);
+        size = Math.min(size, 10000);
         Map<String, Object> response = new HashMap<>();
 
         try {

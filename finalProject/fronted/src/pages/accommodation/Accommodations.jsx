@@ -83,7 +83,10 @@ export default function Accommodations() {
         filters.priceRange === '100k+' ? price >= 100000 : true;
     }
 
-    return matchesSearch && matchesType && matchesPriceRange;
+    // 썸네일 없는 숙소 제외
+    const hasThumbnail = !!acc.thumbnailUrl;
+
+    return matchesSearch && matchesType && matchesPriceRange && hasThumbnail;
   });
 
   // 가격 포맷
@@ -105,17 +108,10 @@ export default function Accommodations() {
   // 기본 이미지
   const defaultImage = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600';
 
-  // 썸네일 있는 숙소 우선 정렬
-  const sortedAccommodations = [...filteredAccommodations].sort((a, b) => {
-    const aHas = a.thumbnailUrl ? 1 : 0;
-    const bHas = b.thumbnailUrl ? 1 : 0;
-    return bHas - aHas;
-  });
-
   // 프론트엔드 페이지네이션
-  const totalFilteredCount = sortedAccommodations.length;
+  const totalFilteredCount = filteredAccommodations.length;
   const totalPages = Math.ceil(totalFilteredCount / pageSize);
-  const paginatedAccommodations = sortedAccommodations.slice(
+  const paginatedAccommodations = filteredAccommodations.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -452,45 +448,51 @@ export default function Accommodations() {
                 transition={{ delay: 0.5, duration: 0.5 }}
                 className="flex items-center justify-center gap-2 mt-12"
               >
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                  disabled={currentPage === 1}
-                  className="w-11 h-11 rounded-xl bg-white shadow-md shadow-sky-100 flex items-center justify-center text-slate-400 hover:text-sky-500 hover:shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all border border-sky-50"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </motion.button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1)
-                  .filter(p => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 2)
-                  .map((page, idx, arr) => (
-                    <React.Fragment key={page}>
-                      {idx > 0 && arr[idx - 1] !== page - 1 && (
-                        <span className="text-slate-300 px-1">...</span>
-                      )}
+                {(() => {
+                  const groupSize = 4;
+                  const groupIndex = Math.floor((currentPage - 1) / groupSize);
+                  const groupStart = groupIndex * groupSize + 1;
+                  const groupEnd = Math.min(groupStart + groupSize - 1, totalPages);
+                  const pages = Array.from({ length: groupEnd - groupStart + 1 }, (_, i) => groupStart + i);
+
+                  return (
+                    <>
                       <motion.button
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
-                        onClick={() => setCurrentPage(page)}
-                        className={`w-11 h-11 rounded-xl font-bold text-sm transition-all duration-300 ${
-                          currentPage === page
-                            ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-200/60'
-                            : 'bg-white shadow-md shadow-sky-50 text-slate-500 hover:text-sky-500 border border-sky-50'
-                        }`}
+                        onClick={() => setCurrentPage(groupStart - 1)}
+                        disabled={groupStart === 1}
+                        className="w-11 h-11 rounded-xl bg-white shadow-md shadow-sky-100 flex items-center justify-center text-slate-400 hover:text-sky-500 hover:shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all border border-sky-50"
                       >
-                        {page}
+                        <ChevronLeft className="w-5 h-5" />
                       </motion.button>
-                    </React.Fragment>
-                  ))}
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                  disabled={currentPage === totalPages}
-                  className="w-11 h-11 rounded-xl bg-white shadow-md shadow-sky-100 flex items-center justify-center text-slate-400 hover:text-sky-500 hover:shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all border border-sky-50"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </motion.button>
+                      {pages.map(page => (
+                        <motion.button
+                          key={page}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          onClick={() => setCurrentPage(page)}
+                          className={`w-11 h-11 rounded-xl font-bold text-sm transition-all duration-300 ${
+                            currentPage === page
+                              ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-200/60'
+                              : 'bg-white shadow-md shadow-sky-50 text-slate-500 hover:text-sky-500 border border-sky-50'
+                          }`}
+                        >
+                          {page}
+                        </motion.button>
+                      ))}
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => setCurrentPage(groupEnd + 1)}
+                        disabled={groupEnd === totalPages}
+                        className="w-11 h-11 rounded-xl bg-white shadow-md shadow-sky-100 flex items-center justify-center text-slate-400 hover:text-sky-500 hover:shadow-lg disabled:opacity-30 disabled:cursor-not-allowed transition-all border border-sky-50"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </motion.button>
+                    </>
+                  );
+                })()}
               </motion.div>
             )}
           </>
