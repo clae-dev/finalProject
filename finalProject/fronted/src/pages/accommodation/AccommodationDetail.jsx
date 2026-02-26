@@ -186,6 +186,25 @@ export default function AccommodationDetail() {
     );
   }
 
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-cyan-50">
+        <Header />
+        <div className="flex flex-col items-center justify-center py-40">
+          <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mb-4">
+            <DoorClosed className="w-8 h-8 text-sky-500" />
+          </div>
+          <p className="text-slate-700 text-lg font-semibold mb-2">로그인이 필요합니다</p>
+          <p className="text-slate-400 text-sm mb-6">숙소 상세 정보는 회원만 볼 수 있습니다.</p>
+          <Button onClick={() => navigate('/login')} className="gap-2 bg-gradient-to-r from-sky-500 to-cyan-500 text-white">
+            로그인하러 가기
+          </Button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   const images = accommodation.imageUrls?.length > 0
     ? accommodation.imageUrls
     : [accommodation.thumbnailUrl || defaultImage];

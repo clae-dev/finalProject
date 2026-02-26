@@ -106,6 +106,25 @@ export default function ReviewDetail() {
     );
   }
 
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-sky-50 to-white">
+        <Header />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-center py-40">
+          <div className="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mb-4">
+            <Flag className="w-8 h-8 text-sky-500" />
+          </div>
+          <p className="text-slate-700 text-lg font-semibold mb-2">로그인이 필요합니다</p>
+          <p className="text-slate-400 text-sm mb-6">후기 상세 내용은 회원만 볼 수 있습니다.</p>
+          <button onClick={() => navigate('/login')} className="px-6 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white rounded-xl font-bold text-sm hover:shadow-lg transition-all">
+            로그인하러 가기
+          </button>
+        </motion.div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-cyan-50">
       <Header />
