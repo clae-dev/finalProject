@@ -152,4 +152,7 @@ public interface AdminMapper {
 
     /** 후기 번호로 숙소번호 조회 */
     int selectAccommodationNoByReviewNo(@Param("reviewNo") int reviewNo);
+
+    /** 관리자 회원번호 목록 조회 */
+    List<Integer> selectAdminMemberNos();
 }

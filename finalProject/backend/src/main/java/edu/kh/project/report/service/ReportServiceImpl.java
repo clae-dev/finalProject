@@ -3,6 +3,9 @@ package edu.kh.project.report.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.kh.project.admin.mapper.AdminMapper;
+import edu.kh.project.notification.dto.NotificationDTO;
+import edu.kh.project.notification.service.NotificationService;
 import edu.kh.project.report.dto.ReportDTO;
 import edu.kh.project.report.mapper.ReportMapper;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +26,28 @@ import lombok.extern.slf4j.Slf4j;
 public class ReportServiceImpl implements ReportService {
 
     private final ReportMapper reportMapper;
+    private final NotificationService notificationService;
+    private final AdminMapper adminMapper;
 
     @Override
     public int submitReport(ReportDTO report) {
-        return reportMapper.insertReport(report);
+        int result = reportMapper.insertReport(report);
+
+        if (result > 0) {
+            for (int adminNo : adminMapper.selectAdminMemberNos()) {
+                notificationService.createNotification(NotificationDTO.builder()
+                        .recipientNo(adminNo)
+                        .senderNo(report.getMemberNo())
+                        .notificationType("REPORT_SUBMITTED")
+                        .targetType("ADMIN_REPORT")
+                        .targetNo(0)
+                        .title("새 신고 접수")
+                        .content("새로운 신고가 접수되었습니다. 확인해주세요.")
+                        .build());
+            }
+        }
+
+        return result;
     }
 
     @Override

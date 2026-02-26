@@ -3,8 +3,11 @@ package edu.kh.project.accommodation.service;
 import edu.kh.project.accommodation.dto.AccommodationReviewDTO;
 import edu.kh.project.accommodation.dto.ReviewImageDTO;
 import edu.kh.project.accommodation.mapper.AccommodationReviewMapper;
+import edu.kh.project.admin.mapper.AdminMapper;
 import edu.kh.project.member.dto.MemberVerificationDTO;
 import edu.kh.project.member.mapper.MemberVerificationMapper;
+import edu.kh.project.notification.dto.NotificationDTO;
+import edu.kh.project.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,6 +36,8 @@ public class AccommodationReviewServiceImpl implements AccommodationReviewServic
 
     private final AccommodationReviewMapper reviewMapper;
     private final MemberVerificationMapper verificationMapper;
+    private final NotificationService notificationService;
+    private final AdminMapper adminMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -101,6 +106,21 @@ public class AccommodationReviewServiceImpl implements AccommodationReviewServic
                 } catch (Exception e) {
                     log.error("후기 이미지 저장 실패", e);
                 }
+            }
+        }
+
+        // 관리자에게 알림 발송
+        if (result > 0) {
+            for (int adminNo : adminMapper.selectAdminMemberNos()) {
+                notificationService.createNotification(NotificationDTO.builder()
+                        .recipientNo(adminNo)
+                        .senderNo(dto.getMemberNo())
+                        .notificationType("ACCOM_REVIEW_SUBMITTED")
+                        .targetType("ADMIN_ACCOM_REVIEW")
+                        .targetNo(dto.getReviewNo())
+                        .title("새 숙소 후기 승인 요청")
+                        .content("새로운 숙소 후기가 등록되어 승인 대기 중입니다.")
+                        .build());
             }
         }
 
