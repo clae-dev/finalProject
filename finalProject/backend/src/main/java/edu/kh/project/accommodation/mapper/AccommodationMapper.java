@@ -50,6 +50,9 @@ public interface AccommodationMapper {
     /** 활성 숙소 전체 조회 */
     List<AccommodationDTO> selectAllActiveAccommodations();
 
+    /** 조회수 증가 */
+    int incrementViewCount(@Param("accommodationNo") long accommodationNo);
+
     /** 숙소 이미지 등록 */
     int insertAccommodationImage(@Param("accommodationNo") long accommodationNo,
                                  @Param("imageUrl") String imageUrl,

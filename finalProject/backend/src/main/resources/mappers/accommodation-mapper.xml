@@ -145,6 +145,13 @@
         WHERE STATUS = 'A'
     </update>
 
+    <!-- 조회수 증가 -->
+    <update id="incrementViewCount" parameterType="long">
+        UPDATE ACCOMMODATION
+        SET VIEW_COUNT = NVL(VIEW_COUNT, 0) + 1
+        WHERE ACCOMMODATION_NO = #{accommodationNo}
+    </update>
+
     <!-- 숙소 이미지 추가 -->
     <insert id="insertAccommodationImage">
         INSERT INTO ACCOMMODATION_IMAGE (
