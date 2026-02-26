@@ -42,7 +42,7 @@ function timeAgo(dateStr) {
   return dateStr;
 }
 
-export default function NotificationBell({ onOpenChat }) {
+export default function NotificationBell() {
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
   const navigate = useNavigate();
@@ -83,7 +83,7 @@ export default function NotificationBell({ onOpenChat }) {
     }
     // 해당 페이지로 이동
     if (notif.targetType === 'CHAT') {
-      onOpenChat?.();
+      window.dispatchEvent(new CustomEvent('open-chat'));
     } else if (notif.targetType === 'COMPANION' && notif.targetNo) {
       navigate(`/companions/${notif.targetNo}`);
     } else if (notif.targetType === 'INQUIRY') {

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef } from 'react';
+import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { Droplets, Wind, CloudRain, Navigation, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { getJejuWeather } from '../../api/weather/weatherAPI';
@@ -37,6 +37,8 @@ function windDirText(deg) {
 export default function WeatherWidget() {
   const [expanded, setExpanded] = useState(true);
   const [city, setCity] = useState('jeju');
+  const constraintsRef = useRef(null);
+  const dragY = useMotionValue(0);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['jejuWeather', city],
@@ -52,11 +54,19 @@ export default function WeatherWidget() {
   const cityLabel = CITIES.find(c => c.key === city)?.label || '제주시';
 
   return (
+    <>
+    {/* 드래그 범위: 뷰포트 전체 */}
+    <div ref={constraintsRef} className="fixed inset-0 z-30 pointer-events-none" />
     <motion.div
       initial={{ x: -100, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 300, damping: 25, delay: 0.5 }}
-      className="fixed left-0 top-1/2 -translate-y-1/2 z-40"
+      drag="y"
+      dragConstraints={constraintsRef}
+      dragElastic={0.1}
+      dragMomentum={false}
+      style={{ y: dragY }}
+      className="fixed left-0 top-1/2 -translate-y-1/2 z-40 cursor-grab active:cursor-grabbing"
     >
       <div className="flex items-stretch">
         {/* 위젯 본체 */}
@@ -138,6 +148,7 @@ export default function WeatherWidget() {
         </button>
       </div>
     </motion.div>
+    </>
   );
 }
 

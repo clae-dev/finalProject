@@ -40,6 +40,7 @@ import Flights from './pages/flight/Flights';
 import PrivacyPolicy from './pages/privacy/PrivacyPolicy';
 import TermsOfService from './pages/terms/TermsOfService';
 import InquiryPage from './pages/inquiry/InquiryPage';
+import ChatBubble from './components/chatting/ChatBubble';
 import AiChatBubble from './components/ai/AiChatBubble';
 import WeatherWidget from './components/main/WeatherSection';
 function AnimatedRoutes() {
@@ -93,6 +94,7 @@ function App() {
           <div className="min-h-screen bg-gradient-to-b from-sky-50 to-cyan-50">
             <AnimatedRoutes />
             <WeatherWidget />
+            <ChatBubble />
             <AiChatBubble />
           </div>
         </BrowserRouter>
