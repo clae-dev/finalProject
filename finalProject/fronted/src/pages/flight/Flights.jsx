@@ -4,7 +4,8 @@ import { Plane, ExternalLink, Search, Globe, ArrowRight, Sparkles, TrendingUp, C
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 
-const HERO_IMAGE = 'https://images.unsplash.com/photo-1436491865332-7a61a109db05?w=1920&q=80';
+import heroImage from '../../assets/images/공항.png';
+const HERO_IMAGE = heroImage;
 
 const bookingSites = [
   {
