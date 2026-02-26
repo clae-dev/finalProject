@@ -34,7 +34,7 @@ export default function Freeboards() {
 
       {/* 히어로 배너 */}
       <div className="relative h-[480px] overflow-hidden mt-8">
-        <img src={freeboardHero} alt="자유게시판" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={freeboardHero} alt="자유게시판" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: 'center 6%' }} />
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/50" />
 
         <div className="relative h-full flex flex-col items-center justify-center text-white px-5">
