@@ -178,7 +178,26 @@ export default function FindPassword() {
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    setErrors(prev => ({ ...prev, [field]: '' }));
+
+    // 비밀번호 필드 실시간 검증
+    if (field === 'newPassword') {
+      const pwError = validatePassword(value);
+      setErrors(prev => ({ ...prev, newPassword: value ? pwError : '' }));
+      // 비밀번호 확인도 함께 검증
+      if (formData.confirmPassword && value !== formData.confirmPassword) {
+        setErrors(prev => ({ ...prev, confirmPassword: '비밀번호가 일치하지 않습니다' }));
+      } else if (formData.confirmPassword) {
+        setErrors(prev => ({ ...prev, confirmPassword: '' }));
+      }
+    } else if (field === 'confirmPassword') {
+      if (value && formData.newPassword !== value) {
+        setErrors(prev => ({ ...prev, confirmPassword: '비밀번호가 일치하지 않습니다' }));
+      } else {
+        setErrors(prev => ({ ...prev, confirmPassword: '' }));
+      }
+    } else {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
   };
 
   const formatTime = (seconds) => {

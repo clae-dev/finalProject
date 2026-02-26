@@ -28,9 +28,34 @@ export default function PasswordChangeModal({ isOpen, onClose, memberNo }) {
     confirm: false,
   });
 
+  const [errors, setErrors] = useState({});
+
+  const validatePassword = (password) => {
+    if (!password) return '';
+    if (password.length < 8 || password.length > 20) return '비밀번호는 8~20자여야 합니다.';
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return '특수문자를 포함해야 합니다.';
+    return '';
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+
+    if (name === 'newPassword') {
+      const pwError = validatePassword(value);
+      setErrors((prev) => ({ ...prev, newPassword: value ? pwError : '' }));
+      if (form.confirmPassword && value !== form.confirmPassword) {
+        setErrors((prev) => ({ ...prev, confirmPassword: '비밀번호가 일치하지 않습니다.' }));
+      } else if (form.confirmPassword) {
+        setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+      }
+    } else if (name === 'confirmPassword') {
+      if (value && form.newPassword !== value) {
+        setErrors((prev) => ({ ...prev, confirmPassword: '비밀번호가 일치하지 않습니다.' }));
+      } else {
+        setErrors((prev) => ({ ...prev, confirmPassword: '' }));
+      }
+    }
   };
 
   const toggleShow = (field) => {
@@ -44,8 +69,12 @@ export default function PasswordChangeModal({ isOpen, onClose, memberNo }) {
       alert('모든 필드를 입력해주세요.');
       return;
     }
-    if (form.newPassword.length < 6) {
-      alert('새 비밀번호는 6자 이상이어야 합니다.');
+    if (form.newPassword.length < 8 || form.newPassword.length > 20) {
+      alert('새 비밀번호는 8~20자여야 합니다.');
+      return;
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(form.newPassword)) {
+      alert('새 비밀번호에 특수문자를 포함해야 합니다.');
       return;
     }
     if (form.newPassword !== form.confirmPassword) {
@@ -70,6 +99,7 @@ export default function PasswordChangeModal({ isOpen, onClose, memberNo }) {
 
   const handleClose = () => {
     setForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    setErrors({});
     onClose();
   };
 
@@ -147,8 +177,8 @@ export default function PasswordChangeModal({ isOpen, onClose, memberNo }) {
                     {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                {form.newPassword && form.newPassword.length < 6 && (
-                  <p className="text-xs text-rose-500 mt-1">비밀번호는 6자 이상이어야 합니다.</p>
+                {errors.newPassword && (
+                  <p className="text-xs text-rose-500 mt-1">{errors.newPassword}</p>
                 )}
               </div>
 
@@ -173,8 +203,8 @@ export default function PasswordChangeModal({ isOpen, onClose, memberNo }) {
                     {showPasswords.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                {form.confirmPassword && form.newPassword !== form.confirmPassword && (
-                  <p className="text-xs text-rose-500 mt-1">비밀번호가 일치하지 않습니다.</p>
+                {errors.confirmPassword && (
+                  <p className="text-xs text-rose-500 mt-1">{errors.confirmPassword}</p>
                 )}
               </div>
 
