@@ -1,9 +1,8 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageCircle, Shield, ChevronDown, Plane, Hotel, CalendarDays, Users, MessageSquare, Star } from 'lucide-react';
+import { Shield, ChevronDown, Plane, Hotel, CalendarDays, Users, MessageSquare, Star } from 'lucide-react';
 import logo from '@/assets/images/logo/혼디.png';
 import { AuthContext } from '../AuthContext';
-import ChatPanel from '../chatting/ChatPanel';
 import NotificationBell from '../notification/NotificationBell';
 
 const navItems = [
@@ -104,7 +103,6 @@ function DropdownMenu({ item, isActive, isOpen, onOpen, onClose }) {
 export default function Header() {
   const { user, handleLogout } = useContext(AuthContext);
   const location = useLocation();
-  const [chatOpen, setChatOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
 
   const isPathActive = (item) => {
@@ -193,16 +191,7 @@ export default function Header() {
                     )}
 
                     {/* 알림 아이콘 */}
-                    <NotificationBell onOpenChat={() => setChatOpen(true)} />
-
-                    {/* 채팅 아이콘 */}
-                    <button
-                      onClick={() => setChatOpen(true)}
-                      className="relative group w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-cyan-400 flex items-center justify-center shadow-md shadow-sky-200/50 hover:shadow-lg hover:shadow-sky-300/50 hover:scale-110 active:scale-95 transition-all duration-300"
-                      title="메시지"
-                    >
-                      <MessageCircle className="w-5 h-5 text-white stroke-[2.5] group-hover:rotate-12 transition-transform duration-300" />
-                    </button>
+                    <NotificationBell />
 
                     <Link
                       to="/mypage"
@@ -244,11 +233,6 @@ export default function Header() {
           </div>
         </div>
       </header>
-
-      {/* 채팅 슬라이드 패널 */}
-      {user && (
-        <ChatPanel isOpen={chatOpen} onClose={() => setChatOpen(false)} />
-      )}
 
     </>
   );

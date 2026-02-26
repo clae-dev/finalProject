@@ -5,20 +5,24 @@ import type { Message } from '../types';
 
 /**
  * WebSocket 커스텀 훅
- * - SockJS로 연결
+ * - SockJS로 연결 (연결은 한 번만, 콜백은 항상 최신 참조)
  * - onMessage 콜백으로 수신 메시지 전달
  * - sendMessage 함수 반환
  * - 언마운트 시 자동 연결 종료
- *
- * @param onMessage - 메시지 수신 콜백
- * @returns {{ sendMessage: function, connected: boolean }}
  */
 export default function useWebSocket(
   onMessage: (data: Message) => void
 ): { sendMessage: (messageObj: Message) => void; connected: boolean } {
   const socketRef = useRef<InstanceType<typeof SockJS> | null>(null);
   const connectedRef = useRef<boolean>(false);
+  const onMessageRef = useRef(onMessage);
 
+  // 콜백 참조만 최신으로 유지 (WebSocket 재연결 없음)
+  useEffect(() => {
+    onMessageRef.current = onMessage;
+  }, [onMessage]);
+
+  // WebSocket 연결은 마운트 시 한 번만
   useEffect(() => {
     const accessToken = getToken('accessToken');
     if (!accessToken) return;
@@ -32,22 +36,19 @@ export default function useWebSocket(
 
     sock.onmessage = (e: MessageEvent) => {
       const data: Message = JSON.parse(e.data);
-      if (onMessage) {
-        onMessage(data);
-      }
+      onMessageRef.current?.(data);
     };
 
     sock.onclose = () => {
       connectedRef.current = false;
     };
 
-    // cleanup
     return () => {
       if (sock) {
         sock.close();
       }
     };
-  }, [onMessage]);
+  }, []); // 빈 배열 — 마운트/언마운트 시에만
 
   const sendMessage = useCallback((messageObj: Message): void => {
     if (socketRef.current && connectedRef.current) {

@@ -9,8 +9,6 @@ import type { Notification } from '../types';
  * - /notificationSock SockJS 연결
  * - 수신 시 React Query 캐시 무효화
  * - 연결 끊김 시 자동 재연결 (최대 5회, 점진적 대기)
- *
- * @param onNotification - 알림 수신 콜백 (optional)
  */
 export default function useNotificationSocket(
   onNotification?: (data: Notification) => void
@@ -20,7 +18,14 @@ export default function useNotificationSocket(
   const retriesRef = useRef<number>(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const unmountedRef = useRef<boolean>(false);
+  const onNotificationRef = useRef(onNotification);
 
+  // 콜백 참조만 최신으로 유지
+  useEffect(() => {
+    onNotificationRef.current = onNotification;
+  }, [onNotification]);
+
+  // WebSocket 연결은 마운트 시 한 번만
   useEffect(() => {
     unmountedRef.current = false;
 
@@ -42,9 +47,7 @@ export default function useNotificationSocket(
         queryClient.invalidateQueries({ queryKey: ['notifications'] });
 
         // 콜백 호출
-        if (onNotification) {
-          onNotification(data);
-        }
+        onNotificationRef.current?.(data);
       };
 
       sock.onclose = () => {
@@ -69,7 +72,7 @@ export default function useNotificationSocket(
         socketRef.current.close();
       }
     };
-  }, [queryClient, onNotification]);
+  }, [queryClient]); // queryClient는 안정적 참조라 실질적으로 한 번만 실행
 
   return socketRef;
 }
