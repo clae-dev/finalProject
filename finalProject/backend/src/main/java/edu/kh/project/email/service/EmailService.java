@@ -253,6 +253,7 @@ public class EmailService {
                                                     %s
                                                 </tr>
                                             </table>
+                                            <p style="margin:10px 0 0;font-size:12px;color:#94a3b8;">복사용&nbsp;&#128203;&nbsp;<span style="color:#0369a1;font-weight:700;font-family:'Courier New',monospace;letter-spacing:3px;">%s</span></p>
                                         </div>
 
                                         <!-- 안내 사항 카드 -->
@@ -334,6 +335,6 @@ public class EmailService {
                 </table>
             </body>
             </html>
-            """.formatted(codeBoxes.toString());
+            """.formatted(codeBoxes.toString(), code);
     }
 }
