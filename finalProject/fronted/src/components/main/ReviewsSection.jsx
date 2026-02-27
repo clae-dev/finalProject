@@ -159,7 +159,7 @@ export default function ReviewsSection() {
                     <div className="flex items-center gap-3 mb-4">
                       <div className="w-11 h-11 bg-gradient-to-br from-rose-400 to-pink-400 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-rose-200/50 overflow-hidden">
                         {review.authorProfile ? (
-                          <img src={review.authorProfile} alt="" className="w-full h-full object-cover" />
+                          <img src={review.authorProfile} alt="" loading="lazy" className="w-full h-full object-cover" />
                         ) : (
                           review.authorNickname?.[0] || '?'
                         )}

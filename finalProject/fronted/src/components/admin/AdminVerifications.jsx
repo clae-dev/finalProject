@@ -122,7 +122,7 @@ export default function AdminVerifications() {
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-sky-100 flex items-center justify-center text-xs font-bold text-sky-600 overflow-hidden">
                           {item.memberProfileImg ? (
-                            <img src={item.memberProfileImg} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                            <img src={item.memberProfileImg} alt="" referrerPolicy="no-referrer" loading="lazy" className="w-full h-full object-cover" />
                           ) : (
                             item.memberNickname?.charAt(0)
                           )}

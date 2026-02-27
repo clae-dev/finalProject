@@ -348,6 +348,7 @@ export default function CompanionsSection() {
                   >
                     <div className="relative h-48 overflow-hidden">
                       <img src={comp.imageUrl || DEFAULT_IMAGE} alt=""
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                         onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
                       />
@@ -370,7 +371,7 @@ export default function CompanionsSection() {
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-sky-200/50 overflow-hidden">
                             {comp.authorProfile ? (
-                              <img src={comp.authorProfile} alt="" className="w-full h-full object-cover" />
+                              <img src={comp.authorProfile} alt="" loading="lazy" className="w-full h-full object-cover" />
                             ) : (comp.authorNickname?.[0] || '?')}
                           </div>
                           <div>
