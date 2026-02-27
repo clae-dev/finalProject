@@ -43,6 +43,8 @@ const PrivacyPolicy = lazy(() => import('./pages/privacy/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/terms/TermsOfService'));
 const InquiryPage = lazy(() => import('./pages/inquiry/InquiryPage'));
 const AdminPage = lazy(() => import('./pages/admin/AdminPage'));
+const OlleTrails = lazy(() => import('./pages/olle/OlleTrails'));
+const OlleDetail = lazy(() => import('./pages/olle/OlleDetail'));
 const NotFound = lazy(() => import('./pages/error/NotFound'));
 const ServerError = lazy(() => import('./pages/error/ServerError'));
 const Forbidden = lazy(() => import('./pages/error/Forbidden'));
@@ -82,6 +84,8 @@ function AnimatedRoutes() {
           <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
           <Route path="/terms" element={<PageTransition><TermsOfService /></PageTransition>} />
           <Route path="/inquiry" element={<PageTransition><InquiryPage /></PageTransition>} />
+          <Route path="/olle" element={<PageTransition><OlleTrails /></PageTransition>} />
+          <Route path="/olle/:courseNo" element={<PageTransition><OlleDetail /></PageTransition>} />
           <Route path="/admin" element={<PageTransition><AdminPage /></PageTransition>} />
           <Route path="/error/500" element={<PageTransition><ServerError /></PageTransition>} />
           <Route path="/error/403" element={<PageTransition><Forbidden /></PageTransition>} />
