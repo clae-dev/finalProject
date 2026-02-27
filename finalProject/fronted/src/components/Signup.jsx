@@ -446,7 +446,7 @@ export default function Register() {
   const validateEmail = (email) => {
     if (!email) return '이메일을 입력해주세요';
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return '올바른 이메일 형식이 아닙니다';
+    if (!emailRegex.test(email)) return '유효하지 않은 이메일 형식입니다.';
     return '';
   };
 
@@ -610,11 +610,14 @@ export default function Register() {
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-    // 이메일 변경 시 인증 상태 초기화 (인증 우회 방지)
+    // 이메일 실시간 형식 검증
     if (field === 'email') {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (value && !emailRegex.test(value)) {
+        setErrors(prev => ({ ...prev, email: '유효하지 않은 이메일 형식입니다.' }));
+      } else {
+        setErrors(prev => ({ ...prev, email: '' }));
+      }
       setIsVerified(false);
       setIsCodeSent(false);
       setVerificationCode('');

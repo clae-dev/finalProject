@@ -16,10 +16,10 @@ const heroSlides = [heroImg1, heroImg2];
 
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 40, scale: 0.95 },
+  hidden: { opacity: 0 },
   visible: (i) => ({
-    opacity: 1, y: 0, scale: 1,
-    transition: { delay: i * 0.08, duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+    opacity: 1,
+    transition: { delay: i * 0.05, duration: 0.35 },
   }),
 };
 
@@ -208,7 +208,7 @@ export default function Accommodations() {
       </div>
 
       {/* 필터 섹션 */}
-      <div className="bg-white/95 backdrop-blur-md border-b border-slate-200/60 sticky top-16 z-40" style={{ fontFamily: "'Pretendard', 'Noto Sans KR', sans-serif" }}>
+      <div className="bg-white/95 backdrop-blur-md border-b border-slate-200/60 sticky top-16 z-40" style={{ fontFamily: "'Pretendard', 'Noto Sans KR', sans-serif", willChange: 'transform' }}>
         <div className="max-w-6xl mx-auto px-5 py-4">
           <div className="flex items-center gap-3">
             {/* 검색바 */}
@@ -224,7 +224,7 @@ export default function Accommodations() {
             </div>
 
             {/* 지역 드롭다운 */}
-            <Select value={filters.region} onValueChange={handleRegionChange}>
+            <Select modal={false} value={filters.region} onValueChange={handleRegionChange}>
               <SelectTrigger className="h-10 w-[130px] bg-slate-50 border-slate-200 rounded-lg text-sm hover:bg-white transition-colors">
                 <SelectValue placeholder="전체 지역" />
               </SelectTrigger>
@@ -236,7 +236,7 @@ export default function Accommodations() {
             </Select>
 
             {/* 유형 드롭다운 */}
-            <Select value={filters.type} onValueChange={(value) => { setFilters({...filters, type: value}); setCurrentPage(1); }}>
+            <Select modal={false} value={filters.type} onValueChange={(value) => { setFilters({...filters, type: value}); setCurrentPage(1); }}>
               <SelectTrigger className="h-10 w-[130px] bg-slate-50 border-slate-200 rounded-lg text-sm hover:bg-white transition-colors">
                 <SelectValue placeholder="전체 유형" />
               </SelectTrigger>
@@ -256,7 +256,7 @@ export default function Accommodations() {
             </Select>
 
             {/* 가격 드롭다운 */}
-            <Select value={filters.priceRange} onValueChange={(value) => { setFilters({...filters, priceRange: value}); setCurrentPage(1); }}>
+            <Select modal={false} value={filters.priceRange} onValueChange={(value) => { setFilters({...filters, priceRange: value}); setCurrentPage(1); }}>
               <SelectTrigger className="h-10 w-[130px] bg-slate-50 border-slate-200 rounded-lg text-sm hover:bg-white transition-colors">
                 <SelectValue placeholder="전체 가격" />
               </SelectTrigger>

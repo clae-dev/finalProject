@@ -5,6 +5,7 @@ import { Megaphone, Search, Eye, ChevronLeft, ChevronRight, Loader2 } from 'luci
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useNoticeList } from '../../api/notice/useNotice';
+import noticeHeroImg from '../../assets/images/공지사항.png';
 
 export default function Notices() {
   const navigate = useNavigate();
@@ -30,17 +31,9 @@ export default function Notices() {
       <Header />
 
       {/* 히어로 배너 */}
-      <div className="relative h-[320px] overflow-hidden mt-8 bg-gradient-to-br from-sky-500 via-cyan-500 to-blue-600">
-        <motion.div
-          className="absolute top-10 left-[10%] w-40 h-40 bg-white/10 rounded-full blur-3xl"
-          animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="absolute bottom-10 right-[10%] w-48 h-48 bg-cyan-300/10 rounded-full blur-3xl"
-          animate={{ y: [0, 20, 0], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        />
+      <div className="relative h-[320px] overflow-hidden mt-8">
+        <img src={noticeHeroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-900/60 via-slate-800/50 to-blue-900/60" />
 
         <div className="relative h-full flex flex-col items-center justify-center text-white px-5">
           <motion.div

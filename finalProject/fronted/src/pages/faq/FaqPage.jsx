@@ -4,6 +4,7 @@ import { HelpCircle, Search, ChevronDown, Eye, Loader2 } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useFaqCategories, useFaqList, useIncreaseFaqView } from '../../api/faq/useFaq';
+import faqHeroImg from '../../assets/images/FAQ.png';
 
 const CATEGORY_TABS = [
   { code: null, label: '전체' },
@@ -50,17 +51,9 @@ export default function FaqPage() {
       <Header />
 
       {/* 히어로 배너 */}
-      <div className="relative h-[320px] overflow-hidden mt-8 bg-gradient-to-br from-sky-500 via-cyan-500 to-blue-600">
-        <motion.div
-          className="absolute top-10 left-[10%] w-40 h-40 bg-white/10 rounded-full blur-3xl"
-          animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="absolute bottom-10 right-[10%] w-48 h-48 bg-cyan-300/10 rounded-full blur-3xl"
-          animate={{ y: [0, 20, 0], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        />
+      <div className="relative h-[320px] overflow-hidden mt-8">
+        <img src={faqHeroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-br from-sky-900/70 via-cyan-800/60 to-blue-900/70" />
 
         <div className="relative h-full flex flex-col items-center justify-center text-white px-5">
           <motion.div
@@ -218,13 +211,16 @@ export default function FaqPage() {
                       transition={{ duration: 0.3, ease: 'easeInOut' }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-5 border-t border-sky-50">
-                        <p
-                          className="text-sm text-slate-600 leading-relaxed pt-4 whitespace-pre-wrap"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
-                        >
-                          {faq.answer}
-                        </p>
+                      <div className="px-6 pb-5 pt-4 border-t border-sky-50">
+                        <div className="flex gap-3">
+                          <div className="w-1 flex-shrink-0 rounded-full bg-gradient-to-b from-sky-400 to-cyan-300 mt-0.5" />
+                          <p
+                            className="text-sm text-slate-600 leading-7 whitespace-pre-wrap"
+                            style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          >
+                            {faq.answer}
+                          </p>
+                        </div>
                       </div>
                     </motion.div>
                   )}

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, ChevronDown, Plane, Hotel, CalendarDays, Users, MessageSquare, Star } from 'lucide-react';
+import { Shield, ChevronDown, Plane, Hotel, CalendarDays, Users, MessageSquare, Star, HelpCircle, Megaphone } from 'lucide-react';
 import logo from '@/assets/images/logo/혼디.png';
 import { AuthContext } from '../AuthContext';
 import NotificationBell from '../notification/NotificationBell';
@@ -24,7 +24,14 @@ const navItems = [
       { name: '여행후기', path: '/reviews', icon: <Star className="w-4 h-4" />, desc: '생생한 후기' },
     ],
   },
-  { name: '고객지원', path: '/faq', type: 'link' },
+  {
+    name: '고객지원',
+    type: 'dropdown',
+    children: [
+      { name: 'FAQ', path: '/faq', icon: <HelpCircle className="w-4 h-4" />, desc: '자주 묻는 질문' },
+      { name: '공지사항', path: '/notices', icon: <Megaphone className="w-4 h-4" />, desc: '서비스 공지 안내' },
+    ],
+  },
 ];
 
 function DropdownMenu({ item, isActive, isOpen, onOpen, onClose }) {
