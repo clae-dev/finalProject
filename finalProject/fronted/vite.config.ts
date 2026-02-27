@@ -10,6 +10,22 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id: string) {
+          if (id.includes('node_modules')) {
+            if (id.includes('framer-motion')) return 'vendor-motion';
+            if (id.includes('@radix-ui')) return 'vendor-radix';
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('@tanstack/react-query')) return 'vendor-query';
+            if (id.includes('react-router-dom') || id.includes('react-router')) return 'vendor-router';
+            if (id.includes('react-dom') || id.includes('/react/')) return 'vendor-react';
+          }
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     strictPort: true,

@@ -329,6 +329,7 @@ export default function AccommodationsSection() {
                   <div className="relative rounded-3xl overflow-hidden mb-5 shadow-lg shadow-amber-100/40 group-hover:shadow-2xl group-hover:shadow-amber-200/50 transition-shadow duration-500">
                     <div className="aspect-[4/3]">
                       <img src={acc.thumbnailUrl || DEFAULT_IMAGE} alt={acc.name}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                         onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
                       />
