@@ -11,6 +11,7 @@ export default function KakaoMap({
   onMarkerClick,
   panToMarker,   // { lat, lng, name } — 변경 시 해당 위치로 지도 이동 + InfoWindow 열기
   onMapReady,    // (mapInstance) — 맵 초기화 완료 시 콜백
+  path,          // Array<{lat, lng}> — 폴리라인 좌표 배열
 }) {
   const mapRef      = useRef(null);
   const mapInstance = useRef(null);
@@ -88,6 +89,19 @@ export default function KakaoMap({
             }
             markerObjs.current.push({ marker, iw, data: m });
           });
+        }
+
+        // 폴리라인 렌더링
+        if (path && path.length > 1) {
+          const linePath = path.map(p => new window.kakao.maps.LatLng(p.lat, p.lng));
+          const polyline = new window.kakao.maps.Polyline({
+            path: linePath,
+            strokeWeight: 4,
+            strokeColor: '#0ea5e9',
+            strokeOpacity: 0.9,
+            strokeStyle: 'solid',
+          });
+          polyline.setMap(map);
         }
 
         setStatus('ready');
