@@ -622,6 +622,9 @@ export default function Register() {
       setIsCodeSent(false);
       setVerificationCode('');
       setTimer(0);
+    } else if (errors[field]) {
+      // 다른 필드 입력 시 해당 필드 에러 클리어
+      setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
 
