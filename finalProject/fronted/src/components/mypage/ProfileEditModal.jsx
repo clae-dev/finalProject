@@ -303,11 +303,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
   }, [customParts]);
 
   const updateCustomPart = useCallback((category, value) => {
-    setCustomParts(prev => {
-      const newParts = { ...prev, [category]: value };
-      setForm(fd => ({ ...fd, memberProfileImg: buildCustomAvatarUrl(newParts) }));
-      return newParts;
-    });
+    setCustomParts(prev => ({ ...prev, [category]: value }));
   }, []);
 
   const selectAvatar = (url) => {
@@ -369,6 +365,9 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
       return;
     }
 
+    // 커스텀 모드일 때 저장 시점에 URL 반영
+    const profileImg = avatarMode === 'custom' ? customAvatarUrl : form.memberProfileImg.trim();
+
     try {
       const result = await updateMember.mutateAsync({
         memberNo: user.memberNo,
@@ -376,7 +375,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
           memberNickname: nickname,
           memberPhone: form.memberPhone.trim(),
           memberIntro: form.memberIntro.trim(),
-          memberProfileImg: form.memberProfileImg.trim(),
+          memberProfileImg: profileImg,
         },
       });
 
@@ -390,7 +389,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
         memberNickname: nickname,
         memberPhone: form.memberPhone.trim(),
         memberIntro: form.memberIntro.trim(),
-        memberProfileImg: form.memberProfileImg.trim() || user.memberProfileImg,
+        memberProfileImg: profileImg || user.memberProfileImg,
       };
       setUser(updatedUser);
       saveToken('userData', JSON.stringify(updatedUser));
