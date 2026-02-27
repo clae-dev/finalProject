@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRoomList, searchTarget, getMessages, enterRoom, updateReadFlag } from './chattingAPI';
+import { getToken } from '../core/tokenStorage';
 
 /**
  * 채팅방 목록 조회 훅
@@ -9,7 +10,8 @@ export const useRoomList = (enabled = true) => {
     queryKey: ['chattingRooms'],
     queryFn: getRoomList,
     refetchInterval: 5000,
-    enabled,
+    enabled: enabled && !!getToken('accessToken'),
+    retry: false,
   });
 };
 
