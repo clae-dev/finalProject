@@ -52,8 +52,23 @@ function renderMarkdown(text) {
   });
 }
 
+const STORAGE_KEY = 'changsik_chat_history';
+
+function loadMessages() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {
+    // 파싱 실패 시 무시
+  }
+  return [WELCOME_MESSAGE];
+}
+
 export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
-  const [messages, setMessages] = useState([WELCOME_MESSAGE]);
+  const [messages, setMessages] = useState(loadMessages);
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
@@ -64,6 +79,14 @@ export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, sendMutation.isPending]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+    } catch {
+      // 저장 실패 시 무시 (용량 초과 등)
+    }
+  }, [messages]);
 
   const getHistory = () => {
     return messages
@@ -122,6 +145,7 @@ export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
     setMessages([WELCOME_MESSAGE]);
     setError(null);
     setInputValue('');
+    localStorage.removeItem(STORAGE_KEY);
   };
 
   return (
