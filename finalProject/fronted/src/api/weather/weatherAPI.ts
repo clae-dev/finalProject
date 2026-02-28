@@ -11,3 +11,19 @@ export async function getJejuWeather(city = "jeju"): Promise<ApiResponse<Weather
   });
   return response.data;
 }
+
+export interface ForecastDay {
+  date: string;
+  label: string;
+  sky: number;
+  ptyCode: number;
+  tmin: number;
+  tmax: number;
+}
+
+export async function getJejuForecast(city = "jeju"): Promise<ApiResponse<ForecastDay[]>> {
+  const response = await axiosApi.get("/api/weather/forecast", {
+    params: { city },
+  });
+  return response.data;
+}

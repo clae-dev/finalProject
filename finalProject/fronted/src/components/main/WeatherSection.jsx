@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { Droplets, Wind, CloudRain, Navigation, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import { getJejuWeather } from '../../api/weather/weatherAPI';
+import { getJejuWeather, getJejuForecast } from '../../api/weather/weatherAPI';
 
 const SKY_MAP = {
   1: { text: '맑음', emoji: '☀️' },
@@ -34,9 +34,15 @@ function windDirText(deg) {
   return dirs[Math.round(deg / 22.5) % 16];
 }
 
+const MODES = [
+  { key: 'current', label: '지금' },
+  { key: 'forecast', label: '예보' },
+];
+
 export default function WeatherWidget() {
   const [expanded, setExpanded] = useState(true);
   const [city, setCity] = useState('jeju');
+  const [mode, setMode] = useState('current');
   const constraintsRef = useRef(null);
   const dragY = useMotionValue(0);
 
@@ -45,6 +51,14 @@ export default function WeatherWidget() {
     queryFn: () => getJejuWeather(city),
     staleTime: 10 * 60 * 1000,
     retry: 1,
+  });
+
+  const { data: forecastData, isLoading: forecastLoading } = useQuery({
+    queryKey: ['jejuForecast', city],
+    queryFn: () => getJejuForecast(city),
+    staleTime: 60 * 60 * 1000,
+    retry: 1,
+    enabled: mode === 'forecast',
   });
 
   if (isError || (!isLoading && !data?.success)) return null;
@@ -117,13 +131,44 @@ export default function WeatherWidget() {
                       ))}
                     </div>
 
-                    {/* 세부 정보 */}
-                    <div className="px-3 py-3 space-y-1.5">
-                      <Row icon={<Droplets className="w-3.5 h-3.5 text-blue-400" />} label="습도" value={`${w.humidity}%`} />
-                      <Row icon={<Wind className="w-3.5 h-3.5 text-teal-400" />} label="풍속" value={`${w.windSpeed} m/s`} />
-                      <Row icon={<Navigation className="w-3.5 h-3.5 text-indigo-400" />} label="풍향" value={windDirText(w.windDir)} />
-                      <Row icon={<CloudRain className="w-3.5 h-3.5 text-sky-400" />} label="강수" value={w.rain > 0 ? `${w.rain}mm` : '없음'} />
+                    {/* 지금 / 예보 모드 탭 */}
+                    <div className="flex border-b border-sky-100/60">
+                      {MODES.map(m => (
+                        <button
+                          key={m.key}
+                          onClick={() => setMode(m.key)}
+                          className={`flex-1 py-1.5 text-[11px] font-semibold transition-colors ${
+                            mode === m.key
+                              ? 'text-cyan-600 bg-cyan-50/60 border-b-2 border-cyan-400'
+                              : 'text-slate-400 hover:text-slate-500 hover:bg-slate-50/40'
+                          }`}
+                        >
+                          {m.label}
+                        </button>
+                      ))}
                     </div>
+
+                    {/* 세부 정보 / 3일 예보 */}
+                    {mode === 'current' ? (
+                      <div className="px-3 py-3 space-y-1.5">
+                        <Row icon={<Droplets className="w-3.5 h-3.5 text-blue-400" />} label="습도" value={`${w.humidity}%`} />
+                        <Row icon={<Wind className="w-3.5 h-3.5 text-teal-400" />} label="풍속" value={`${w.windSpeed} m/s`} />
+                        <Row icon={<Navigation className="w-3.5 h-3.5 text-indigo-400" />} label="풍향" value={windDirText(w.windDir)} />
+                        <Row icon={<CloudRain className="w-3.5 h-3.5 text-sky-400" />} label="강수" value={w.rain > 0 ? `${w.rain}mm` : '없음'} />
+                      </div>
+                    ) : (
+                      <div className="px-3 py-3 space-y-1">
+                        {forecastLoading ? (
+                          <div className="flex justify-center py-4">
+                            <Loader2 className="w-5 h-5 text-sky-400 animate-spin" />
+                          </div>
+                        ) : (
+                          (forecastData?.data || []).map(day => (
+                            <ForecastRow key={day.date} day={day} />
+                          ))
+                        )}
+                      </div>
+                    )}
                   </>
                 )}
               </div>
@@ -160,6 +205,24 @@ function Row({ icon, label, value }) {
         <span className="text-[11px] text-slate-400">{label}</span>
       </div>
       <span className="text-xs font-bold text-slate-700">{value}</span>
+    </div>
+  );
+}
+
+function ForecastRow({ day }) {
+  const wx = day.ptyCode > 0 && PTY_MAP[day.ptyCode]
+    ? PTY_MAP[day.ptyCode]
+    : (SKY_MAP[day.sky] || SKY_MAP[1]);
+
+  return (
+    <div className="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-sky-50/60 transition-colors">
+      <span className="text-[11px] font-semibold text-slate-500 w-8">{day.label}</span>
+      <span className="text-base leading-none">{wx.emoji}</span>
+      <span className="text-[11px] font-bold">
+        <span className="text-blue-400">{day.tmin}°</span>
+        <span className="text-slate-300 mx-0.5">/</span>
+        <span className="text-red-400">{day.tmax}°</span>
+      </span>
     </div>
   );
 }
