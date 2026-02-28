@@ -24,7 +24,13 @@ export default function HeroSection() {
       {/* 슬라이드 배경 */}
       {heroSlides.map((slide, idx) => (
         <div key={idx} className={`absolute inset-0 transition-opacity duration-1000 ${currentSlide === idx ? 'opacity-100' : 'opacity-0'}`}>
-          <img src={slide.image} alt="" className="w-full h-full object-cover" />
+          <img
+            src={slide.image}
+            alt=""
+            className="w-full h-full object-cover"
+            loading={idx === 0 ? 'eager' : 'lazy'}
+            fetchpriority={idx === 0 ? 'high' : 'low'}
+          />
         </div>
       ))}
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/60" />
