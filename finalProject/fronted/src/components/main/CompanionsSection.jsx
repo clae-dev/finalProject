@@ -3,41 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCompanions } from '../../api/companion/useCompanion';
 import { Loader2, Users, MapPin, Compass } from 'lucide-react';
+import { getDday, getDdayStyle, formatTravelDate } from '../../lib/companionUtils';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=400';
-
-function getDday(travelDate) {
-  if (!travelDate) return null;
-  let target;
-  const isoMatch = travelDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (isoMatch) {
-    target = new Date(parseInt(isoMatch[1]), parseInt(isoMatch[2]) - 1, parseInt(isoMatch[3]));
-  } else {
-    const match = travelDate.match(/(\d{1,2})\.(\d{1,2})/);
-    if (!match) return null;
-    const now = new Date();
-    const year = now.getFullYear();
-    target = new Date(year, parseInt(match[1]) - 1, parseInt(match[2]));
-    if (target < now) target.setFullYear(year + 1);
-  }
-  const now = new Date();
-  now.setHours(0, 0, 0, 0);
-  const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
-  if (diff === 0) return 'D-Day';
-  if (diff > 0) return `D-${diff}`;
-  return null;
-}
-
-function formatTravelDate(travelDate) {
-  if (!travelDate) return '';
-  const isoMatch = travelDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (isoMatch) {
-    const days = ['일', '월', '화', '수', '목', '금', '토'];
-    const d = new Date(parseInt(isoMatch[1]), parseInt(isoMatch[2]) - 1, parseInt(isoMatch[3]));
-    return `${d.getMonth() + 1}.${d.getDate()}(${days[d.getDay()]})`;
-  }
-  return travelDate;
-}
 
 /* ─── 배경 캐릭터 SVG ─── */
 
@@ -354,7 +322,7 @@ export default function CompanionsSection() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-slate-900/10 to-transparent" />
                       {dday && (
-                        <span className="absolute top-4 right-4 px-3.5 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-xs font-bold text-sky-500 shadow-lg">{dday}</span>
+                        <span className={`absolute top-4 right-4 px-3.5 py-1.5 backdrop-blur-sm rounded-full text-xs font-bold shadow-lg ${getDdayStyle(dday)}`}>{dday}</span>
                       )}
                       {comp.status === 'C' && (
                         <span className="absolute top-4 left-4 px-3.5 py-1.5 bg-red-500/90 backdrop-blur-sm rounded-full text-xs font-bold text-white shadow-lg">마감</span>
