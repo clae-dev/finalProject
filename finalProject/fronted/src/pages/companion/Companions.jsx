@@ -38,6 +38,16 @@ function getDday(travelDate) {
   return null;
 }
 
+function getDdayStyle(dday) {
+  if (dday === 'D-Day') {
+    return 'bg-orange-500 text-white shadow-orange-300/60 animate-pulse';
+  }
+  const n = parseInt(dday.replace('D-', ''), 10);
+  if (n <= 3)  return 'bg-red-500 text-white shadow-red-300/60';
+  if (n <= 7)  return 'bg-amber-400 text-white shadow-amber-300/60';
+  return 'bg-white/95 text-sky-500 shadow-sky-100/60';
+}
+
 function formatTravelDate(travelDate) {
   if (!travelDate) return '';
   const isoMatch = travelDate.match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -318,7 +328,7 @@ export default function Companions() {
 
                       {/* D-day 배지 */}
                       {dday && (
-                        <span className="absolute top-4 right-4 px-3.5 py-1.5 bg-white/95 backdrop-blur-sm rounded-full text-xs font-bold text-sky-500 shadow-lg">
+                        <span className={`absolute top-4 right-4 px-3.5 py-1.5 backdrop-blur-sm rounded-full text-xs font-bold shadow-lg ${getDdayStyle(dday)}`}>
                           {dday}
                         </span>
                       )}
