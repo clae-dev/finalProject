@@ -17,14 +17,16 @@ import java.util.List;
 @Mapper
 public interface CompanionReviewMapper {
 
-    /** 후기 목록 조회 (페이징) */
+    /** 후기 목록 조회 (페이징 + 검색 + 정렬) */
     List<CompanionReviewDTO> selectReviewList(
         @Param("offset") int offset,
-        @Param("limit") int limit
+        @Param("limit") int limit,
+        @Param("search") String search,
+        @Param("sort") String sort
     );
 
-    /** 후기 총 수 */
-    int selectReviewCount();
+    /** 후기 총 수 (검색 조건 포함) */
+    int selectReviewCount(@Param("search") String search);
 
     /** 후기 상세 조회 */
     CompanionReviewDTO selectReviewDetail(@Param("reviewNo") int reviewNo);

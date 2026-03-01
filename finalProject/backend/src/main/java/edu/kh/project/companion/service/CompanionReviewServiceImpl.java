@@ -33,16 +33,16 @@ public class CompanionReviewServiceImpl implements CompanionReviewService {
     /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public List<CompanionReviewDTO> getReviewList(int page, int size) {
+    public List<CompanionReviewDTO> getReviewList(int page, int size, String search, String sort) {
         int offset = (page - 1) * size;
-        return reviewMapper.selectReviewList(offset, size);
+        return reviewMapper.selectReviewList(offset, size, search, sort);
     }
 
     /** {@inheritDoc} */
     @Override
     @Transactional(readOnly = true)
-    public int getReviewCount() {
-        return reviewMapper.selectReviewCount();
+    public int getReviewCount(String search) {
+        return reviewMapper.selectReviewCount(search);
     }
 
     /** {@inheritDoc} */

@@ -68,20 +68,24 @@ public class CompanionReviewController {
     /**
      * 후기 목록을 페이징 조회한다.
      *
-     * @param page 현재 페이지 번호 (기본값: 1)
-     * @param size 페이지당 후기 수 (기본값: 9)
+     * @param page   현재 페이지 번호 (기본값: 1)
+     * @param size   페이지당 후기 수 (기본값: 9)
+     * @param search 검색어 — 제목/내용 LIKE 검색 (기본값: 빈 문자열)
+     * @param sort   정렬 기준 latest | rating_desc | rating_asc (기본값: latest)
      * @return 후기 목록, 총 건수, 페이징 정보
      */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getReviewList(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "9") int size) {
+            @RequestParam(defaultValue = "9") int size,
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(defaultValue = "latest") String sort) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
-            List<CompanionReviewDTO> list = reviewService.getReviewList(page, size);
-            int totalCount = reviewService.getReviewCount();
+            List<CompanionReviewDTO> list = reviewService.getReviewList(page, size, search, sort);
+            int totalCount = reviewService.getReviewCount(search);
 
             response.put("success", true);
             response.put("list", list);
