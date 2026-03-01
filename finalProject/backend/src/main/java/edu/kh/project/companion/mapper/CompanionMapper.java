@@ -37,6 +37,9 @@ public interface CompanionMapper {
     /** 동행 게시글 등록 */
     int insertCompanion(CompanionDTO companion);
 
+    /** 동행 게시글 수정 (작성자만) */
+    int updateCompanion(CompanionDTO companion);
+
     /** 동행 게시글 삭제 (작성자) */
     int deleteCompanion(
         @Param("companionNo") int companionNo,

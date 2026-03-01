@@ -64,6 +64,20 @@ public interface CompanionService {
                         String webPath, String folderPath);
 
     /**
+     * 동행 게시글을 수정한다 (작성자만 가능).
+     *
+     * @param companion  수정할 동행 데이터 (companionNo, memberNo 포함)
+     * @param keepImages 기존에 유지할 이미지 URL (쉼표 구분 문자열)
+     * @param newImages  새로 추가할 이미지 파일 목록
+     * @param webPath    이미지 웹 접근 경로
+     * @param folderPath 이미지 서버 물리 경로
+     * @return 수정된 행 수 (권한 없으면 0)
+     */
+    int updateCompanion(CompanionDTO companion, String keepImages,
+                        List<MultipartFile> newImages,
+                        String webPath, String folderPath);
+
+    /**
      * 동행 게시글을 삭제한다 (작성자만 가능).
      *
      * @param companionNo 동행 게시글 번호
