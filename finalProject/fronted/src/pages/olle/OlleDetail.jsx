@@ -184,13 +184,34 @@ export default function OlleDetail() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 mb-6"
+          className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden mb-6"
         >
-          <div className="flex items-center gap-2 mb-3">
-            <Flag className="w-4 h-4 text-teal-500" />
-            <h2 className="text-sm font-bold text-slate-700">코스 소개</h2>
+          <div className="flex items-center gap-2.5 px-6 pt-6 pb-4">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-sm flex-shrink-0">
+              <Flag className="w-4 h-4 text-white" strokeWidth={2.5} />
+            </div>
+            <h2 className="text-base font-bold text-slate-800">코스 소개</h2>
           </div>
-          <p className="text-sm text-slate-600 leading-relaxed">{trail.description}</p>
+          <div className="mx-6 mb-6 rounded-2xl bg-gradient-to-br from-teal-50/70 to-emerald-50/50 border border-teal-100/70 px-6 py-5 relative overflow-hidden">
+            <span className="absolute top-2 right-4 text-7xl font-black text-teal-100/80 leading-none select-none pointer-events-none">"</span>
+            <div className="relative space-y-3">
+              {(trail.description.match(/[^.!?]+[.!?]+/g) ?? [trail.description])
+                .map((s) => s.trim())
+                .filter(Boolean)
+                .map((sentence, i) => (
+                  <p
+                    key={i}
+                    className={`text-[15px] leading-8 ${
+                      i === 0
+                        ? 'font-semibold text-slate-800'
+                        : 'text-slate-600'
+                    }`}
+                  >
+                    {sentence}
+                  </p>
+                ))}
+            </div>
+          </div>
         </motion.div>
 
         {/* ── 스탬프 포인트 ── */}
