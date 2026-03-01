@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, MessageSquare, Heart, Inbox, MessageCircle, ThumbsUp, Star, Bookmark, Building2, Users } from 'lucide-react';
+import { FileText, MessageSquare, Heart, Inbox, MessageCircle, ThumbsUp, Star, Bookmark, Building2, Users, Calendar } from 'lucide-react';
 import { AuthContext } from '../AuthContext';
 import { useMyActivity } from '../../api/member/useMember';
 import { useMyWishlists } from '../../api/wishlist/useWishlist';
@@ -9,6 +9,7 @@ import { useMyWishlists } from '../../api/wishlist/useWishlist';
 const tabs = [
   { key: 'posts', label: '내 글', icon: FileText },
   { key: 'reviews', label: '내 후기', icon: MessageSquare },
+  { key: 'companions', label: '내 동행', icon: Users },
   { key: 'likes', label: '좋아요', icon: Heart },
   { key: 'wishlists', label: '저장한 목록', icon: Bookmark },
 ];
@@ -16,6 +17,7 @@ const tabs = [
 const emptyMessages = {
   posts: '아직 작성한 글이 없어요',
   reviews: '아직 작성한 후기가 없어요',
+  companions: '아직 작성한 동행 글이 없어요',
   likes: '좋아요한 글이 없어요',
   wishlists: '저장한 항목이 없어요',
 };
@@ -38,13 +40,15 @@ export default function ActivityTabs() {
   const [activeTab, setActiveTab] = useState('posts');
   const [wishlistSubTab, setWishlistSubTab] = useState('accommodations');
 
-  const items = activeTab === 'wishlists' ? [] : (activityData[activeTab] || []);
+  const items = (activeTab === 'wishlists') ? [] : (activityData[activeTab] || []);
 
   const handleItemClick = (item) => {
     if (activeTab === 'posts' || activeTab === 'likes') {
       navigate(`/freeboard/${item.boardNo}`);
     } else if (activeTab === 'reviews') {
       navigate(`/review/${item.reviewNo}`);
+    } else if (activeTab === 'companions') {
+      navigate(`/companions/${item.companionNo}`);
     }
   };
 
@@ -234,7 +238,7 @@ export default function ActivityTabs() {
               <div className="space-y-3">
                 {items.map((item, index) => (
                   <motion.div
-                    key={item.boardNo || item.reviewNo || index}
+                    key={item.boardNo || item.reviewNo || item.companionNo || index}
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.05, duration: 0.3 }}
@@ -243,66 +247,115 @@ export default function ActivityTabs() {
                     className="bg-white/80 backdrop-blur-xl rounded-2xl p-5 shadow-md shadow-sky-100 border border-sky-50
                                hover:shadow-lg hover:shadow-sky-200 transition-shadow cursor-pointer group"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <h4
-                          className="text-base font-semibold text-slate-700 truncate group-hover:text-sky-600 transition-colors"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
-                        >
-                          {item.title}
-                        </h4>
-                        <div className="flex items-center gap-3 mt-1.5">
-                          <span className="text-xs text-slate-400">{item.createdAt}</span>
-
-                          {/* 자유게시판 글: 댓글 수, 좋아요 수 */}
-                          {activeTab === 'posts' && (
-                            <>
-                              {item.commentCount > 0 && (
-                                <span className="inline-flex items-center gap-1 text-xs text-slate-400">
-                                  <MessageCircle className="w-3 h-3" /> {item.commentCount}
-                                </span>
-                              )}
-                              {item.likeCount > 0 && (
-                                <span className="inline-flex items-center gap-1 text-xs text-rose-400">
-                                  <ThumbsUp className="w-3 h-3" /> {item.likeCount}
-                                </span>
-                              )}
-                            </>
-                          )}
-
-                          {/* 후기: 별점, 동행 제목 */}
-                          {activeTab === 'reviews' && (
-                            <>
-                              {item.rating && (
-                                <span className="inline-flex items-center gap-1 text-xs text-amber-500">
-                                  <Star className="w-3 h-3 fill-current" /> {item.rating}
-                                </span>
-                              )}
-                              {item.companionTitle && (
-                                <span className="px-2.5 py-0.5 bg-sky-50 text-sky-500 rounded-full text-xs font-semibold truncate max-w-[160px]">
-                                  {item.companionTitle}
-                                </span>
-                              )}
-                            </>
-                          )}
-
-                          {/* 좋아요: 작성자 */}
-                          {activeTab === 'likes' && item.authorNickname && (
-                            <span className="px-2.5 py-0.5 bg-sky-50 text-sky-500 rounded-full text-xs font-semibold">
-                              {item.authorNickname}
+                    {/* 동행 탭 전용 레이아웃 */}
+                    {activeTab === 'companions' ? (
+                      <div className="flex items-center gap-4">
+                        {/* 썸네일 */}
+                        {item.imageUrl && (
+                          <div className="w-14 h-14 rounded-xl overflow-hidden flex-shrink-0">
+                            <img
+                              src={item.imageUrl}
+                              alt=""
+                              className="w-full h-full object-cover"
+                              onError={(e) => { e.target.parentElement.style.display = 'none'; }}
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <h4
+                            className="text-base font-semibold text-slate-700 truncate group-hover:text-sky-600 transition-colors"
+                            style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          >
+                            {item.title}
+                          </h4>
+                          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                            <span className="text-xs text-slate-400">{item.createdAt}</span>
+                            {item.travelDate && (
+                              <span className="inline-flex items-center gap-1 text-xs text-sky-500">
+                                <Calendar className="w-3 h-3" /> {item.travelDate}
+                              </span>
+                            )}
+                            <span className="inline-flex items-center gap-1 text-xs text-slate-500">
+                              <Users className="w-3 h-3" /> {item.currentMembers}/{item.maxMembers}명
                             </span>
-                          )}
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                              item.status === 'Y'
+                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
+                                : 'bg-red-50 text-red-500 border border-red-200'
+                            }`}>
+                              {item.status === 'Y' ? '모집중' : '마감'}
+                            </span>
+                          </div>
                         </div>
+                        <svg
+                          className="w-5 h-5 text-slate-300 group-hover:text-sky-400 group-hover:translate-x-1 transition-all flex-shrink-0"
+                          fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
                       </div>
-                      <svg
-                        className="w-5 h-5 text-slate-300 group-hover:text-sky-400 group-hover:translate-x-1 transition-all flex-shrink-0 ml-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
+                    ) : (
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <h4
+                            className="text-base font-semibold text-slate-700 truncate group-hover:text-sky-600 transition-colors"
+                            style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          >
+                            {item.title}
+                          </h4>
+                          <div className="flex items-center gap-3 mt-1.5">
+                            <span className="text-xs text-slate-400">{item.createdAt}</span>
+
+                            {/* 자유게시판 글: 댓글 수, 좋아요 수 */}
+                            {activeTab === 'posts' && (
+                              <>
+                                {item.commentCount > 0 && (
+                                  <span className="inline-flex items-center gap-1 text-xs text-slate-400">
+                                    <MessageCircle className="w-3 h-3" /> {item.commentCount}
+                                  </span>
+                                )}
+                                {item.likeCount > 0 && (
+                                  <span className="inline-flex items-center gap-1 text-xs text-rose-400">
+                                    <ThumbsUp className="w-3 h-3" /> {item.likeCount}
+                                  </span>
+                                )}
+                              </>
+                            )}
+
+                            {/* 후기: 별점, 동행 제목 */}
+                            {activeTab === 'reviews' && (
+                              <>
+                                {item.rating && (
+                                  <span className="inline-flex items-center gap-1 text-xs text-amber-500">
+                                    <Star className="w-3 h-3 fill-current" /> {item.rating}
+                                  </span>
+                                )}
+                                {item.companionTitle && (
+                                  <span className="px-2.5 py-0.5 bg-sky-50 text-sky-500 rounded-full text-xs font-semibold truncate max-w-[160px]">
+                                    {item.companionTitle}
+                                  </span>
+                                )}
+                              </>
+                            )}
+
+                            {/* 좋아요: 작성자 */}
+                            {activeTab === 'likes' && item.authorNickname && (
+                              <span className="px-2.5 py-0.5 bg-sky-50 text-sky-500 rounded-full text-xs font-semibold">
+                                {item.authorNickname}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <svg
+                          className="w-5 h-5 text-slate-300 group-hover:text-sky-400 group-hover:translate-x-1 transition-all flex-shrink-0 ml-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    )}
                   </motion.div>
                 ))}
               </div>

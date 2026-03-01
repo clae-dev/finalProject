@@ -234,4 +234,26 @@
         WHERE RN &lt;= 10
     </select>
 
+    <!-- 내가 작성한 동행 글 (최근 10개) -->
+    <select id="selectMyCompanions" resultType="java.util.HashMap">
+        SELECT * FROM (
+            SELECT
+                CB.COMPANION_NO AS "companionNo",
+                CB.TITLE AS "title",
+                CB.STATUS AS "status",
+                CB.MAX_MEMBERS AS "maxMembers",
+                TO_CHAR(CB.TRAVEL_DATE, 'YYYY-MM-DD') AS "travelDate",
+                TO_CHAR(CB.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
+                CB.IMAGE_URL AS "imageUrl",
+                (SELECT COUNT(*) FROM COMPANION_JOIN J
+                 WHERE J.COMPANION_NO = CB.COMPANION_NO
+                   AND J.STATUS IN ('W', 'A')) AS "currentMembers",
+                ROW_NUMBER() OVER (ORDER BY CB.CREATED_AT DESC) AS RN
+            FROM COMPANION_BOARD CB
+            WHERE CB.MEMBER_NO = #{memberNo}
+              AND CB.STATUS != 'D'
+        )
+        WHERE RN &lt;= 10
+    </select>
+
 </mapper>
