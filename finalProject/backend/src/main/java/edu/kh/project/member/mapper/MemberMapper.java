@@ -106,4 +106,7 @@ public interface MemberMapper {
 
     /** 내가 좋아요한 글 목록 */
     List<Map<String, Object>> selectMyLikes(@Param("memberNo") int memberNo);
+
+    /** 내가 작성한 동행 글 목록 */
+    List<Map<String, Object>> selectMyCompanions(@Param("memberNo") int memberNo);
 }

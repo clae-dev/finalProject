@@ -251,6 +251,7 @@ public class MemberServiceImpl implements MemberService {
         result.put("posts", memberMapper.selectMyPosts(memberNo));
         result.put("reviews", memberMapper.selectMyReviews(memberNo));
         result.put("likes", memberMapper.selectMyLikes(memberNo));
+        result.put("companions", memberMapper.selectMyCompanions(memberNo));
         return result;
     }
 
