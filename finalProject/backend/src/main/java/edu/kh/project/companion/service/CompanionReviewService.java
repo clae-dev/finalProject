@@ -17,18 +17,21 @@ public interface CompanionReviewService {
     /**
      * 후기 목록을 페이징 조회한다.
      *
-     * @param page 현재 페이지 번호
-     * @param size 페이지당 후기 수
+     * @param page   현재 페이지 번호
+     * @param size   페이지당 후기 수
+     * @param search 검색어 (제목/내용, 빈 문자열이면 전체)
+     * @param sort   정렬 기준 (latest | rating_desc | rating_asc)
      * @return 후기 목록
      */
-    List<CompanionReviewDTO> getReviewList(int page, int size);
+    List<CompanionReviewDTO> getReviewList(int page, int size, String search, String sort);
 
     /**
      * 후기 총 건수를 조회한다.
      *
+     * @param search 검색어 (빈 문자열이면 전체)
      * @return 총 후기 수
      */
-    int getReviewCount();
+    int getReviewCount(String search);
 
     /**
      * 후기 상세 정보를 조회한다.

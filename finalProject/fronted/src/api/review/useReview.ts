@@ -10,10 +10,10 @@ import {
 /**
  * 후기 목록 조회 훅
  */
-export const useReviews = (page = 1, size = 9) => {
+export const useReviews = (page = 1, size = 9, search = '', sort = 'latest') => {
   return useQuery({
-    queryKey: ['reviews', page, size],
-    queryFn: () => getReviewList(page, size),
+    queryKey: ['reviews', page, size, search, sort],
+    queryFn: () => getReviewList(page, size, search, sort),
   });
 };
 

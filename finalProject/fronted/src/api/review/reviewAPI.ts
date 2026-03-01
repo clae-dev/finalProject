@@ -5,12 +5,17 @@ import type { ApiResponse, Review, PageResponse } from "../../types";
  * 동행 후기 API
  */
 
-// 목록 조회 (페이징)
+// 목록 조회 (페이징 + 검색 + 정렬)
 export const getReviewList = async (
   page = 1,
-  size = 9
+  size = 9,
+  search = '',
+  sort = 'latest'
 ): Promise<ApiResponse<PageResponse<Review>>> => {
-  const response = await axiosApi.get("/api/reviews", { params: { page, size } });
+  const params: Record<string, unknown> = { page, size };
+  if (search) params.search = search;
+  if (sort && sort !== 'latest') params.sort = sort;
+  const response = await axiosApi.get("/api/reviews", { params });
   return response.data;
 };
 

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Plus, ChevronLeft, ChevronRight, Loader2, Search, MessageSquare } from 'lucide-react';
+import { Star, Plus, ChevronLeft, ChevronRight, Loader2, Search, MessageSquare, SortDesc, X } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useReviews } from '../../api/review/useReview';
@@ -38,6 +38,9 @@ export default function Reviews() {
   const { user } = useContext(AuthContext) || {};
   const [currentPage, setCurrentPage] = useState(1);
   const [heroSlide, setHeroSlide] = useState(0);
+  const [searchInput, setSearchInput] = useState('');
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('latest');
   const pageSize = 9;
 
   useEffect(() => {
@@ -45,7 +48,24 @@ export default function Reviews() {
     return () => clearInterval(timer);
   }, []);
 
-  const { data, isLoading } = useReviews(currentPage, pageSize);
+  const { data, isLoading } = useReviews(currentPage, pageSize, search, sort);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(searchInput.trim());
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (value) => {
+    setSort(value);
+    setCurrentPage(1);
+  };
+
+  const handleClearSearch = () => {
+    setSearchInput('');
+    setSearch('');
+    setCurrentPage(1);
+  };
 
   const reviews = data?.success ? (data.list || []) : [];
   const totalCount = data?.success ? (data.totalCount || 0) : 0;
@@ -144,25 +164,97 @@ export default function Reviews() {
         <div className="absolute top-0 right-0 w-72 h-72 bg-cyan-100/40 rounded-full blur-3xl -z-10" />
         <div className="absolute bottom-40 left-0 w-60 h-60 bg-sky-100/40 rounded-full blur-3xl -z-10" />
 
-        {/* 작성 버튼 */}
+        {/* 검색 + 정렬 + 작성 버튼 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
-          className="flex items-center justify-end mb-10"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-10"
         >
+          {/* 검색바 */}
+          <form onSubmit={handleSearch} className="flex-1 bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 px-4 py-3 flex items-center gap-3">
+            <Search className="w-4 h-4 text-slate-400 flex-shrink-0" />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="제목이나 내용으로 검색"
+              className="flex-1 bg-transparent text-sm text-slate-700 placeholder-slate-400 outline-none"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            />
+            {searchInput && (
+              <button type="button" onClick={handleClearSearch} className="text-slate-300 hover:text-slate-500 transition-colors">
+                <X className="w-4 h-4" />
+              </button>
+            )}
+            <button
+              type="submit"
+              className="px-3 py-1.5 bg-sky-500 text-white text-xs font-bold rounded-xl hover:bg-sky-600 transition-colors"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
+            >
+              검색
+            </button>
+          </form>
+
+          {/* 정렬 버튼 */}
+          <div className="flex items-center gap-2 bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 px-3 py-2">
+            <SortDesc className="w-4 h-4 text-slate-400 flex-shrink-0" />
+            {[
+              { value: 'latest', label: '최신순' },
+              { value: 'rating_desc', label: '별점↑' },
+              { value: 'rating_asc', label: '별점↓' },
+            ].map(({ value, label }) => (
+              <button
+                key={value}
+                onClick={() => handleSortChange(value)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                  sort === value
+                    ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md shadow-sky-200/50'
+                    : 'text-slate-500 hover:text-sky-600 hover:bg-sky-50'
+                }`}
+                style={{ fontFamily: "'Pretendard', sans-serif" }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {/* 작성 버튼 */}
           {user && (
             <motion.button
               whileHover={{ scale: 1.03, y: -2 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => navigate('/reviews/write')}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-400 text-white font-bold rounded-2xl hover:shadow-xl hover:shadow-sky-200/50 transition-shadow"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-400 text-white font-bold rounded-2xl hover:shadow-xl hover:shadow-sky-200/50 transition-shadow whitespace-nowrap"
+              style={{ fontFamily: "'Pretendard', sans-serif" }}
             >
               <Plus className="w-4 h-4" />
               후기 작성
             </motion.button>
           )}
         </motion.div>
+
+        {/* 검색 결과 안내 */}
+        {search && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 mb-6 text-sm text-slate-500"
+            style={{ fontFamily: "'Pretendard', sans-serif" }}
+          >
+            <Search className="w-4 h-4 text-sky-400" />
+            <span>
+              <span className="font-semibold text-sky-600">"{search}"</span> 검색 결과
+              {!isLoading && <span className="ml-1 text-slate-400">· 총 {totalCount}건</span>}
+            </span>
+            <button
+              onClick={handleClearSearch}
+              className="ml-auto flex items-center gap-1 text-xs text-slate-400 hover:text-sky-500 transition-colors"
+            >
+              <X className="w-3 h-3" /> 초기화
+            </button>
+          </motion.div>
+        )}
 
         {/* 로딩 */}
         {isLoading && (
@@ -196,18 +288,37 @@ export default function Reviews() {
             >
               <Search className="w-12 h-12 text-sky-400" />
             </motion.div>
-            <h3 className="text-xl font-bold text-slate-700 mb-3">아직 후기가 없습니다</h3>
-            <p className="text-slate-400 mb-6">첫 번째 동행 후기를 작성해보세요!</p>
-            {user && (
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => navigate('/reviews/write')}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-bold rounded-2xl shadow-lg shadow-sky-200"
-              >
-                <Plus className="w-4 h-4" />
-                첫 후기 작성하기
-              </motion.button>
+            {search ? (
+              <>
+                <h3 className="text-xl font-bold text-slate-700 mb-3">검색 결과가 없습니다</h3>
+                <p className="text-slate-400 mb-6">다른 키워드로 검색해보세요.</p>
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleClearSearch}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-white border border-sky-200 text-sky-600 font-bold rounded-2xl shadow-sm hover:shadow-md transition-shadow"
+                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                >
+                  <X className="w-4 h-4" />
+                  검색 초기화
+                </motion.button>
+              </>
+            ) : (
+              <>
+                <h3 className="text-xl font-bold text-slate-700 mb-3">아직 후기가 없습니다</h3>
+                <p className="text-slate-400 mb-6">첫 번째 동행 후기를 작성해보세요!</p>
+                {user && (
+                  <motion.button
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => navigate('/reviews/write')}
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-sky-500 to-cyan-500 text-white font-bold rounded-2xl shadow-lg shadow-sky-200"
+                  >
+                    <Plus className="w-4 h-4" />
+                    첫 후기 작성하기
+                  </motion.button>
+                )}
+              </>
             )}
           </motion.div>
         )}
