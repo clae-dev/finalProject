@@ -26,6 +26,7 @@ const AccommodationReviewWrite = lazy(() => import('./pages/accommodation/Accomm
 const Companions = lazy(() => import('./pages/companion/Companions'));
 const CompanionWrite = lazy(() => import('./pages/companion/CompanionWrite'));
 const CompanionDetail = lazy(() => import('./pages/companion/CompanionDetail'));
+const CompanionEdit = lazy(() => import('./pages/companion/CompanionEdit'));
 const Reviews = lazy(() => import('./pages/review/Reviews'));
 const ReviewWrite = lazy(() => import('./pages/review/ReviewWrite'));
 const ReviewDetail = lazy(() => import('./pages/review/ReviewDetail'));
@@ -68,6 +69,7 @@ function AnimatedRoutes() {
           <Route path="/companions" element={<PageTransition><Companions /></PageTransition>} />
           <Route path="/companions/write" element={<PageTransition><CompanionWrite /></PageTransition>} />
           <Route path="/companions/:companionNo" element={<PageTransition><CompanionDetail /></PageTransition>} />
+          <Route path="/companions/:companionNo/edit" element={<PageTransition><CompanionEdit /></PageTransition>} />
           <Route path="/reviews" element={<PageTransition><Reviews /></PageTransition>} />
           <Route path="/reviews/write" element={<PageTransition><ReviewWrite /></PageTransition>} />
           <Route path="/reviews/:reviewNo" element={<PageTransition><ReviewDetail /></PageTransition>} />

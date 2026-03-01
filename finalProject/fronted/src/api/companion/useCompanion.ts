@@ -3,6 +3,7 @@ import {
   getCompanionList,
   getCompanionDetail,
   createCompanion,
+  updateCompanion,
   deleteCompanion,
   joinCompanion,
   cancelJoin,
@@ -38,6 +39,22 @@ export const useCreateCompanion = () => {
   return useMutation({
     mutationFn: (data: FormData) => createCompanion(data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['companions'] });
+    },
+  });
+};
+
+/**
+ * 동행 수정 훅
+ */
+export const useUpdateCompanion = (companionNo: number | string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: FormData) => updateCompanion(companionNo, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['companion', companionNo] });
+      queryClient.invalidateQueries({ queryKey: ['companion', String(companionNo)] });
+      queryClient.invalidateQueries({ queryKey: ['companion', Number(companionNo)] });
       queryClient.invalidateQueries({ queryKey: ['companions'] });
     },
   });

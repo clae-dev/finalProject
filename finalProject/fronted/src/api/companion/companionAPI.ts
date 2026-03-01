@@ -35,6 +35,17 @@ export const createCompanion = async (formData: FormData): Promise<ApiResponse<C
   return response.data;
 };
 
+// 수정 (multipart/form-data)
+export const updateCompanion = async (
+  companionNo: number | string,
+  formData: FormData
+): Promise<ApiResponse<unknown>> => {
+  const response = await axiosApi.put(`/api/companions/${companionNo}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};
+
 // 삭제
 export const deleteCompanion = async (companionNo: number | string): Promise<ApiResponse<unknown>> => {
   const response = await axiosApi.delete(`/api/companions/${companionNo}`);

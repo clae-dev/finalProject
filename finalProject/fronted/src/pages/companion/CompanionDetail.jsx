@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Calendar, Users, MapPin, Loader2, Check, X, Trash2, ImageIcon, Flag, Map } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, MapPin, Loader2, Check, X, Trash2, ImageIcon, Flag, Map, Pencil } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import heroStar from '../../assets/images/companion/별.png';
@@ -301,15 +301,26 @@ export default function CompanionDetail() {
               <p className="text-sm text-slate-400">{companion.authorAgeRange || '-'} · {companion.createdAt}</p>
             </div>
             {isAuthor && (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleDelete}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-red-50 text-red-500 rounded-xl text-sm font-semibold hover:bg-red-100 transition-colors border border-red-100"
-              >
-                <Trash2 className="w-4 h-4" />
-                삭제
-              </motion.button>
+              <div className="flex items-center gap-2">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => navigate(`/companions/${companionNo}/edit`)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-sky-50 text-sky-500 rounded-xl text-sm font-semibold hover:bg-sky-100 transition-colors border border-sky-100"
+                >
+                  <Pencil className="w-4 h-4" />
+                  수정
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleDelete}
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-red-50 text-red-500 rounded-xl text-sm font-semibold hover:bg-red-100 transition-colors border border-red-100"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  삭제
+                </motion.button>
+              </div>
             )}
             {user && !isAuthor && (
               <motion.button

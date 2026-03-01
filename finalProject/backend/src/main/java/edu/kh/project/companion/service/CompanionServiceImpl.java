@@ -131,6 +131,49 @@ public class CompanionServiceImpl implements CompanionService {
         return fileName.substring(fileName.lastIndexOf("."));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>유지할 기존 이미지 URL과 새로 업로드한 이미지를 합쳐
+     * contentImages에 저장한다.</p>
+     */
+    @Override
+    public int updateCompanion(CompanionDTO companion, String keepImages,
+                               List<MultipartFile> newImages,
+                               String webPath, String folderPath) {
+
+        List<String> allImages = new ArrayList<>();
+
+        // 기존에 유지할 이미지 URL
+        if (keepImages != null && !keepImages.isBlank()) {
+            for (String url : keepImages.split(",")) {
+                if (!url.isBlank()) allImages.add(url.trim());
+            }
+        }
+
+        // 새로 추가된 이미지 파일 저장
+        if (newImages != null && !newImages.isEmpty()) {
+            File dir = new File(folderPath);
+            if (!dir.exists()) dir.mkdirs();
+            try {
+                for (MultipartFile file : newImages) {
+                    if (file != null && !file.isEmpty()) {
+                        String rename = UUID.randomUUID()
+                                + getFileExtension(file.getOriginalFilename());
+                        file.transferTo(new File(folderPath + rename));
+                        allImages.add(webPath + rename);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("동행 수정 이미지 저장 실패", e);
+                throw new RuntimeException("이미지 저장 중 오류가 발생했습니다.", e);
+            }
+        }
+
+        companion.setContentImages(allImages.isEmpty() ? null : String.join(",", allImages));
+        return companionMapper.updateCompanion(companion);
+    }
+
     /** {@inheritDoc} */
     @Override
     public int deleteCompanion(int companionNo, int memberNo) {

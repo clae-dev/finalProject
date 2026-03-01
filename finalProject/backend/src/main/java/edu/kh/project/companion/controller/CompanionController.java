@@ -209,6 +209,82 @@ public class CompanionController {
     }
 
     /**
+     * 동행 게시글을 수정한다 (작성자만 가능).
+     *
+     * @param authHeader  Authorization 헤더 (Bearer 토큰)
+     * @param companionNo 수정할 동행 게시글 번호
+     * @param title       게시글 제목
+     * @param content     게시글 내용
+     * @param travelDate  여행 날짜 (선택)
+     * @param maxMembers  최대 모집 인원
+     * @param tags        태그 문자열 (선택)
+     * @param latitude    위도 (선택)
+     * @param longitude   경도 (선택)
+     * @param placeName   장소명 (선택)
+     * @param keepImages  유지할 기존 이미지 URL — 쉼표 구분 (선택)
+     * @param newImages   새로 추가할 이미지 파일 목록 (선택)
+     * @return 수정 성공 여부
+     */
+    @PutMapping("/{no}")
+    public ResponseEntity<Map<String, Object>> updateCompanion(
+            @RequestHeader("Authorization") String authHeader,
+            @PathVariable("no") int companionNo,
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam(value = "travelDate", required = false) String travelDate,
+            @RequestParam(value = "maxMembers", defaultValue = "4") int maxMembers,
+            @RequestParam(value = "tags", required = false) String tags,
+            @RequestParam(value = "latitude", required = false) Double latitude,
+            @RequestParam(value = "longitude", required = false) Double longitude,
+            @RequestParam(value = "placeName", required = false) String placeName,
+            @RequestParam(value = "keepImages", required = false) String keepImages,
+            @RequestParam(value = "newImages", required = false) List<MultipartFile> newImages) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            int memberNo = extractMemberNo(authHeader);
+
+            CompanionDTO companion = new CompanionDTO();
+            companion.setCompanionNo(companionNo);
+            companion.setMemberNo(memberNo);
+            companion.setTitle(title);
+            companion.setContent(content);
+            companion.setTravelDate(travelDate);
+            companion.setMaxMembers(maxMembers);
+            companion.setTags(tags);
+            companion.setLatitude(latitude);
+            companion.setLongitude(longitude);
+            companion.setPlaceName(placeName);
+
+            int result = companionService.updateCompanion(
+                    companion, keepImages, newImages,
+                    companionWebPath, companionFolderPath);
+
+            if (result == 0) {
+                response.put("success", false);
+                response.put("message", "수정 실패 (권한 없음)");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+
+            response.put("success", true);
+            response.put("message", "수정 완료");
+            return ResponseEntity.ok(response);
+
+        } catch (JwtException e) {
+            log.warn("동행 수정 - JWT 인증 실패: {}", e.getMessage());
+            response.put("success", false);
+            response.put("message", "인증이 만료되었습니다.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            log.error("동행 수정 실패", e);
+            response.put("success", false);
+            response.put("message", "동행 수정 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
      * 동행 게시글을 삭제한다 (작성자만 가능).
      *
      * @param authHeader  Authorization 헤더 (Bearer 토큰)

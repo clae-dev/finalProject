@@ -147,6 +147,24 @@
         )
     </insert>
 
+    <!-- 게시글 수정 (작성자만) -->
+    <update id="updateCompanion">
+        UPDATE COMPANION_BOARD
+        SET
+            TITLE          = #{title},
+            CONTENT        = #{content},
+            TRAVEL_DATE    = #{travelDate},
+            MAX_MEMBERS    = #{maxMembers},
+            TAGS           = #{tags},
+            LATITUDE       = #{latitude},
+            LONGITUDE      = #{longitude},
+            PLACE_NAME     = #{placeName},
+            CONTENT_IMAGES = #{contentImages},
+            UPDATED_AT     = SYSDATE
+        WHERE COMPANION_NO = #{companionNo}
+          AND MEMBER_NO    = #{memberNo}
+    </update>
+
     <!-- 게시글 삭제 (작성자만, 소프트 삭제) -->
     <update id="deleteCompanion">
         UPDATE COMPANION_BOARD
