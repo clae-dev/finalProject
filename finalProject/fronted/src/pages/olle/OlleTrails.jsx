@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import { olleTrails } from '../../data/olleTrails';
+import { useOlleTrails } from '../../api/olletrail/useOlleTrail';
 
 const DIFFICULTY = {
   하: {
@@ -32,13 +32,15 @@ export default function OlleTrails() {
   const [difficulty, setDifficulty] = useState('전체');
   const [region, setRegion]         = useState('전체');
 
+  const { data: olleTrails = [] } = useOlleTrails();
+
   const filtered = useMemo(() =>
     olleTrails.filter((t) => {
       if (difficulty !== '전체' && t.difficulty !== difficulty) return false;
       if (region     !== '전체' && t.region     !== region)     return false;
       return true;
     }),
-  [difficulty, region]);
+  [difficulty, region, olleTrails]);
 
   const totalDistance = olleTrails.reduce((s, t) => s + t.distance, 0).toFixed(1);
 

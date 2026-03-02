@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.kh.project.olletrail.mapper.OlleTrailMapper">
+
+    <resultMap id="overrideResultMap" type="edu.kh.project.olletrail.dto.OlleTrailOverrideDTO">
+        <id     property="trailId"     column="TRAIL_ID"    />
+        <result property="subtitle"    column="SUBTITLE"    />
+        <result property="description" column="DESCRIPTION" />
+        <result property="difficulty"  column="DIFFICULTY"  />
+        <result property="duration"    column="DURATION"    />
+        <result property="terrain"     column="TERRAIN"     />
+        <result property="distance"    column="DISTANCE"    />
+        <result property="updatedAt"   column="UPDATED_AT"  />
+        <result property="updatedBy"   column="UPDATED_BY"  />
+    </resultMap>
+
+    <!-- 전체 override 조회 -->
+    <select id="selectAllOverrides" resultMap="overrideResultMap">
+        SELECT TRAIL_ID, SUBTITLE, DESCRIPTION, DIFFICULTY,
+               DURATION, TERRAIN, DISTANCE, UPDATED_AT, UPDATED_BY
+        FROM OLLE_TRAIL_OVERRIDE
+        ORDER BY TRAIL_ID ASC
+    </select>
+
+    <!-- 단건 조회 -->
+    <select id="selectOverrideById" resultMap="overrideResultMap">
+        SELECT TRAIL_ID, SUBTITLE, DESCRIPTION, DIFFICULTY,
+               DURATION, TERRAIN, DISTANCE, UPDATED_AT, UPDATED_BY
+        FROM OLLE_TRAIL_OVERRIDE
+        WHERE TRAIL_ID = #{trailId}
+    </select>
+
+    <!-- MERGE (없으면 INSERT, 있으면 UPDATE) -->
+    <insert id="upsertOverride">
+        MERGE INTO OLLE_TRAIL_OVERRIDE T
+        USING DUAL ON (T.TRAIL_ID = #{trailId})
+        WHEN MATCHED THEN
+            UPDATE SET
+                SUBTITLE    = #{subtitle},
+                DESCRIPTION = #{description},
+                DIFFICULTY  = #{difficulty},
+                DURATION    = #{duration},
+                TERRAIN     = #{terrain},
+                DISTANCE    = #{distance},
+                UPDATED_AT  = SYSDATE,
+                UPDATED_BY  = #{updatedBy}
+        WHEN NOT MATCHED THEN
+            INSERT (TRAIL_ID, SUBTITLE, DESCRIPTION, DIFFICULTY,
+                    DURATION, TERRAIN, DISTANCE, UPDATED_AT, UPDATED_BY)
+            VALUES (#{trailId}, #{subtitle}, #{description}, #{difficulty},
+                    #{duration}, #{terrain}, #{distance}, SYSDATE, #{updatedBy})
+    </insert>
+
+    <!-- override 삭제 -->
+    <delete id="deleteOverride">
+        DELETE FROM OLLE_TRAIL_OVERRIDE
+        WHERE TRAIL_ID = #{trailId}
+    </delete>
+
+</mapper>

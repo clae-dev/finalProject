@@ -8,7 +8,7 @@ import {
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import KakaoMap from '../../components/common/KakaoMap';
-import { olleTrails } from '../../data/olleTrails';
+import { useOlleTrails } from '../../api/olletrail/useOlleTrail';
 
 const DIFFICULTY = {
   하: {
@@ -51,9 +51,10 @@ export default function OlleDetail() {
   const { courseNo } = useParams();
   const navigate     = useNavigate();
 
+  const { data: olleTrails = [] } = useOlleTrails();
   const trail = useMemo(
     () => olleTrails.find((t) => t.id === Number(courseNo)),
-    [courseNo],
+    [courseNo, olleTrails],
   );
 
   if (!trail) {
@@ -126,7 +127,7 @@ export default function OlleDetail() {
       <Header />
 
       {/* ── 히어로 헤더 (난이도 그라데이션) ── */}
-      <div className={`relative bg-gradient-to-br ${dc.header} mt-8 pt-10 pb-20 px-4 overflow-hidden`}>
+      <div className={`relative bg-gradient-to-br ${dc.header} mt-8 pt-20 pb-16 px-4 overflow-hidden`}>
         {/* 배경 장식 — 큰 코스 번호 */}
         <span className="absolute right-6 top-4 text-[110px] font-black text-white/10 leading-none select-none pointer-events-none">
           {numLabel}
@@ -193,7 +194,7 @@ export default function OlleDetail() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-white rounded-3xl border border-slate-100 shadow-lg -mt-8 mb-6"
+          className="bg-white rounded-3xl border border-slate-100 shadow-lg mb-6"
         >
           <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 divide-x-0 sm:divide-x divide-slate-100">
             {[

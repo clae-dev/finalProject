@@ -1,39 +1,88 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Shield, ShieldCheck, LayoutDashboard, Users, FileText, Building2, MapPin, MessageCircleQuestion, Megaphone, Flag, Mail } from 'lucide-react';
-import Header from '../../components/common/Header';
-import Footer from '../../components/main/Footer';
-import AdminDashboard from '../../components/admin/AdminDashboard';
-import AdminMembers from '../../components/admin/AdminMembers';
-import AdminPosts from '../../components/admin/AdminPosts';
+import {
+  LayoutDashboard, Users, FileText, Building2, MapPin,
+  MessageCircleQuestion, Megaphone, Flag, Mail, Footprints,
+  ShieldCheck, ChevronRight, LogOut, Menu, X, Shield,
+} from 'lucide-react';
+import AdminDashboard     from '../../components/admin/AdminDashboard';
+import AdminMembers       from '../../components/admin/AdminMembers';
+import AdminPosts         from '../../components/admin/AdminPosts';
 import AdminAccommodations from '../../components/admin/AdminAccommodations';
-import AdminSpots from '../../components/admin/AdminSpots';
-import AdminFaq from '../../components/admin/AdminFaq';
-import AdminNotices from '../../components/admin/AdminNotices';
-import AdminReports from '../../components/admin/AdminReports';
+import AdminSpots         from '../../components/admin/AdminSpots';
+import AdminFaq           from '../../components/admin/AdminFaq';
+import AdminNotices       from '../../components/admin/AdminNotices';
+import AdminReports       from '../../components/admin/AdminReports';
 import AdminVerifications from '../../components/admin/AdminVerifications';
-import AdminInquiry from '../../components/admin/AdminInquiry';
-import { AuthContext } from '../../components/AuthContext';
-import adminHeroBg from '../../assets/images/admin/admin-hero.png';
+import AdminInquiry       from '../../components/admin/AdminInquiry';
+import AdminOlleTrails    from '../../components/admin/AdminOlleTrails';
+import { AuthContext }    from '../../components/AuthContext';
 
-const TABS = [
-  { key: 'dashboard', label: '대시보드', icon: LayoutDashboard },
-  { key: 'members', label: '회원 관리', icon: Users },
-  { key: 'posts', label: '게시물 관리', icon: FileText },
-  { key: 'accommodations', label: '숙소 관리', icon: Building2 },
-  { key: 'spots', label: '명소 관리', icon: MapPin },
-  { key: 'faq', label: 'FAQ 관리', icon: MessageCircleQuestion },
-  { key: 'notices', label: '공지 관리', icon: Megaphone },
-  { key: 'verifications', label: '인증 관리', icon: ShieldCheck },
-  { key: 'reports', label: '신고 관리', icon: Flag },
-  { key: 'inquiry', label: '문의 관리', icon: Mail },
+/* ── 사이드바 메뉴 정의 ── */
+const MENU_GROUPS = [
+  {
+    label: '개요',
+    items: [
+      { key: 'dashboard', label: '대시보드', icon: LayoutDashboard },
+    ],
+  },
+  {
+    label: '사용자',
+    items: [
+      { key: 'members', label: '회원 관리', icon: Users },
+    ],
+  },
+  {
+    label: '콘텐츠',
+    items: [
+      { key: 'posts',      label: '게시물 관리', icon: FileText },
+      { key: 'notices',    label: '공지 관리',   icon: Megaphone },
+      { key: 'faq',        label: 'FAQ 관리',    icon: MessageCircleQuestion },
+      { key: 'olletrails', label: '올레길 관리', icon: Footprints },
+    ],
+  },
+  {
+    label: '서비스',
+    items: [
+      { key: 'accommodations', label: '숙소 관리', icon: Building2 },
+      { key: 'spots',          label: '명소 관리', icon: MapPin },
+    ],
+  },
+  {
+    label: '운영',
+    items: [
+      { key: 'verifications', label: '인증 관리', icon: ShieldCheck },
+      { key: 'reports',       label: '신고 관리', icon: Flag },
+      { key: 'inquiry',       label: '문의 관리', icon: Mail },
+    ],
+  },
 ];
+
+const PAGE_LABEL = Object.fromEntries(
+  MENU_GROUPS.flatMap((g) => g.items.map((i) => [i.key, i.label]))
+);
+
+/* ── 컴포넌트 맵 ── */
+const PANEL = {
+  dashboard:      <AdminDashboard />,
+  members:        <AdminMembers />,
+  posts:          <AdminPosts />,
+  accommodations: <AdminAccommodations />,
+  spots:          <AdminSpots />,
+  faq:            <AdminFaq />,
+  notices:        <AdminNotices />,
+  verifications:  <AdminVerifications />,
+  reports:        <AdminReports />,
+  inquiry:        <AdminInquiry />,
+  olletrails:     <AdminOlleTrails />,
+};
 
 export default function AdminPage() {
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext) || {};
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const { user, handleLogout } = useContext(AuthContext) || {};
+  const [active,      setActive]      = useState('dashboard');
+  const [sidebarOpen, setSidebarOpen] = useState(true);   // 데스크톱 기본 열림
 
   useEffect(() => {
     if (!user || user.memberRole !== 'A') {
@@ -43,126 +92,154 @@ export default function AdminPage() {
 
   if (!user || user.memberRole !== 'A') return null;
 
+  const avatar = user.memberProfileImg
+    ? <img src={user.memberProfileImg} alt="" className="w-8 h-8 rounded-full object-cover" />
+    : (
+      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold">
+        {(user.memberNickname || 'A')[0]}
+      </div>
+    );
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-cyan-50">
-      <Header />
+    <div className="flex h-screen bg-slate-50 overflow-hidden" style={{ fontFamily: "'Pretendard', sans-serif" }}>
 
-      {/* 히어로 배너 */}
-      <div className="relative h-[320px] overflow-hidden mt-8">
-        {/* 배경 이미지 */}
-        <img
-          src={adminHeroBg}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover object-top"
-        />
-        {/* 그라데이션 오버레이 */}
-        <div className="absolute inset-0 bg-gradient-to-r from-sky-900/60 via-cyan-800/50 to-blue-900/60" />
-        {/* 장식 */}
-        <motion.div
-          className="absolute top-10 left-[10%] w-40 h-40 bg-white/10 rounded-full blur-3xl"
-          animate={{ y: [0, -20, 0], opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          className="absolute bottom-10 right-[10%] w-48 h-48 bg-cyan-300/10 rounded-full blur-3xl"
-          animate={{ y: [0, 20, 0], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
-        <div className="relative h-full flex flex-col items-center justify-center text-white px-5">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5, type: 'spring' }}
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg"
+      {/* ════════════════════════════════
+          사이드바
+      ════════════════════════════════ */}
+      <AnimatePresence initial={false}>
+        {sidebarOpen && (
+          <motion.aside
+            key="sidebar"
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 240, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: 'easeInOut' }}
+            className="flex-shrink-0 h-full bg-slate-900 overflow-hidden flex flex-col z-30"
           >
-            <Shield className="w-4 h-4 text-cyan-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>Admin Panel</span>
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.7 }}
-            className="text-4xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
-          >
-            <span className="text-white">관리자 </span>
-            <span className="bg-gradient-to-r from-cyan-200 via-sky-200 to-teal-200 bg-clip-text text-transparent">대시보드</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-lg text-white/70 text-center"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
-          >
-            HONDI 플랫폼을 관리하고 모니터링하세요
-          </motion.p>
-        </div>
+            {/* 로고 */}
+            <div className="px-6 py-5 border-b border-slate-700/60">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center shadow-lg">
+                  <Shield className="w-4 h-4 text-white" />
+                </div>
+                <div>
+                  <p className="text-white font-black text-sm leading-none" style={{ fontFamily: "'GmarketSans', sans-serif" }}>HONDI</p>
+                  <p className="text-slate-400 text-[10px] mt-0.5">Admin Console</p>
+                </div>
+              </div>
+            </div>
 
-        {/* 하단 웨이브 */}
-        <div className="absolute -bottom-1 left-0 right-0">
-          <svg viewBox="0 0 1440 80" className="w-full" preserveAspectRatio="none">
-            <path fill="rgb(240 249 255)" d="M0,50 C300,80 600,20 900,50 C1100,70 1300,30 1440,45 L1440,80 L0,80 Z" />
-          </svg>
-        </div>
-      </div>
+            {/* 메뉴 */}
+            <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
+              {MENU_GROUPS.map((group) => (
+                <div key={group.label}>
+                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                    {group.label}
+                  </p>
+                  <ul className="space-y-0.5">
+                    {group.items.map(({ key, label, icon: Icon }) => {
+                      const isActive = active === key;
+                      return (
+                        <li key={key}>
+                          <button
+                            onClick={() => setActive(key)}
+                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                              isActive
+                                ? 'bg-gradient-to-r from-cyan-500/20 to-teal-500/20 text-cyan-300 border border-cyan-500/30'
+                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                            }`}
+                          >
+                            <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-cyan-400' : 'text-slate-500 group-hover:text-slate-300'}`} />
+                            <span className="truncate">{label}</span>
+                            {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto text-cyan-400" />}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              ))}
+            </nav>
 
-      {/* 탭 네비게이션 */}
-      <div className="max-w-6xl mx-auto px-5 -mt-6 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 p-2.5 flex flex-wrap justify-center gap-1.5"
-        >
-          {TABS.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.key;
-            return (
+            {/* 하단 — 유저 정보 + 로그아웃 */}
+            <div className="border-t border-slate-700/60 px-4 py-4">
+              <div className="flex items-center gap-2.5 mb-3">
+                {avatar}
+                <div className="min-w-0">
+                  <p className="text-slate-200 text-sm font-semibold truncate">{user.memberNickname}</p>
+                  <p className="text-slate-500 text-[11px] truncate">{user.memberEmail}</p>
+                </div>
+              </div>
               <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 whitespace-nowrap ${
-                  isActive
-                    ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-200/60'
-                    : 'text-slate-500 hover:text-sky-600 hover:bg-sky-50'
-                }`}
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                onClick={() => handleLogout?.()}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 text-sm font-medium transition-all"
               >
-                <Icon className="w-4 h-4" />
-                {tab.label}
+                <LogOut className="w-4 h-4" />
+                로그아웃
               </button>
-            );
-          })}
-        </motion.div>
-      </div>
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
 
-      {/* 탭 콘텐츠 */}
-      <div className="max-w-6xl mx-auto px-5 py-10">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+      {/* ════════════════════════════════
+          메인 영역
+      ════════════════════════════════ */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+        {/* 탑바 */}
+        <header className="flex-shrink-0 h-14 bg-white border-b border-slate-100 flex items-center px-5 gap-4 shadow-sm z-20">
+          {/* 사이드바 토글 */}
+          <button
+            onClick={() => setSidebarOpen((v) => !v)}
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
           >
-            {activeTab === 'dashboard' && <AdminDashboard />}
-            {activeTab === 'members' && <AdminMembers />}
-            {activeTab === 'posts' && <AdminPosts />}
-            {activeTab === 'accommodations' && <AdminAccommodations />}
-            {activeTab === 'spots' && <AdminSpots />}
-            {activeTab === 'faq' && <AdminFaq />}
-            {activeTab === 'notices' && <AdminNotices />}
-            {activeTab === 'verifications' && <AdminVerifications />}
-            {activeTab === 'reports' && <AdminReports />}
-            {activeTab === 'inquiry' && <AdminInquiry />}
-          </motion.div>
-        </AnimatePresence>
-      </div>
+            {sidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
 
-      <Footer />
+          {/* 브레드크럼 */}
+          <div className="flex items-center gap-1.5 text-sm">
+            <span className="text-slate-400">관리자</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
+            <span className="font-semibold text-slate-700">{PAGE_LABEL[active]}</span>
+          </div>
+
+          {/* 우측 — 관리자 뱃지 */}
+          <div className="ml-auto flex items-center gap-3">
+            <span className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-cyan-50 to-teal-50 border border-cyan-100 rounded-full text-xs font-bold text-cyan-600">
+              <Shield className="w-3 h-3" />
+              관리자
+            </span>
+            {avatar}
+          </div>
+        </header>
+
+        {/* 콘텐츠 */}
+        <main className="flex-1 overflow-y-auto bg-slate-50">
+          <div className="max-w-6xl mx-auto px-6 py-8">
+            {/* 페이지 타이틀 */}
+            <div className="mb-6">
+              <h1 className="text-xl font-black text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+                {PAGE_LABEL[active]}
+              </h1>
+              <p className="text-slate-400 text-sm mt-0.5">HONDI 플랫폼을 관리하고 모니터링하세요</p>
+            </div>
+
+            {/* 패널 */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={active}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+              >
+                {PANEL[active]}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
