@@ -32,20 +32,20 @@ export default defineConfig({
     open: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:80',
+        target: 'http://localhost:8080',
         changeOrigin: true,
       },
       '/upload': {
-        target: 'http://localhost:80',
+        target: 'http://localhost:8080',
         changeOrigin: true,
       },
       '/chattingSock': {
-        target: 'http://localhost:80',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         ws: true,
       },
       '/notificationSock': {
-        target: 'http://localhost:80',
+        target: 'http://localhost:8080',
         changeOrigin: true,
         ws: true,
       },
