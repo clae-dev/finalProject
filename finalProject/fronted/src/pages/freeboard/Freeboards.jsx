@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import freeboardHero from '../../assets/images/자유게시판.jpg';
+import freeboardHero from '../../assets/images/page/자유게시판.jpg';
 import { useFreeBoardList } from '../../api/freeboard/useFreeboard';
 import { AuthContext } from '../../components/AuthContext';
 

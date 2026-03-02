@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { X, Send, RotateCcw, AlertCircle, Palmtree, MapPin, UtensilsCrossed, Compass, Plane } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSendAiChat } from '../../api/ai/useAiChat';
-import changsikImg from '../../assets/images/제주.png';
+import changsikImg from '../../assets/images/page/제주.png';
 
 const QUICK_QUESTIONS = [
   { icon: <Compass className="w-3.5 h-3.5" />, text: '제주 혼자 여행 코스 추천해줘' },
