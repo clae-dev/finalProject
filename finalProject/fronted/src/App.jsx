@@ -98,15 +98,15 @@ function AnimatedRoutes() {
   );
 }
 
-/** 관리자 페이지에서는 플로팅 위젯 숨김 */
+/** 관리자 페이지에서는 날씨·AI 위젯 숨김, 1:1 채팅은 유지 */
 function GlobalWidgets() {
   const location = useLocation();
-  if (location.pathname.startsWith('/admin')) return null;
+  const isAdmin = location.pathname.startsWith('/admin');
   return (
     <>
-      <WeatherWidget />
+      {!isAdmin && <WeatherWidget />}
       <ChatBubble />
-      <AiChatBubble />
+      {!isAdmin && <AiChatBubble />}
     </>
   );
 }
