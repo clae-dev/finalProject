@@ -2,7 +2,7 @@ import React, { useState, useRef, useContext } from 'react';
 import { motion, useMotionValue } from 'framer-motion';
 import { AuthContext } from '../AuthContext';
 import AiChatPanel from './AiChatPanel';
-import changsikImg from '../../assets/images/제주.png';
+import changsikImg from '../../assets/images/page/제주.png';
 
 export default function AiChatBubble() {
   const { user } = useContext(AuthContext) || {};

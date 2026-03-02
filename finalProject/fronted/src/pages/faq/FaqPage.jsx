@@ -4,7 +4,7 @@ import { HelpCircle, Search, ChevronDown, Eye, Loader2 } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useFaqCategories, useFaqList, useIncreaseFaqView } from '../../api/faq/useFaq';
-import faqHeroImg from '../../assets/images/FAQ.png';
+import faqHeroImg from '../../assets/images/page/FAQ.png';
 
 const CATEGORY_TABS = [
   { code: null, label: '전체' },

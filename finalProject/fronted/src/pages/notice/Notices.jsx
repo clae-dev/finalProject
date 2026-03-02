@@ -5,7 +5,7 @@ import { Megaphone, Search, Eye, ChevronLeft, ChevronRight, Loader2 } from 'luci
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useNoticeList } from '../../api/notice/useNotice';
-import noticeHeroImg from '../../assets/images/공지사항.png';
+import noticeHeroImg from '../../assets/images/page/공지사항.png';
 
 export default function Notices() {
   const navigate = useNavigate();
