@@ -130,10 +130,10 @@ export default function AdminPage() {
             </div>
 
             {/* 메뉴 */}
-            <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
+            <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-3 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
               {MENU_GROUPS.map((group) => (
                 <div key={group.label}>
-                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5">
+                  <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest px-3 mb-1">
                     {group.label}
                   </p>
                   <ul className="space-y-0.5">
@@ -143,7 +143,7 @@ export default function AdminPage() {
                         <li key={key}>
                           <button
                             onClick={() => setActive(key)}
-                            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                            className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 group ${
                               isActive
                                 ? 'bg-gradient-to-r from-cyan-500/20 to-teal-500/20 text-cyan-300 border border-cyan-500/30'
                                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
