@@ -117,7 +117,7 @@ export default function AdminPage() {
             className="flex-shrink-0 h-full bg-slate-900 overflow-hidden flex flex-col z-30"
           >
             {/* 로고 */}
-            <div className="px-6 py-5 border-b border-slate-700/60">
+            <div className="px-6 py-5">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center shadow-lg">
                   <Shield className="w-4 h-4 text-white" />
@@ -130,7 +130,7 @@ export default function AdminPage() {
             </div>
 
             {/* 메뉴 */}
-            <nav className="flex-1 overflow-y-auto py-3 px-3 space-y-3 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            <nav className="admin-nav flex-1 overflow-y-auto py-4 px-3 space-y-5">
               {MENU_GROUPS.map((group) => (
                 <div key={group.label}>
                   <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest px-3 mb-1">
@@ -162,7 +162,7 @@ export default function AdminPage() {
             </nav>
 
             {/* 하단 — 유저 정보 + 로그아웃 */}
-            <div className="border-t border-slate-700/60 px-4 py-4">
+            <div className="px-4 py-4">
               <div className="flex items-center gap-2.5 mb-3">
                 {avatar}
                 <div className="min-w-0">

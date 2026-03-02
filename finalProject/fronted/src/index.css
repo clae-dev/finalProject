@@ -60,3 +60,11 @@ body {
   color: hsl(var(--foreground));
 }
 
+.admin-nav {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.admin-nav::-webkit-scrollbar {
+  display: none;
+}
+
