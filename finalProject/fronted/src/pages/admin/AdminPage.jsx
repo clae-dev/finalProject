@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Users, FileText, Building2, MapPin,
   MessageCircleQuestion, Megaphone, Flag, Mail, Footprints,
-  ShieldCheck, ChevronRight, LogOut, Menu, X, Shield,
+  ShieldCheck, ChevronRight, LogOut, Menu, X, Shield, Home,
 } from 'lucide-react';
 import AdminDashboard     from '../../components/admin/AdminDashboard';
 import AdminMembers       from '../../components/admin/AdminMembers';
@@ -170,6 +170,13 @@ export default function AdminPage() {
                   <p className="text-slate-500 text-[11px] truncate">{user.memberEmail}</p>
                 </div>
               </div>
+              <button
+                onClick={() => navigate('/')}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-slate-400 hover:text-cyan-300 hover:bg-slate-800 text-sm font-medium transition-all mb-1"
+              >
+                <Home className="w-4 h-4" />
+                홈으로 이동
+              </button>
               <button
                 onClick={() => handleLogout?.()}
                 className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 text-sm font-medium transition-all"

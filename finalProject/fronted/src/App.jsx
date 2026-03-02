@@ -98,6 +98,19 @@ function AnimatedRoutes() {
   );
 }
 
+/** 관리자 페이지에서는 플로팅 위젯 숨김 */
+function GlobalWidgets() {
+  const location = useLocation();
+  if (location.pathname.startsWith('/admin')) return null;
+  return (
+    <>
+      <WeatherWidget />
+      <ChatBubble />
+      <AiChatBubble />
+    </>
+  );
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClientInstance}>
@@ -105,9 +118,7 @@ function App() {
         <BrowserRouter>
           <div className="min-h-screen bg-gradient-to-b from-sky-50 to-cyan-50">
             <AnimatedRoutes />
-            <WeatherWidget />
-            <ChatBubble />
-            <AiChatBubble />
+            <GlobalWidgets />
           </div>
         </BrowserRouter>
       </AuthProvider>
