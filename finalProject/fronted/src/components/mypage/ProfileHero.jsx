@@ -51,6 +51,7 @@ export default function ProfileHero({ user, memberData, onEditProfile }) {
                 src={avatarUrl}
                 alt={user.memberNickname}
                 referrerPolicy="no-referrer"
+                loading="lazy"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
               />
             </div>

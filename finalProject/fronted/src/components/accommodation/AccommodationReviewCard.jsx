@@ -66,6 +66,7 @@ export default function AccommodationReviewCard({ review, currentUserNo, onDelet
           <img
             src={images[imgIndex]?.imageUrl}
             alt={`후기 이미지 ${imgIndex + 1}`}
+            loading="lazy"
             className="w-full h-48 object-cover"
           />
           {images.length > 1 && (

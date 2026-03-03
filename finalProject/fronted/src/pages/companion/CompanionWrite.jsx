@@ -7,8 +7,8 @@ import Footer from '../../components/main/Footer';
 import KakaoMap from '../../components/common/KakaoMap';
 import { useCreateCompanion } from '../../api/companion/useCompanion';
 import { AuthContext } from '../../components/AuthContext';
-import heroStar from '../../assets/images/companion/별.png';
-import heroFriends from '../../assets/images/companion/친구.png';
+import heroStar from '../../assets/images/companion/별.webp';
+import heroFriends from '../../assets/images/companion/친구.webp';
 import { compressImage } from '../../lib/imageUtils';
 
 const heroSlides = [heroStar, heroFriends];
@@ -484,7 +484,7 @@ export default function CompanionWrite() {
                       animate={{ opacity: 1, scale: 1 }}
                       className="relative aspect-square rounded-2xl overflow-hidden group shadow-md shadow-sky-100/30"
                     >
-                      <img src={src} alt="" className="w-full h-full object-cover" />
+                      <img src={src} alt="" loading="lazy" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       <motion.button
                         whileHover={{ scale: 1.1 }}
@@ -585,7 +585,7 @@ export default function CompanionWrite() {
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-sky-200/50 overflow-hidden">
                         {user?.memberProfileImg ? (
-                          <img src={user.memberProfileImg} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = user?.memberNickname?.[0] || '?'; }} />
+                          <img src={user.memberProfileImg} alt="" loading="lazy" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = user?.memberNickname?.[0] || '?'; }} />
                         ) : (
                           user?.memberNickname?.[0] || '?'
                         )}

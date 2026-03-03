@@ -75,6 +75,7 @@ export default function ChatRoomList({ rooms, selectedRoomNo, onSelectRoom, onNe
                   <img
                     src={room.targetProfile}
                     alt=""
+                    loading="lazy"
                     className="w-14 h-14 rounded-full object-cover border border-slate-200"
                   />
                 ) : (

@@ -5,7 +5,7 @@ import { Megaphone, Search, Eye, ChevronLeft, ChevronRight, Loader2 } from 'luci
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useNoticeList } from '../../api/notice/useNotice';
-import noticeHeroImg from '../../assets/images/page/공지사항.png';
+import noticeHeroImg from '../../assets/images/page/공지사항.webp';
 
 export default function Notices() {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export default function Notices() {
 
       {/* 히어로 배너 */}
       <div className="relative h-[320px] overflow-hidden mt-8">
-        <img src={noticeHeroImg} alt="" className="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
+        <img src={noticeHeroImg} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover object-[center_30%]" />
         <div className="absolute inset-0 bg-gradient-to-br from-sky-900/60 via-slate-800/50 to-blue-900/60" />
 
         <div className="relative h-full flex flex-col items-center justify-center text-white px-5">

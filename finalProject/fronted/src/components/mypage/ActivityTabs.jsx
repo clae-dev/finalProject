@@ -177,6 +177,7 @@ export default function ActivityTabs() {
                                 <img
                                   src={item.thumbnailUrl || item.imageUrl}
                                   alt=""
+                                  loading="lazy"
                                   className="w-full h-full object-cover"
                                   onError={(e) => { e.target.parentElement.style.display = 'none'; }}
                                 />
@@ -256,6 +257,7 @@ export default function ActivityTabs() {
                             <img
                               src={item.imageUrl}
                               alt=""
+                              loading="lazy"
                               className="w-full h-full object-cover"
                               onError={(e) => { e.target.parentElement.style.display = 'none'; }}
                             />
