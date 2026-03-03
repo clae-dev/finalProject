@@ -1,7 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Shield, ChevronDown, Plane, Hotel, CalendarDays, Users, MessageSquare, Star, HelpCircle, Megaphone, Footprints } from 'lucide-react';
-import logo from '@/assets/images/logo/혼디.png';
+import logo from '@/assets/images/logo/혼디.webp';
 import { AuthContext } from '../AuthContext';
 import NotificationBell from '../notification/NotificationBell';
 
@@ -207,7 +207,7 @@ export default function Header() {
                     >
                       <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center text-sky-500 font-bold text-sm shadow-md shadow-sky-200/50 overflow-hidden">
                         {user.memberProfileImg ? (
-                          <img src={user.memberProfileImg} alt="" referrerPolicy="no-referrer" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = user.memberNickname?.[0] || '?'; }} />
+                          <img src={user.memberProfileImg} alt="" referrerPolicy="no-referrer" loading="lazy" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = user.memberNickname?.[0] || '?'; }} />
                         ) : (
                           user.memberNickname?.[0] || '?'
                         )}

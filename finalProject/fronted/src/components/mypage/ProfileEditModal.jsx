@@ -495,7 +495,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                               : 'border-transparent hover:border-sky-200'
                           }`}
                         >
-                          <img src={url} alt={`아바타 ${idx + 1}`} className="w-full h-full object-cover bg-white" />
+                          <img src={url} alt={`아바타 ${idx + 1}`} loading="lazy" className="w-full h-full object-cover bg-white" />
                         </button>
                       ))}
                     </div>
@@ -508,7 +508,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                     {/* 미리보기 */}
                     <div className="flex justify-center mb-4">
                       <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-sky-100 to-cyan-100 border-2 border-sky-200/60 overflow-hidden shadow-lg shadow-sky-200/30 p-1">
-                        <img src={customAvatarUrl} alt="내 아바타" className="w-full h-full object-cover rounded-2xl bg-white" />
+                        <img src={customAvatarUrl} alt="내 아바타" loading="lazy" className="w-full h-full object-cover rounded-2xl bg-white" />
                       </div>
                     </div>
 

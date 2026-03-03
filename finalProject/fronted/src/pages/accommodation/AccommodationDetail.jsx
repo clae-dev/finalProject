@@ -240,6 +240,7 @@ export default function AccommodationDetail() {
             <img
               src={images[currentImageIndex]}
               alt={accommodation.name}
+              loading="lazy"
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 cursor-zoom-in"
               onClick={() => setLightboxIndex(currentImageIndex)}
               onError={(e) => { e.target.src = defaultImage; }}
