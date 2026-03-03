@@ -131,12 +131,22 @@ public class AiChatService {
         // ── HONDI 사이트 데이터 활용 규칙 ──
         "## HONDI 사이트 데이터 활용 규칙\n" +
         "- 아래에 HONDI 플랫폼의 실제 데이터가 제공될 수 있어.\n" +
-        "- 숙소 추천 시 HONDI에 등록된 숙소를 우선 안내하고, 'HONDI에서 자세한 정보를 확인해보세요!'라고 안내해.\n" +
-        "- 동행 모집 글이 있으면, 혼행족에게 '지금 HONDI에서 동행을 모집 중인 글도 있어요!'라고 자연스럽게 안내해.\n" +
+        "- 숙소 추천 시 HONDI에 등록된 숙소를 우선 안내해.\n" +
+        "- 동행 모집 글이 있으면, 혼행족에게 자연스럽게 안내해.\n" +
         "- HONDI 명소 데이터가 있으면 우선 참고하되, 일반 제주 지식과 함께 답변해.\n" +
         "- 데이터에 없는 내용을 묻는 경우, 일반 제주 여행 지식으로 답변해.\n" +
-        "- 가격 정보는 '약 ~원대'로 안내하고, 정확한 금액은 현장 확인을 권해.\n" +
-        "- 커뮤니티 인기 글이나 동행 모집 정보를 안내할 때 구체적인 제목을 언급해도 돼.\n\n" +
+        "- 가격 정보는 '약 ~원대'로 안내하고, 정확한 금액은 현장 확인을 권해.\n\n" +
+
+        // ── 링크 형식 규칙 ──
+        "## 링크 형식 규칙 (반드시 준수)\n" +
+        "- HONDI 숙소를 언급할 때는 반드시 아래 형식으로 링크를 포함해:\n" +
+        "  [숙소명](/accommodations/숙소번호)\n" +
+        "  예시: [한림 게스트하우스](/accommodations/3)\n" +
+        "- HONDI 동행 모집을 언급할 때는 반드시 아래 형식으로 링크를 포함해:\n" +
+        "  [동행제목](/companions/동행번호)\n" +
+        "  예시: [성산일출봉 함께 갈 분](/companions/12)\n" +
+        "- 링크 형식 외에 '자세한 정보는 HONDI에서 확인하세요' 같은 문구는 생략해도 돼. 링크 자체가 안내 역할을 해.\n" +
+        "- 숙소번호와 동행번호는 아래 데이터에 제공된 번호를 그대로 사용해.\n\n" +
 
         // ── 제주 항공편 참고 정보 ──
         "## 제주 항공편 참고 정보\n" +
@@ -265,7 +275,8 @@ public class AiChatService {
         sb.append("\n### 등록 숙소 (인기순 ").append(accommodations.size()).append("개)\n");
 
         for (Map<String, Object> acc : accommodations) {
-            sb.append("- ").append(acc.get("name"));
+            sb.append("- [").append(acc.get("name"))
+              .append("](/accommodations/").append(acc.get("accommodationNo")).append(")");
             sb.append(" (").append(acc.get("type")).append(", ").append(acc.get("region")).append(")");
 
             // 가격 범위
@@ -342,7 +353,8 @@ public class AiChatService {
         sb.append("\n### 동행 모집 중 (최근 ").append(companions.size()).append("건)\n");
 
         for (Map<String, Object> comp : companions) {
-            sb.append("- ").append(comp.get("title"));
+            sb.append("- [").append(comp.get("title"))
+              .append("](/companions/").append(comp.get("companionNo")).append(")");
             sb.append(" (").append(comp.get("travelDate"));
             sb.append(", ").append(comp.get("joinCount"))
                     .append("/").append(comp.get("maxMembers")).append("명)");

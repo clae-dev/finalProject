@@ -290,7 +290,7 @@ export default function AccommodationFormModal({ isOpen, onClose, editTarget, on
                 </div>
                 {thumbnailPreview && (
                   <div className="w-20 h-20 rounded-xl overflow-hidden border border-sky-100 flex-shrink-0">
-                    <img src={thumbnailPreview} alt="썸네일" className="w-full h-full object-cover"
+                    <img src={thumbnailPreview} alt="썸네일" loading="lazy" className="w-full h-full object-cover"
                       onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=200'; }}
                     />
                   </div>
@@ -315,7 +315,7 @@ export default function AccommodationFormModal({ isOpen, onClose, editTarget, on
                   <div className="flex flex-wrap gap-2">
                     {existingImages.map((url, idx) => (
                       <div key={idx} className="w-16 h-16 rounded-lg overflow-hidden border border-slate-200 relative group">
-                        <img src={url} alt={`기존 ${idx + 1}`} className="w-full h-full object-cover" />
+                        <img src={url} alt={`기존 ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
                       </div>
                     ))}
                   </div>
@@ -332,7 +332,7 @@ export default function AccommodationFormModal({ isOpen, onClose, editTarget, on
                 <div className="flex flex-wrap gap-2 mt-3">
                   {galleryPreviews.map((preview, idx) => (
                     <div key={idx} className="w-16 h-16 rounded-lg overflow-hidden border border-emerald-200 relative group">
-                      <img src={preview} alt={`새 ${idx + 1}`} className="w-full h-full object-cover" />
+                      <img src={preview} alt={`새 ${idx + 1}`} loading="lazy" className="w-full h-full object-cover" />
                       <button type="button" onClick={() => removeGalleryFile(idx)}
                         className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <Trash2 className="w-3 h-3" />

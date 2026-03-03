@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { getSavedEmail, saveEmail, removeSavedEmail } from '../api/core/tokenStorage';
-import logo from '@/assets/images/logo/혼디.png';
-import bgImage from '@/assets/images/auth/협재.png';
+import logo from '@/assets/images/logo/혼디.webp';
+import bgImage from '@/assets/images/auth/협재.webp';
 
 function Login() {
   const globalState = useContext(AuthContext);
@@ -38,7 +38,7 @@ function Login() {
     <div className="min-h-screen flex items-center justify-center p-5 relative overflow-hidden">
       {/* 배경 */}
       <div className="absolute inset-0">
-        <img src={bgImage} alt="협재 해변" className="w-full h-full object-cover" />
+        <img src={bgImage} alt="협재 해변" loading="lazy" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-br from-sky-900/50 via-sky-800/40 to-cyan-900/50" />
       </div>
 

@@ -140,6 +140,7 @@ export default function ReviewsSection() {
                       <img
                         src={review.imageUrl}
                         alt=""
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                         onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
                       />

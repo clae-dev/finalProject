@@ -9,6 +9,7 @@
         SELECT *
         FROM (
             SELECT
+                A.ACCOMMODATION_NO  AS "accommodationNo",
                 A.NAME              AS "name",
                 A.ACCOMMODATION_TYPE AS "type",
                 A.REGION            AS "region",
@@ -48,6 +49,7 @@
         SELECT *
         FROM (
             SELECT
+                C.COMPANION_NO AS "companionNo",
                 C.TITLE        AS "title",
                 TO_CHAR(C.TRAVEL_DATE, 'YYYY-MM-DD') AS "travelDate",
                 C.MAX_MEMBERS  AS "maxMembers",

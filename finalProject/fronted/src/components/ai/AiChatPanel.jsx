@@ -6,7 +6,7 @@ import { X, Send, RotateCcw, AlertCircle, Palmtree, MapPin, UtensilsCrossed, Com
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useSendAiChat } from '../../api/ai/useAiChat';
-import changsikImg from '../../assets/images/page/제주.png';
+import changsikImg from '../../assets/images/page/제주.webp';
 
 const QUICK_QUESTIONS = [
   { icon: <Compass className="w-3.5 h-3.5" />, text: '제주 혼자 여행 코스 추천해줘' },
@@ -211,7 +211,7 @@ export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-orange-100">
-                  <img src={changsikImg} alt="창식이" className="w-full h-full object-cover" />
+                  <img src={changsikImg} alt="창식이" loading="lazy" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -bottom-px -right-px w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
               </div>
@@ -251,7 +251,7 @@ export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
               {/* 어시스턴트 아바타 */}
               {msg.role === 'assistant' && (
                 <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-1">
-                  <img src={changsikImg} alt="창식이" className="w-full h-full object-cover" />
+                  <img src={changsikImg} alt="창식이" loading="lazy" className="w-full h-full object-cover" />
                 </div>
               )}
 
@@ -278,7 +278,7 @@ export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
                 className="flex gap-2"
               >
                 <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-1">
-                  <img src={changsikImg} alt="창식이" className="w-full h-full object-cover" />
+                  <img src={changsikImg} alt="창식이" loading="lazy" className="w-full h-full object-cover" />
                 </div>
                 <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.06)] flex items-center gap-1">
                   {[0, 1, 2].map((i) => (

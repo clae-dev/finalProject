@@ -198,6 +198,7 @@ function SpotFormModal({ isOpen, onClose, editTarget, isPending, onSubmit }) {
                   <img
                     src={imagePreview}
                     alt="미리보기"
+                    loading="lazy"
                     className="w-full h-40 object-cover"
                     onError={(e) => { e.target.style.display = 'none'; }}
                   />
@@ -396,6 +397,7 @@ export default function AdminSpots() {
                 <img
                   src={item.spotImage}
                   alt={item.spotTitle}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                   onError={(e) => { e.target.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23e2e8f0" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%2394a3b8" font-size="12">No Image</text></svg>'; }}
                 />

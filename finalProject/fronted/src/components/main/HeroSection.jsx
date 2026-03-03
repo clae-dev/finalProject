@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import slideNoeul from '../../assets/images/main/노을.png';
-import slideSseolmae from '../../assets/images/main/썰매.png';
-import slideChingu from '../../assets/images/main/친구.png';
+import slideNoeul from '../../assets/images/main/노을.webp';
+import slideSseolmae from '../../assets/images/main/썰매.webp';
+import slideChingu from '../../assets/images/main/친구.webp';
 
 const heroSlides = [
   { image: slideNoeul, location: '협재해수욕장' },

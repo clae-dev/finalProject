@@ -254,7 +254,7 @@ export default function AccommodationReviewWrite() {
               <div className="flex gap-3 flex-wrap">
                 {previews.map((src, i) => (
                   <div key={i} className="relative w-20 h-20 rounded-lg overflow-hidden border border-slate-200">
-                    <img src={src} alt="" className="w-full h-full object-cover" />
+                    <img src={src} alt="" loading="lazy" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => removeImage(i)}
@@ -298,7 +298,7 @@ export default function AccommodationReviewWrite() {
               >
                 {verificationPreview ? (
                   <div className="relative inline-block">
-                    <img src={verificationPreview} alt="인증서류 미리보기" className="max-h-40 mx-auto rounded-lg" />
+                    <img src={verificationPreview} alt="인증서류 미리보기" loading="lazy" className="max-h-40 mx-auto rounded-lg" />
                     <button
                       type="button"
                       onClick={(e) => {

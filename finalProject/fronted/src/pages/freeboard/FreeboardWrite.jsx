@@ -254,7 +254,7 @@ export default function FreeboardWrite() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="relative aspect-square rounded-2xl overflow-hidden group shadow-md shadow-sky-100/30"
                   >
-                    <img src={src} alt="" className="w-full h-full object-cover" />
+                    <img src={src} alt="" loading="lazy" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     <motion.button
                       whileHover={{ scale: 1.1 }}
