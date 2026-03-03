@@ -307,3 +307,32 @@ export interface TourEvent {
   firstimage: string | null;
   contentid: string;
 }
+
+// ─── 그룹 채팅 ────────────────────────────────────────────────────────────────
+export interface GroupMember {
+  memberNo: number;
+  nickname: string;
+  profileImage: string | null;
+}
+
+export interface GroupChatRoom {
+  groupRoomNo: number;
+  companionNo: number;
+  roomName: string;
+  lastMessage: string | null;
+  lastSendTime: string | null;
+  unreadCount: number;
+  memberCount: number;
+  members: GroupMember[];
+}
+
+export interface GroupMessage {
+  groupMsgNo: number;
+  groupRoomNo: number;
+  senderNo: number;
+  senderNickname: string;
+  senderProfile: string | null;
+  msgContent: string;
+  sendTime: string;
+  isGroupMessage: true;
+}
