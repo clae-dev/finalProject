@@ -4,8 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Calendar, Users, MapPin, Loader2, Check, X, Trash2, ImageIcon, Flag, Map, Pencil } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import heroStar from '../../assets/images/companion/별.png';
-import heroFriends from '../../assets/images/companion/친구.png';
+import heroStar from '../../assets/images/companion/별.webp';
+import heroFriends from '../../assets/images/companion/친구.webp';
 import { useCompanionDetail, useJoinCompanion, useCancelJoin, useUpdateJoinStatus, useDeleteCompanion } from '../../api/companion/useCompanion';
 import { useCheckReport, useSubmitReport } from '../../api/report/useReport';
 import { AuthContext } from '../../components/AuthContext';
@@ -291,7 +291,7 @@ export default function CompanionDetail() {
           <div className="flex items-center gap-4 mb-6 pb-6 border-b border-sky-50">
             <div className="w-14 h-14 bg-gradient-to-br from-sky-400 via-cyan-400 to-teal-400 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-sky-200/50 overflow-hidden">
               {companion.authorProfile ? (
-                <img src={companion.authorProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = companion.authorNickname?.[0] || '?'; }} />
+                <img src={companion.authorProfile} alt="" loading="lazy" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = companion.authorNickname?.[0] || '?'; }} />
               ) : (
                 companion.authorNickname?.[0] || '?'
               )}
@@ -399,6 +399,7 @@ export default function CompanionDetail() {
                   <img
                     src={imgUrl}
                     alt={`사진 ${idx + 1}`}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     onError={(e) => { e.target.parentElement.style.display = 'none'; }}
                   />
@@ -432,7 +433,7 @@ export default function CompanionDetail() {
                   <div className="flex items-center gap-3">
                     <div className="w-11 h-11 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-sky-200/30 overflow-hidden">
                       {join.memberProfile ? (
-                        <img src={join.memberProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = join.memberNickname?.[0] || '?'; }} />
+                        <img src={join.memberProfile} alt="" loading="lazy" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = join.memberNickname?.[0] || '?'; }} />
                       ) : (
                         join.memberNickname?.[0] || '?'
                       )}

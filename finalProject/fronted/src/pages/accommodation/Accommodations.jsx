@@ -9,8 +9,8 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useAccommodations } from '../../api/accommodation/useAccommodation';
 import WishlistButton from '../../components/common/WishlistButton';
-import heroImg1 from '../../assets/images/accommodation/월정리.png';
-import heroImg2 from '../../assets/images/accommodation/협재2.png';
+import heroImg1 from '../../assets/images/accommodation/월정리.webp';
+import heroImg2 from '../../assets/images/accommodation/협재2.webp';
 
 const heroSlides = [heroImg1, heroImg2];
 
@@ -366,6 +366,7 @@ export default function Accommodations() {
                       <img
                         src={acc.thumbnailUrl || defaultImage}
                         alt={acc.name}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => { e.target.src = defaultImage; }}
                       />

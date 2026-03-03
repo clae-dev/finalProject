@@ -4,7 +4,7 @@ import { HelpCircle, Search, ChevronDown, Eye, Loader2 } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useFaqCategories, useFaqList, useIncreaseFaqView } from '../../api/faq/useFaq';
-import faqHeroImg from '../../assets/images/page/FAQ.png';
+import faqHeroImg from '../../assets/images/page/FAQ.webp';
 
 const CATEGORY_TABS = [
   { code: null, label: '전체' },
@@ -52,7 +52,7 @@ export default function FaqPage() {
 
       {/* 히어로 배너 */}
       <div className="relative h-[320px] overflow-hidden mt-8">
-        <img src={faqHeroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={faqHeroImg} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-br from-sky-900/70 via-cyan-800/60 to-blue-900/70" />
 
         <div className="relative h-full flex flex-col items-center justify-center text-white px-5">

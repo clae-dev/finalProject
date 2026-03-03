@@ -30,6 +30,7 @@ function EventCard({ item, type, index }) {
             <img
               src={item.image}
               alt={item.title}
+              loading="lazy"
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
               onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
             />
@@ -189,6 +190,7 @@ export default function CTASection() {
           <img
             src="https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=1600&q=80"
             alt=""
+            loading="lazy"
             className="w-full h-full object-cover"
           />
         </motion.div>

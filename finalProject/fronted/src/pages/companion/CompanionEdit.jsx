@@ -7,8 +7,8 @@ import Footer from '../../components/main/Footer';
 import KakaoMap from '../../components/common/KakaoMap';
 import { useCompanionDetail, useUpdateCompanion } from '../../api/companion/useCompanion';
 import { AuthContext } from '../../components/AuthContext';
-import heroStar from '../../assets/images/companion/별.png';
-import heroFriends from '../../assets/images/companion/친구.png';
+import heroStar from '../../assets/images/companion/별.webp';
+import heroFriends from '../../assets/images/companion/친구.webp';
 import { compressImage } from '../../lib/imageUtils';
 import { getDday, formatTravelDate } from '../../lib/companionUtils';
 
@@ -467,7 +467,7 @@ export default function CompanionEdit() {
                       <motion.div key={url} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
                         className="relative aspect-square rounded-2xl overflow-hidden group shadow-md shadow-sky-100/30"
                       >
-                        <img src={url} alt="" className="w-full h-full object-cover"
+                        <img src={url} alt="" loading="lazy" className="w-full h-full object-cover"
                           onError={(e) => { e.target.parentElement.style.display = 'none'; }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -492,7 +492,7 @@ export default function CompanionEdit() {
                       <motion.div key={idx} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
                         className="relative aspect-square rounded-2xl overflow-hidden group shadow-md shadow-sky-100/30"
                       >
-                        <img src={src} alt="" className="w-full h-full object-cover" />
+                        <img src={src} alt="" loading="lazy" className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                         <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                           type="button" onClick={() => removeNewImage(idx)}
@@ -563,7 +563,7 @@ export default function CompanionEdit() {
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-xl flex items-center justify-center text-white font-bold shadow-md overflow-hidden">
                         {user?.memberProfileImg ? (
-                          <img src={user.memberProfileImg} alt="" className="w-full h-full object-cover" />
+                          <img src={user.memberProfileImg} alt="" loading="lazy" className="w-full h-full object-cover" />
                         ) : (user?.memberNickname?.[0] || '?')}
                       </div>
                       <div>

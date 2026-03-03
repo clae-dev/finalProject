@@ -6,8 +6,8 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useCreateReview } from '../../api/review/useReview';
 import { AuthContext } from '../../components/AuthContext';
-import heroStar from '../../assets/images/companion/별.png';
-import heroFriends from '../../assets/images/companion/친구.png';
+import heroStar from '../../assets/images/companion/별.webp';
+import heroFriends from '../../assets/images/companion/친구.webp';
 import { compressImage } from '../../lib/imageUtils';
 
 const heroSlides = [heroStar, heroFriends];
@@ -263,7 +263,7 @@ export default function ReviewWrite() {
               </div>
               {thumbnailPreview ? (
                 <div className="relative w-full h-60 rounded-2xl overflow-hidden group">
-                  <img src={thumbnailPreview} alt="썸네일" className="w-full h-full object-cover" />
+                  <img src={thumbnailPreview} alt="썸네일" loading="lazy" className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <motion.button
                     whileHover={{ scale: 1.1 }}
@@ -357,7 +357,7 @@ export default function ReviewWrite() {
                       animate={{ opacity: 1, scale: 1 }}
                       className="relative aspect-square rounded-2xl overflow-hidden group shadow-md shadow-sky-100/30"
                     >
-                      <img src={src} alt="" className="w-full h-full object-cover" />
+                      <img src={src} alt="" loading="lazy" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       <motion.button
                         whileHover={{ scale: 1.1 }}
@@ -417,7 +417,7 @@ export default function ReviewWrite() {
                 {/* 카드 이미지 */}
                 <div className="relative h-48 overflow-hidden bg-gradient-to-br from-sky-100 to-cyan-100">
                   {thumbnailPreview ? (
-                    <img src={thumbnailPreview} alt="" className="w-full h-full object-cover" />
+                    <img src={thumbnailPreview} alt="" loading="lazy" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center gap-2">
                       <Camera className="w-10 h-10 text-sky-300" />
