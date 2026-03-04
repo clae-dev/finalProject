@@ -1,9 +1,10 @@
 package edu.kh.project.websocket.handler;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -47,7 +48,8 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
     private final MemberService memberService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
+    /** memberNo → 해당 멤버의 활성 세션 집합 (멀티탭 지원) */
+    private final Map<Integer, Set<WebSocketSession>> sessionMap = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -57,8 +59,8 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
             session.close(CloseStatus.NOT_ACCEPTABLE);
             return;
         }
-        sessions.add(session);
         int memberNo = (int) memberNoObj;
+        sessionMap.computeIfAbsent(memberNo, k -> new CopyOnWriteArraySet<>()).add(session);
         log.info("WebSocket 연결됨 - memberNo: {}, sessionId: {}", memberNo, session.getId());
     }
 
@@ -101,16 +103,12 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
         String jsonMsg = objectMapper.writeValueAsString(msg);
         TextMessage textMsg = new TextMessage(jsonMsg);
 
-        // 접속 중인 방 멤버에게 브로드캐스트
-        synchronized (sessions) {
-            for (WebSocketSession s : sessions) {
-                if (!s.isOpen()) continue;
-                Object sessionMemberNoObj = s.getAttributes().get("memberNo");
-                if (sessionMemberNoObj == null) continue;
-                int sessionMemberNo = (int) sessionMemberNoObj;
-                if (memberNos.contains(sessionMemberNo)) {
-                    s.sendMessage(textMsg);
-                }
+        // 접속 중인 방 멤버에게 브로드캐스트 (O(멤버 수) 직접 조회)
+        for (int memberNo : memberNos) {
+            Set<WebSocketSession> memberSessions = sessionMap.get(memberNo);
+            if (memberSessions == null) continue;
+            for (WebSocketSession s : memberSessions) {
+                if (s.isOpen()) s.sendMessage(textMsg);
             }
         }
     }
@@ -131,15 +129,12 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
             String jsonMsg = objectMapper.writeValueAsString(msg);
             TextMessage textMsg = new TextMessage(jsonMsg);
 
-            synchronized (sessions) {
-                for (WebSocketSession s : sessions) {
-                    if (!s.isOpen()) continue;
-                    Object sessionMemberNoObj = s.getAttributes().get("memberNo");
-                    if (sessionMemberNoObj == null) continue;
-                    int sessionMemberNo = (int) sessionMemberNoObj;
-                    if (sessionMemberNo == senderNo || sessionMemberNo == targetNo) {
-                        s.sendMessage(textMsg);
-                    }
+            // 발신자·수신자 세션에 직접 전송 (O(1) 조회)
+            for (int memberNo : new int[]{senderNo, targetNo}) {
+                Set<WebSocketSession> memberSessions = sessionMap.get(memberNo);
+                if (memberSessions == null) continue;
+                for (WebSocketSession s : memberSessions) {
+                    if (s.isOpen()) s.sendMessage(textMsg);
                 }
             }
 
@@ -169,7 +164,15 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sessions.remove(session);
+        Object memberNoObj = session.getAttributes().get("memberNo");
+        if (memberNoObj != null) {
+            int memberNo = (int) memberNoObj;
+            Set<WebSocketSession> memberSessions = sessionMap.get(memberNo);
+            if (memberSessions != null) {
+                memberSessions.remove(session);
+                if (memberSessions.isEmpty()) sessionMap.remove(memberNo);
+            }
+        }
         log.info("WebSocket 연결 종료 - sessionId: {}", session.getId());
     }
 }
