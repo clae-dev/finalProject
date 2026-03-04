@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useCallback } from 'react';
 import { motion, useMotionValue } from 'framer-motion';
 import { AuthContext } from '../AuthContext';
 import AiChatPanel from './AiChatPanel';
@@ -14,14 +14,14 @@ export default function AiChatBubble() {
 
   if (!user) return null;
 
-  const handlePointerUp = () => {
+  const handlePointerUp = useCallback(() => {
     // 드래그 중이었으면 클릭 무시
     if (dragged) {
       setDragged(false);
       return;
     }
     setOpen((prev) => !prev);
-  };
+  }, [dragged]);
 
   return (
     <>

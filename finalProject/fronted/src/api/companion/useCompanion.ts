@@ -52,8 +52,6 @@ export const useUpdateCompanion = (companionNo: number | string) => {
   return useMutation({
     mutationFn: (data: FormData) => updateCompanion(companionNo, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['companion', companionNo] });
-      queryClient.invalidateQueries({ queryKey: ['companion', String(companionNo)] });
       queryClient.invalidateQueries({ queryKey: ['companion', Number(companionNo)] });
       queryClient.invalidateQueries({ queryKey: ['companions'] });
     },

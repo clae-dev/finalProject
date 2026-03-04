@@ -58,14 +58,16 @@
                 M.NICKNAME AS AUTHOR_NICKNAME,
                 M.PROFILE_IMAGE AS AUTHOR_PROFILE,
                 M.AGE_RANGE AS AUTHOR_AGE_RANGE,
-                (SELECT COUNT(*)
-                 FROM COMPANION_JOIN J
-                 WHERE J.COMPANION_NO = C.COMPANION_NO
-                   AND J.STATUS IN ('W', 'A')
-                ) AS CURRENT_MEMBERS,
+                NVL(jc.CURRENT_MEMBERS, 0) AS CURRENT_MEMBERS,
                 ROW_NUMBER() OVER (ORDER BY C.CREATED_AT DESC) AS RN
             FROM COMPANION_BOARD C
             JOIN MEMBER M ON C.MEMBER_NO = M.MEMBER_NO
+            LEFT JOIN (
+                SELECT COMPANION_NO, COUNT(*) AS CURRENT_MEMBERS
+                FROM COMPANION_JOIN
+                WHERE STATUS IN ('W', 'A')
+                GROUP BY COMPANION_NO
+            ) jc ON jc.COMPANION_NO = C.COMPANION_NO
             WHERE C.STATUS = 'Y'
             <if test="tag != null and tag != ''">
                 AND C.TAGS LIKE '%' || #{tag} || '%'
