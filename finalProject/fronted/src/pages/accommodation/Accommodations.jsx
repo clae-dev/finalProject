@@ -49,7 +49,7 @@ export default function Accommodations() {
                       filters.region === 'jeju_city' ? '제주시' : '서귀포시';
 
   // 1차: totalCount 확인용 조회
-  const { data, isLoading, isError, error, refetch } = useAccommodations(1, 10000, regionParam);
+  const { data, isLoading, isError, error, refetch } = useAccommodations(1, 500, regionParam);
 
   const accommodations = data?.success ? (data.list || []) : [];
   const totalCount = data?.success ? (data.totalCount || 0) : 0;
