@@ -9,9 +9,9 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { queryClientInstance } from './lib/query-client';
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './components/common/PageTransition';
-import ChatBubble from './components/chatting/ChatBubble';
-import AiChatBubble from './components/ai/AiChatBubble';
-import WeatherWidget from './components/main/WeatherSection';
+const ChatBubble    = lazy(() => import('./components/chatting/ChatBubble'));
+const AiChatBubble  = lazy(() => import('./components/ai/AiChatBubble'));
+const WeatherWidget = lazy(() => import('./components/main/WeatherSection'));
 
 // 페이지 컴포넌트 - 라우트 진입 시점에만 번들 로드
 const Main = lazy(() => import('./components/Main'));
@@ -103,11 +103,11 @@ function GlobalWidgets() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
   return (
-    <>
+    <Suspense fallback={null}>
       {!isAdmin && <WeatherWidget />}
       <ChatBubble />
       {!isAdmin && <AiChatBubble />}
-    </>
+    </Suspense>
   );
 }
 
