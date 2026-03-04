@@ -9,7 +9,6 @@ export const useGroupRoomList = (enabled = true) => {
   return useQuery({
     queryKey: ['groupChattingRooms'],
     queryFn: getGroupRoomList,
-    refetchInterval: 5000,
     enabled: enabled && !!getToken('accessToken'),
     retry: false,
   });
@@ -23,7 +22,6 @@ export const useGroupMessages = (groupRoomNo: number | string | undefined) => {
     queryKey: ['groupMessages', groupRoomNo],
     queryFn: () => getGroupMessages(groupRoomNo!),
     enabled: !!groupRoomNo,
-    refetchInterval: 3000,
   });
 };
 
