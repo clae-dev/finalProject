@@ -17,7 +17,6 @@ export const useNotifications = (page = 1, size = 20) => {
     queryKey: ['notifications', page, size],
     queryFn: () => getNotifications(page, size),
     enabled: !!getToken('accessToken'),
-    refetchInterval: 30000, // 30초마다 폴링 (WebSocket 보완용)
   });
 };
 
@@ -29,7 +28,6 @@ export const useUnreadCount = () => {
     queryKey: ['notifications', 'unreadCount'],
     queryFn: () => getUnreadCount(),
     enabled: !!getToken('accessToken'),
-    refetchInterval: 30000, // 30초마다 폴링 (WebSocket 보완용)
   });
 };
 

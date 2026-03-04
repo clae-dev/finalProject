@@ -11,7 +11,7 @@
         <result property="profileImage" column="PROFILE_IMAGE" />
     </resultMap>
 
-    <!-- 그룹 채팅방 ResultMap (멤버 목록 nested select) -->
+    <!-- 그룹 채팅방 ResultMap (멤버 JOIN - N+1 제거) -->
     <resultMap id="groupRoomResultMap" type="edu.kh.project.chatting.dto.GroupChatRoomDTO">
         <id     property="groupRoomNo"  column="GROUP_ROOM_NO" />
         <result property="companionNo"  column="COMPANION_NO" />
@@ -20,9 +20,11 @@
         <result property="lastSendTime" column="LAST_SEND_TIME" />
         <result property="unreadCount"  column="UNREAD_COUNT" />
         <result property="memberCount"  column="MEMBER_COUNT" />
-        <collection property="members"
-                    column="GROUP_ROOM_NO"
-                    select="selectGroupMembers" />
+        <collection property="members" ofType="edu.kh.project.chatting.dto.GroupMemberDTO">
+            <result property="memberNo"     column="MEMBER_NO" />
+            <result property="nickname"     column="NICKNAME" />
+            <result property="profileImage" column="PROFILE_IMAGE" />
+        </collection>
     </resultMap>
 
     <!-- 그룹 메시지 ResultMap -->
@@ -60,61 +62,61 @@
         VALUES (SEQ_GROUP_MEMBER_ID.NEXTVAL, #{groupRoomNo}, #{memberNo})
     </insert>
 
-    <!-- 내가 속한 그룹 채팅방 목록 -->
+    <!-- 내가 속한 그룹 채팅방 목록 (멤버 JOIN으로 N+1 제거) -->
     <select id="selectGroupRoomList" resultMap="groupRoomResultMap">
-        SELECT
-            r.GROUP_ROOM_NO,
-            r.COMPANION_NO,
-            r.ROOM_NAME,
-
-            /* 마지막 메시지 */
-            (SELECT MSG_CONTENT
-             FROM GROUP_MESSAGE
-             WHERE GROUP_ROOM_NO = r.GROUP_ROOM_NO
-             ORDER BY GROUP_MSG_NO DESC
-             FETCH FIRST 1 ROWS ONLY
-            ) AS LAST_MESSAGE,
-
-            /* 마지막 메시지 시간 */
-            (SELECT TO_CHAR(SEND_TIME, 'YYYY-MM-DD HH24:MI')
-             FROM GROUP_MESSAGE
-             WHERE GROUP_ROOM_NO = r.GROUP_ROOM_NO
-             ORDER BY GROUP_MSG_NO DESC
-             FETCH FIRST 1 ROWS ONLY
-            ) AS LAST_SEND_TIME,
-
-            /* 미읽음 메시지 수 */
-            (SELECT COUNT(*)
-             FROM GROUP_MESSAGE gm
-             WHERE gm.GROUP_ROOM_NO = r.GROUP_ROOM_NO
-               AND gm.GROUP_MSG_NO > NVL(
-                   (SELECT LAST_READ_MSG
-                    FROM GROUP_MSG_READ
-                    WHERE GROUP_ROOM_NO = r.GROUP_ROOM_NO
-                      AND MEMBER_NO = #{memberNo}),
-                   0)
-            ) AS UNREAD_COUNT,
-
-            /* 멤버 수 */
-            (SELECT COUNT(*)
-             FROM GROUP_CHAT_MEMBER
-             WHERE GROUP_ROOM_NO = r.GROUP_ROOM_NO
-            ) AS MEMBER_COUNT
-
-        FROM GROUP_CHAT_ROOM r
-        WHERE EXISTS (
-            SELECT 1 FROM GROUP_CHAT_MEMBER
-            WHERE GROUP_ROOM_NO = r.GROUP_ROOM_NO
-              AND MEMBER_NO = #{memberNo}
+        WITH MY_ROOMS AS (
+            SELECT r.GROUP_ROOM_NO,
+                   r.COMPANION_NO,
+                   r.ROOM_NAME,
+                   r.CREATED_AT,
+                   lm.LAST_MESSAGE,
+                   lm.LAST_SEND_TIME,
+                   lm.LAST_MSG_NO,
+                   NVL(rd.LAST_READ_MSG, 0) AS LAST_READ_MSG
+            FROM GROUP_CHAT_ROOM r
+            JOIN GROUP_CHAT_MEMBER my ON my.GROUP_ROOM_NO = r.GROUP_ROOM_NO
+                                     AND my.MEMBER_NO = #{memberNo}
+            LEFT JOIN (
+                SELECT GROUP_ROOM_NO,
+                       MAX(GROUP_MSG_NO) AS LAST_MSG_NO,
+                       MAX(MSG_CONTENT) KEEP (DENSE_RANK LAST ORDER BY GROUP_MSG_NO) AS LAST_MESSAGE,
+                       TO_CHAR(MAX(SEND_TIME) KEEP (DENSE_RANK LAST ORDER BY GROUP_MSG_NO), 'YYYY-MM-DD HH24:MI') AS LAST_SEND_TIME
+                FROM GROUP_MESSAGE
+                GROUP BY GROUP_ROOM_NO
+            ) lm ON lm.GROUP_ROOM_NO = r.GROUP_ROOM_NO
+            LEFT JOIN GROUP_MSG_READ rd ON rd.GROUP_ROOM_NO = r.GROUP_ROOM_NO
+                                       AND rd.MEMBER_NO = #{memberNo}
+        ),
+        MEMBER_COUNT AS (
+            SELECT GROUP_ROOM_NO, COUNT(*) AS CNT
+            FROM GROUP_CHAT_MEMBER
+            GROUP BY GROUP_ROOM_NO
+        ),
+        UNREAD AS (
+            SELECT mr.GROUP_ROOM_NO,
+                   COUNT(*) AS UNREAD_COUNT
+            FROM MY_ROOMS mr
+            JOIN GROUP_MESSAGE gm ON gm.GROUP_ROOM_NO = mr.GROUP_ROOM_NO
+                                  AND gm.GROUP_MSG_NO > mr.LAST_READ_MSG
+            GROUP BY mr.GROUP_ROOM_NO
         )
-        ORDER BY
-            (SELECT SEND_TIME
-             FROM GROUP_MESSAGE
-             WHERE GROUP_ROOM_NO = r.GROUP_ROOM_NO
-             ORDER BY GROUP_MSG_NO DESC
-             FETCH FIRST 1 ROWS ONLY
-            ) DESC NULLS LAST,
-            r.CREATED_AT DESC
+        SELECT
+            mr.GROUP_ROOM_NO,
+            mr.COMPANION_NO,
+            mr.ROOM_NAME,
+            mr.LAST_MESSAGE,
+            mr.LAST_SEND_TIME,
+            NVL(u.UNREAD_COUNT, 0) AS UNREAD_COUNT,
+            mc.CNT                 AS MEMBER_COUNT,
+            m.MEMBER_NO,
+            m.NICKNAME,
+            m.PROFILE_IMAGE
+        FROM MY_ROOMS mr
+        JOIN MEMBER_COUNT mc ON mc.GROUP_ROOM_NO = mr.GROUP_ROOM_NO
+        LEFT JOIN UNREAD u   ON u.GROUP_ROOM_NO  = mr.GROUP_ROOM_NO
+        JOIN GROUP_CHAT_MEMBER gcm ON gcm.GROUP_ROOM_NO = mr.GROUP_ROOM_NO
+        JOIN MEMBER m              ON m.MEMBER_NO        = gcm.MEMBER_NO
+        ORDER BY mr.LAST_MSG_NO DESC NULLS LAST, mr.CREATED_AT DESC
     </select>
 
     <!-- 그룹 멤버 번호 목록 (브로드캐스트용) -->
