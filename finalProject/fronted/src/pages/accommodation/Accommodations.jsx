@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,6 +14,21 @@ import heroImg2 from '../../assets/images/accommodation/협재2.webp';
 
 const heroSlides = [heroImg1, heroImg2];
 
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600';
+
+function formatPrice(priceMin, priceMax) {
+  if (!priceMin && !priceMax) return '가격 문의';
+  if (priceMin && priceMax) {
+    return `${(priceMin / 10000).toFixed(0)}~${(priceMax / 10000).toFixed(0)}만원`;
+  }
+  if (priceMin) return `${(priceMin / 10000).toFixed(0)}만원~`;
+  return `~${(priceMax / 10000).toFixed(0)}만원`;
+}
+
+function parseFacilities(facilities) {
+  if (!facilities) return [];
+  return facilities.split(',').map(f => f.trim()).filter(f => f);
+}
 
 const cardVariants = {
   hidden: { opacity: 0 },
@@ -48,8 +63,7 @@ export default function Accommodations() {
   const regionParam = filters.region === 'all' ? null :
                       filters.region === 'jeju_city' ? '제주시' : '서귀포시';
 
-  // 1차: totalCount 확인용 조회
-  const { data, isLoading, isError, error, refetch } = useAccommodations(1, 500, regionParam);
+  const { data, isLoading, isError, error, refetch } = useAccommodations(1, 200, regionParam);
 
   const accommodations = data?.success ? (data.list || []) : [];
   const totalCount = data?.success ? (data.totalCount || 0) : 0;
@@ -62,17 +76,15 @@ export default function Accommodations() {
   };
 
   // 프론트엔드 필터링 (검색어, 가격대)
-  const filteredAccommodations = accommodations.filter(acc => {
-    // 검색어 필터
+  const filteredAccommodations = useMemo(() => accommodations.filter(acc => {
+    const searchLower = searchTerm.toLowerCase();
     const matchesSearch = !searchTerm ||
-      acc.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      acc.address?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      acc.recommendationReason?.toLowerCase().includes(searchTerm.toLowerCase());
+      acc.name?.toLowerCase().includes(searchLower) ||
+      acc.address?.toLowerCase().includes(searchLower) ||
+      acc.recommendationReason?.toLowerCase().includes(searchLower);
 
-    // 숙소 유형 필터
     const matchesType = filters.type === 'all' || acc.accommodationType === filters.type;
 
-    // 가격대 필터
     let matchesPriceRange = true;
     if (filters.priceRange !== 'all' && acc.priceMin) {
       const price = acc.priceMin;
@@ -83,30 +95,8 @@ export default function Accommodations() {
         filters.priceRange === '100k+' ? price >= 100000 : true;
     }
 
-    // 썸네일 없는 숙소 제외
-    const hasThumbnail = !!acc.thumbnailUrl;
-
-    return matchesSearch && matchesType && matchesPriceRange && hasThumbnail;
-  });
-
-  // 가격 포맷
-  const formatPrice = (priceMin, priceMax) => {
-    if (!priceMin && !priceMax) return '가격 문의';
-    if (priceMin && priceMax) {
-      return `${(priceMin / 10000).toFixed(0)}~${(priceMax / 10000).toFixed(0)}만원`;
-    }
-    if (priceMin) return `${(priceMin / 10000).toFixed(0)}만원~`;
-    return `~${(priceMax / 10000).toFixed(0)}만원`;
-  };
-
-  // 편의시설 파싱
-  const parseFacilities = (facilities) => {
-    if (!facilities) return [];
-    return facilities.split(',').map(f => f.trim()).filter(f => f);
-  };
-
-  // 기본 이미지
-  const defaultImage = 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600';
+    return matchesSearch && matchesType && matchesPriceRange && !!acc.thumbnailUrl;
+  }), [accommodations, searchTerm, filters.type, filters.priceRange]);
 
   // 프론트엔드 페이지네이션
   const totalFilteredCount = filteredAccommodations.length;
@@ -364,11 +354,11 @@ export default function Accommodations() {
                     {/* 이미지 */}
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <img
-                        src={acc.thumbnailUrl || defaultImage}
+                        src={acc.thumbnailUrl || DEFAULT_IMAGE}
                         alt={acc.name}
                         loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        onError={(e) => { e.target.src = defaultImage; }}
+                        onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
                       />
 
                       {/* 찜 버튼 */}
