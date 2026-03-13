@@ -191,7 +191,7 @@ function Mountains() {
   );
 }
 
-export default function AccommodationsSection() {
+function AccommodationsSection() {
   const navigate = useNavigate();
   const [slide, setSlide] = useState(0);
   const [addModalOpen, setAddModalOpen] = useState(false);
@@ -508,3 +508,5 @@ export default function AccommodationsSection() {
     </section>
   );
 }
+
+export default React.memo(AccommodationsSection);
