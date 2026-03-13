@@ -1,5 +1,6 @@
 package edu.kh.project.companion.service;
 
+import edu.kh.project.chatting.service.GroupChatService;
 import edu.kh.project.companion.dto.CompanionDTO;
 import edu.kh.project.companion.dto.CompanionJoinDTO;
 import edu.kh.project.companion.mapper.CompanionMapper;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 
 /**
  * 동행 모집 서비스 구현체
@@ -42,6 +44,9 @@ public class CompanionServiceImpl implements CompanionService {
 
     /** 알림 서비스 (참여 신청/승인 시 알림 전송) */
     private final NotificationService notificationService;
+
+    /** 그룹 채팅 서비스 (수락 시 그룹방 자동 생성) */
+    private final GroupChatService groupChatService;
 
     /** {@inheritDoc} */
     @Override
@@ -257,6 +262,19 @@ public class CompanionServiceImpl implements CompanionService {
                                 .content(content)
                                 .build();
                         notificationService.createNotification(notification);
+
+                        // 승인 시 그룹 채팅방 자동 생성 (실패해도 수락 트랜잭션 롤백 안 함)
+                        if ("A".equals(status)) {
+                            try {
+                                groupChatService.createGroupRoom(
+                                    join.getCompanionNo(),
+                                    companion.getTitle(),
+                                    List.of(companion.getMemberNo(), join.getMemberNo())
+                                );
+                            } catch (Exception e) {
+                                log.warn("그룹 채팅방 생성 실패 - joinNo: {}", joinNo, e);
+                            }
+                        }
                     }
                 }
             } catch (Exception e) {

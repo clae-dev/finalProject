@@ -1,8 +1,8 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useCallback } from 'react';
 import { motion, useMotionValue } from 'framer-motion';
 import { AuthContext } from '../AuthContext';
 import AiChatPanel from './AiChatPanel';
-import changsikImg from '../../assets/images/page/제주.png';
+import changsikImg from '../../assets/images/page/제주.webp';
 
 export default function AiChatBubble() {
   const { user } = useContext(AuthContext) || {};
@@ -14,14 +14,14 @@ export default function AiChatBubble() {
 
   if (!user) return null;
 
-  const handlePointerUp = () => {
+  const handlePointerUp = useCallback(() => {
     // 드래그 중이었으면 클릭 무시
     if (dragged) {
       setDragged(false);
       return;
     }
     setOpen((prev) => !prev);
-  };
+  }, [dragged]);
 
   return (
     <>
@@ -46,7 +46,7 @@ export default function AiChatBubble() {
         whileTap={{ scale: 0.95 }}
       >
         {/* 캐릭터 이미지 */}
-        <img src={changsikImg} alt="AI 창식이" className="w-full h-full object-cover pointer-events-none" />
+        <img src={changsikImg} alt="AI 창식이" loading="lazy" className="w-full h-full object-cover pointer-events-none" />
 
         {/* 온라인 dot */}
         <span className="absolute top-0 right-0 w-4 h-4 bg-emerald-400 rounded-full border-[2.5px] border-white pointer-events-none" />

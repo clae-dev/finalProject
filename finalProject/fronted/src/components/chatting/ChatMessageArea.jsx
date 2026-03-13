@@ -73,6 +73,7 @@ export default function ChatMessageArea({
                 src={targetProfile}
                 alt=""
                 referrerPolicy="no-referrer"
+                loading="lazy"
                 className="w-9 h-9 rounded-full object-cover border border-slate-200"
               />
             ) : (
@@ -104,7 +105,7 @@ export default function ChatMessageArea({
         {messages && messages.length === 0 && (
           <div className="flex flex-col items-center pt-8 pb-6">
             {targetProfile ? (
-              <img src={targetProfile} alt="" referrerPolicy="no-referrer" className="w-24 h-24 rounded-full object-cover border border-slate-200 mb-4" />
+              <img src={targetProfile} alt="" referrerPolicy="no-referrer" loading="lazy" className="w-24 h-24 rounded-full object-cover border border-slate-200 mb-4" />
             ) : (
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center mb-4">
                 <User className="w-12 h-12 text-slate-400" />
@@ -139,7 +140,7 @@ export default function ChatMessageArea({
                     <div className="w-8 mr-2 flex-shrink-0">
                       {showAvatar ? (
                         targetProfile ? (
-                          <img src={targetProfile} alt="" referrerPolicy="no-referrer" className="w-7 h-7 rounded-full object-cover" />
+                          <img src={targetProfile} alt="" referrerPolicy="no-referrer" loading="lazy" className="w-7 h-7 rounded-full object-cover" />
                         ) : (
                           <div className="w-7 h-7 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
                             <User className="w-3.5 h-3.5 text-slate-400" />

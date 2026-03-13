@@ -6,8 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Mail, Lock, Eye, EyeOff, User, Send, CheckCircle2, Loader2, RefreshCw, ArrowLeft, Sparkles, Shield, UserPlus, X, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { axiosApi } from '../api/core/axiosAPI';
-import logo from '@/assets/images/logo/혼디.png';
-import bgImage from '@/assets/images/auth/협재.png';
+import logo from '@/assets/images/logo/혼디.webp';
+import bgImage from '@/assets/images/auth/협재.webp';
 
 const AVATAR_STYLES = ['adventurer', 'fun-emoji', 'avataaars', 'bottts', 'pixel-art', 'lorelei'];
 
@@ -632,7 +632,7 @@ export default function Register() {
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-sky-50 to-cyan-50">
       {/* 배경 이미지 - 상단 히어로 영역 */}
       <div className="absolute top-0 left-0 right-0 h-[420px]">
-        <img src={bgImage} alt="협재 해변" className="w-full h-full object-cover" />
+        <img src={bgImage} alt="협재 해변" loading="lazy" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-sky-900/60 via-sky-800/40 to-sky-50" />
       </div>
 
@@ -833,7 +833,7 @@ export default function Register() {
                                 : 'border-transparent hover:border-sky-200'
                             }`}
                           >
-                            <img src={url} alt={`아바타 ${idx + 1}`} className="w-full h-full object-cover bg-white" />
+                            <img src={url} alt={`아바타 ${idx + 1}`} loading="lazy" className="w-full h-full object-cover bg-white" />
                           </button>
                         ))}
                       </div>
@@ -846,7 +846,7 @@ export default function Register() {
                       {/* 미리보기 */}
                       <div className="flex justify-center mb-4">
                         <div className="w-28 h-28 rounded-3xl bg-gradient-to-br from-sky-100 to-cyan-100 border-2 border-sky-200/60 overflow-hidden shadow-lg shadow-sky-200/30 p-1">
-                          <img src={customAvatarUrl} alt="내 아바타" className="w-full h-full object-cover rounded-2xl bg-white" />
+                          <img src={customAvatarUrl} alt="내 아바타" loading="lazy" className="w-full h-full object-cover rounded-2xl bg-white" />
                         </div>
                       </div>
 

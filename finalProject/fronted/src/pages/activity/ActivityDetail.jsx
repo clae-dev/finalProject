@@ -167,7 +167,7 @@ export default function ActivityDetail() {
               <div className="flex items-center gap-4">
                 <div className="w-11 h-11 bg-gradient-to-br from-orange-400 to-amber-400 rounded-xl flex items-center justify-center text-white font-bold shadow-md shadow-orange-200/30 overflow-hidden">
                   {board.memberProfile ? (
-                    <img src={board.memberProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = board.memberNickname?.[0] || '?'; }} />
+                    <img src={board.memberProfile} alt="" loading="lazy" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = board.memberNickname?.[0] || '?'; }} />
                   ) : (
                     board.memberNickname?.[0] || '?'
                   )}
@@ -243,6 +243,7 @@ export default function ActivityDetail() {
                       <img
                         src={imgUrl}
                         alt={`이미지 ${idx + 1}`}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => { e.target.parentElement.style.display = 'none'; }}
                       />
@@ -345,7 +346,7 @@ export default function ActivityDetail() {
                     <div className="flex gap-3">
                       <div className="w-9 h-9 bg-gradient-to-br from-orange-400 to-amber-400 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm flex-shrink-0 overflow-hidden">
                         {comment.memberProfile ? (
-                          <img src={comment.memberProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = comment.memberNickname?.[0] || '?'; }} />
+                          <img src={comment.memberProfile} alt="" loading="lazy" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = comment.memberNickname?.[0] || '?'; }} />
                         ) : (
                           comment.memberNickname?.[0] || '?'
                         )}
@@ -414,7 +415,7 @@ export default function ActivityDetail() {
                           <div key={reply.commentNo} className="flex gap-3">
                             <div className="w-7 h-7 bg-gradient-to-br from-amber-400 to-yellow-400 rounded-md flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0 overflow-hidden">
                               {reply.memberProfile ? (
-                                <img src={reply.memberProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = reply.memberNickname?.[0] || '?'; }} />
+                                <img src={reply.memberProfile} alt="" loading="lazy" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = reply.memberNickname?.[0] || '?'; }} />
                               ) : (
                                 reply.memberNickname?.[0] || '?'
                               )}

@@ -1,8 +1,10 @@
 package edu.kh.project.websocket.handler;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -10,10 +12,13 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import edu.kh.project.chatting.dto.GroupMessageDTO;
 import edu.kh.project.chatting.dto.MessageDTO;
 import edu.kh.project.chatting.service.ChattingService;
+import edu.kh.project.chatting.service.GroupChatService;
 import edu.kh.project.member.dto.MemberDTO;
 import edu.kh.project.member.service.MemberService;
 import edu.kh.project.notification.dto.NotificationDTO;
@@ -24,11 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * 채팅 WebSocket 핸들러
  *
- * <p>TextWebSocketHandler를 확장하여 1:1 실시간 채팅을 처리한다.
- * sessions Set으로 연결을 관리하며, 메시지 수신 시 DB에 저장한 후
- * 발신자(sender)와 수신자(target)에게 브로드캐스트한다.</p>
+ * <p>1:1 채팅과 그룹 채팅을 단일 엔드포인트(/chattingSock)에서 처리한다.
+ * 수신 메시지의 {@code isGroupMessage} 플래그로 두 경로를 분기한다.</p>
  *
- * @author HONDI
+ * <ul>
+ *   <li>isGroupMessage == true → 그룹 경로: DB 저장 후 방 멤버 전체 브로드캐스트</li>
+ *   <li>else → 기존 1:1 경로: 발신자·수신자에게만 전송 + 알림</li>
+ * </ul>
  */
 @Component
 @RequiredArgsConstructor
@@ -36,11 +43,13 @@ import lombok.extern.slf4j.Slf4j;
 public class ChattingWebSocketHandler extends TextWebSocketHandler {
 
     private final ChattingService chattingService;
+    private final GroupChatService groupChatService;
     private final NotificationService notificationService;
     private final MemberService memberService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    private final Set<WebSocketSession> sessions = Collections.synchronizedSet(new HashSet<>());
+    /** memberNo → 해당 멤버의 활성 세션 집합 (멀티탭 지원) */
+    private final Map<Integer, Set<WebSocketSession>> sessionMap = new ConcurrentHashMap<>();
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -50,48 +59,82 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
             session.close(CloseStatus.NOT_ACCEPTABLE);
             return;
         }
-        sessions.add(session);
         int memberNo = (int) memberNoObj;
+        sessionMap.computeIfAbsent(memberNo, k -> new CopyOnWriteArraySet<>()).add(session);
         log.info("WebSocket 연결됨 - memberNo: {}, sessionId: {}", memberNo, session.getId());
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
-        // JSON 파싱
-        MessageDTO msg = objectMapper.readValue(message.getPayload(), MessageDTO.class);
-
-        // 발신자 번호를 WebSocket 세션에서 가져옴 (조작 방지)
+        // 발신자 번호를 세션에서 가져옴 (조작 방지)
         Object senderNoObj = session.getAttributes().get("memberNo");
         if (senderNoObj == null) {
             session.close(CloseStatus.NOT_ACCEPTABLE);
             return;
         }
         int senderNo = (int) senderNoObj;
+
+        // JSON 파싱 — isGroupMessage 플래그 확인
+        JsonNode root = objectMapper.readTree(message.getPayload());
+        boolean isGroup = root.has("isGroupMessage") && root.get("isGroupMessage").asBoolean();
+
+        if (isGroup) {
+            handleGroupMessage(senderNo, root);
+        } else {
+            handleDirectMessage(senderNo, root);
+        }
+    }
+
+    /**
+     * 그룹 채팅 메시지 처리
+     */
+    private void handleGroupMessage(int senderNo, JsonNode root) throws Exception {
+
+        GroupMessageDTO msg = objectMapper.treeToValue(root, GroupMessageDTO.class);
         msg.setSenderNo(senderNo);
 
-        // DB 저장
+        // DB 저장 (selectKey로 groupMsgNo 채워짐)
+        groupChatService.insertGroupMessage(msg);
+
+        // 방 멤버 목록 조회
+        List<Integer> memberNos = groupChatService.selectGroupMemberNos(msg.getGroupRoomNo());
+
+        String jsonMsg = objectMapper.writeValueAsString(msg);
+        TextMessage textMsg = new TextMessage(jsonMsg);
+
+        // 접속 중인 방 멤버에게 브로드캐스트 (O(멤버 수) 직접 조회)
+        for (int memberNo : memberNos) {
+            Set<WebSocketSession> memberSessions = sessionMap.get(memberNo);
+            if (memberSessions == null) continue;
+            for (WebSocketSession s : memberSessions) {
+                if (s.isOpen()) s.sendMessage(textMsg);
+            }
+        }
+    }
+
+    /**
+     * 1:1 채팅 메시지 처리 (기존 로직 완전 유지)
+     */
+    private void handleDirectMessage(int senderNo, JsonNode root) throws Exception {
+
+        MessageDTO msg = objectMapper.treeToValue(root, MessageDTO.class);
+        msg.setSenderNo(senderNo);
+
         int result = chattingService.insertMessage(msg);
 
         if (result > 0) {
-            // 발신자 + 수신자에게 메시지 전달
             int targetNo = msg.getTargetNo();
 
             String jsonMsg = objectMapper.writeValueAsString(msg);
             TextMessage textMsg = new TextMessage(jsonMsg);
 
-            synchronized (sessions) {
-                for (WebSocketSession s : sessions) {
-                    if (!s.isOpen()) continue;
-
-                    Object sessionMemberNoObj = s.getAttributes().get("memberNo");
-                    if (sessionMemberNoObj == null) continue;
-                    int sessionMemberNo = (int) sessionMemberNoObj;
-
-                    // 같은 채팅방의 발신자 또는 수신자에게만 전송
-                    if (sessionMemberNo == senderNo || sessionMemberNo == targetNo) {
-                        s.sendMessage(textMsg);
-                    }
+            // 발신자·수신자 세션에 직접 전송 (O(1) 조회)
+            for (int memberNo : new int[]{senderNo, targetNo}) {
+                Set<WebSocketSession> memberSessions = sessionMap.get(memberNo);
+                if (memberSessions == null) continue;
+                for (WebSocketSession s : memberSessions) {
+                    if (s.isOpen()) s.sendMessage(textMsg);
                 }
             }
 
@@ -102,7 +145,6 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
                 if (preview.length() > 30) {
                     preview = preview.substring(0, 30) + "...";
                 }
-
                 notificationService.createNotification(
                     NotificationDTO.builder()
                         .recipientNo(targetNo)
@@ -122,7 +164,15 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sessions.remove(session);
+        Object memberNoObj = session.getAttributes().get("memberNo");
+        if (memberNoObj != null) {
+            int memberNo = (int) memberNoObj;
+            Set<WebSocketSession> memberSessions = sessionMap.get(memberNo);
+            if (memberSessions != null) {
+                memberSessions.remove(session);
+                if (memberSessions.isEmpty()) sessionMap.remove(memberNo);
+            }
+        }
         log.info("WebSocket 연결 종료 - sessionId: {}", session.getId());
     }
 }

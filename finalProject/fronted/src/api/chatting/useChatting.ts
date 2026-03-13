@@ -9,7 +9,6 @@ export const useRoomList = (enabled = true) => {
   return useQuery({
     queryKey: ['chattingRooms'],
     queryFn: getRoomList,
-    refetchInterval: 5000,
     enabled: enabled && !!getToken('accessToken'),
     retry: false,
   });
@@ -36,7 +35,6 @@ export const useMessages = (chattingRoomNo: number | string | undefined) => {
     queryKey: ['messages', chattingRoomNo],
     queryFn: () => getMessages(chattingRoomNo!),
     enabled: !!chattingRoomNo,
-    refetchInterval: 3000,
   });
 };
 

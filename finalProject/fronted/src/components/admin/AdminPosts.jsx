@@ -409,7 +409,7 @@ function AccommodationReviewTable() {
               <h3 className="text-sm font-bold text-slate-700">인증서류</h3>
               <button onClick={() => setViewingFile(null)} className="text-slate-400 hover:text-slate-600 text-lg font-bold">✕</button>
             </div>
-            <img src={viewingFile} alt="인증서류" className="max-w-full rounded-lg" />
+            <img src={viewingFile} alt="인증서류" loading="lazy" className="max-w-full rounded-lg" />
           </motion.div>
         </div>
       )}

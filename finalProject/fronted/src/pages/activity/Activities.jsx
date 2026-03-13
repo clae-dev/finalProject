@@ -6,10 +6,10 @@ import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 import { useActivityList, useEventList, useLeisureList } from '../../api/activity/useActivity';
 import { AuthContext } from '../../components/AuthContext';
-import heroImg1 from '../../assets/images/Activity/KakaoTalk_20260226_135519289.jpg';
-import heroImg2 from '../../assets/images/Activity/KakaoTalk_20260226_135519289_01.jpg';
-import heroImg3 from '../../assets/images/Activity/KakaoTalk_20260226_135519289_02.jpg';
-import heroImg4 from '../../assets/images/Activity/KakaoTalk_20260226_135519289_03.jpg';
+import heroImg1 from '../../assets/images/Activity/KakaoTalk_20260226_135519289.webp';
+import heroImg2 from '../../assets/images/Activity/KakaoTalk_20260226_135519289_01.webp';
+import heroImg3 from '../../assets/images/Activity/KakaoTalk_20260226_135519289_02.webp';
+import heroImg4 from '../../assets/images/Activity/KakaoTalk_20260226_135519289_03.webp';
 
 const heroSlides = [heroImg1, heroImg2, heroImg3, heroImg4];
 
@@ -290,6 +290,7 @@ export default function Activities() {
                         <img
                           src={event.image}
                           alt={event.title}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
                         />
@@ -394,6 +395,7 @@ export default function Activities() {
                         <img
                           src={item.image}
                           alt={item.title}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
                         />
@@ -488,6 +490,7 @@ export default function Activities() {
                         <img
                           src={board.imageUrls}
                           alt=""
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           onError={(e) => { e.target.src = DEFAULT_IMAGE; }}
                         />
@@ -519,7 +522,7 @@ export default function Activities() {
                         <div className="flex items-center gap-2">
                           <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-amber-400 rounded-lg flex items-center justify-center text-white text-xs font-bold shadow-sm overflow-hidden">
                             {board.memberProfile ? (
-                              <img src={board.memberProfile} alt="" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = board.memberNickname?.[0] || '?'; }} />
+                              <img src={board.memberProfile} alt="" loading="lazy" className="w-full h-full object-cover" onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = board.memberNickname?.[0] || '?'; }} />
                             ) : (
                               board.memberNickname?.[0] || '?'
                             )}

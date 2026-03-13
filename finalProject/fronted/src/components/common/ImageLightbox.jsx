@@ -60,6 +60,7 @@ export default function ImageLightbox({ images, initialIndex = 0, onClose }) {
           <img
             src={images[currentIndex]}
             alt={`이미지 ${currentIndex + 1}`}
+            loading="lazy"
             className="max-w-[90vw] max-h-[85vh] object-contain rounded-2xl shadow-2xl"
           />
 

@@ -246,7 +246,7 @@ export default function AdminVerifications() {
                   <X className="w-5 h-5 text-slate-400" />
                 </button>
               </div>
-              <img src={viewImage} alt="인증서류" className="max-w-full rounded-xl" />
+              <img src={viewImage} alt="인증서류" loading="lazy" className="max-w-full rounded-xl" />
             </motion.div>
           </motion.div>
         )}

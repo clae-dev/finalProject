@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.kh.project.chatting.mapper.GroupChatMapper">
+
+    <!-- 그룹 멤버 ResultMap -->
+    <resultMap id="groupMemberResultMap" type="edu.kh.project.chatting.dto.GroupMemberDTO">
+        <result property="memberNo"     column="MEMBER_NO" />
+        <result property="nickname"     column="NICKNAME" />
+        <result property="profileImage" column="PROFILE_IMAGE" />
+    </resultMap>
+
+    <!-- 그룹 채팅방 ResultMap (멤버 JOIN - N+1 제거) -->
+    <resultMap id="groupRoomResultMap" type="edu.kh.project.chatting.dto.GroupChatRoomDTO">
+        <id     property="groupRoomNo"  column="GROUP_ROOM_NO" />
+        <result property="companionNo"  column="COMPANION_NO" />
+        <result property="roomName"     column="ROOM_NAME" />
+        <result property="lastMessage"  column="LAST_MESSAGE" />
+        <result property="lastSendTime" column="LAST_SEND_TIME" />
+        <result property="unreadCount"  column="UNREAD_COUNT" />
+        <result property="memberCount"  column="MEMBER_COUNT" />
+        <collection property="members" ofType="edu.kh.project.chatting.dto.GroupMemberDTO">
+            <result property="memberNo"     column="MEMBER_NO" />
+            <result property="nickname"     column="NICKNAME" />
+            <result property="profileImage" column="PROFILE_IMAGE" />
+        </collection>
+    </resultMap>
+
+    <!-- 그룹 메시지 ResultMap -->
+    <resultMap id="groupMessageResultMap" type="edu.kh.project.chatting.dto.GroupMessageDTO">
+        <id     property="groupMsgNo"      column="GROUP_MSG_NO" />
+        <result property="groupRoomNo"     column="GROUP_ROOM_NO" />
+        <result property="senderNo"        column="SENDER_NO" />
+        <result property="senderNickname"  column="SENDER_NICKNAME" />
+        <result property="senderProfile"   column="SENDER_PROFILE" />
+        <result property="msgContent"      column="MSG_CONTENT" />
+        <result property="sendTime"        column="SEND_TIME" />
+        <result property="groupMessage"    column="IS_GROUP_MESSAGE" />
+    </resultMap>
+
+    <!-- 그룹 채팅방 생성 -->
+    <insert id="insertGroupRoom" parameterType="edu.kh.project.chatting.dto.GroupChatRoomDTO">
+        <selectKey keyProperty="groupRoomNo" resultType="int" order="BEFORE">
+            SELECT SEQ_GROUP_ROOM_NO.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO GROUP_CHAT_ROOM (GROUP_ROOM_NO, COMPANION_NO, ROOM_NAME)
+        VALUES (#{groupRoomNo}, #{companionNo}, #{roomName})
+    </insert>
+
+    <!-- companionNo로 기존 그룹방 조회 -->
+    <select id="selectGroupRoomNoByCompanionNo" resultType="java.lang.Integer">
+        SELECT GROUP_ROOM_NO
+        FROM GROUP_CHAT_ROOM
+        WHERE COMPANION_NO = #{companionNo}
+        FETCH FIRST 1 ROWS ONLY
+    </select>
+
+    <!-- 그룹 멤버 추가 -->
+    <insert id="insertGroupMember">
+        INSERT INTO GROUP_CHAT_MEMBER (GROUP_MEMBER_ID, GROUP_ROOM_NO, MEMBER_NO)
+        VALUES (SEQ_GROUP_MEMBER_ID.NEXTVAL, #{groupRoomNo}, #{memberNo})
+    </insert>
+
+    <!-- 내가 속한 그룹 채팅방 목록 (멤버 JOIN으로 N+1 제거) -->
+    <select id="selectGroupRoomList" resultMap="groupRoomResultMap">
+        WITH MY_ROOMS AS (
+            SELECT r.GROUP_ROOM_NO,
+                   r.COMPANION_NO,
+                   r.ROOM_NAME,
+                   r.CREATED_AT,
+                   lm.LAST_MESSAGE,
+                   lm.LAST_SEND_TIME,
+                   lm.LAST_MSG_NO,
+                   NVL(rd.LAST_READ_MSG, 0) AS LAST_READ_MSG
+            FROM GROUP_CHAT_ROOM r
+            JOIN GROUP_CHAT_MEMBER my ON my.GROUP_ROOM_NO = r.GROUP_ROOM_NO
+                                     AND my.MEMBER_NO = #{memberNo}
+            LEFT JOIN (
+                SELECT GROUP_ROOM_NO,
+                       MAX(GROUP_MSG_NO) AS LAST_MSG_NO,
+                       MAX(MSG_CONTENT) KEEP (DENSE_RANK LAST ORDER BY GROUP_MSG_NO) AS LAST_MESSAGE,
+                       TO_CHAR(MAX(SEND_TIME) KEEP (DENSE_RANK LAST ORDER BY GROUP_MSG_NO), 'YYYY-MM-DD HH24:MI') AS LAST_SEND_TIME
+                FROM GROUP_MESSAGE
+                GROUP BY GROUP_ROOM_NO
+            ) lm ON lm.GROUP_ROOM_NO = r.GROUP_ROOM_NO
+            LEFT JOIN GROUP_MSG_READ rd ON rd.GROUP_ROOM_NO = r.GROUP_ROOM_NO
+                                       AND rd.MEMBER_NO = #{memberNo}
+        ),
+        MEMBER_COUNT AS (
+            SELECT GROUP_ROOM_NO, COUNT(*) AS CNT
+            FROM GROUP_CHAT_MEMBER
+            GROUP BY GROUP_ROOM_NO
+        ),
+        UNREAD AS (
+            SELECT mr.GROUP_ROOM_NO,
+                   COUNT(*) AS UNREAD_COUNT
+            FROM MY_ROOMS mr
+            JOIN GROUP_MESSAGE gm ON gm.GROUP_ROOM_NO = mr.GROUP_ROOM_NO
+                                  AND gm.GROUP_MSG_NO > mr.LAST_READ_MSG
+            GROUP BY mr.GROUP_ROOM_NO
+        )
+        SELECT
+            mr.GROUP_ROOM_NO,
+            mr.COMPANION_NO,
+            mr.ROOM_NAME,
+            mr.LAST_MESSAGE,
+            mr.LAST_SEND_TIME,
+            NVL(u.UNREAD_COUNT, 0) AS UNREAD_COUNT,
+            mc.CNT                 AS MEMBER_COUNT,
+            m.MEMBER_NO,
+            m.NICKNAME,
+            m.PROFILE_IMAGE
+        FROM MY_ROOMS mr
+        JOIN MEMBER_COUNT mc ON mc.GROUP_ROOM_NO = mr.GROUP_ROOM_NO
+        LEFT JOIN UNREAD u   ON u.GROUP_ROOM_NO  = mr.GROUP_ROOM_NO
+        JOIN GROUP_CHAT_MEMBER gcm ON gcm.GROUP_ROOM_NO = mr.GROUP_ROOM_NO
+        JOIN MEMBER m              ON m.MEMBER_NO        = gcm.MEMBER_NO
+        ORDER BY mr.LAST_MSG_NO DESC NULLS LAST, mr.CREATED_AT DESC
+    </select>
+
+    <!-- 그룹 멤버 번호 목록 (브로드캐스트용) -->
+    <select id="selectGroupMemberNos" resultType="int">
+        SELECT MEMBER_NO
+        FROM GROUP_CHAT_MEMBER
+        WHERE GROUP_ROOM_NO = #{groupRoomNo}
+    </select>
+
+    <!-- 그룹 멤버 상세 목록 -->
+    <select id="selectGroupMembers" resultMap="groupMemberResultMap">
+        SELECT
+            m.MEMBER_NO,
+            m.NICKNAME,
+            m.PROFILE_IMAGE
+        FROM GROUP_CHAT_MEMBER gcm
+        JOIN MEMBER m ON gcm.MEMBER_NO = m.MEMBER_NO
+        WHERE gcm.GROUP_ROOM_NO = #{groupRoomNo}
+        ORDER BY gcm.JOINED_AT ASC
+    </select>
+
+    <!-- 그룹 메시지 저장 -->
+    <insert id="insertGroupMessage" parameterType="edu.kh.project.chatting.dto.GroupMessageDTO">
+        <selectKey keyProperty="groupMsgNo" resultType="int" order="BEFORE">
+            SELECT SEQ_GROUP_MSG_NO.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO GROUP_MESSAGE (GROUP_MSG_NO, GROUP_ROOM_NO, SENDER_NO, MSG_CONTENT)
+        VALUES (#{groupMsgNo}, #{groupRoomNo}, #{senderNo}, #{msgContent})
+    </insert>
+
+    <!-- 그룹 메시지 목록 조회 (발신자 정보 JOIN) -->
+    <select id="selectGroupMessageList" resultMap="groupMessageResultMap">
+        SELECT
+            gm.GROUP_MSG_NO,
+            gm.GROUP_ROOM_NO,
+            gm.SENDER_NO,
+            m.NICKNAME      AS SENDER_NICKNAME,
+            m.PROFILE_IMAGE AS SENDER_PROFILE,
+            gm.MSG_CONTENT,
+            TO_CHAR(gm.SEND_TIME, 'YYYY-MM-DD HH24:MI') AS SEND_TIME,
+            1 AS IS_GROUP_MESSAGE
+        FROM GROUP_MESSAGE gm
+        JOIN MEMBER m ON gm.SENDER_NO = m.MEMBER_NO
+        WHERE gm.GROUP_ROOM_NO = #{groupRoomNo}
+        ORDER BY gm.GROUP_MSG_NO ASC
+    </select>
+
+    <!-- 읽음 워터마크 UPSERT
+         lastReadMsg = 0 전달 시 해당 방의 최신 메시지 번호로 자동 설정 -->
+    <update id="upsertGroupReadMark">
+        MERGE INTO GROUP_MSG_READ dst
+        USING (SELECT
+                   #{groupRoomNo} AS GROUP_ROOM_NO,
+                   #{memberNo}    AS MEMBER_NO,
+                   CASE WHEN #{lastReadMsg} = 0
+                        THEN NVL((SELECT MAX(GROUP_MSG_NO)
+                                  FROM GROUP_MESSAGE
+                                  WHERE GROUP_ROOM_NO = #{groupRoomNo}), 0)
+                        ELSE #{lastReadMsg}
+                   END AS LAST_READ_MSG
+               FROM DUAL) src
+        ON (dst.GROUP_ROOM_NO = src.GROUP_ROOM_NO
+            AND dst.MEMBER_NO = src.MEMBER_NO)
+        WHEN MATCHED THEN
+            UPDATE SET dst.LAST_READ_MSG = src.LAST_READ_MSG
+        WHEN NOT MATCHED THEN
+            INSERT (READ_ID, GROUP_ROOM_NO, MEMBER_NO, LAST_READ_MSG)
+            VALUES (SEQ_GROUP_READ_ID.NEXTVAL,
+                    src.GROUP_ROOM_NO,
+                    src.MEMBER_NO,
+                    src.LAST_READ_MSG)
+    </update>
+
+</mapper>

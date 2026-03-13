@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeOff, Mail, Lock, ArrowLeft, CheckCircle2, User, KeyRound, Send, Loader2, ShieldCheck } from 'lucide-react';
-import bgImage from '@/assets/images/auth/협재.png';
-import logo from '@/assets/images/logo/혼디.png';
+import bgImage from '@/assets/images/auth/협재.webp';
+import logo from '@/assets/images/logo/혼디.webp';
 
 export default function FindPassword() {
   const navigate = useNavigate();
@@ -213,7 +213,7 @@ export default function FindPassword() {
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-b from-sky-50 to-cyan-50">
       {/* 배경 이미지 - 상단 히어로 영역 */}
       <div className="absolute top-0 left-0 right-0 h-[380px]">
-        <img src={bgImage} alt="협재 해변" className="w-full h-full object-cover" />
+        <img src={bgImage} alt="협재 해변" loading="lazy" className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-sky-900/60 via-sky-800/40 to-sky-50" />
       </div>
 
