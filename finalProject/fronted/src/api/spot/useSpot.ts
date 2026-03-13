@@ -13,6 +13,7 @@ export const useActiveSpots = () => {
   return useQuery({
     queryKey: ['spots', 'active'],
     queryFn: getActiveSpots,
+    staleTime: 1000 * 60 * 10,
   });
 };
 
@@ -21,6 +22,7 @@ export const useAllSpots = () => {
   return useQuery({
     queryKey: ['spots', 'all'],
     queryFn: getAllSpots,
+    staleTime: 1000 * 60 * 10,
   });
 };
 

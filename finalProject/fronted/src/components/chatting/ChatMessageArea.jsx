@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, User, Info, Phone, Video, Image, Heart, Smile } from 'lucide-react';
 
 /**
  * 채팅 메시지 영역 (Instagram DM 스타일)
  */
-export default function ChatMessageArea({
+function ChatMessageArea({
   messages,
   currentMemberNo,
   targetNickName,
@@ -22,7 +22,7 @@ export default function ChatMessageArea({
   }, [messages]);
 
   // 메시지 전송
-  const handleSend = () => {
+  const handleSend = useCallback(() => {
     const trimmed = inputValue.trim();
     if (!trimmed) return;
     onSendMessage(trimmed);
@@ -30,37 +30,37 @@ export default function ChatMessageArea({
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
-  };
+  }, [inputValue, onSendMessage]);
 
   // Enter = 전송, Shift+Enter = 줄바꿈
-  const handleKeyDown = (e) => {
+  const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
-  };
+  }, [handleSend]);
 
-  const handleInput = (e) => {
+  const handleInput = useCallback((e) => {
     setInputValue(e.target.value);
     e.target.style.height = 'auto';
     e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
-  };
+  }, []);
 
   // 메시지 그룹핑 (연속 같은 사람이면 아바타 숨김)
-  const shouldShowAvatar = (idx) => {
+  const shouldShowAvatar = useCallback((idx) => {
     if (idx === 0) return true;
     const prev = messages[idx - 1];
     const curr = messages[idx];
     return prev.senderNo !== curr.senderNo;
-  };
+  }, [messages]);
 
   // 마지막 연속 메시지인지 (시간 표시용)
-  const isLastInGroup = (idx) => {
+  const isLastInGroup = useCallback((idx) => {
     if (idx === messages.length - 1) return true;
     const next = messages[idx + 1];
     const curr = messages[idx];
     return next.senderNo !== curr.senderNo;
-  };
+  }, [messages]);
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -221,3 +221,5 @@ export default function ChatMessageArea({
     </div>
   );
 }
+
+export default React.memo(ChatMessageArea);

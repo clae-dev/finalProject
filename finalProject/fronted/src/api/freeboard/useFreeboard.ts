@@ -16,6 +16,7 @@ export const useFreeBoardList = (page = 1, size = 9, search = '') => {
   return useQuery({
     queryKey: ['freeboards', page, size, search],
     queryFn: () => getFreeBoardList(page, size, search),
+    staleTime: 1000 * 60 * 3,
   });
 };
 
@@ -25,6 +26,7 @@ export const useFreeBoardDetail = (boardNo: number | string | undefined) => {
     queryKey: ['freeboard', boardNo],
     queryFn: () => getFreeBoardDetail(boardNo!),
     enabled: !!boardNo,
+    staleTime: 1000 * 60 * 3,
   });
 };
 
@@ -69,6 +71,7 @@ export const useCommentList = (boardNo: number | string | undefined) => {
     queryKey: ['freeboard-comments', boardNo],
     queryFn: () => getCommentList(boardNo!),
     enabled: !!boardNo,
+    staleTime: 1000 * 60 * 3,
   });
 };
 

@@ -70,24 +70,22 @@ export default function ChatPanel({ isOpen, onClose, motionX, motionY }) {
   const { sendMessage } = useWebSocket(handleWsMessage);
 
   // 1:1 룸 선택
-  const handleSelectRoom = (room) => {
+  const handleSelectRoom = useCallback((room) => {
     setSelectedRoom(room);
     setSelectedGroupRoom(null);
     if (room.notReadCount > 0) {
       updateReadMutation.mutate(room.chattingRoomNo);
     }
-  };
+  }, [updateReadMutation]);
 
   // 그룹 룸 선택
-  const handleSelectGroupRoom = (room) => {
+  const handleSelectGroupRoom = useCallback((room) => {
     setSelectedGroupRoom(room);
     setSelectedRoom(null);
-    // 읽음 처리 — 현재 마지막 메시지 기준
     if (room.unreadCount > 0) {
-      // 메시지 목록이 로드되면 처리하므로 groupRoomNo만 넘김 (lastReadMsgNo=0은 서버가 처리)
       markGroupReadMutation.mutate({ groupRoomNo: room.groupRoomNo, lastReadMsgNo: 0 });
     }
-  };
+  }, [markGroupReadMutation]);
 
   const handleSelectTarget = async (target, firstMessage) => {
     try {
@@ -116,38 +114,38 @@ export default function ChatPanel({ isOpen, onClose, motionX, motionY }) {
   };
 
   // 1:1 메시지 전송
-  const handleSendMessage = (text) => {
+  const handleSendMessage = useCallback((text) => {
     if (!selectedRoom || !currentMemberNo) return;
     sendMessage({
       messageContent: text,
       chattingRoomNo: selectedRoom.chattingRoomNo,
       targetNo: selectedRoom.targetNo,
     });
-  };
+  }, [selectedRoom, currentMemberNo, sendMessage]);
 
   // 그룹 메시지 전송
-  const handleSendGroupMessage = (text) => {
+  const handleSendGroupMessage = useCallback((text) => {
     if (!selectedGroupRoom || !currentMemberNo) return;
     sendMessage({
       isGroupMessage: true,
       groupRoomNo: selectedGroupRoom.groupRoomNo,
       msgContent: text,
     });
-  };
+  }, [selectedGroupRoom, currentMemberNo, sendMessage]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (selectedRoom) {
       setSelectedRoom(null);
     } else if (selectedGroupRoom) {
       setSelectedGroupRoom(null);
     }
-  };
+  }, [selectedRoom, selectedGroupRoom]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setSelectedRoom(null);
     setSelectedGroupRoom(null);
     onClose();
-  };
+  }, [onClose]);
 
   // 헤더 타이틀
   const headerTitle = () => {
