@@ -42,7 +42,7 @@ function timeAgo(dateStr) {
   return dateStr;
 }
 
-export default function NotificationBell() {
+function NotificationBell() {
   const [open, setOpen] = useState(false);
   const panelRef = useRef(null);
   const navigate = useNavigate();
@@ -76,12 +76,10 @@ export default function NotificationBell() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open]);
 
-  const handleNotifClick = (notif) => {
-    // 읽음 처리
+  const handleNotifClick = useCallback((notif) => {
     if (notif.readFl === 'N') {
       markAsRead.mutate(notif.notificationNo);
     }
-    // 해당 페이지로 이동
     if (notif.targetType === 'CHAT') {
       window.dispatchEvent(new CustomEvent('open-chat'));
     } else if (notif.targetType === 'COMPANION' && notif.targetNo) {
@@ -98,24 +96,24 @@ export default function NotificationBell() {
       navigate('/admin');
     }
     setOpen(false);
-  };
+  }, [markAsRead, navigate]);
 
-  const handleMarkAllRead = (e) => {
+  const handleMarkAllRead = useCallback((e) => {
     e.stopPropagation();
     markAllAsRead.mutate();
-  };
+  }, [markAllAsRead]);
 
-  const handleDelete = (e, notificationNo) => {
+  const handleDelete = useCallback((e, notificationNo) => {
     e.stopPropagation();
     deleteNotification.mutate(notificationNo);
-  };
+  }, [deleteNotification]);
 
-  const handleDeleteAll = (e) => {
+  const handleDeleteAll = useCallback((e) => {
     e.stopPropagation();
     if (confirm('알림을 모두 삭제하시겠습니까?')) {
       deleteAllNotifications.mutate();
     }
-  };
+  }, [deleteAllNotifications]);
 
   return (
     <div className="relative" ref={panelRef}>
@@ -256,3 +254,5 @@ export default function NotificationBell() {
     </div>
   );
 }
+
+export default React.memo(NotificationBell);
