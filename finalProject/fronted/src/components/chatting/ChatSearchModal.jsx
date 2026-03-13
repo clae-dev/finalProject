@@ -106,6 +106,7 @@ export default function ChatSearchModal({ onClose, onSelectTarget }) {
                     src={target.profileImage}
                     alt=""
                     referrerPolicy="no-referrer"
+                    loading="lazy"
                     className="w-10 h-10 rounded-full object-cover border border-slate-200"
                   />
                 ) : (

@@ -93,7 +93,7 @@ export default function AdminPage() {
   if (!user || user.memberRole !== 'A') return null;
 
   const avatar = user.memberProfileImg
-    ? <img src={user.memberProfileImg} alt="" className="w-8 h-8 rounded-full object-cover" />
+    ? <img src={user.memberProfileImg} alt="" loading="lazy" className="w-8 h-8 rounded-full object-cover" />
     : (
       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-white text-sm font-bold">
         {(user.memberNickname || 'A')[0]}

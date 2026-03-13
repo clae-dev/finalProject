@@ -2,10 +2,11 @@
  * AI 창식이 채팅 슬라이드 패널 컴포넌트 - 실시간 대화 UI, 빠른 질문, 타이핑 인디케이터
  */
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, RotateCcw, AlertCircle, Palmtree, MapPin, UtensilsCrossed, Compass, Plane } from 'lucide-react';
+import { X, Send, RotateCcw, AlertCircle, Palmtree, MapPin, UtensilsCrossed, Compass, Plane, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { useSendAiChat } from '../../api/ai/useAiChat';
-import changsikImg from '../../assets/images/page/제주.png';
+import changsikImg from '../../assets/images/page/제주.webp';
 
 const QUICK_QUESTIONS = [
   { icon: <Compass className="w-3.5 h-3.5" />, text: '제주 혼자 여행 코스 추천해줘' },
@@ -19,11 +20,36 @@ const WELCOME_MESSAGE = {
   content: '혼저옵서예~ 🍊\n저는 제주 여행 AI 도우미 창식이예요!\n\n관광지, 맛집, 숙소, 항공편, 교통 등\n제주에 대해 궁금한 거 뭐든 물어보세요!',
 };
 
-/** 마크다운 **bold** 를 <strong> 태그로 변환하여 렌더링 */
-function renderMarkdown(text) {
+/** 숙소/동행 링크 타입 판별 */
+function getLinkMeta(href) {
+  if (href.startsWith('/accommodations/')) {
+    return { type: 'accommodation', label: '숙소 보기', color: 'bg-sky-50 text-sky-600 border-sky-200 hover:bg-sky-100' };
+  }
+  if (href.startsWith('/companions/')) {
+    return { type: 'companion', label: '동행 보기', color: 'bg-emerald-50 text-emerald-600 border-emerald-200 hover:bg-emerald-100' };
+  }
+  return null;
+}
+
+/** 마크다운 **bold**, [text](url) 링크 파싱 후 렌더링 */
+function renderMarkdown(text, navigate) {
   if (!text) return null;
 
-  return text.split('\n').map((line, li) => {
+  // [text](url) 링크 → 클릭 가능한 카드 버튼으로 추출 (줄 단위 처리 전)
+  const linkCards = [];
+  const LINK_RE = /\[([^\]]+)\]\((\/[^)]+)\)/g;
+  let match;
+  while ((match = LINK_RE.exec(text)) !== null) {
+    const meta = getLinkMeta(match[2]);
+    if (meta) {
+      linkCards.push({ label: match[1], href: match[2], meta });
+    }
+  }
+
+  // 링크 마크다운 제거 후 텍스트만 남김
+  const cleanText = text.replace(/\[([^\]]+)\]\(\/[^)]+\)/g, '$1');
+
+  const lines = cleanText.split('\n').map((line, li) => {
     const parts = [];
     let rest = line;
     let k = 0;
@@ -33,7 +59,6 @@ function renderMarkdown(text) {
       if (s === -1) { parts.push(rest); break; }
       const e = rest.indexOf('**', s + 2);
       if (e === -1) { parts.push(rest); break; }
-
       if (s > 0) parts.push(rest.substring(0, s));
       parts.push(
         <strong key={k++} className="font-semibold">
@@ -50,6 +75,26 @@ function renderMarkdown(text) {
       </React.Fragment>
     );
   });
+
+  return (
+    <>
+      {lines}
+      {linkCards.length > 0 && (
+        <div className="flex flex-col gap-1.5 mt-2.5">
+          {linkCards.map((card, i) => (
+            <button
+              key={i}
+              onClick={() => navigate(card.href)}
+              className={`flex items-center justify-between gap-2 px-3 py-2 rounded-xl border text-[12px] font-semibold transition-colors ${card.meta.color}`}
+            >
+              <span className="truncate text-left">{card.label}</span>
+              <ExternalLink className="w-3 h-3 flex-shrink-0 opacity-60" />
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  );
 }
 
 const STORAGE_KEY = 'changsik_chat_history';
@@ -68,6 +113,7 @@ function loadMessages() {
 }
 
 export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState(loadMessages);
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState(null);
@@ -165,7 +211,7 @@ export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
             <div className="flex items-center gap-3">
               <div className="relative">
                 <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-orange-100">
-                  <img src={changsikImg} alt="창식이" className="w-full h-full object-cover" />
+                  <img src={changsikImg} alt="창식이" loading="lazy" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -bottom-px -right-px w-3 h-3 bg-green-400 rounded-full border-2 border-white" />
               </div>
@@ -205,7 +251,7 @@ export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
               {/* 어시스턴트 아바타 */}
               {msg.role === 'assistant' && (
                 <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-1">
-                  <img src={changsikImg} alt="창식이" className="w-full h-full object-cover" />
+                  <img src={changsikImg} alt="창식이" loading="lazy" className="w-full h-full object-cover" />
                 </div>
               )}
 
@@ -217,7 +263,7 @@ export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
                     : 'bg-white text-gray-700 rounded-2xl rounded-bl-md shadow-[0_1px_2px_rgba(0,0,0,0.06)]'
                 }`}
               >
-                {renderMarkdown(msg.content)}
+                {renderMarkdown(msg.content, navigate)}
               </div>
             </motion.div>
           ))}
@@ -232,7 +278,7 @@ export default function AiChatPanel({ isOpen, onClose, motionX, motionY }) {
                 className="flex gap-2"
               >
                 <div className="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-1">
-                  <img src={changsikImg} alt="창식이" className="w-full h-full object-cover" />
+                  <img src={changsikImg} alt="창식이" loading="lazy" className="w-full h-full object-cover" />
                 </div>
                 <div className="bg-white rounded-2xl rounded-bl-md px-4 py-3 shadow-[0_1px_2px_rgba(0,0,0,0.06)] flex items-center gap-1">
                   {[0, 1, 2].map((i) => (

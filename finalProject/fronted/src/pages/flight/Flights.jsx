@@ -4,7 +4,7 @@ import { Plane, ExternalLink, Search, Globe, ArrowRight, Sparkles, TrendingUp, C
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
 
-import heroImage from '../../assets/images/page/공항.png';
+import heroImage from '../../assets/images/page/공항.webp';
 const HERO_IMAGE = heroImage;
 
 const bookingSites = [
@@ -242,6 +242,7 @@ export default function Flights() {
           <img
             src={HERO_IMAGE}
             alt="하늘"
+            loading="lazy"
             className="w-full h-full object-cover"
           />
         </motion.div>

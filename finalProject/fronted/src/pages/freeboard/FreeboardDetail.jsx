@@ -33,6 +33,7 @@ function Avatar({ src, name, size = 'md' }) {
         <img
           src={src}
           alt=""
+          loading="lazy"
           className="w-full h-full object-cover"
           onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.textContent = name?.[0] || '?'; }}
         />
@@ -312,6 +313,7 @@ export default function FreeboardDetail() {
                       <img
                         src={imgUrl}
                         alt={`이미지 ${idx + 1}`}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={(e) => { e.target.parentElement.style.display = 'none'; }}
                       />

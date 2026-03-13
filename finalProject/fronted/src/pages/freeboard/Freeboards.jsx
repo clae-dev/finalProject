@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import Header from '../../components/common/Header';
 import Footer from '../../components/main/Footer';
-import freeboardHero from '../../assets/images/page/자유게시판.jpg';
+import freeboardHero from '../../assets/images/page/자유게시판.webp';
 import { useFreeBoardList } from '../../api/freeboard/useFreeboard';
 import { AuthContext } from '../../components/AuthContext';
 
@@ -40,6 +40,7 @@ export default function Freeboards() {
         <img
           src={freeboardHero}
           alt="자유게시판"
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover"
           style={{ objectPosition: 'center 6%' }}
         />
