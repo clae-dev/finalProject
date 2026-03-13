@@ -14,6 +14,7 @@ export const useReviews = (page = 1, size = 9, search = '', sort = 'latest') => 
   return useQuery({
     queryKey: ['reviews', page, size, search, sort],
     queryFn: () => getReviewList(page, size, search, sort),
+    staleTime: 1000 * 60 * 5,
   });
 };
 
@@ -25,6 +26,7 @@ export const useReviewDetail = (reviewNo: number | string | undefined) => {
     queryKey: ['review', reviewNo],
     queryFn: () => getReviewDetail(reviewNo!),
     enabled: !!reviewNo,
+    staleTime: 1000 * 60 * 5,
   });
 };
 
@@ -63,5 +65,6 @@ export const useRecentReviews = (limit = 9) => {
   return useQuery({
     queryKey: ['recentReviews', limit],
     queryFn: () => getRecentReviews(limit),
+    staleTime: 1000 * 60 * 5,
   });
 };

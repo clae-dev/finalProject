@@ -17,6 +17,7 @@ export const useCompanions = (page = 1, size = 9, tag: string | null = null) => 
   return useQuery({
     queryKey: ['companions', page, size, tag],
     queryFn: () => getCompanionList(page, size, tag),
+    staleTime: 1000 * 60 * 3,
   });
 };
 
@@ -28,6 +29,7 @@ export const useCompanionDetail = (companionNo: number | string | undefined) => 
     queryKey: ['companion', companionNo],
     queryFn: () => getCompanionDetail(companionNo!),
     enabled: !!companionNo,
+    staleTime: 1000 * 60 * 3,
   });
 };
 
