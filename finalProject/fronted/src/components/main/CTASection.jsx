@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarDays, MapPin, ChevronLeft, ChevronRight, Sparkles, ArrowRight, Loader2, ImageIcon } from 'lucide-react';
@@ -13,7 +13,7 @@ const formatDate = (dateStr) => {
   return `${s.slice(0, 4)}.${s.slice(4, 6)}.${s.slice(6, 8)}`;
 };
 
-function EventCard({ item, type, index }) {
+const EventCard = React.memo(function EventCard({ item, type, index }) {
   const isEvent = type === 'event';
 
   return (
@@ -95,9 +95,9 @@ function EventCard({ item, type, index }) {
       </div>
     </motion.div>
   );
-}
+});
 
-export default function CTASection() {
+function CTASection() {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
   const [scrollX, setScrollX] = useState(0);
@@ -112,12 +112,15 @@ export default function CTASection() {
   const leisureList = leisureData?.success ? (leisureData.list || []) : [];
 
   // 이벤트와 액티비티를 번갈아 섞기
-  const allItems = [];
-  const maxLen = Math.max(eventList.length, leisureList.length);
-  for (let i = 0; i < maxLen; i++) {
-    if (i < eventList.length) allItems.push({ ...eventList[i], _type: 'event' });
-    if (i < leisureList.length) allItems.push({ ...leisureList[i], _type: 'leisure' });
-  }
+  const allItems = useMemo(() => {
+    const items = [];
+    const maxLen = Math.max(eventList.length, leisureList.length);
+    for (let i = 0; i < maxLen; i++) {
+      if (i < eventList.length) items.push({ ...eventList[i], _type: 'event' });
+      if (i < leisureList.length) items.push({ ...leisureList[i], _type: 'leisure' });
+    }
+    return items;
+  }, [eventList, leisureList]);
 
   const isLoading = eventLoading && leisureLoading;
 
@@ -430,3 +433,5 @@ export default function CTASection() {
     </section>
   );
 }
+
+export default React.memo(CTASection);
