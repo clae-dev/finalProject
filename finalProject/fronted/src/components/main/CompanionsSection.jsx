@@ -189,7 +189,7 @@ function Cloud({ className, delay = 0, direction = 1 }) {
   );
 }
 
-export default function CompanionsSection() {
+function CompanionsSection() {
   const navigate = useNavigate();
   const [companionSlide, setCompanionSlide] = useState(0);
 
@@ -459,3 +459,5 @@ export default function CompanionsSection() {
     </section>
   );
 }
+
+export default React.memo(CompanionsSection);
