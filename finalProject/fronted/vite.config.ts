@@ -3,13 +3,16 @@ import react from '@vitejs/plugin-react'
 import path from 'path'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
+  // 프로덕션 빌드 시 console.log, debugger 제거
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  esbuild: { drop: command === 'build' ? ['console', 'debugger'] : [] } as any,
   build: {
     rollupOptions: {
       output: {
@@ -51,4 +54,4 @@ export default defineConfig({
       },
     },
   },
-})
+}))

@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect } from 'react';
+import React, { useContext, useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Shield, ChevronDown, Plane, Hotel, CalendarDays, Users, MessageSquare, Star, HelpCircle, Megaphone, Footprints } from 'lucide-react';
 import logo from '@/assets/images/logo/혼디.webp';
@@ -108,12 +108,12 @@ function DropdownMenu({ item, isActive, isOpen, onOpen, onClose }) {
   );
 }
 
-export default function Header() {
+function Header() {
   const { user, handleLogout } = useContext(AuthContext);
   const location = useLocation();
   const [openDropdown, setOpenDropdown] = useState(null);
 
-  const isPathActive = (item) => {
+  const isPathActive = useCallback((item) => {
     if (item.type === 'link') {
       return item.path === '/' ? location.pathname === '/' : location.pathname.startsWith(item.path);
     }
@@ -121,7 +121,7 @@ export default function Header() {
       return item.children.some((child) => location.pathname.startsWith(child.path));
     }
     return false;
-  };
+  }, [location.pathname]);
 
   return (
     <>
@@ -245,3 +245,5 @@ export default function Header() {
     </>
   );
 }
+
+export default React.memo(Header);
