@@ -23,7 +23,7 @@ const supportLinks = [
   { name: '개인정보처리방침', path: '/privacy' },
 ];
 
-export default function Footer() {
+function Footer() {
   return (
     <footer className="relative overflow-hidden">
       {/* 상단 웨이브 디바이더 */}
@@ -185,3 +185,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+export default React.memo(Footer);

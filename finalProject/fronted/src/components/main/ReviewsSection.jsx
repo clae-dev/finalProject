@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=400';
 
-function StarRating({ rating }) {
+const StarRating = React.memo(function StarRating({ rating }) {
   return (
     <div className="flex gap-0.5">
       {[...Array(5)].map((_, i) => (
@@ -16,9 +16,9 @@ function StarRating({ rating }) {
       ))}
     </div>
   );
-}
+});
 
-export default function ReviewsSection() {
+function ReviewsSection() {
   const navigate = useNavigate();
   const [reviewSlide, setReviewSlide] = useState(0);
 
@@ -212,3 +212,5 @@ export default function ReviewsSection() {
     </section>
   );
 }
+
+export default React.memo(ReviewsSection);

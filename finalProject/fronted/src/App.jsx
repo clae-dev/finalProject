@@ -98,15 +98,18 @@ function AnimatedRoutes() {
   );
 }
 
-/** 관리자 페이지에서는 날씨·AI 위젯 숨김, 1:1 채팅은 유지 */
+/** 관리자 페이지에서는 날씨·AI 위젯 숨김, 1:1 채팅은 유지
+ *  조건부 렌더 대신 CSS hidden으로 처리하여 unmount/remount 비용 제거 */
 function GlobalWidgets() {
   const location = useLocation();
   const isAdmin = location.pathname.startsWith('/admin');
   return (
     <Suspense fallback={null}>
-      {!isAdmin && <WeatherWidget />}
+      <div className={isAdmin ? 'hidden' : ''}>
+        <WeatherWidget />
+        <AiChatBubble />
+      </div>
       <ChatBubble />
-      {!isAdmin && <AiChatBubble />}
     </Suspense>
   );
 }
