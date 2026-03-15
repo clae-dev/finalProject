@@ -141,8 +141,7 @@ function NotificationBell() {
           {/* 헤더 */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
             <h3
-              className="text-sm font-bold text-slate-700"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-sm font-bold text-slate-700 font-pretendard"
             >
               알림
               {unreadCount > 0 && (
@@ -155,8 +154,7 @@ function NotificationBell() {
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllRead}
-                  className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors font-pretendard"
                 >
                   <CheckCheck className="w-3.5 h-3.5" />
                   모두 읽음
@@ -165,8 +163,7 @@ function NotificationBell() {
               {notifications.length > 0 && (
                 <button
                   onClick={handleDeleteAll}
-                  className="flex items-center gap-1 text-xs text-red-400 hover:text-red-500 font-medium transition-colors"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="flex items-center gap-1 text-xs text-red-400 hover:text-red-500 font-medium transition-colors font-pretendard"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   모두 삭제
@@ -181,8 +178,7 @@ function NotificationBell() {
               <div className="py-12 text-center">
                 <Bell className="w-8 h-8 text-slate-300 mx-auto mb-2" />
                 <p
-                  className="text-sm text-slate-400"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-sm text-slate-400 font-pretendard"
                 >
                   알림이 없습니다
                 </p>
@@ -211,22 +207,20 @@ function NotificationBell() {
                       className={`text-sm leading-snug ${
                         notif.readFl === 'N' ? 'font-semibold text-slate-800' : 'text-slate-600'
                       }`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     >
                       {notif.content}
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       {notif.senderNickname && (
                         <span
-                          className="text-[11px] text-slate-400"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="text-[11px] text-slate-400 font-pretendard"
                         >
                           {notif.senderNickname}
                         </span>
                       )}
                       <span
-                        className="text-[11px] text-slate-300"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="text-[11px] text-slate-300 font-pretendard"
                       >
                         {timeAgo(notif.createdAt)}
                       </span>

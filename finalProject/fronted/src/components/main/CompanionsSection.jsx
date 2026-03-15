@@ -256,10 +256,10 @@ function CompanionsSection() {
               </svg>
               동행 모집
             </motion.span>
-            <h2 className="text-3xl md:text-5xl font-black text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-800 font-gmarket">
               함께라서 더 <span className="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">특별한</span>
             </h2>
-            <p className="text-slate-400 mt-4 text-lg" style={{ fontFamily: "'Pretendard', sans-serif" }}>지금 모집 중인 동행에 참여해보세요</p>
+            <p className="text-slate-400 mt-4 text-lg font-pretendard">지금 모집 중인 동행에 참여해보세요</p>
           </div>
           <div className="flex gap-3">
             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
@@ -367,8 +367,7 @@ function CompanionsSection() {
         >
           <motion.button whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}
             onClick={() => navigate('/companions')}
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/90 backdrop-blur-sm text-sky-600 font-bold rounded-full shadow-lg shadow-sky-100/50 hover:shadow-xl border border-white/80 transition-all"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/90 backdrop-blur-sm text-sky-600 font-bold rounded-full shadow-lg shadow-sky-100/50 hover:shadow-xl border border-white/80 transition-all font-pretendard"
           >
             동행 더보기
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>

@@ -79,7 +79,7 @@ export default function AdminVerifications() {
       <div
         className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 p-4 flex flex-wrap items-center gap-2"
       >
-        <span className="text-xs font-bold text-slate-500 mr-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>상태:</span>
+        <span className="text-xs font-bold text-slate-500 mr-2 font-pretendard">상태:</span>
         {STATUS_TABS.map((tab) => (
           <button
             key={tab.key}
@@ -89,7 +89,7 @@ export default function AdminVerifications() {
                 ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md shadow-sky-200/50'
                 : 'bg-sky-50 text-slate-500 hover:bg-sky-100'
             }`}
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="font-pretendard"
           >
             {tab.label}
           </button>
@@ -240,7 +240,7 @@ export default function AdminVerifications() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Eye className="w-5 h-5 text-sky-500" />
-                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>인증 서류</h3>
+                  <h3 className="text-lg font-bold text-slate-800 font-pretendard">인증 서류</h3>
                 </div>
                 <button onClick={() => setViewImage(null)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                   <X className="w-5 h-5 text-slate-400" />
@@ -273,20 +273,19 @@ export default function AdminVerifications() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <XCircle className="w-5 h-5 text-red-500" />
-                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>인증 거부</h3>
+                  <h3 className="text-lg font-bold text-slate-800 font-pretendard">인증 거부</h3>
                 </div>
                 <button onClick={() => setRejectTarget(null)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                   <X className="w-5 h-5 text-slate-400" />
                 </button>
               </div>
-              <label className="text-sm font-bold text-slate-700 block mb-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>거부 사유</label>
+              <label className="text-sm font-bold text-slate-700 block mb-2 font-pretendard">거부 사유</label>
               <textarea
                 value={rejectComment}
                 onChange={(e) => setRejectComment(e.target.value)}
                 placeholder="거부 사유를 입력해주세요..."
                 rows={3}
-                className="w-full px-4 py-2.5 border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="w-full px-4 py-2.5 border border-sky-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none font-pretendard"
               />
               <div className="flex gap-3 mt-5">
                 <button

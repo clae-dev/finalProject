@@ -422,7 +422,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+              <h2 className="text-xl font-bold text-slate-800 font-gmarket">
                 프로필 수정
               </h2>
               <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
@@ -433,7 +433,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* 프로필 아바타 선택 */}
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard">
                   프로필 아바타
                 </label>
 
@@ -453,7 +453,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                           ? 'bg-white text-sky-600 shadow-sm shadow-sky-100'
                           : 'text-slate-500 hover:text-slate-700'
                       }`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     >
                       {tab.label}
                     </button>
@@ -467,8 +467,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                       <button
                         type="button"
                         onClick={() => setForm(prev => ({ ...prev, memberProfileImg: '' }))}
-                        className="flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-500 font-medium transition-colors bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-full"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="flex items-center gap-1.5 text-xs text-rose-400 hover:text-rose-500 font-medium transition-colors bg-rose-50 hover:bg-rose-100 px-3 py-1.5 rounded-full font-pretendard"
                       >
                         <RotateCcw className="w-3 h-3" />
                         초기화
@@ -476,8 +475,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                       <button
                         type="button"
                         onClick={refreshAvatars}
-                        className="flex items-center gap-1.5 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors bg-sky-50 hover:bg-sky-100 px-3 py-1.5 rounded-full"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="flex items-center gap-1.5 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors bg-sky-50 hover:bg-sky-100 px-3 py-1.5 rounded-full font-pretendard"
                       >
                         <RefreshCw className="w-3 h-3" />
                         새로고침
@@ -524,7 +522,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                               ? 'bg-gradient-to-r from-sky-400 to-cyan-400 text-white shadow-sm shadow-sky-200/50'
                               : 'bg-sky-50 text-slate-600 hover:bg-sky-100 border border-sky-100'
                           }`}
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="font-pretendard"
                         >
                           {label}
                         </button>
@@ -561,7 +559,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                                   ? 'bg-gradient-to-r from-sky-400 to-cyan-400 text-white shadow-sm'
                                   : 'bg-white text-slate-600 hover:bg-sky-50 border border-sky-100'
                               }`}
-                              style={{ fontFamily: "'Pretendard', sans-serif" }}
+                              className="font-pretendard"
                             >
                               {label}
                             </button>
@@ -583,12 +581,11 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                           <ImagePlus className="w-10 h-10 text-sky-300 group-hover:text-sky-400 transition-colors mb-2" />
                         </motion.div>
                       )}
-                      <span className="text-sm font-semibold text-slate-500 group-hover:text-sky-500 transition-colors"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      <span className="text-sm font-semibold text-slate-500 group-hover:text-sky-500 transition-colors font-pretendard"
                       >
                         {uploading ? '업로드 중...' : '클릭하여 이미지 선택'}
                       </span>
-                      <span className="text-xs text-slate-400 mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                      <span className="text-xs text-slate-400 mt-1 font-pretendard">
                         JPG, PNG, GIF (최대 5MB)
                       </span>
                       <input
@@ -606,8 +603,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
                 {/* 선택 완료 메시지 */}
                 {form.memberProfileImg && (
                   <p
-                    className="text-sky-500 text-xs mt-3 flex items-center gap-1.5 font-medium bg-sky-50 px-3 py-2 rounded-xl"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="text-sky-500 text-xs mt-3 flex items-center gap-1.5 font-medium bg-sky-50 px-3 py-2 rounded-xl font-pretendard"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" /> 아바타가 선택되었습니다
                   </p>
@@ -616,7 +612,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
 
               {/* 닉네임 */}
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard">
                   닉네임
                 </label>
                 <div className="flex gap-2">
@@ -649,7 +645,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
 
               {/* 전화번호 */}
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard">
                   전화번호
                 </label>
                 <input
@@ -664,7 +660,7 @@ export default function ProfileEditModal({ isOpen, onClose, memberData }) {
 
               {/* 자기소개 */}
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard">
                   자기소개
                 </label>
                 <textarea

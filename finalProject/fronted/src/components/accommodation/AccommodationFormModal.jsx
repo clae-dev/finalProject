@@ -150,7 +150,7 @@ export default function AccommodationFormModal({ isOpen, onClose, editTarget, on
         >
           {/* 모달 헤더 */}
           <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-sky-100 px-6 py-4 flex items-center justify-between rounded-t-3xl z-10">
-            <h2 className="text-lg font-bold text-slate-700" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <h2 className="text-lg font-bold text-slate-700 font-pretendard">
               {editTarget ? '숙소 수정' : '숙소 추가'}
             </h2>
             <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 transition-colors">
@@ -159,7 +159,7 @@ export default function AccommodationFormModal({ isOpen, onClose, editTarget, on
           </div>
 
           {/* 모달 폼 */}
-          <form onSubmit={handleSubmit} className="p-6 space-y-4" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <form onSubmit={handleSubmit} className="p-6 space-y-4 font-pretendard">
             {/* 숙소명 */}
             <div>
               <label className="block text-sm font-semibold text-slate-600 mb-1">숙소명 *</label>

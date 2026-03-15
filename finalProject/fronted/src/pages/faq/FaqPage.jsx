@@ -63,14 +63,13 @@ export default function FaqPage() {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg"
           >
             <HelpCircle className="w-4 h-4 text-cyan-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>FAQ</span>
+            <span className="font-pretendard">FAQ</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
-            className="text-4xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-4xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg font-gmarket"
           >
             <span className="text-white">자주 묻는 </span>
             <span className="bg-gradient-to-r from-cyan-200 via-sky-200 to-teal-200 bg-clip-text text-transparent">질문</span>
@@ -79,8 +78,7 @@ export default function FaqPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-lg text-white/70 text-center"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-lg text-white/70 text-center font-pretendard"
           >
             궁금한 점을 빠르게 찾아보세요
           </motion.p>
@@ -110,7 +108,7 @@ export default function FaqPage() {
                   ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-200/60'
                   : 'bg-white text-slate-500 hover:text-sky-600 shadow-sm border border-sky-100'
               }`}
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="font-pretendard"
             >
               {tab.label}
             </button>
@@ -131,15 +129,13 @@ export default function FaqPage() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="질문 또는 답변 키워드로 검색"
-              className="w-full px-4 py-2.5 pr-10 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="w-full px-4 py-2.5 pr-10 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
             />
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           </div>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 font-pretendard"
           >
             검색
           </button>
@@ -159,7 +155,7 @@ export default function FaqPage() {
             className="text-center py-20"
           >
             <HelpCircle className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-            <p className="text-slate-400 text-lg font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <p className="text-slate-400 text-lg font-medium font-pretendard">
               등록된 FAQ가 없습니다.
             </p>
           </motion.div>
@@ -182,8 +178,7 @@ export default function FaqPage() {
                       {faq.categoryName}
                     </span>
                     <span
-                      className="text-sm font-semibold text-slate-700 truncate"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-sm font-semibold text-slate-700 truncate font-pretendard"
                     >
                       {faq.question}
                     </span>
@@ -215,8 +210,7 @@ export default function FaqPage() {
                         <div className="flex gap-3">
                           <div className="w-1 flex-shrink-0 rounded-full bg-gradient-to-b from-sky-400 to-cyan-300 mt-0.5" />
                           <p
-                            className="text-sm text-slate-600 leading-7 whitespace-pre-wrap"
-                            style={{ fontFamily: "'Pretendard', sans-serif" }}
+                            className="text-sm text-slate-600 leading-7 whitespace-pre-wrap font-pretendard"
                           >
                             {faq.answer}
                           </p>
