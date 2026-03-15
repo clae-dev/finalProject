@@ -142,8 +142,7 @@ export default function Accommodations() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5 font-pretendard"
           >
             Jeju Accommodation
           </motion.p>
@@ -154,14 +153,13 @@ export default function Accommodations() {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg shadow-cyan-500/10"
           >
             <Sparkles className="w-4 h-4 text-cyan-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>혼행 추천 숙소</span>
+            <span className="font-pretendard">혼행 추천 숙소</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg font-gmarket"
           >
             <span className="text-white">제주, 나를 찾는 </span>
             <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-teal-300 bg-clip-text text-transparent">여행</span>
@@ -170,8 +168,7 @@ export default function Accommodations() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="text-lg text-white/70 text-center max-w-md leading-relaxed"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-lg text-white/70 text-center max-w-md leading-relaxed font-pretendard"
           >
             바다 소리에 귀 기울이고, 바람에 마음을 맡기는<br />
             당신만의 특별한 시간
@@ -198,7 +195,7 @@ export default function Accommodations() {
       </div>
 
       {/* 필터 섹션 */}
-      <div className="bg-white/95 backdrop-blur-md border-b border-slate-200/60 sticky top-16 z-40" style={{ fontFamily: "'Pretendard', 'Noto Sans KR', sans-serif", willChange: 'transform' }}>
+      <div className="bg-white/95 backdrop-blur-md border-b border-slate-200/60 sticky top-16 z-40 font-pretendard" style={{ willChange: 'transform' }}>
         <div className="max-w-6xl mx-auto px-5 py-4">
           <div className="flex items-center gap-3">
             {/* 검색바 */}
@@ -208,8 +205,7 @@ export default function Accommodations() {
                 placeholder="숙소명, 주소로 검색..."
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="pl-10 h-10 bg-slate-50 border-slate-200 focus:border-sky-400 focus:bg-white rounded-lg text-sm transition-colors"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="pl-10 h-10 bg-slate-50 border-slate-200 focus:border-sky-400 focus:bg-white rounded-lg text-sm transition-colors font-pretendard"
               />
             </div>
 
@@ -275,7 +271,7 @@ export default function Accommodations() {
           transition={{ delay: 0.2, duration: 0.4 }}
           className="mb-10"
         >
-          <h2 className="text-2xl md:text-3xl font-black mb-2" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+          <h2 className="text-2xl md:text-3xl font-black mb-2 font-gmarket">
             <span className="text-slate-800">여행자에게 추천하는 </span>
             <span className="bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-400 bg-clip-text text-transparent">숙소</span>
           </h2>
@@ -348,8 +344,7 @@ export default function Accommodations() {
                       if (!user) { alert('로그인 후 이용할 수 있습니다.'); navigate('/login'); return; }
                       navigate(`/accommodations/${acc.accommodationNo}`);
                     }}
-                    className="bg-white rounded-xl overflow-hidden border border-slate-200/80 hover:border-slate-300 hover:shadow-lg transition-all duration-200 cursor-pointer group"
-                    style={{ fontFamily: "'Pretendard', 'Noto Sans KR', sans-serif" }}
+                    className="bg-white rounded-xl overflow-hidden border border-slate-200/80 hover:border-slate-300 hover:shadow-lg transition-all duration-200 cursor-pointer group font-pretendard"
                   >
                     {/* 이미지 */}
                     <div className="relative aspect-[4/3] overflow-hidden">

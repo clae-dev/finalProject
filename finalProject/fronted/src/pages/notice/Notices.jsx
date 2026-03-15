@@ -43,14 +43,13 @@ export default function Notices() {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg"
           >
             <Megaphone className="w-4 h-4 text-cyan-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>Notice</span>
+            <span className="font-pretendard">Notice</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
-            className="text-4xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-4xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg font-gmarket"
           >
             <span className="bg-gradient-to-r from-cyan-200 via-sky-200 to-teal-200 bg-clip-text text-transparent">공지사항</span>
           </motion.h1>
@@ -58,8 +57,7 @@ export default function Notices() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-lg text-white/70 text-center"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-lg text-white/70 text-center font-pretendard"
           >
             HONDI의 새로운 소식을 확인하세요
           </motion.p>
@@ -87,15 +85,13 @@ export default function Notices() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="제목으로 검색"
-              className="w-full px-4 py-2.5 pr-10 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="w-full px-4 py-2.5 pr-10 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
             />
             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           </div>
           <button
             type="submit"
-            className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 font-pretendard"
           >
             검색
           </button>
@@ -115,7 +111,7 @@ export default function Notices() {
             className="text-center py-20"
           >
             <Megaphone className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-            <p className="text-slate-400 text-lg font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <p className="text-slate-400 text-lg font-medium font-pretendard">
               등록된 공지사항이 없습니다.
             </p>
           </motion.div>
@@ -133,13 +129,12 @@ export default function Notices() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
                     <h3
-                      className="text-sm font-semibold text-slate-700 truncate group-hover:text-sky-600 transition-colors"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-sm font-semibold text-slate-700 truncate group-hover:text-sky-600 transition-colors font-pretendard"
                     >
                       {notice.boardTitle}
                     </h3>
                     <div className="flex items-center gap-4 mt-2">
-                      <span className="text-xs text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                      <span className="text-xs text-slate-400 font-pretendard">
                         {notice.createdAt}
                       </span>
                       <span className="flex items-center gap-1 text-xs text-slate-400">

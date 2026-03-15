@@ -111,7 +111,7 @@ function SpotFormModal({ isOpen, onClose, editTarget, isPending, onSubmit }) {
           className="bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto"
         >
           <div className="flex items-center justify-between p-6 border-b border-sky-50">
-            <h3 className="text-xl font-black text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+            <h3 className="text-xl font-black text-slate-800 font-gmarket">
               {editTarget ? '명소 수정' : '명소 추가'}
             </h3>
             <button onClick={onClose} className="p-2 rounded-xl hover:bg-slate-100 transition-colors">
@@ -122,7 +122,7 @@ function SpotFormModal({ isOpen, onClose, editTarget, isPending, onSubmit }) {
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
             {/* 제목 */}
             <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                 제목 *
               </label>
               <input
@@ -137,7 +137,7 @@ function SpotFormModal({ isOpen, onClose, editTarget, isPending, onSubmit }) {
 
             {/* 설명 */}
             <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                 설명
               </label>
               <input
@@ -151,7 +151,7 @@ function SpotFormModal({ isOpen, onClose, editTarget, isPending, onSubmit }) {
 
             {/* 이미지 */}
             <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                 이미지
               </label>
               <div className="flex gap-2 mb-3">
@@ -209,7 +209,7 @@ function SpotFormModal({ isOpen, onClose, editTarget, isPending, onSubmit }) {
             {/* 태그 + 크기 */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                   태그
                 </label>
                 <select
@@ -223,7 +223,7 @@ function SpotFormModal({ isOpen, onClose, editTarget, isPending, onSubmit }) {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                   카드 크기
                 </label>
                 <select
@@ -241,7 +241,7 @@ function SpotFormModal({ isOpen, onClose, editTarget, isPending, onSubmit }) {
             {/* 정렬 순서 + 위치 */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                   정렬 순서
                 </label>
                 <input
@@ -253,7 +253,7 @@ function SpotFormModal({ isOpen, onClose, editTarget, isPending, onSubmit }) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                   위치
                 </label>
                 <input
@@ -363,14 +363,13 @@ export default function AdminSpots() {
         animate={{ opacity: 1, y: 0 }}
         className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg shadow-sky-100 border border-sky-50 p-4 flex items-center justify-between"
       >
-        <p className="text-sm text-slate-500 font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+        <p className="text-sm text-slate-500 font-medium font-pretendard">
           총 <span className="font-bold text-sky-600">{list.length}</span>개 명소
         </p>
         <button
           type="button"
           onClick={openAddModal}
-          className="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-emerald-400 to-teal-400 text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
+          className="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-emerald-400 to-teal-400 text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 font-pretendard"
         >
           <Plus className="w-4 h-4" />
           명소 추가
@@ -430,7 +429,7 @@ export default function AdminSpots() {
             <div className="p-4">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <h4 className="font-bold text-slate-800 text-sm truncate" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <h4 className="font-bold text-slate-800 text-sm truncate font-pretendard">
                     {item.spotTitle}
                   </h4>
                   {item.spotDesc && (

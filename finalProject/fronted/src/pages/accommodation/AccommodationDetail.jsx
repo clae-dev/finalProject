@@ -219,7 +219,7 @@ export default function AccommodationDetail() {
   const prevImage = () => setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
 
   return (
-    <div className="min-h-screen bg-[#f8fafb]" style={{ fontFamily: "'Pretendard', 'Noto Sans KR', sans-serif" }}>
+    <div className="min-h-screen bg-[#f8fafb] font-pretendard">
       <Header />
 
       <div className="pt-24 max-w-6xl mx-auto px-5 py-8">
@@ -258,7 +258,7 @@ export default function AccommodationDetail() {
                   {accommodation.region}
                 </span>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg" style={{ fontFamily: "'GmarketSans', 'Pretendard', sans-serif" }}>{accommodation.name}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg font-gmarket">{accommodation.name}</h1>
             </div>
 
             {/* 이미지 네비게이션 */}
@@ -324,7 +324,7 @@ export default function AccommodationDetail() {
 
             {/* 위치 & 연락처 */}
             <div className="bg-white rounded-xl p-6 border border-slate-100">
-              <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2 font-pretendard">
                 <MapPin className="w-[18px] h-[18px] text-sky-500" />
                 위치 & 연락처
               </h2>
@@ -374,7 +374,7 @@ export default function AccommodationDetail() {
             {/* 편의시설 */}
             {facilities.length > 0 && (
               <div className="bg-white rounded-xl p-6 border border-slate-100">
-                <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2 font-pretendard">
                   <Sparkles className="w-[18px] h-[18px] text-emerald-500" />
                   편의시설 & 서비스
                 </h2>
@@ -396,7 +396,7 @@ export default function AccommodationDetail() {
             {/* 가격 정보 */}
             {priceDisplay && (
               <div className="bg-white rounded-xl p-6 border border-slate-100">
-                <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2 font-pretendard">
                   <Banknote className="w-[18px] h-[18px] text-amber-500" />
                   객실 가격 안내
                 </h2>
@@ -424,7 +424,7 @@ export default function AccommodationDetail() {
             {/* 숙소 소개 */}
             {accommodation.recommendationReason && (
               <div className="bg-white rounded-xl p-6 border border-slate-100">
-                <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <h2 className="text-[17px] font-bold text-slate-800 mb-4 flex items-center gap-2 font-pretendard">
                   <Compass className="w-[18px] h-[18px] text-rose-400" />
                   숙소 소개
                 </h2>
@@ -627,7 +627,7 @@ function AccommodationReviewSection({ accommodationNo, user, navigate }) {
   return (
     <div className="bg-white rounded-xl p-6 border border-slate-100">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-[17px] font-bold text-slate-800 flex items-center gap-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+        <h2 className="text-[17px] font-bold text-slate-800 flex items-center gap-2 font-pretendard">
           <Star className="w-[18px] h-[18px] text-amber-400" />
           숙소 후기
           {totalCount > 0 && (

@@ -86,23 +86,20 @@ export default function AdminFaq() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="질문으로 검색"
-            className="w-full px-4 py-2.5 pr-10 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="w-full px-4 py-2.5 pr-10 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
           />
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         </div>
         <button
           type="submit"
-          className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
+          className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 font-pretendard"
         >
           검색
         </button>
         <button
           type="button"
           onClick={handleCreate}
-          className="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-emerald-400 to-teal-400 text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
+          className="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-emerald-400 to-teal-400 text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 font-pretendard"
         >
           <Plus className="w-4 h-4" />
           FAQ 등록
@@ -257,8 +254,7 @@ function FaqModal({ categories, editingFaq, onClose, onSubmit, isPending }) {
       >
         <div className="flex items-center justify-between mb-6">
           <h2
-            className="text-xl font-black text-slate-800"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-xl font-black text-slate-800 font-pretendard"
           >
             {editingFaq ? 'FAQ 수정' : 'FAQ 등록'}
           </h2>
@@ -269,14 +265,13 @@ function FaqModal({ categories, editingFaq, onClose, onSubmit, isPending }) {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
               카테고리
             </label>
             <select
               value={categoryNo}
               onChange={(e) => setCategoryNo(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
             >
               {categories.map((cat) => (
                 <option key={cat.categoryNo} value={cat.categoryNo}>
@@ -287,7 +282,7 @@ function FaqModal({ categories, editingFaq, onClose, onSubmit, isPending }) {
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
               질문
             </label>
             <input
@@ -295,14 +290,13 @@ function FaqModal({ categories, editingFaq, onClose, onSubmit, isPending }) {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               required
-              className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
               placeholder="질문을 입력하세요"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
               답변
             </label>
             <textarea
@@ -310,14 +304,13 @@ function FaqModal({ categories, editingFaq, onClose, onSubmit, isPending }) {
               onChange={(e) => setAnswer(e.target.value)}
               required
               rows={5}
-              className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none font-pretendard"
               placeholder="답변을 입력하세요"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
               표시 순서
             </label>
             <input
@@ -325,8 +318,7 @@ function FaqModal({ categories, editingFaq, onClose, onSubmit, isPending }) {
               value={displayOrder}
               onChange={(e) => setDisplayOrder(e.target.value)}
               min={0}
-              className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
             />
           </div>
 
@@ -334,16 +326,14 @@ function FaqModal({ categories, editingFaq, onClose, onSubmit, isPending }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-6 py-2.5 rounded-full text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="px-6 py-2.5 rounded-full text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors font-pretendard"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="px-6 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="px-6 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 font-pretendard"
             >
               {isPending ? '처리중...' : editingFaq ? '수정' : '등록'}
             </button>

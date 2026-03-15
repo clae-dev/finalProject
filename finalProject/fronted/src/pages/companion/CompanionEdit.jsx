@@ -263,20 +263,18 @@ export default function CompanionEdit() {
         <div className="relative h-full flex flex-col items-center justify-center text-white px-5">
           <motion.p initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5 font-pretendard"
           >Jeju Companion</motion.p>
           <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.5, type: 'spring' }}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg shadow-cyan-500/10"
           >
             <Users className="w-4 h-4 text-cyan-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>동행 모집글 수정</span>
+            <span className="font-pretendard">동행 모집글 수정</span>
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg font-gmarket"
           >
             <span className="text-white">함께라서 더 특별한 </span>
             <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-teal-300 bg-clip-text text-transparent">제주</span>
