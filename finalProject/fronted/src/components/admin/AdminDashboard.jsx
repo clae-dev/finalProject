@@ -41,24 +41,22 @@ function CountUp({ end }) {
   const [count, setCount] = React.useState(0);
   React.useEffect(() => {
     if (!end) return;
-    let start = 0;
     const duration = 1200;
-    const step = Math.max(1, Math.floor(end / (duration / 16)));
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= end) {
-        setCount(end);
-        clearInterval(timer);
-      } else {
-        setCount(start);
-      }
-    }, 16);
-    return () => clearInterval(timer);
+    const startTime = performance.now();
+    let rafId;
+    const animate = (now) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(eased * end));
+      if (progress < 1) rafId = requestAnimationFrame(animate);
+    };
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
   }, [end]);
   return <>{count.toLocaleString()}</>;
 }
 
-export default function AdminDashboard() {
+function AdminDashboard() {
   const { data, isLoading } = useDashboard();
 
   if (isLoading) {
@@ -174,3 +172,5 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
+export default React.memo(AdminDashboard);
