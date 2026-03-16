@@ -226,19 +226,19 @@ function AccommodationsSection() {
 
       {/* 구름 */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <Cloud className="absolute top-3 left-[5%] w-32 md:w-40 opacity-70" delay={0} direction={1} />
-        <Cloud className="absolute top-8 right-[10%] w-24 md:w-32 opacity-50" delay={3} direction={-1} />
-        <Cloud className="absolute top-1 left-[50%] w-20 md:w-24 opacity-40" delay={6} direction={1} />
+        <Cloud className="absolute top-3 left-[5%] w-32 md:w-40 opacity-70" delay={0} direction={1} isInView={isInView} />
+        <Cloud className="absolute top-8 right-[10%] w-24 md:w-32 opacity-50" delay={3} direction={-1} isInView={isInView} />
+        <Cloud className="absolute top-1 left-[50%] w-20 md:w-24 opacity-40" delay={6} direction={1} isInView={isInView} />
       </div>
 
       {/* 블러 장식 */}
       <motion.div className="absolute top-16 left-[8%] w-40 h-40 bg-amber-200/30 rounded-full blur-3xl"
-        animate={{ y: [0, -12, 0], opacity: [0.2, 0.35, 0.2] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { y: [0, -12, 0], opacity: [0.2, 0.35, 0.2] } : { y: 0, opacity: 0.2 }}
+        transition={{ duration: 7, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
       <motion.div className="absolute bottom-40 right-[8%] w-48 h-48 bg-green-200/25 rounded-full blur-3xl"
-        animate={{ y: [0, 12, 0], opacity: [0.15, 0.3, 0.15] }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { y: [0, 12, 0], opacity: [0.15, 0.3, 0.15] } : { y: 0, opacity: 0.15 }}
+        transition={{ duration: 9, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
 
       <div className="max-w-6xl mx-auto px-5 relative z-10">
@@ -413,7 +413,7 @@ function AccommodationsSection() {
         <svg className="absolute bottom-0 left-0 w-full h-full" viewBox="0 0 1200 140" preserveAspectRatio="xMidYMax meet">
           {/* 큰 나무 왼쪽 */}
           <g transform="translate(30, 40)" opacity="0.6">
-            <BigTree />
+            <BigTree isInView={isInView} />
           </g>
 
           {/* 울타리 */}
@@ -423,32 +423,32 @@ function AccommodationsSection() {
 
           {/* 초가집 */}
           <g transform="translate(220, 55)" opacity="0.65">
-            <Cottage />
+            <Cottage isInView={isInView} />
           </g>
 
           {/* 꽃밭 */}
           <g transform="translate(310, 108)" opacity="0.6">
-            <Flowers count={5} />
+            <Flowers count={5} isInView={isInView} />
           </g>
 
           {/* 나비 1 */}
           <g transform="translate(340, 80)" opacity="0.6">
-            <Butterfly delay={0} />
+            <Butterfly delay={0} isInView={isInView} />
           </g>
 
           {/* 산책하는 가족 */}
           <g transform="translate(460, 72)" opacity="0.75">
-            <FamilyWalk />
+            <FamilyWalk isInView={isInView} />
           </g>
 
           {/* 꽃밭 2 */}
           <g transform="translate(560, 110)" opacity="0.55">
-            <Flowers count={4} />
+            <Flowers count={4} isInView={isInView} />
           </g>
 
           {/* 나비 2 */}
           <g transform="translate(620, 75)" opacity="0.5">
-            <Butterfly delay={2} />
+            <Butterfly delay={2} isInView={isInView} />
           </g>
 
           {/* 울타리 2 */}
@@ -458,27 +458,27 @@ function AccommodationsSection() {
 
           {/* 큰 나무 중간 */}
           <g transform="translate(810, 42)" opacity="0.55">
-            <BigTree flip />
+            <BigTree flip isInView={isInView} />
           </g>
 
           {/* 초가집 2 */}
           <g transform="translate(890, 58)" opacity="0.6">
-            <Cottage />
+            <Cottage isInView={isInView} />
           </g>
 
           {/* 꽃밭 3 */}
           <g transform="translate(980, 112)" opacity="0.5">
-            <Flowers count={4} />
+            <Flowers count={4} isInView={isInView} />
           </g>
 
           {/* 큰 나무 오른쪽 */}
           <g transform="translate(1080, 38)" opacity="0.5">
-            <BigTree />
+            <BigTree isInView={isInView} />
           </g>
 
           {/* 나비 3 */}
           <g transform="translate(1020, 70)" opacity="0.45">
-            <Butterfly delay={4} />
+            <Butterfly delay={4} isInView={isInView} />
           </g>
 
           {/* 잔디 포인트 */}
