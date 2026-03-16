@@ -63,48 +63,60 @@ export default function Accommodations() {
   const regionParam = filters.region === 'all' ? null :
                       filters.region === 'jeju_city' ? '제주시' : '서귀포시';
 
-  const { data, isLoading, isError, error, refetch } = useAccommodations(1, 200, regionParam);
+  // 클라이언트 필터(검색어·타입·가격대) 사용 여부
+  const hasClientFilters = !!searchTerm || filters.type !== 'all' || filters.priceRange !== 'all';
+
+  // 클라이언트 필터 없을 때 → 서버 페이지네이션 (size=9)
+  // 클라이언트 필터 있을 때 → 전체 로드 후 프론트 필터링 (size=200)
+  const serverPage = hasClientFilters ? 1 : currentPage;
+  const serverSize = hasClientFilters ? 200 : pageSize;
+
+  const { data, isLoading, isError, error, refetch } = useAccommodations(serverPage, serverSize, regionParam);
 
   const accommodations = data?.success ? (data.list || []) : [];
-  const totalCount = data?.success ? (data.totalCount || 0) : 0;
+  const serverTotalCount = data?.success ? (data.totalCount || 0) : 0;
   const errorMessage = isError ? '서버와 연결할 수 없습니다.' : (data && !data.success ? (data.message || '숙소 목록을 불러오는데 실패했습니다.') : null);
 
-  // 지역 필터 변경 시 페이지 초기화
+  // 필터 변경 시 페이지 초기화
   const handleRegionChange = (value) => {
     setFilters({...filters, region: value});
     setCurrentPage(1);
   };
 
-  // 프론트엔드 필터링 (검색어, 가격대)
-  const filteredAccommodations = useMemo(() => accommodations.filter(acc => {
+  // 프론트엔드 필터링 (검색어, 타입, 가격대) — 클라이언트 필터 있을 때만 실행
+  const filteredAccommodations = useMemo(() => {
+    if (!hasClientFilters) return accommodations;
     const searchLower = searchTerm.toLowerCase();
-    const matchesSearch = !searchTerm ||
-      acc.name?.toLowerCase().includes(searchLower) ||
-      acc.address?.toLowerCase().includes(searchLower) ||
-      acc.recommendationReason?.toLowerCase().includes(searchLower);
+    return accommodations.filter(acc => {
+      const matchesSearch = !searchTerm ||
+        acc.name?.toLowerCase().includes(searchLower) ||
+        acc.address?.toLowerCase().includes(searchLower) ||
+        acc.recommendationReason?.toLowerCase().includes(searchLower);
 
-    const matchesType = filters.type === 'all' || acc.accommodationType === filters.type;
+      const matchesType = filters.type === 'all' || acc.accommodationType === filters.type;
 
-    let matchesPriceRange = true;
-    if (filters.priceRange !== 'all' && acc.priceMin) {
-      const price = acc.priceMin;
-      matchesPriceRange =
-        filters.priceRange === '10k-30k' ? price >= 10000 && price < 30000 :
-        filters.priceRange === '30k-50k' ? price >= 30000 && price < 50000 :
-        filters.priceRange === '50k-100k' ? price >= 50000 && price < 100000 :
-        filters.priceRange === '100k+' ? price >= 100000 : true;
-    }
+      let matchesPriceRange = true;
+      if (filters.priceRange !== 'all' && acc.priceMin) {
+        const price = acc.priceMin;
+        matchesPriceRange =
+          filters.priceRange === '10k-30k' ? price >= 10000 && price < 30000 :
+          filters.priceRange === '30k-50k' ? price >= 30000 && price < 50000 :
+          filters.priceRange === '50k-100k' ? price >= 50000 && price < 100000 :
+          filters.priceRange === '100k+' ? price >= 100000 : true;
+      }
 
-    return matchesSearch && matchesType && matchesPriceRange && !!acc.thumbnailUrl;
-  }), [accommodations, searchTerm, filters.type, filters.priceRange]);
+      return matchesSearch && matchesType && matchesPriceRange && !!acc.thumbnailUrl;
+    });
+  }, [accommodations, hasClientFilters, searchTerm, filters.type, filters.priceRange]);
 
-  // 프론트엔드 페이지네이션
-  const totalFilteredCount = filteredAccommodations.length;
+  // 페이지네이션
+  // 서버 페이지네이션 사용 시: totalCount는 서버 제공값, paginatedAccommodations는 그대로
+  // 클라이언트 필터 사용 시: totalCount는 필터된 결과 수, slice로 페이지 분할
+  const totalFilteredCount = hasClientFilters ? filteredAccommodations.length : serverTotalCount;
   const totalPages = Math.ceil(totalFilteredCount / pageSize);
-  const paginatedAccommodations = filteredAccommodations.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
+  const paginatedAccommodations = hasClientFilters
+    ? filteredAccommodations.slice((currentPage - 1) * pageSize, currentPage * pageSize)
+    : filteredAccommodations;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-cyan-50">

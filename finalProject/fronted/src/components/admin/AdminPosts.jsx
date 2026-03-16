@@ -30,7 +30,7 @@ const SUB_TABS = [
   { key: 'accomReviews', label: '숙소 후기' },
 ];
 
-export default function AdminPosts() {
+function AdminPosts() {
   const [subTab, setSubTab] = useState('companions');
 
   return (
@@ -491,3 +491,5 @@ function Pagination({ page, setPage, totalPages }) {
     </div>
   );
 }
+
+export default React.memo(AdminPosts);

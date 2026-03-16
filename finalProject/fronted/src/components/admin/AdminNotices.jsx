@@ -8,7 +8,7 @@ import {
   useDeleteNotice,
 } from '../../api/notice/useNotice';
 
-export default function AdminNotices() {
+function AdminNotices() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -311,3 +311,5 @@ function NoticeModal({ editingNotice, onClose, onSubmit, isPending }) {
     </motion.div>
   );
 }
+
+export default React.memo(AdminNotices);

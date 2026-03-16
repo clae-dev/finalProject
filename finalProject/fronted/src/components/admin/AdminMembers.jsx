@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { useAdminMembers, useUpdateMemberStatus } from '../../api/admin/useAdmin';
 
-export default function AdminMembers() {
+function AdminMembers() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -212,3 +212,5 @@ export default function AdminMembers() {
     </div>
   );
 }
+
+export default React.memo(AdminMembers);
