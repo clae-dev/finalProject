@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { CalendarDays, MapPin, ChevronLeft, ChevronRight, Sparkles, ArrowRight, Loader2, ImageIcon } from 'lucide-react';
 import { useEventList, useLeisureList } from '../../api/activity/useActivity';
 
@@ -13,7 +13,7 @@ const formatDate = (dateStr) => {
   return `${s.slice(0, 4)}.${s.slice(4, 6)}.${s.slice(6, 8)}`;
 };
 
-function EventCard({ item, type, index }) {
+const EventCard = React.memo(function EventCard({ item, type, index }) {
   const isEvent = type === 'event';
 
   return (
@@ -49,7 +49,7 @@ function EventCard({ item, type, index }) {
                   ? 'bg-gradient-to-r from-orange-500/90 to-amber-500/90'
                   : 'bg-gradient-to-r from-emerald-500/90 to-teal-500/90'
               }`}
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="font-pretendard"
             >
               {isEvent ? '축제' : '액티비티'}
             </span>
@@ -61,8 +61,7 @@ function EventCard({ item, type, index }) {
               <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-full">
                 <CalendarDays className="w-3 h-3 text-amber-300" />
                 <span
-                  className="text-[11px] text-white/90 font-medium"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-[11px] text-white/90 font-medium font-pretendard"
                 >
                   {formatDate(item.startDate)} ~ {formatDate(item.endDate)}
                 </span>
@@ -74,8 +73,7 @@ function EventCard({ item, type, index }) {
         {/* 내용 */}
         <div className="p-5">
           <h3
-            className="font-bold text-slate-800 text-[15px] leading-snug mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors duration-300"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="font-bold text-slate-800 text-[15px] leading-snug mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors duration-300 font-pretendard"
           >
             {item.title}
           </h3>
@@ -84,8 +82,7 @@ function EventCard({ item, type, index }) {
             <div className="flex items-start gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-slate-300 flex-shrink-0 mt-0.5" />
               <p
-                className="text-[13px] text-slate-400 line-clamp-1"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="text-[13px] text-slate-400 line-clamp-1 font-pretendard"
               >
                 {item.addr}
               </p>
@@ -95,15 +92,17 @@ function EventCard({ item, type, index }) {
       </div>
     </motion.div>
   );
-}
+});
 
-export default function CTASection() {
+function CTASection() {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
   const [scrollX, setScrollX] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const autoScrollRef = useRef(null);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { margin: '100px' });
 
   const { data: eventData, isLoading: eventLoading } = useEventList(1, 12);
   const { data: leisureData, isLoading: leisureLoading } = useLeisureList(1, 12);
@@ -112,12 +111,15 @@ export default function CTASection() {
   const leisureList = leisureData?.success ? (leisureData.list || []) : [];
 
   // 이벤트와 액티비티를 번갈아 섞기
-  const allItems = [];
-  const maxLen = Math.max(eventList.length, leisureList.length);
-  for (let i = 0; i < maxLen; i++) {
-    if (i < eventList.length) allItems.push({ ...eventList[i], _type: 'event' });
-    if (i < leisureList.length) allItems.push({ ...leisureList[i], _type: 'leisure' });
-  }
+  const allItems = useMemo(() => {
+    const items = [];
+    const maxLen = Math.max(eventList.length, leisureList.length);
+    for (let i = 0; i < maxLen; i++) {
+      if (i < eventList.length) items.push({ ...eventList[i], _type: 'event' });
+      if (i < leisureList.length) items.push({ ...leisureList[i], _type: 'leisure' });
+    }
+    return items;
+  }, [eventList, leisureList]);
 
   const isLoading = eventLoading && leisureLoading;
 
@@ -176,7 +178,7 @@ export default function CTASection() {
   const canScrollRight = scrollX < maxScroll - 10;
 
   return (
-    <section className="relative overflow-hidden">
+    <section ref={sectionRef} className="relative overflow-hidden">
       {/* ── 히어로 배너 ── */}
       <div className="relative h-[340px] md:h-[380px] overflow-hidden">
         {/* 배경 이미지 */}
@@ -214,15 +216,11 @@ export default function CTASection() {
             key={i}
             className={`absolute ${item.size} pointer-events-none select-none`}
             style={{ left: item.left, top: item.top }}
-            animate={{
-              y: [0, -12, 0],
-              rotate: [0, 8, -8, 0],
-              scale: [1, 1.1, 1],
-            }}
+            animate={isInView ? { y: [0, -12, 0], rotate: [0, 8, -8, 0], scale: [1, 1.1, 1] } : { y: 0, rotate: 0, scale: 1 }}
             transition={{
               delay: item.delay,
               duration: item.dur,
-              repeat: Infinity,
+              repeat: isInView ? Infinity : 0,
               ease: 'easeInOut',
             }}
           >
@@ -236,14 +234,10 @@ export default function CTASection() {
             key={`p-${i}`}
             className="absolute w-1.5 h-1.5 bg-yellow-300 rounded-full"
             style={{ left: `${15 + i * 15}%`, top: `${20 + (i % 3) * 25}%` }}
-            animate={{
-              opacity: [0, 1, 0],
-              scale: [0, 1.5, 0],
-              y: [0, -30, -60],
-            }}
+            animate={isInView ? { opacity: [0, 1, 0], scale: [0, 1.5, 0], y: [0, -30, -60] } : { opacity: 0, scale: 0, y: 0 }}
             transition={{
               duration: 2.5 + i * 0.3,
-              repeat: Infinity,
+              repeat: isInView ? Infinity : 0,
               delay: i * 0.4,
               ease: 'easeOut',
             }}
@@ -267,22 +261,19 @@ export default function CTASection() {
             >
               <Sparkles className="w-4 h-4 text-yellow-300" />
               <span
-                className="text-xs font-bold text-white tracking-wider"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="text-xs font-bold text-white tracking-wider font-pretendard"
               >
                 FESTIVAL & ACTIVITY
               </span>
             </motion.div>
 
             <h2
-              className="text-4xl md:text-5xl font-black text-white mb-3 drop-shadow-lg"
-              style={{ fontFamily: "'GmarketSans', sans-serif" }}
+              className="text-4xl md:text-5xl font-black text-white mb-3 drop-shadow-lg font-gmarket"
             >
               제주의 즐길거리
             </h2>
             <p
-              className="text-lg md:text-xl text-white/85 font-medium drop-shadow max-w-lg"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-lg md:text-xl text-white/85 font-medium drop-shadow max-w-lg font-pretendard"
             >
               지금 제주에서 펼쳐지는 축제와 액티비티를 만나보세요
             </p>
@@ -332,8 +323,7 @@ export default function CTASection() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => navigate('/activities')}
-              className="hidden md:inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-orange-200/50 hover:shadow-xl hover:shadow-orange-300/50 transition-all duration-300"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="hidden md:inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-orange-200/50 hover:shadow-xl hover:shadow-orange-300/50 transition-all duration-300 font-pretendard"
             >
               전체보기
               <ArrowRight className="w-4 h-4" />
@@ -354,8 +344,7 @@ export default function CTASection() {
           <div className="text-center py-20 px-6">
             <CalendarDays className="w-14 h-14 text-slate-200 mx-auto mb-4" />
             <p
-              className="text-slate-400 text-lg font-medium"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-slate-400 text-lg font-medium font-pretendard"
             >
               등록된 축제 및 액티비티가 없습니다
             </p>
@@ -415,8 +404,7 @@ export default function CTASection() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => navigate('/activities')}
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-orange-200/50"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="inline-flex items-center gap-2 px-8 py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-orange-200/50 font-pretendard"
             >
               전체보기
               <ArrowRight className="w-4 h-4" />
@@ -430,3 +418,5 @@ export default function CTASection() {
     </section>
   );
 }
+
+export default React.memo(CTASection);

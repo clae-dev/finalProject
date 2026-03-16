@@ -61,8 +61,7 @@ export default function OlleTrails() {
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-white/60 text-xs tracking-[0.35em] uppercase mb-4"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-white/60 text-xs tracking-[0.35em] uppercase mb-4 font-pretendard"
           >
             JEJU OLLE TRAIL
           </motion.p>
@@ -70,8 +69,7 @@ export default function OlleTrails() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-4xl md:text-6xl font-black text-white mb-3 drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-4xl md:text-6xl font-black text-white mb-3 drop-shadow-lg font-gmarket"
           >
             제주 올레길
           </motion.h1>
@@ -79,8 +77,7 @@ export default function OlleTrails() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="text-white/80 text-sm mb-7"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-white/80 text-sm mb-7 font-pretendard"
           >
             제주 해안과 오름을 잇는 도보 여행의 정수
           </motion.p>
@@ -92,13 +89,13 @@ export default function OlleTrails() {
           >
             <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-2xl border border-white/25">
               <Footprints className="w-4 h-4 text-emerald-300" />
-              <span className="text-white text-sm font-bold" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <span className="text-white text-sm font-bold font-pretendard">
                 총 {olleTrails.length}개 코스
               </span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-sm rounded-2xl border border-white/25">
               <Route className="w-4 h-4 text-teal-300" />
-              <span className="text-white text-sm font-bold" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <span className="text-white text-sm font-bold font-pretendard">
                 총 {totalDistance} km
               </span>
             </div>
@@ -118,14 +115,14 @@ export default function OlleTrails() {
         <div className="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center gap-x-3 gap-y-2">
           <div className="flex items-center gap-1.5 text-slate-400 mr-1">
             <SlidersHorizontal className="w-3.5 h-3.5" />
-            <span className="text-xs font-semibold" style={{ fontFamily: "'Pretendard', sans-serif" }}>난이도</span>
+            <span className="text-xs font-semibold font-pretendard">난이도</span>
           </div>
 
           {['전체', '하', '중', '상'].map((d) => (
             <button
               key={d}
               onClick={() => setDifficulty(d)}
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="font-pretendard"
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all ${
                 difficulty === d
                   ? d === '전체' ? 'bg-slate-700 text-white border-slate-700'
@@ -140,13 +137,13 @@ export default function OlleTrails() {
           ))}
 
           <div className="w-px h-4 bg-slate-200 hidden sm:block mx-1" />
-          <span className="text-xs font-semibold text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>지역</span>
+          <span className="text-xs font-semibold text-slate-400 font-pretendard">지역</span>
 
           {['전체', '제주시', '서귀포시'].map((r) => (
             <button
               key={r}
               onClick={() => setRegion(r)}
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="font-pretendard"
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold border transition-all ${
                 region === r
                   ? 'bg-teal-500 text-white border-teal-500'
@@ -159,8 +156,7 @@ export default function OlleTrails() {
 
           <div className="ml-auto">
             <span
-              className="text-xs font-bold text-teal-600 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-full"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-xs font-bold text-teal-600 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-full font-pretendard"
             >
               {filtered.length}개 코스
             </span>
@@ -173,7 +169,7 @@ export default function OlleTrails() {
         {filtered.length === 0 ? (
           <div className="text-center py-20 text-slate-400">
             <Mountain className="w-10 h-10 mx-auto mb-3 opacity-40" />
-            <p className="font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <p className="font-medium font-pretendard">
               해당 조건의 코스가 없습니다
             </p>
           </div>
@@ -204,14 +200,12 @@ export default function OlleTrails() {
 
                     {/* 상단 행 — 지역 + 난이도 */}
                     <div className="flex items-center justify-between mb-4 relative">
-                      <span className="flex items-center gap-1 text-[11px] text-white/85 font-semibold bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      <span className="flex items-center gap-1 text-[11px] text-white/85 font-semibold bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20 font-pretendard"
                       >
                         <MapPin className="w-3 h-3" />
                         {trail.region}
                       </span>
-                      <span className="text-[11px] text-white/90 font-bold bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      <span className="text-[11px] text-white/90 font-bold bg-white/20 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20 font-pretendard"
                       >
                         난이도 {trail.difficulty}
                       </span>
@@ -219,12 +213,11 @@ export default function OlleTrails() {
 
                     {/* 코스명 + 부제 */}
                     <h3
-                      className="text-xl font-black text-white mb-1 relative drop-shadow-sm"
-                      style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                      className="text-xl font-black text-white mb-1 relative drop-shadow-sm font-gmarket"
                     >
                       {trail.name}
                     </h3>
-                    <p className="text-white/75 text-xs relative truncate" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                    <p className="text-white/75 text-xs relative truncate font-pretendard">
                       {trail.subtitle}
                     </p>
                   </div>
@@ -236,7 +229,7 @@ export default function OlleTrails() {
                         <div className="w-7 h-7 rounded-lg bg-sky-50 flex items-center justify-center">
                           <Route className="w-3.5 h-3.5 text-sky-500" />
                         </div>
-                        <p className="text-sm font-black text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                        <p className="text-sm font-black text-slate-800 font-pretendard">
                           {trail.distance}
                         </p>
                         <p className="text-[10px] text-slate-400 font-medium">km</p>
@@ -245,7 +238,7 @@ export default function OlleTrails() {
                         <div className="w-7 h-7 rounded-lg bg-violet-50 flex items-center justify-center">
                           <Clock className="w-3.5 h-3.5 text-violet-500" />
                         </div>
-                        <p className="text-[11px] font-bold text-slate-700 text-center leading-tight" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                        <p className="text-[11px] font-bold text-slate-700 text-center leading-tight font-pretendard">
                           {trail.duration}
                         </p>
                         <p className="text-[10px] text-slate-400 font-medium">소요</p>
@@ -254,7 +247,7 @@ export default function OlleTrails() {
                         <div className="w-7 h-7 rounded-lg bg-teal-50 flex items-center justify-center">
                           <Footprints className="w-3.5 h-3.5 text-teal-500" />
                         </div>
-                        <p className="text-[11px] font-bold text-slate-700 text-center leading-tight" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                        <p className="text-[11px] font-bold text-slate-700 text-center leading-tight font-pretendard">
                           {trail.terrain}
                         </p>
                         <p className="text-[10px] text-slate-400 font-medium">지형</p>
@@ -264,7 +257,7 @@ export default function OlleTrails() {
 
                   {/* 카드 푸터 — 출발→도착 + 화살표 버튼 */}
                   <div className="px-5 pb-4 flex items-center justify-between gap-2">
-                    <p className="text-[11px] text-slate-400 font-medium truncate" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                    <p className="text-[11px] text-slate-400 font-medium truncate font-pretendard">
                       {firstStamp}
                       <span className="mx-1 text-slate-300">→</span>
                       {lastStamp}

@@ -51,8 +51,7 @@ export default function Freeboards() {
             initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-white/60 text-xs tracking-[0.35em] uppercase mb-4"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-white/60 text-xs tracking-[0.35em] uppercase mb-4 font-pretendard"
           >
             Free Board
           </motion.p>
@@ -60,8 +59,7 @@ export default function Freeboards() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-3xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-3xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg font-gmarket"
           >
             <span className="text-white">자유롭게 나누는 </span>
             <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-teal-300 bg-clip-text text-transparent">
@@ -72,8 +70,7 @@ export default function Freeboards() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="text-sm text-white/75 text-center max-w-xs leading-relaxed"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-sm text-white/75 text-center max-w-xs leading-relaxed font-pretendard"
           >
             제주 혼행의 이야기를 자유롭게 나눠보세요
           </motion.p>
@@ -105,8 +102,7 @@ export default function Freeboards() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="제목이나 내용으로 검색"
-              className="flex-1 text-sm text-slate-700 placeholder:text-slate-400 bg-transparent focus:outline-none"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="flex-1 text-sm text-slate-700 placeholder:text-slate-400 bg-transparent focus:outline-none font-pretendard"
             />
             {searchInput && (
               <button
@@ -119,8 +115,7 @@ export default function Freeboards() {
             )}
             <button
               type="submit"
-              className="px-4 py-1.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-xs font-bold rounded-xl shadow-sm hover:shadow-md transition-all"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="px-4 py-1.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-xs font-bold rounded-xl shadow-sm hover:shadow-md transition-all font-pretendard"
             >
               검색
             </button>
@@ -131,8 +126,7 @@ export default function Freeboards() {
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => navigate('/freeboard/write')}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-sm font-bold rounded-2xl shadow-md shadow-sky-200/50 hover:shadow-lg transition-all whitespace-nowrap"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-sm font-bold rounded-2xl shadow-md shadow-sky-200/50 hover:shadow-lg transition-all whitespace-nowrap font-pretendard"
             >
               <PenLine className="w-4 h-4" />
               글쓰기
@@ -146,19 +140,18 @@ export default function Freeboards() {
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
               <Loader2 className="w-9 h-9 text-sky-400" />
             </motion.div>
-            <p className="text-sm text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>불러오는 중...</p>
+            <p className="text-sm text-slate-400 font-pretendard">불러오는 중...</p>
           </div>
         ) : list.length === 0 ? (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-24">
             <MessageSquareText className="w-14 h-14 text-slate-200 mx-auto mb-4" />
-            <p className="text-slate-400 font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <p className="text-slate-400 font-medium font-pretendard">
               {search ? `"${search}"에 대한 검색 결과가 없습니다.` : '아직 게시글이 없습니다.'}
             </p>
             {search && (
               <button
                 onClick={() => { setSearch(''); setSearchInput(''); setPage(1); }}
-                className="mt-4 text-sm text-sky-500 font-semibold hover:underline"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="mt-4 text-sm text-sky-500 font-semibold hover:underline font-pretendard"
               >
                 전체 글 보기
               </button>
@@ -175,18 +168,17 @@ export default function Freeboards() {
             <div className="flex items-center justify-between px-5 py-3 bg-gradient-to-r from-sky-50 to-cyan-50 border-b border-sky-100">
               <div className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold">
                 <TrendingUp className="w-3.5 h-3.5 text-sky-400" />
-                <span style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <span className="font-pretendard">
                   총 <strong className="text-sky-600">{totalCount.toLocaleString()}</strong>개의 글
                 </span>
               </div>
-              <span className="text-xs text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <span className="text-xs text-slate-400 font-pretendard">
                 {page} / {totalPages} 페이지
               </span>
             </div>
 
             {/* 컬럼 헤더 */}
-            <div className="hidden sm:grid grid-cols-[52px_1fr_88px_100px] border-b border-slate-100 px-5 py-2.5 text-[11px] font-bold text-slate-400 tracking-wide uppercase"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <div className="hidden sm:grid grid-cols-[52px_1fr_88px_100px] border-b border-slate-100 px-5 py-2.5 text-[11px] font-bold text-slate-400 tracking-wide uppercase font-pretendard">
               <span className="text-center">번호</span>
               <span>제목</span>
               <span className="text-center">작성자</span>
@@ -229,7 +221,7 @@ export default function Freeboards() {
                         )}
                         <span
                           className={`text-[13.5px] font-semibold line-clamp-1 transition-colors ${isHot ? 'text-slate-800 group-hover:text-orange-600' : 'text-slate-700 group-hover:text-sky-600'}`}
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="font-pretendard"
                         >
                           {board.boardTitle}
                         </span>
@@ -239,7 +231,7 @@ export default function Freeboards() {
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 text-[11px] text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                      <div className="flex items-center gap-2 text-[11px] text-slate-400 font-pretendard">
                         <span className="font-medium text-slate-500">{board.memberNickname}</span>
                         <span className="text-slate-300">·</span>
                         <span>{board.createdAt}</span>
@@ -260,8 +252,7 @@ export default function Freeboards() {
                     {/* 작성자 (sm+) */}
                     <div className="hidden sm:block text-center">
                       <span
-                        className="text-xs text-slate-500 font-medium truncate block px-1"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="text-xs text-slate-500 font-medium truncate block px-1 font-pretendard"
                       >
                         {board.memberNickname}
                       </span>
@@ -316,7 +307,7 @@ export default function Freeboards() {
                         ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md shadow-sky-200/60'
                         : 'bg-white border border-sky-100 text-slate-500 hover:text-sky-600 hover:border-sky-200 shadow-sm'
                     }`}
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="font-pretendard"
                   >
                     {p}
                   </motion.button>

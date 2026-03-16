@@ -14,6 +14,7 @@ export const useNoticeList = (page = 1, size = 10, search = '') => {
   return useQuery({
     queryKey: ['notices', page, size, search],
     queryFn: () => getNoticeList(page, size, search),
+    staleTime: 1000 * 60 * 10,
   });
 };
 
@@ -23,6 +24,7 @@ export const useNoticeDetail = (boardNo: number | string | undefined) => {
     queryKey: ['notice', boardNo],
     queryFn: () => getNoticeDetail(boardNo!),
     enabled: !!boardNo,
+    staleTime: 1000 * 60 * 10,
   });
 };
 
@@ -31,6 +33,7 @@ export const useAdminNoticeList = (page = 1, size = 10, search = '') => {
   return useQuery({
     queryKey: ['admin', 'notices', page, size, search],
     queryFn: () => getAdminNoticeList(page, size, search),
+    staleTime: 1000 * 60 * 5,
   });
 };
 

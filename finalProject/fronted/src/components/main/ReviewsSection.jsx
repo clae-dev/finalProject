@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { useRecentReviews } from '../../api/review/useReview';
 import { Loader2 } from 'lucide-react';
 
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5?w=400';
 
-function StarRating({ rating }) {
+const StarRating = React.memo(function StarRating({ rating }) {
   return (
     <div className="flex gap-0.5">
       {[...Array(5)].map((_, i) => (
@@ -16,11 +16,13 @@ function StarRating({ rating }) {
       ))}
     </div>
   );
-}
+});
 
-export default function ReviewsSection() {
+function ReviewsSection() {
   const navigate = useNavigate();
   const [reviewSlide, setReviewSlide] = useState(0);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { margin: '100px' });
 
   const { data, isLoading } = useRecentReviews(9);
   const reviews = data?.success ? (data.list || []) : [];
@@ -30,20 +32,20 @@ export default function ReviewsSection() {
   const prevReview = () => setReviewSlide(prev => Math.max(prev - 1, 0));
 
   return (
-    <section className="relative py-24 bg-gradient-to-b from-sky-50 via-white to-sky-50/50 overflow-hidden">
+    <section ref={sectionRef} className="relative py-24 bg-gradient-to-b from-sky-50 via-white to-sky-50/50 overflow-hidden">
       {/* 상단 페이드 - AccommodationsSection에서 자연스럽게 녹아듦 */}
       <div className="absolute top-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-b from-[#bbf7d0]/30 via-[#e0f2fe]/40 to-transparent z-[1]" />
 
       {/* 배경 장식 */}
       <motion.div
         className="absolute top-16 right-[8%] w-48 h-48 bg-rose-100/40 rounded-full blur-3xl"
-        animate={{ y: [0, -15, 0], opacity: [0.3, 0.5, 0.3] }}
-        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { y: [0, -15, 0], opacity: [0.3, 0.5, 0.3] } : { y: 0, opacity: 0.3 }}
+        transition={{ duration: 8, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
       <motion.div
         className="absolute bottom-16 left-[8%] w-40 h-40 bg-amber-100/40 rounded-full blur-3xl"
-        animate={{ y: [0, 15, 0], opacity: [0.2, 0.4, 0.2] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { y: [0, 15, 0], opacity: [0.2, 0.4, 0.2] } : { y: 0, opacity: 0.2 }}
+        transition={{ duration: 7, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
 
       <div className="max-w-6xl mx-auto px-5 relative">
@@ -65,10 +67,10 @@ export default function ReviewsSection() {
             >
               <span>💬</span> REAL REVIEW
             </motion.span>
-            <h2 className="text-3xl md:text-5xl font-black text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-800 font-gmarket">
               혼행러들의 <span className="bg-gradient-to-r from-rose-500 to-pink-500 bg-clip-text text-transparent">솔직한 후기</span>
             </h2>
-            <p className="text-slate-400 mt-4 text-lg" style={{ fontFamily: "'Pretendard', sans-serif" }}>직접 다녀온 분들의 생생한 이야기</p>
+            <p className="text-slate-400 mt-4 text-lg font-pretendard">직접 다녀온 분들의 생생한 이야기</p>
           </div>
           {reviews.length > 3 && (
             <div className="flex gap-3">
@@ -201,8 +203,7 @@ export default function ReviewsSection() {
             whileHover={{ scale: 1.03, y: -2 }}
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate('/reviews')}
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-rose-500 font-bold rounded-full shadow-lg shadow-rose-100/40 hover:shadow-xl border border-rose-100/60 transition-all"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-rose-500 font-bold rounded-full shadow-lg shadow-rose-100/40 hover:shadow-xl border border-rose-100/60 transition-all font-pretendard"
           >
             후기 더보기
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
@@ -212,3 +213,5 @@ export default function ReviewsSection() {
     </section>
   );
 }
+
+export default React.memo(ReviewsSection);

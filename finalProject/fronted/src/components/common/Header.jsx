@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect } from 'react';
+import React, { useContext, useState, useRef, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Shield, ChevronDown, Plane, Hotel, CalendarDays, Users, MessageSquare, Star, HelpCircle, Megaphone, Footprints } from 'lucide-react';
 import logo from '@/assets/images/logo/혼디.webp';
@@ -63,7 +63,7 @@ function DropdownMenu({ item, isActive, isOpen, onOpen, onClose }) {
             ? 'text-sky-600'
             : 'text-slate-500 hover:text-white hover:bg-sky-400'
         }`}
-        style={{ fontFamily: "'Pretendard', sans-serif" }}
+        className="font-pretendard"
       >
         {item.name}
         <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
@@ -88,14 +88,12 @@ function DropdownMenu({ item, isActive, isOpen, onOpen, onClose }) {
               </div>
               <div>
                 <p
-                  className="text-sm font-semibold text-slate-700 group-hover:text-sky-600 transition-colors"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-sm font-semibold text-slate-700 group-hover:text-sky-600 transition-colors font-pretendard"
                 >
                   {child.name}
                 </p>
                 <p
-                  className="text-[11px] text-slate-400"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-[11px] text-slate-400 font-pretendard"
                 >
                   {child.desc}
                 </p>
@@ -108,12 +106,12 @@ function DropdownMenu({ item, isActive, isOpen, onOpen, onClose }) {
   );
 }
 
-export default function Header() {
+function Header() {
   const { user, handleLogout } = useContext(AuthContext);
   const location = useLocation();
   const [openDropdown, setOpenDropdown] = useState(null);
 
-  const isPathActive = (item) => {
+  const isPathActive = useCallback((item) => {
     if (item.type === 'link') {
       return item.path === '/' ? location.pathname === '/' : location.pathname.startsWith(item.path);
     }
@@ -121,7 +119,7 @@ export default function Header() {
       return item.children.some((child) => location.pathname.startsWith(child.path));
     }
     return false;
-  };
+  }, [location.pathname]);
 
   return (
     <>
@@ -134,14 +132,12 @@ export default function Header() {
                 <img src={logo} alt="혼디" className="h-14 group-hover:scale-105 transition-transform duration-300" />
                 <div className="flex flex-col leading-tight">
                   <span
-                    className="text-2xl font-black bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent tracking-wider"
-                    style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                    className="text-2xl font-black bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent tracking-wider font-gmarket"
                   >
                     HONDI
                   </span>
                   <span
-                    className="text-[11px] font-semibold text-slate-400 tracking-widest"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="text-[11px] font-semibold text-slate-400 tracking-widest font-pretendard"
                   >
                     혼디
                   </span>
@@ -175,7 +171,7 @@ export default function Header() {
                           ? 'text-sky-600'
                           : 'text-slate-500 hover:text-white hover:bg-sky-400'
                       }`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     >
                       {item.name}
                     </Link>
@@ -213,16 +209,14 @@ export default function Header() {
                         )}
                       </div>
                       <span
-                        className="text-sm text-slate-600 font-medium hover:text-sky-500 transition-colors"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="text-sm text-slate-600 font-medium hover:text-sky-500 transition-colors font-pretendard"
                       >
                         {user.memberNickname}님
                       </span>
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-105 transition-all duration-300"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-105 transition-all duration-300 font-pretendard"
                     >
                       로그아웃
                     </button>
@@ -230,8 +224,7 @@ export default function Header() {
                 ) : (
                   <Link
                     to="/login"
-                    className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-105 transition-all duration-300"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-105 transition-all duration-300 font-pretendard"
                   >
                     로그인
                   </Link>
@@ -245,3 +238,5 @@ export default function Header() {
     </>
   );
 }
+
+export default React.memo(Header);

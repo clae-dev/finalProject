@@ -49,8 +49,7 @@ function Login() {
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-sky-500 font-medium transition-colors duration-300 mb-6"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-sky-500 font-medium transition-colors duration-300 mb-6 font-pretendard"
           >
             <ArrowLeft className="w-4 h-4" />
             홈으로
@@ -62,22 +61,19 @@ function Login() {
               <img src={logo} alt="혼디" className="h-16" />
               <div className="flex flex-col leading-tight text-left">
                 <span
-                  className="text-3xl font-black bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent tracking-wider"
-                  style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                  className="text-3xl font-black bg-gradient-to-r from-sky-500 to-cyan-400 bg-clip-text text-transparent tracking-wider font-gmarket"
                 >
                   HONDI
                 </span>
                 <span
-                  className="text-[11px] font-semibold text-slate-400 tracking-widest"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-[11px] font-semibold text-slate-400 tracking-widest font-pretendard"
                 >
                   혼디
                 </span>
               </div>
             </div>
             <p
-              className="text-slate-400 text-sm"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-slate-400 text-sm font-pretendard"
             >
               나만의 제주 여행을 시작하세요
             </p>
@@ -90,8 +86,7 @@ function Login() {
           }} className="space-y-5">
             <div>
               <label
-                className="block text-sm font-semibold text-slate-600 mb-2"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
               >
                 이메일
               </label>
@@ -103,8 +98,7 @@ function Login() {
                   value={globalState.email}
                   onChange={globalState.changeInputEmail}
                   autoComplete="off"
-                  className="h-12 pl-12 bg-slate-50/80 border-slate-200 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="h-12 pl-12 bg-slate-50/80 border-slate-200 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm font-pretendard"
                   required
                 />
               </div>
@@ -112,8 +106,7 @@ function Login() {
 
             <div>
               <label
-                className="block text-sm font-semibold text-slate-600 mb-2"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
               >
                 비밀번호
               </label>
@@ -125,8 +118,7 @@ function Login() {
                   value={globalState.password}
                   onChange={globalState.changeInputPw}
                   autoComplete="new-password"
-                  className="h-12 pl-12 pr-12 bg-slate-50/80 border-slate-200 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="h-12 pl-12 pr-12 bg-slate-50/80 border-slate-200 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm font-pretendard"
                   required
                 />
                 <button
@@ -149,16 +141,14 @@ function Login() {
                 />
                 <label
                   htmlFor="saveId"
-                  className="text-sm text-slate-500 cursor-pointer"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-sm text-slate-500 cursor-pointer font-pretendard"
                 >
                   아이디 저장
                 </label>
               </div>
               <Link
                 to="/find-password"
-                className="text-sm text-sky-500 hover:text-sky-600 font-medium transition-colors"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="text-sm text-sky-500 hover:text-sky-600 font-medium transition-colors font-pretendard"
               >
                 비밀번호 찾기
               </Link>
@@ -166,8 +156,7 @@ function Login() {
 
             <Button
               type="submit"
-              className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-[15px] rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.02] transition-all duration-300"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-[15px] rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.02] transition-all duration-300 font-pretendard"
             >
               로그인
             </Button>
@@ -177,8 +166,7 @@ function Login() {
           <div className="flex items-center gap-4 my-8">
             <div className="flex-1 h-px bg-slate-200" />
             <span
-              className="text-xs text-slate-400 tracking-wider"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-xs text-slate-400 tracking-wider font-pretendard"
             >
               간편 로그인
             </span>
@@ -221,8 +209,7 @@ function Login() {
           {/* 회원가입 링크 */}
           <div className="text-center mt-8 pt-6 border-t border-slate-100">
             <p
-              className="text-sm text-slate-500"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-sm text-slate-500 font-pretendard"
             >
               아직 회원이 아니신가요?{' '}
               <Link to="/signup" className="text-sky-500 hover:text-sky-600 font-bold transition-colors">

@@ -23,7 +23,7 @@ const supportLinks = [
   { name: '개인정보처리방침', path: '/privacy' },
 ];
 
-export default function Footer() {
+function Footer() {
   return (
     <footer className="relative overflow-hidden">
       {/* 상단 웨이브 디바이더 */}
@@ -54,22 +54,19 @@ export default function Footer() {
                 />
                 <div className="flex flex-col leading-tight">
                   <span
-                    className="text-xl font-black bg-gradient-to-r from-sky-400 to-cyan-300 bg-clip-text text-transparent tracking-wider"
-                    style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                    className="text-xl font-black bg-gradient-to-r from-sky-400 to-cyan-300 bg-clip-text text-transparent tracking-wider font-gmarket"
                   >
                     HONDI
                   </span>
                   <span
-                    className="text-[10px] font-semibold text-slate-500 tracking-widest"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="text-[10px] font-semibold text-slate-500 tracking-widest font-pretendard"
                   >
                     혼디
                   </span>
                 </div>
               </Link>
               <p
-                className="text-sm text-slate-400 leading-relaxed mb-6"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="text-sm text-slate-400 leading-relaxed mb-6 font-pretendard"
               >
                 제주 바다처럼 자유로운
                 <br />
@@ -99,8 +96,7 @@ export default function Footer() {
             {/* 서비스 */}
             <div>
               <h4
-                className="text-sm font-bold text-white mb-5 tracking-wide"
-                style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                className="text-sm font-bold text-white mb-5 tracking-wide font-gmarket"
               >
                 서비스
               </h4>
@@ -109,8 +105,7 @@ export default function Footer() {
                   <li key={item.name}>
                     <Link
                       to={item.path}
-                      className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-300 font-medium"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-300 font-medium font-pretendard"
                     >
                       {item.name}
                     </Link>
@@ -122,8 +117,7 @@ export default function Footer() {
             {/* 커뮤니티 */}
             <div>
               <h4
-                className="text-sm font-bold text-white mb-5 tracking-wide"
-                style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                className="text-sm font-bold text-white mb-5 tracking-wide font-gmarket"
               >
                 커뮤니티
               </h4>
@@ -132,8 +126,7 @@ export default function Footer() {
                   <li key={item.name}>
                     <Link
                       to={item.path}
-                      className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-300 font-medium"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-300 font-medium font-pretendard"
                     >
                       {item.name}
                     </Link>
@@ -145,8 +138,7 @@ export default function Footer() {
             {/* 고객지원 */}
             <div>
               <h4
-                className="text-sm font-bold text-white mb-5 tracking-wide"
-                style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                className="text-sm font-bold text-white mb-5 tracking-wide font-gmarket"
               >
                 고객지원
               </h4>
@@ -155,8 +147,7 @@ export default function Footer() {
                   <li key={item.name}>
                     <Link
                       to={item.path}
-                      className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-300 font-medium"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-sm text-slate-400 hover:text-sky-400 transition-colors duration-300 font-medium font-pretendard"
                     >
                       {item.name}
                     </Link>
@@ -169,15 +160,14 @@ export default function Footer() {
           {/* 구분선 + 하단 */}
           <div className="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <p
-              className="text-xs text-slate-500 font-medium"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-xs text-slate-500 font-medium font-pretendard"
             >
               &copy; 2025 HONDI. All rights reserved.
             </p>
             <div className="flex items-center gap-1.5 text-xs text-slate-600">
-              <span style={{ fontFamily: "'Pretendard', sans-serif" }}>Made with</span>
+              <span className="font-pretendard">Made with</span>
               <span className="text-sky-400">&hearts;</span>
-              <span style={{ fontFamily: "'Pretendard', sans-serif" }}>in Jeju</span>
+              <span className="font-pretendard">in Jeju</span>
             </div>
           </div>
         </div>
@@ -185,3 +175,5 @@ export default function Footer() {
     </footer>
   );
 }
+
+export default React.memo(Footer);

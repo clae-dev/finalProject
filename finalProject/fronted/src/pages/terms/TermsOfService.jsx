@@ -284,7 +284,7 @@ function AccordionItem({ section, isOpen, onToggle, index }) {
           <div className="flex-1 min-w-0">
             <h3
               className={`text-[15px] font-bold transition-colors duration-300 ${isOpen ? 'text-sky-700' : 'text-slate-700'}`}
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="font-pretendard"
             >
               제{section.id}조. {section.title}
             </h3>
@@ -309,8 +309,7 @@ function AccordionItem({ section, isOpen, onToggle, index }) {
               <div className="px-5 pb-5">
                 <div className="border-t border-sky-100 pt-4">
                   <pre
-                    className="text-[13.5px] text-slate-700 font-medium leading-[1.85] whitespace-pre-wrap font-[inherit]"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="text-[13.5px] text-slate-700 font-medium leading-[1.85] whitespace-pre-wrap font-[inherit] font-pretendard"
                   >
                     {section.content}
                   </pre>
@@ -356,7 +355,7 @@ export default function TermsOfService() {
           >
             <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-sky-200">
               <ScrollText className="w-4 h-4 text-sky-300" />
-              <span style={{ fontFamily: "'Pretendard', sans-serif" }}>Terms of Service</span>
+              <span className="font-pretendard">Terms of Service</span>
             </div>
           </motion.div>
 
@@ -364,8 +363,7 @@ export default function TermsOfService() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-3xl md:text-5xl font-black text-white mb-4"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-3xl md:text-5xl font-black text-white mb-4 font-gmarket"
           >
             이용약관
           </motion.h1>
@@ -373,8 +371,7 @@ export default function TermsOfService() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
-            className="text-base text-white/60 max-w-lg"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-base text-white/60 max-w-lg font-pretendard"
           >
             혼디 서비스 이용에 관한 기본적인 사항을 규정합니다.
           </motion.p>
@@ -412,8 +409,8 @@ export default function TermsOfService() {
                 <div className="w-10 h-10 rounded-xl bg-sky-50 text-sky-500 flex items-center justify-center mx-auto mb-2">
                   {item.icon}
                 </div>
-                <p className="text-sm font-bold text-slate-700" style={{ fontFamily: "'Pretendard', sans-serif" }}>{item.label}</p>
-                <p className="text-xs text-slate-400 mt-0.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{item.desc}</p>
+                <p className="text-sm font-bold text-slate-700 font-pretendard">{item.label}</p>
+                <p className="text-xs text-slate-400 mt-0.5 font-pretendard">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -443,15 +440,13 @@ export default function TermsOfService() {
           transition={{ duration: 0.6 }}
         >
           <p
-            className="text-sm text-slate-400 mb-2"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-sm text-slate-400 mb-2 font-pretendard"
           >
             이용약관 관련 문의사항이 있으시면 아래로 연락해주세요.
           </p>
           <a
             href="mailto:hondi@hondi.com"
-            className="inline-flex items-center gap-2 px-5 py-3 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition-colors"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="inline-flex items-center gap-2 px-5 py-3 bg-slate-800 text-white text-sm font-semibold rounded-xl hover:bg-slate-700 transition-colors font-pretendard"
           >
             <ScrollText className="w-4 h-4" />
             hondi@hondi.com

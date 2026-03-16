@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { useCompanions } from '../../api/companion/useCompanion';
 import { Loader2, Users, MapPin, Compass } from 'lucide-react';
 import { getDday, getDdayStyle, formatTravelDate } from '../../lib/companionUtils';
@@ -10,9 +10,11 @@ const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1559128010-7c1ad6e1b6a5
 /* ─── 배경 캐릭터 SVG ─── */
 
 // 배낭 멘 여행자 1 (모자 + 배낭)
-function Traveler1() {
+function Traveler1({ isInView = true }) {
   return (
-    <motion.g animate={{ y: [0, -3, 0] }} transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}>
+    <motion.g
+      animate={isInView ? { y: [0, -3, 0] } : { y: 0 }}
+      transition={{ duration: 2, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}>
       <circle cx="25" cy="18" r="8" fill="#fcd34d" />
       <circle cx="23" cy="16.5" r="1.3" fill="#1e293b" />
       <circle cx="28" cy="16.5" r="1.3" fill="#1e293b" />
@@ -34,8 +36,8 @@ function Traveler1() {
       <motion.line x1="28" y1="30" x2="34" y2="24"
         stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round"
         initial={{ x2: 34, y2: 24 }}
-        animate={{ x2: [34, 36, 34], y2: [24, 26, 24] }}
-        transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { x2: [34, 36, 34], y2: [24, 26, 24] } : { x2: 34, y2: 24 }}
+        transition={{ duration: 1.5, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
       {/* 다리 */}
       <line x1="23" y1="40" x2="21" y2="52" stroke="#1e293b" strokeWidth="3.5" strokeLinecap="round" />
@@ -47,9 +49,11 @@ function Traveler1() {
 }
 
 // 카메라 든 여행자 2
-function Traveler2() {
+function Traveler2({ isInView = true }) {
   return (
-    <motion.g animate={{ y: [0, -2, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut', delay: 0.4 }}>
+    <motion.g
+      animate={isInView ? { y: [0, -2, 0] } : { y: 0 }}
+      transition={{ duration: 1.8, repeat: isInView ? Infinity : 0, ease: 'easeInOut', delay: 0.4 }}>
       <circle cx="25" cy="18" r="8" fill="#fcd34d" />
       <circle cx="23" cy="16.5" r="1.3" fill="#1e293b" />
       <circle cx="28" cy="16.5" r="1.3" fill="#1e293b" />
@@ -61,7 +65,9 @@ function Traveler2() {
       {/* 몸 */}
       <rect x="21" y="26" width="8" height="14" rx="4" fill="#22d3ee" />
       {/* 카메라 */}
-      <motion.g animate={{ rotate: [0, -5, 5, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+      <motion.g
+        animate={isInView ? { rotate: [0, -5, 5, 0] } : { rotate: 0 }}
+        transition={{ duration: 3, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
         style={{ transformOrigin: '38px 30px' }}>
         <rect x="33" y="26" width="12" height="9" rx="2" fill="#374151" />
         <circle cx="39" cy="30" r="3" fill="#1e293b" />
@@ -72,8 +78,8 @@ function Traveler2() {
       <motion.line x1="28" y1="30" x2="34" y2="28"
         stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round"
         initial={{ x2: 34, y2: 28 }}
-        animate={{ x2: [34, 35, 34], y2: [28, 29, 28] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { x2: [34, 35, 34], y2: [28, 29, 28] } : { x2: 34, y2: 28 }}
+        transition={{ duration: 3, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
       <line x1="22" y1="30" x2="17" y2="36" stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round" />
       {/* 다리 */}
@@ -86,9 +92,11 @@ function Traveler2() {
 }
 
 // 손 흔드는 여행자 3
-function Traveler3() {
+function Traveler3({ isInView = true }) {
   return (
-    <motion.g animate={{ y: [0, -3, 0] }} transition={{ duration: 2.2, repeat: Infinity, ease: 'easeInOut', delay: 0.8 }}>
+    <motion.g
+      animate={isInView ? { y: [0, -3, 0] } : { y: 0 }}
+      transition={{ duration: 2.2, repeat: isInView ? Infinity : 0, ease: 'easeInOut', delay: 0.8 }}>
       <circle cx="25" cy="18" r="8" fill="#fcd34d" />
       <circle cx="23" cy="16" r="1.3" fill="#1e293b" />
       <circle cx="28" cy="16" r="1.3" fill="#1e293b" />
@@ -103,8 +111,8 @@ function Traveler3() {
       <motion.line x1="30" y1="30" x2="40" y2="16"
         stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round"
         initial={{ x2: 40, y2: 16 }}
-        animate={{ x2: [40, 38, 42, 40], y2: [16, 18, 14, 16] }}
-        transition={{ duration: 0.8, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { x2: [40, 38, 42, 40], y2: [16, 18, 14, 16] } : { x2: 40, y2: 16 }}
+        transition={{ duration: 0.8, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
       <line x1="20" y1="30" x2="14" y2="36" stroke="#fcd34d" strokeWidth="3.5" strokeLinecap="round" />
       {/* 다리 */}
@@ -117,13 +125,13 @@ function Traveler3() {
 }
 
 // 지도 보는 두 사람
-function MapReaders() {
+function MapReaders({ isInView = true }) {
   return (
     <g>
       {/* 지도 */}
       <motion.rect x="22" y="40" width="20" height="15" rx="1" fill="#fef9c3" stroke="#d4a574" strokeWidth="0.8"
-        animate={{ rotate: [0, 2, -2, 0] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { rotate: [0, 2, -2, 0] } : { rotate: 0 }}
+        transition={{ duration: 3, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
         style={{ transformOrigin: '32px 47px' }}
       />
       <line x1="27" y1="44" x2="37" y2="44" stroke="#94a3b8" strokeWidth="0.5" />
@@ -160,11 +168,13 @@ function MapReaders() {
 }
 
 // 이정표
-function Signpost() {
+function Signpost({ isInView = true }) {
   return (
     <g>
       <rect x="18" y="20" width="4" height="60" rx="2" fill="#92400e" />
-      <motion.g animate={{ rotate: [0, 1, -1, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+      <motion.g
+        animate={isInView ? { rotate: [0, 1, -1, 0] } : { rotate: 0 }}
+        transition={{ duration: 3, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
         style={{ transformOrigin: '20px 20px' }}>
         <rect x="5" y="15" width="30" height="12" rx="2" fill="#fbbf24" />
         <text x="12" y="24" fontSize="6" fill="#92400e" fontWeight="bold">제주</text>
@@ -176,11 +186,11 @@ function Signpost() {
 }
 
 // 구름
-function Cloud({ className, delay = 0, direction = 1 }) {
+function Cloud({ className, delay = 0, direction = 1, isInView = true }) {
   return (
     <motion.svg className={className} viewBox="0 0 160 60" fill="white"
-      animate={{ x: [0, 20 * direction, 0] }}
-      transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut', delay }}
+      animate={isInView ? { x: [0, 20 * direction, 0] } : { x: 0 }}
+      transition={{ duration: 14, repeat: isInView ? Infinity : 0, ease: 'easeInOut', delay }}
     >
       <ellipse cx="55" cy="38" rx="40" ry="18" />
       <ellipse cx="90" cy="32" rx="32" ry="16" />
@@ -189,9 +199,11 @@ function Cloud({ className, delay = 0, direction = 1 }) {
   );
 }
 
-export default function CompanionsSection() {
+function CompanionsSection() {
   const navigate = useNavigate();
   const [companionSlide, setCompanionSlide] = useState(0);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { margin: '100px' });
 
   const { data, isLoading } = useCompanions(1, 9);
   const companions = data?.success ? (data.list || []) : [];
@@ -201,7 +213,7 @@ export default function CompanionsSection() {
   const prevCompanion = () => setCompanionSlide(prev => Math.max(prev - 1, 0));
 
   return (
-    <section className="relative pt-24 pb-56 overflow-hidden">
+    <section ref={sectionRef} className="relative pt-24 pb-56 overflow-hidden">
       {/* 상단 페이드 - SpotsSection 모래사장에서 자연스럽게 녹아듦 */}
       <div className="absolute top-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-b from-[#fde68a]/40 via-[#bae6fd]/50 to-transparent z-[1]" />
 
@@ -210,19 +222,19 @@ export default function CompanionsSection() {
 
       {/* 구름 */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <Cloud className="absolute top-4 left-[3%] w-32 md:w-40 opacity-70" delay={0} direction={1} />
-        <Cloud className="absolute top-10 right-[8%] w-24 md:w-32 opacity-55" delay={2} direction={-1} />
-        <Cloud className="absolute top-2 left-[45%] w-20 md:w-24 opacity-40" delay={5} direction={1} />
+        <Cloud className="absolute top-4 left-[3%] w-32 md:w-40 opacity-70" delay={0} direction={1} isInView={isInView} />
+        <Cloud className="absolute top-10 right-[8%] w-24 md:w-32 opacity-55" delay={2} direction={-1} isInView={isInView} />
+        <Cloud className="absolute top-2 left-[45%] w-20 md:w-24 opacity-40" delay={5} direction={1} isInView={isInView} />
       </div>
 
       {/* 잔디 배경 장식 블러 */}
       <motion.div className="absolute top-20 left-[5%] w-44 h-44 bg-emerald-200/30 rounded-full blur-3xl"
-        animate={{ y: [0, -15, 0], opacity: [0.2, 0.4, 0.2] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { y: [0, -15, 0], opacity: [0.2, 0.4, 0.2] } : { y: 0, opacity: 0.2 }}
+        transition={{ duration: 7, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
       <motion.div className="absolute bottom-40 right-[5%] w-56 h-56 bg-sky-200/30 rounded-full blur-3xl"
-        animate={{ y: [0, 15, 0], opacity: [0.2, 0.4, 0.2] }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { y: [0, 15, 0], opacity: [0.2, 0.4, 0.2] } : { y: 0, opacity: 0.2 }}
+        transition={{ duration: 9, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
 
       <div className="max-w-6xl mx-auto px-5 relative z-10">
@@ -256,10 +268,10 @@ export default function CompanionsSection() {
               </svg>
               동행 모집
             </motion.span>
-            <h2 className="text-3xl md:text-5xl font-black text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-800 font-gmarket">
               함께라서 더 <span className="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">특별한</span>
             </h2>
-            <p className="text-slate-400 mt-4 text-lg" style={{ fontFamily: "'Pretendard', sans-serif" }}>지금 모집 중인 동행에 참여해보세요</p>
+            <p className="text-slate-400 mt-4 text-lg font-pretendard">지금 모집 중인 동행에 참여해보세요</p>
           </div>
           <div className="flex gap-3">
             <motion.button whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
@@ -367,8 +379,7 @@ export default function CompanionsSection() {
         >
           <motion.button whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}
             onClick={() => navigate('/companions')}
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/90 backdrop-blur-sm text-sky-600 font-bold rounded-full shadow-lg shadow-sky-100/50 hover:shadow-xl border border-white/80 transition-all"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/90 backdrop-blur-sm text-sky-600 font-bold rounded-full shadow-lg shadow-sky-100/50 hover:shadow-xl border border-white/80 transition-all font-pretendard"
           >
             동행 더보기
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
@@ -399,28 +410,28 @@ export default function CompanionsSection() {
         <svg className="absolute bottom-0 left-0 w-full h-full" viewBox="0 0 1200 130" preserveAspectRatio="xMidYMax meet">
           {/* 이정표 */}
           <g transform="translate(60, 38)" opacity="0.7">
-            <Signpost />
+            <Signpost isInView={isInView} />
           </g>
 
           {/* 배낭 여행자 */}
           <g transform="translate(180, 62)" opacity="0.75">
-            <Traveler1 />
+            <Traveler1 isInView={isInView} />
           </g>
 
           {/* 카메라 여행자 */}
           <g transform="translate(350, 62)" opacity="0.75">
-            <Traveler2 />
+            <Traveler2 isInView={isInView} />
           </g>
 
           {/* 지도 보는 두 사람 */}
           <g transform="translate(540, 58)" opacity="0.7">
-            <MapReaders />
+            <MapReaders isInView={isInView} />
           </g>
 
           {/* 나침반 아이콘 */}
           <motion.g transform="translate(730, 95)" opacity="0.5"
-            animate={{ rotate: [0, 360] }}
-            transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+            animate={isInView ? { rotate: [0, 360] } : { rotate: 0 }}
+            transition={{ duration: 8, repeat: isInView ? Infinity : 0, ease: 'linear' }}
             style={{ transformOrigin: '12px 12px' }}
           >
             <circle cx="12" cy="12" r="10" fill="none" stroke="#0ea5e9" strokeWidth="1.5" />
@@ -430,7 +441,9 @@ export default function CompanionsSection() {
 
           {/* 핀 마커 */}
           <g transform="translate(850, 85)" opacity="0.55">
-            <motion.g animate={{ y: [0, -4, 0] }} transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}>
+            <motion.g
+              animate={isInView ? { y: [0, -4, 0] } : { y: 0 }}
+              transition={{ duration: 2, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}>
               <path d="M10,0 Q18,0 18,8 Q18,16 10,24 Q2,16 2,8 Q2,0 10,0Z" fill="#ef4444" />
               <circle cx="10" cy="8" r="3.5" fill="white" />
             </motion.g>
@@ -438,12 +451,12 @@ export default function CompanionsSection() {
 
           {/* 손 흔드는 여행자 */}
           <g transform="translate(940, 58)" opacity="0.75">
-            <Traveler3 />
+            <Traveler3 isInView={isInView} />
           </g>
 
           {/* 이정표 2 */}
           <g transform="translate(1100, 42)" opacity="0.6">
-            <Signpost />
+            <Signpost isInView={isInView} />
           </g>
 
           {/* 잔디 포인트 */}
@@ -459,3 +472,5 @@ export default function CompanionsSection() {
     </section>
   );
 }
+
+export default React.memo(CompanionsSection);

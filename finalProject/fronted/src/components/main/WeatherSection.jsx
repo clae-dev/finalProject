@@ -39,7 +39,7 @@ const MODES = [
   { key: 'forecast', label: '예보' },
 ];
 
-export default function WeatherWidget() {
+function WeatherWidget() {
   const [expanded, setExpanded] = useState(true);
   const [city, setCity] = useState('jeju');
   const [mode, setMode] = useState('current');
@@ -105,7 +105,7 @@ export default function WeatherWidget() {
                       <div className="flex items-center gap-3">
                         <span className="text-4xl">{weather.emoji}</span>
                         <div>
-                          <p className="text-2xl font-black text-white leading-none" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+                          <p className="text-2xl font-black text-white leading-none font-gmarket">
                             {w.temp}°
                           </p>
                           <p className="text-xs text-white/70 font-medium mt-1">{weather.text}</p>
@@ -197,7 +197,9 @@ export default function WeatherWidget() {
   );
 }
 
-function Row({ icon, label, value }) {
+export default React.memo(WeatherWidget);
+
+const Row = React.memo(function Row({ icon, label, value }) {
   return (
     <div className="flex items-center justify-between px-2 py-1.5 rounded-lg hover:bg-sky-50/60 transition-colors">
       <div className="flex items-center gap-2">
@@ -207,9 +209,9 @@ function Row({ icon, label, value }) {
       <span className="text-xs font-bold text-slate-700">{value}</span>
     </div>
   );
-}
+});
 
-function ForecastRow({ day }) {
+const ForecastRow = React.memo(function ForecastRow({ day }) {
   const wx = day.ptyCode > 0 && PTY_MAP[day.ptyCode]
     ? PTY_MAP[day.ptyCode]
     : (SKY_MAP[day.sky] || SKY_MAP[1]);
@@ -225,4 +227,4 @@ function ForecastRow({ day }) {
       </span>
     </div>
   );
-}
+});

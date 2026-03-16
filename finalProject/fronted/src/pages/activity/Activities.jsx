@@ -102,8 +102,7 @@ export default function Activities() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5 font-pretendard"
           >
             Events & Activities
           </motion.p>
@@ -114,14 +113,13 @@ export default function Activities() {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-orange-100 shadow-lg shadow-orange-500/10"
           >
             <CalendarDays className="w-4 h-4 text-orange-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>행사/액티비티</span>
+            <span className="font-pretendard">행사/액티비티</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg font-gmarket"
           >
             <span className="text-white">제주의 다채로운 </span>
             <span className="bg-gradient-to-r from-orange-300 via-amber-300 to-yellow-300 bg-clip-text text-transparent">행사와 액티비티</span>
@@ -130,8 +128,7 @@ export default function Activities() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="text-lg text-white/70 text-center max-w-md leading-relaxed"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-lg text-white/70 text-center max-w-md leading-relaxed font-pretendard"
           >
             제주에서 열리는 축제, 이벤트, 체험활동을 확인하세요
           </motion.p>
@@ -168,7 +165,7 @@ export default function Activities() {
                 ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-200/60'
                 : 'bg-white/80 text-slate-500 hover:text-orange-500 shadow-md shadow-orange-50 border border-orange-50'
             }`}
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="font-pretendard"
           >
             공공 행사
           </button>
@@ -179,7 +176,7 @@ export default function Activities() {
                 ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-200/60'
                 : 'bg-white/80 text-slate-500 hover:text-orange-500 shadow-md shadow-orange-50 border border-orange-50'
             }`}
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="font-pretendard"
           >
             액티비티
           </button>
@@ -190,7 +187,7 @@ export default function Activities() {
                 ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-200/60'
                 : 'bg-white/80 text-slate-500 hover:text-orange-500 shadow-md shadow-orange-50 border border-orange-50'
             }`}
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="font-pretendard"
           >
             커뮤니티
           </button>
@@ -211,15 +208,13 @@ export default function Activities() {
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="행사명이나 내용으로 검색"
-                  className="w-full px-4 py-2.5 pr-10 rounded-xl border border-orange-100 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="w-full px-4 py-2.5 pr-10 rounded-xl border border-orange-100 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 font-pretendard"
                 />
                 <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               </div>
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-gradient-to-r from-orange-400 to-amber-400 text-white text-sm font-bold rounded-full shadow-lg shadow-orange-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="px-6 py-2.5 bg-gradient-to-r from-orange-400 to-amber-400 text-white text-sm font-bold rounded-full shadow-lg shadow-orange-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 font-pretendard"
               >
                 검색
               </button>
@@ -230,8 +225,7 @@ export default function Activities() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/activities/write')}
-                className="inline-flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 text-white font-bold rounded-2xl shadow-lg shadow-orange-200/50 hover:shadow-xl transition-all whitespace-nowrap"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="inline-flex items-center gap-2 px-6 py-4 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 text-white font-bold rounded-2xl shadow-lg shadow-orange-200/50 hover:shadow-xl transition-all whitespace-nowrap font-pretendard"
               >
                 <PenLine className="w-4 h-4" />
                 행사 등록
@@ -256,10 +250,10 @@ export default function Activities() {
                 className="text-center py-20"
               >
                 <CalendarDays className="w-16 h-16 text-orange-300 mx-auto mb-4" />
-                <p className="text-slate-500 text-lg font-medium mb-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <p className="text-slate-500 text-lg font-medium mb-2 font-pretendard">
                   API 키 설정이 필요합니다
                 </p>
-                <p className="text-slate-400 text-sm" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <p className="text-slate-400 text-sm font-pretendard">
                   config.properties에 한국관광공사 TourAPI 서비스 키를 설정해주세요
                 </p>
               </motion.div>
@@ -270,7 +264,7 @@ export default function Activities() {
                 className="text-center py-20"
               >
                 <CalendarDays className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-                <p className="text-slate-400 text-lg font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <p className="text-slate-400 text-lg font-medium font-pretendard">
                   현재 진행 중인 공공 행사가 없습니다.
                 </p>
               </motion.div>
@@ -303,8 +297,7 @@ export default function Activities() {
                       {/* 공공행사 뱃지 */}
                       <div className="absolute top-3 left-3">
                         <span
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-orange-500/90 backdrop-blur-sm text-white text-xs font-bold rounded-full"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-orange-500/90 backdrop-blur-sm text-white text-xs font-bold rounded-full font-pretendard"
                         >
                           공공행사
                         </span>
@@ -314,8 +307,7 @@ export default function Activities() {
                     {/* 카드 내용 */}
                     <div className="p-5">
                       <h3
-                        className="font-bold text-slate-800 text-base mb-3 line-clamp-1 group-hover:text-orange-600 transition-colors"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-bold text-slate-800 text-base mb-3 line-clamp-1 group-hover:text-orange-600 transition-colors font-pretendard"
                       >
                         {event.title}
                       </h3>
@@ -323,7 +315,7 @@ export default function Activities() {
                       {/* 기간 */}
                       <div className="flex items-center gap-2 mb-2">
                         <CalendarDays className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" />
-                        <p className="text-sm text-slate-500" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                        <p className="text-sm text-slate-500 font-pretendard">
                           {formatDate(String(event.startDate))} ~ {formatDate(String(event.endDate))}
                         </p>
                       </div>
@@ -332,7 +324,7 @@ export default function Activities() {
                       {event.addr && (
                         <div className="flex items-center gap-2 mb-2">
                           <MapPin className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" />
-                          <p className="text-sm text-slate-400 line-clamp-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                          <p className="text-sm text-slate-400 line-clamp-1 font-pretendard">
                             {event.addr}
                           </p>
                         </div>
@@ -342,7 +334,7 @@ export default function Activities() {
                       {event.tel && (
                         <div className="flex items-center gap-2">
                           <Phone className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" />
-                          <p className="text-sm text-slate-400 line-clamp-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                          <p className="text-sm text-slate-400 line-clamp-1 font-pretendard">
                             {event.tel}
                           </p>
                         </div>
@@ -376,7 +368,7 @@ export default function Activities() {
                 className="text-center py-20"
               >
                 <Bike className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-                <p className="text-slate-400 text-lg font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <p className="text-slate-400 text-lg font-medium font-pretendard">
                   등록된 액티비티가 없습니다.
                 </p>
               </motion.div>
@@ -407,8 +399,7 @@ export default function Activities() {
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 to-transparent" />
                       <div className="absolute top-3 left-3">
                         <span
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-bold rounded-full"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-bold rounded-full font-pretendard"
                         >
                           <Bike className="w-3 h-3" />
                           액티비티
@@ -418,8 +409,7 @@ export default function Activities() {
 
                     <div className="p-5">
                       <h3
-                        className="font-bold text-slate-800 text-base mb-3 line-clamp-1 group-hover:text-orange-600 transition-colors"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-bold text-slate-800 text-base mb-3 line-clamp-1 group-hover:text-orange-600 transition-colors font-pretendard"
                       >
                         {item.title}
                       </h3>
@@ -427,7 +417,7 @@ export default function Activities() {
                       {item.addr && (
                         <div className="flex items-center gap-2 mb-2">
                           <MapPin className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" />
-                          <p className="text-sm text-slate-400 line-clamp-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                          <p className="text-sm text-slate-400 line-clamp-1 font-pretendard">
                             {item.addr}
                           </p>
                         </div>
@@ -436,7 +426,7 @@ export default function Activities() {
                       {item.tel && (
                         <div className="flex items-center gap-2">
                           <Phone className="w-3.5 h-3.5 text-orange-400 flex-shrink-0" />
-                          <p className="text-sm text-slate-400 line-clamp-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                          <p className="text-sm text-slate-400 line-clamp-1 font-pretendard">
                             {item.tel}
                           </p>
                         </div>
@@ -469,7 +459,7 @@ export default function Activities() {
                 className="text-center py-20"
               >
                 <CalendarDays className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-                <p className="text-slate-400 text-lg font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <p className="text-slate-400 text-lg font-medium font-pretendard">
                   등록된 행사가 없습니다.
                 </p>
               </motion.div>
@@ -505,14 +495,12 @@ export default function Activities() {
                     {/* 카드 내용 */}
                     <div className="p-5">
                       <h3
-                        className="font-bold text-slate-800 text-base mb-2 line-clamp-1 group-hover:text-orange-600 transition-colors"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-bold text-slate-800 text-base mb-2 line-clamp-1 group-hover:text-orange-600 transition-colors font-pretendard"
                       >
                         {board.boardTitle}
                       </h3>
                       <p
-                        className="text-sm text-slate-400 line-clamp-2 mb-4 leading-relaxed"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="text-sm text-slate-400 line-clamp-2 mb-4 leading-relaxed font-pretendard"
                       >
                         {board.boardContent}
                       </p>

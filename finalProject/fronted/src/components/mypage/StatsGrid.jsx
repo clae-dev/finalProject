@@ -74,10 +74,10 @@ export default function StatsGrid({ memberData }) {
                 <div className={`w-12 h-12 ${stat.bg} rounded-2xl flex items-center justify-center mb-4`}>
                   <Icon className={`w-6 h-6 ${stat.text}`} />
                 </div>
-                <div className="text-3xl font-bold text-slate-800 mb-1" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+                <div className="text-3xl font-bold text-slate-800 mb-1 font-gmarket">
                   <CountUp target={stat.value} />
                 </div>
-                <div className="text-sm text-slate-500 font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <div className="text-sm text-slate-500 font-medium font-pretendard">
                   {stat.label}
                 </div>
               </motion.div>
