@@ -46,15 +46,14 @@ export default function MapSection() {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-sky-50 rounded-full text-sm font-bold text-sky-600 mb-5 border border-sky-100"
           >
             <MapPin className="w-4 h-4" />
-            <span style={{ fontFamily: "'GmarketSans', sans-serif" }}>JEJU MAP</span>
+            <span className="font-gmarket">JEJU MAP</span>
           </motion.span>
           <h2
-            className="text-3xl md:text-4xl font-black text-slate-800 mb-3"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-3xl md:text-4xl font-black text-slate-800 mb-3 font-gmarket"
           >
             제주 명소 <span className="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">지도</span>
           </h2>
-          <p className="text-slate-400 text-base" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <p className="text-slate-400 text-base font-pretendard">
             혼행러들이 사랑한 제주 명소를 지도에서 찾아보세요
           </p>
         </motion.div>
@@ -89,7 +88,7 @@ export default function MapSection() {
                   <MapPin className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <p className="font-bold text-slate-800 font-pretendard">
                     {selectedMarker.name}
                   </p>
                   {selectedMarker.info && (
@@ -112,8 +111,7 @@ export default function MapSection() {
               {markers.slice(0, 8).map((m, i) => (
                 <span
                   key={i}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-sky-50 rounded-full text-xs font-semibold text-slate-600 hover:text-sky-600 cursor-pointer border border-slate-100 hover:border-sky-200 transition-all"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-sky-50 rounded-full text-xs font-semibold text-slate-600 hover:text-sky-600 cursor-pointer border border-slate-100 hover:border-sky-200 transition-all font-pretendard"
                   onClick={() => setSelectedMarker(m)}
                 >
                   <MapPin className="w-3 h-3" />

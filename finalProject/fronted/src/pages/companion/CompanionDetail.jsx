@@ -200,8 +200,7 @@ export default function CompanionDetail() {
           <motion.p
             initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-white/50 text-sm tracking-[0.3em] uppercase mb-5 font-pretendard"
           >
             Jeju Companion
           </motion.p>
@@ -211,13 +210,12 @@ export default function CompanionDetail() {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg shadow-cyan-500/10"
           >
             <Users className="w-4 h-4 text-cyan-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>제주 동행 찾기</span>
+            <span className="font-pretendard">제주 동행 찾기</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-4xl md:text-6xl font-black mb-6 text-center leading-tight drop-shadow-lg font-gmarket"
           >
             <span className="text-white">함께라서 더 특별한 </span>
             <span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-teal-300 bg-clip-text text-transparent">제주</span>
@@ -225,8 +223,7 @@ export default function CompanionDetail() {
           <motion.p
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="text-lg text-white/70 text-center max-w-md leading-relaxed"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-lg text-white/70 text-center max-w-md leading-relaxed font-pretendard"
           >
             혼자여도 괜찮아요. 같은 길을 걷는 동행을 만나보세요.
           </motion.p>
@@ -262,7 +259,7 @@ export default function CompanionDetail() {
         {/* 제목 + 태그 카드 */}
         <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={0}
           className="bg-white rounded-3xl shadow-xl shadow-sky-100/40 p-7 mb-6 border border-sky-50">
-          <h1 className="text-2xl md:text-3xl font-black text-slate-800 mb-4" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+          <h1 className="text-2xl md:text-3xl font-black text-slate-800 mb-4 font-gmarket">
             {companion.title}
           </h1>
           {(tagList.length > 0 || companion.status === 'C') && (
@@ -373,7 +370,7 @@ export default function CompanionDetail() {
         {/* 본문 내용 */}
         <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={2}
           className="bg-white rounded-3xl shadow-xl shadow-sky-100/40 p-7 mb-6 border border-sky-50">
-          <h3 className="text-sm font-bold text-sky-500 uppercase tracking-wider mb-4" style={{ fontFamily: "'Pretendard', sans-serif" }}>상세 내용</h3>
+          <h3 className="text-sm font-bold text-sky-500 uppercase tracking-wider mb-4 font-pretendard">상세 내용</h3>
           <p className="text-slate-600 leading-[1.9] whitespace-pre-wrap text-[15px]">{companion.content}</p>
         </motion.div>
 
@@ -495,7 +492,7 @@ export default function CompanionDetail() {
             name={companion.placeName || '제주도'}
             height="200px"
           />
-          <p className="text-xs text-slate-400 mt-2 text-center" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <p className="text-xs text-slate-400 mt-2 text-center font-pretendard">
             {companion.placeName
               ? `${companion.placeName}에서 함께할 동행을 모집 중입니다`
               : '제주도 전체 지역에서 함께할 동행을 모집 중입니다'}
@@ -560,7 +557,7 @@ export default function CompanionDetail() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Flag className="w-5 h-5 text-orange-500" />
-                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>동행 신고</h3>
+                  <h3 className="text-lg font-bold text-slate-800 font-pretendard">동행 신고</h3>
                 </div>
                 <button onClick={() => setShowReportModal(false)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                   <X className="w-5 h-5 text-slate-400" />
@@ -591,8 +588,7 @@ export default function CompanionDetail() {
                 placeholder="상세 사유를 입력해주세요 (선택)"
                 maxLength={500}
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none mb-5"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none mb-5 font-pretendard"
               />
 
               <div className="flex gap-3">

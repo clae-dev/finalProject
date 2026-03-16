@@ -67,8 +67,7 @@ export default function ProfileHero({ user, memberData, onEditProfile }) {
           {/* Nickname */}
           <motion.h1
             variants={fadeInUp}
-            className="text-3xl sm:text-4xl font-bold text-white drop-shadow-lg mb-2"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-3xl sm:text-4xl font-bold text-white drop-shadow-lg mb-2 font-gmarket"
           >
             {user.memberNickname}
           </motion.h1>

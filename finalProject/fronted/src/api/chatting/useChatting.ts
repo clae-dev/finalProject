@@ -11,6 +11,8 @@ export const useRoomList = (enabled = true) => {
     queryFn: getRoomList,
     enabled: enabled && !!getToken('accessToken'),
     retry: false,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 };
 
@@ -23,6 +25,7 @@ export const useSearchTarget = (query: string) => {
     queryKey: ['searchTarget', query],
     queryFn: () => searchTarget(query),
     enabled: !!query && query.length >= 1,
+    staleTime: 1000 * 30,
   });
 };
 
@@ -35,6 +38,8 @@ export const useMessages = (chattingRoomNo: number | string | undefined) => {
     queryKey: ['messages', chattingRoomNo],
     queryFn: () => getMessages(chattingRoomNo!),
     enabled: !!chattingRoomNo,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 };
 

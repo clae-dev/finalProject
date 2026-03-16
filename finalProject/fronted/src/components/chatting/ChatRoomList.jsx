@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { SquarePen, User } from 'lucide-react';
 
 /**
  * 채팅방 목록 (Instagram DM 스타일)
  */
-export default function ChatRoomList({ rooms, selectedRoomNo, onSelectRoom, onNewChat, currentUserNickname, hideHeader }) {
+function ChatRoomList({ rooms, selectedRoomNo, onSelectRoom, onNewChat, currentUserNickname, hideHeader }) {
   return (
     <div className="flex flex-col h-full bg-white">
       {/* 헤더 - IG 스타일 */}
@@ -122,3 +122,5 @@ export default function ChatRoomList({ rooms, selectedRoomNo, onSelectRoom, onNe
     </div>
   );
 }
+
+export default React.memo(ChatRoomList);

@@ -646,8 +646,7 @@ export default function Register() {
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-sm text-white/80 hover:text-white font-medium transition-colors duration-300 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-full border border-white/20"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="flex items-center gap-2 text-sm text-white/80 hover:text-white font-medium transition-colors duration-300 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-full border border-white/20 font-pretendard"
           >
             <ArrowLeft className="w-4 h-4" />
             홈으로
@@ -655,8 +654,7 @@ export default function Register() {
           <button
             type="button"
             onClick={() => navigate('/login')}
-            className="text-sm text-white/80 hover:text-white font-medium transition-colors duration-300 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-full border border-white/20"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-sm text-white/80 hover:text-white font-medium transition-colors duration-300 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-full border border-white/20 font-pretendard"
           >
             로그인
           </button>
@@ -669,28 +667,24 @@ export default function Register() {
           <img src={logo} alt="혼디" className="h-14 drop-shadow-lg" />
           <div className="flex flex-col leading-tight text-left">
             <span
-              className="text-3xl font-black text-white tracking-wider drop-shadow-lg"
-              style={{ fontFamily: "'GmarketSans', sans-serif" }}
+              className="text-3xl font-black text-white tracking-wider drop-shadow-lg font-gmarket"
             >
               HONDI
             </span>
             <span
-              className="text-[11px] font-semibold text-white/70 tracking-widest"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-[11px] font-semibold text-white/70 tracking-widest font-pretendard"
             >
               혼디
             </span>
           </div>
         </div>
         <h1
-          className="text-2xl font-bold text-white drop-shadow-md mb-2"
-          style={{ fontFamily: "'GmarketSans', sans-serif" }}
+          className="text-2xl font-bold text-white drop-shadow-md mb-2 font-gmarket"
         >
           새로운 여행의 시작
         </h1>
         <p
-          className="text-white/70 text-sm"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
+          className="text-white/70 text-sm font-pretendard"
         >
           나만의 제주 여행을 함께할 프로필을 만들어보세요
         </p>
@@ -716,8 +710,7 @@ export default function Register() {
                   <UserPlus className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className="text-sm font-semibold text-sky-600"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-sm font-semibold text-sky-600 font-pretendard"
                 >
                   기본 정보
                 </span>
@@ -728,8 +721,7 @@ export default function Register() {
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className="text-sm font-semibold text-sky-600"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-sm font-semibold text-sky-600 font-pretendard"
                 >
                   프로필 꾸미기
                 </span>
@@ -740,8 +732,7 @@ export default function Register() {
                   <Shield className="w-4 h-4 text-white" />
                 </div>
                 <span
-                  className="text-sm font-semibold text-sky-600"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-sm font-semibold text-sky-600 font-pretendard"
                 >
                   인증 & 약관
                 </span>
@@ -760,21 +751,18 @@ export default function Register() {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-sky-50 to-cyan-50 border border-sky-200/60 mb-3">
                     <Sparkles className="w-3.5 h-3.5 text-sky-500" />
                     <span
-                      className="text-xs font-bold text-sky-600 tracking-wide"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-xs font-bold text-sky-600 tracking-wide font-pretendard"
                     >
                       AVATAR
                     </span>
                   </div>
                   <h3
-                    className="text-lg font-bold text-slate-800 mb-1"
-                    style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                    className="text-lg font-bold text-slate-800 mb-1 font-gmarket"
                   >
                     프로필 아바타
                   </h3>
                   <p
-                    className="text-xs text-slate-400 mb-4"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="text-xs text-slate-400 mb-4 font-pretendard"
                   >
                     나를 표현할 아바타를 선택해주세요
                   </p>
@@ -789,7 +777,7 @@ export default function Register() {
                           ? 'bg-white text-sky-600 shadow-sm shadow-sky-100'
                           : 'text-slate-500 hover:text-slate-700'
                       }`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     >
                       랜덤 선택
                     </button>
@@ -801,7 +789,7 @@ export default function Register() {
                           ? 'bg-white text-sky-600 shadow-sm shadow-sky-100'
                           : 'text-slate-500 hover:text-slate-700'
                       }`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     >
                       직접 꾸미기
                     </button>
@@ -814,8 +802,7 @@ export default function Register() {
                         <button
                           type="button"
                           onClick={refreshAvatars}
-                          className="flex items-center gap-1.5 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors bg-sky-50 hover:bg-sky-100 px-3 py-1.5 rounded-full"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="flex items-center gap-1.5 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors bg-sky-50 hover:bg-sky-100 px-3 py-1.5 rounded-full font-pretendard"
                         >
                           <RefreshCw className="w-3 h-3" />
                           새로고침
@@ -862,7 +849,7 @@ export default function Register() {
                                 ? 'bg-gradient-to-r from-sky-400 to-cyan-400 text-white shadow-sm shadow-sky-200/50'
                                 : 'bg-sky-50 text-slate-600 hover:bg-sky-100 border border-sky-100'
                             }`}
-                            style={{ fontFamily: "'Pretendard', sans-serif" }}
+                            className="font-pretendard"
                           >
                             {label}
                           </button>
@@ -899,7 +886,7 @@ export default function Register() {
                                     ? 'bg-gradient-to-r from-sky-400 to-cyan-400 text-white shadow-sm'
                                     : 'bg-white text-slate-600 hover:bg-sky-50 border border-sky-100'
                                 }`}
-                                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                                className="font-pretendard"
                               >
                                 {label}
                               </button>
@@ -913,8 +900,7 @@ export default function Register() {
                   {/* 선택 완료 메시지 */}
                   {formData.profileImg && (
                     <p
-                      className="text-sky-500 text-xs mt-3 flex items-center gap-1.5 font-medium bg-sky-50 px-3 py-2 rounded-xl"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-sky-500 text-xs mt-3 flex items-center gap-1.5 font-medium bg-sky-50 px-3 py-2 rounded-xl font-pretendard"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" /> 아바타가 선택되었습니다
                     </p>
@@ -926,8 +912,7 @@ export default function Register() {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-sky-50 to-cyan-50 border border-sky-200/60 mb-3">
                     <User className="w-3.5 h-3.5 text-sky-500" />
                     <span
-                      className="text-xs font-bold text-sky-600 tracking-wide"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-xs font-bold text-sky-600 tracking-wide font-pretendard"
                     >
                       INFO
                     </span>
@@ -935,56 +920,53 @@ export default function Register() {
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label
-                        className="block text-sm font-semibold text-slate-600 mb-2"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                       >
                         성별
                       </label>
                       <Select value={formData.gender} onValueChange={(value) => handleChange('gender', value)}>
                         <SelectTrigger
                           className={`h-12 bg-white border-sky-100 rounded-xl hover:border-sky-300 transition-colors ${errors.gender ? 'border-red-400' : ''}`}
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="font-pretendard"
                         >
                           <SelectValue placeholder="선택" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="male" style={{ fontFamily: "'Pretendard', sans-serif" }}>남성</SelectItem>
-                          <SelectItem value="female" style={{ fontFamily: "'Pretendard', sans-serif" }}>여성</SelectItem>
+                          <SelectItem value="male" className="font-pretendard">남성</SelectItem>
+                          <SelectItem value="female" className="font-pretendard">여성</SelectItem>
                         </SelectContent>
                       </Select>
-                      {errors.gender && <p className="text-red-500 text-xs mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.gender}</p>}
+                      {errors.gender && <p className="text-red-500 text-xs mt-1 font-pretendard">{errors.gender}</p>}
                     </div>
                     <div>
                       <label
-                        className="block text-sm font-semibold text-slate-600 mb-2"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                       >
                         연령대
                       </label>
                       <Select value={formData.age_group} onValueChange={(value) => handleChange('age_group', value)}>
                         <SelectTrigger
                           className={`h-12 bg-white border-sky-100 rounded-xl hover:border-sky-300 transition-colors ${errors.age_group ? 'border-red-400' : ''}`}
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="font-pretendard"
                         >
                           <SelectValue placeholder="선택" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="20s" style={{ fontFamily: "'Pretendard', sans-serif" }}>20대</SelectItem>
-                          <SelectItem value="30s" style={{ fontFamily: "'Pretendard', sans-serif" }}>30대</SelectItem>
-                          <SelectItem value="40s" style={{ fontFamily: "'Pretendard', sans-serif" }}>40대</SelectItem>
-                          <SelectItem value="50s" style={{ fontFamily: "'Pretendard', sans-serif" }}>50대</SelectItem>
-                          <SelectItem value="60s+" style={{ fontFamily: "'Pretendard', sans-serif" }}>60대 이상</SelectItem>
+                          <SelectItem value="20s" className="font-pretendard">20대</SelectItem>
+                          <SelectItem value="30s" className="font-pretendard">30대</SelectItem>
+                          <SelectItem value="40s" className="font-pretendard">40대</SelectItem>
+                          <SelectItem value="50s" className="font-pretendard">50대</SelectItem>
+                          <SelectItem value="60s+" className="font-pretendard">60대 이상</SelectItem>
                         </SelectContent>
                       </Select>
-                      {errors.age_group && <p className="text-red-500 text-xs mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.age_group}</p>}
+                      {errors.age_group && <p className="text-red-500 text-xs mt-1 font-pretendard">{errors.age_group}</p>}
                     </div>
                   </div>
 
                   {/* 생년월일 */}
                   <div className="mt-3">
                     <label
-                      className="block text-sm font-semibold text-slate-600 mb-2"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                     >
                       생년월일 <span className="text-sky-500 text-xs font-medium">(만 14세 이상만 가입 가능)</span>
                     </label>
@@ -994,9 +976,9 @@ export default function Register() {
                       onChange={(e) => handleChange('birthDate', e.target.value)}
                       max={new Date().toISOString().split('T')[0]}
                       className={`h-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.birthDate ? 'border-red-400' : ''}`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     />
-                    {errors.birthDate && <p className="text-red-500 text-xs mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.birthDate}</p>}
+                    {errors.birthDate && <p className="text-red-500 text-xs mt-1 font-pretendard">{errors.birthDate}</p>}
                   </div>
                 </div>
               </div>
@@ -1007,8 +989,7 @@ export default function Register() {
                 <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-sky-50 to-cyan-50 border border-sky-200/60">
                   <UserPlus className="w-3.5 h-3.5 text-sky-500" />
                   <span
-                    className="text-xs font-bold text-sky-600 tracking-wide"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="text-xs font-bold text-sky-600 tracking-wide font-pretendard"
                   >
                     ACCOUNT
                   </span>
@@ -1018,8 +999,7 @@ export default function Register() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label
-                      className="block text-sm font-semibold text-slate-600 mb-2"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                     >
                       이름
                     </label>
@@ -1031,16 +1011,15 @@ export default function Register() {
                         value={formData.name}
                         onChange={(e) => handleChange('name', e.target.value)}
                         className={`h-12 pl-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.name ? 'border-red-400' : ''}`}
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-pretendard"
                       />
                     </div>
-                    {errors.name && <p className="text-red-500 text-xs mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.name}</p>}
+                    {errors.name && <p className="text-red-500 text-xs mt-1 font-pretendard">{errors.name}</p>}
                   </div>
 
                   <div>
                     <label
-                      className="block text-sm font-semibold text-slate-600 mb-2"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                     >
                       닉네임
                     </label>
@@ -1053,18 +1032,17 @@ export default function Register() {
                         onChange={(e) => handleChange('nickname', e.target.value)}
                         maxLength={10}
                         className={`h-12 pl-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.nickname ? 'border-red-400' : ''}`}
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-pretendard"
                       />
                     </div>
-                    {errors.nickname && <p className="text-red-500 text-xs mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.nickname}</p>}
+                    {errors.nickname && <p className="text-red-500 text-xs mt-1 font-pretendard">{errors.nickname}</p>}
                   </div>
                 </div>
 
                 {/* 이메일 */}
                 <div>
                   <label
-                    className="block text-sm font-semibold text-slate-600 mb-2"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                   >
                     이메일 (아이디)
                   </label>
@@ -1077,18 +1055,17 @@ export default function Register() {
                       onChange={(e) => handleChange('email', e.target.value)}
                       autoComplete="off"
                       className={`h-12 pl-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.email ? 'border-red-400' : ''}`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     />
                   </div>
-                  {errors.email && <p className="text-red-500 text-xs mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.email}</p>}
+                  {errors.email && <p className="text-red-500 text-xs mt-1 font-pretendard">{errors.email}</p>}
                 </div>
 
                 {/* 비밀번호 + 비밀번호 확인 가로 배치 */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label
-                      className="block text-sm font-semibold text-slate-600 mb-2"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                     >
                       비밀번호
                     </label>
@@ -1102,7 +1079,7 @@ export default function Register() {
                         maxLength={20}
                         autoComplete="new-password"
                         className={`h-12 pl-12 pr-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.password ? 'border-red-400' : ''}`}
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-pretendard"
                       />
                       <button
                         type="button"
@@ -1112,13 +1089,12 @@ export default function Register() {
                         {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
-                    {errors.password && <p className="text-red-500 text-xs mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.password}</p>}
+                    {errors.password && <p className="text-red-500 text-xs mt-1 font-pretendard">{errors.password}</p>}
                   </div>
 
                   <div>
                     <label
-                      className="block text-sm font-semibold text-slate-600 mb-2"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                     >
                       비밀번호 확인
                     </label>
@@ -1131,7 +1107,7 @@ export default function Register() {
                         onChange={(e) => handleChange('confirmPassword', e.target.value)}
                         autoComplete="new-password"
                         className={`h-12 pl-12 pr-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.confirmPassword ? 'border-red-400' : ''}`}
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-pretendard"
                       />
                       <button
                         type="button"
@@ -1141,7 +1117,7 @@ export default function Register() {
                         {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
-                    {errors.confirmPassword && <p className="text-red-500 text-xs mt-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && <p className="text-red-500 text-xs mt-1 font-pretendard">{errors.confirmPassword}</p>}
                   </div>
                 </div>
 
@@ -1150,8 +1126,7 @@ export default function Register() {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-sky-200/60 mb-3">
                     <Mail className="w-3.5 h-3.5 text-sky-500" />
                     <span
-                      className="text-xs font-bold text-sky-600 tracking-wide"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-xs font-bold text-sky-600 tracking-wide font-pretendard"
                     >
                       이메일 인증
                     </span>
@@ -1161,15 +1136,14 @@ export default function Register() {
                       type="text"
                       value={formData.email}
                       disabled
-                      className="h-12 bg-white border-sky-100 rounded-xl text-slate-500 text-sm"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="h-12 bg-white border-sky-100 rounded-xl text-slate-500 text-sm font-pretendard"
                     />
                     <Button
                       type="button"
                       onClick={handleSendVerificationCode}
                       disabled={!formData.email || isVerified || isSending}
                       className={`h-12 px-6 rounded-xl whitespace-nowrap font-semibold text-sm shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${isVerified ? 'bg-green-500 hover:bg-green-600 shadow-green-200/50' : 'bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 shadow-sky-200/50'}`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     >
                       {isVerified ? (
                         <>
@@ -1199,12 +1173,11 @@ export default function Register() {
                           value={verificationCode}
                           onChange={(e) => setVerificationCode(e.target.value)}
                           className={`h-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm ${errors.verificationCode ? 'border-red-400' : ''}`}
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="font-pretendard"
                         />
                         {timer > 0 && (
                           <span
-                            className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-red-500 font-semibold tabular-nums"
-                            style={{ fontFamily: "'Pretendard', sans-serif" }}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-red-500 font-semibold tabular-nums font-pretendard"
                           >
                             {Math.floor(timer / 60)}:{String(timer % 60).padStart(2, '0')}
                           </span>
@@ -1214,8 +1187,7 @@ export default function Register() {
                         type="button"
                         onClick={handleVerifyCode}
                         disabled={isVerifying || !verificationCode}
-                        className="h-12 px-6 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 rounded-xl whitespace-nowrap font-semibold text-sm shadow-md shadow-sky-200/50 transition-all duration-300 hover:shadow-lg hover:scale-[1.02]"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="h-12 px-6 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 rounded-xl whitespace-nowrap font-semibold text-sm shadow-md shadow-sky-200/50 transition-all duration-300 hover:shadow-lg hover:scale-[1.02] font-pretendard"
                       >
                         {isVerifying ? (
                           <>
@@ -1229,11 +1201,10 @@ export default function Register() {
                     </div>
                   )}
 
-                  {errors.verificationCode && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.verificationCode}</p>}
+                  {errors.verificationCode && <p className="text-red-500 text-xs mt-1.5 font-pretendard">{errors.verificationCode}</p>}
                   {isVerified && (
                     <p
-                      className="text-green-600 text-xs mt-2 flex items-center gap-1.5 font-medium bg-green-50 px-3 py-2 rounded-xl"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-green-600 text-xs mt-2 flex items-center gap-1.5 font-medium bg-green-50 px-3 py-2 rounded-xl font-pretendard"
                     >
                       <CheckCircle2 className="w-3.5 h-3.5" /> 이메일 인증이 완료되었습니다
                     </p>
@@ -1245,8 +1216,7 @@ export default function Register() {
                   <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white border border-sky-200/60 mb-3">
                     <Shield className="w-3.5 h-3.5 text-sky-500" />
                     <span
-                      className="text-xs font-bold text-sky-600 tracking-wide"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-xs font-bold text-sky-600 tracking-wide font-pretendard"
                     >
                       약관 동의
                     </span>
@@ -1262,8 +1232,7 @@ export default function Register() {
                         />
                         <label
                           htmlFor="terms"
-                          className="text-sm text-slate-600 cursor-pointer leading-relaxed"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="text-sm text-slate-600 cursor-pointer leading-relaxed font-pretendard"
                         >
                           <span className="text-sky-500 font-semibold">(필수)</span> 이용약관
                         </label>
@@ -1271,14 +1240,13 @@ export default function Register() {
                       <button
                         type="button"
                         onClick={() => setTermsModal({ open: true, type: 'terms' })}
-                        className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors hover:underline"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors hover:underline font-pretendard"
                       >
                         <FileText className="w-3 h-3" />
                         보기
                       </button>
                     </div>
-                    {errors.terms && <p className="text-red-500 text-xs ml-6" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.terms}</p>}
+                    {errors.terms && <p className="text-red-500 text-xs ml-6 font-pretendard">{errors.terms}</p>}
 
                     <div className="flex items-center justify-between">
                       <div className="flex items-start gap-2.5">
@@ -1290,8 +1258,7 @@ export default function Register() {
                         />
                         <label
                           htmlFor="privacy"
-                          className="text-sm text-slate-600 cursor-pointer leading-relaxed"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="text-sm text-slate-600 cursor-pointer leading-relaxed font-pretendard"
                         >
                           <span className="text-sky-500 font-semibold">(필수)</span> 개인정보 처리방침
                         </label>
@@ -1299,14 +1266,13 @@ export default function Register() {
                       <button
                         type="button"
                         onClick={() => setTermsModal({ open: true, type: 'privacy' })}
-                        className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors hover:underline"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="flex items-center gap-1 text-xs text-sky-500 hover:text-sky-600 font-medium transition-colors hover:underline font-pretendard"
                       >
                         <FileText className="w-3 h-3" />
                         보기
                       </button>
                     </div>
-                    {errors.privacy && <p className="text-red-500 text-xs ml-6" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.privacy}</p>}
+                    {errors.privacy && <p className="text-red-500 text-xs ml-6 font-pretendard">{errors.privacy}</p>}
                   </div>
                 </div>
               </div>
@@ -1318,8 +1284,7 @@ export default function Register() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full h-14 bg-gradient-to-r from-sky-400 via-cyan-400 to-sky-400 hover:from-sky-500 hover:via-cyan-500 hover:to-sky-500 text-white font-bold text-base rounded-2xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 disabled:opacity-70"
-                style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                className="w-full h-14 bg-gradient-to-r from-sky-400 via-cyan-400 to-sky-400 hover:from-sky-500 hover:via-cyan-500 hover:to-sky-500 text-white font-bold text-base rounded-2xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 disabled:opacity-70 font-gmarket"
               >
                 {isSubmitting ? (
                   <>
@@ -1336,15 +1301,13 @@ export default function Register() {
           {/* 로그인 링크 */}
           <div className="text-center pb-8 px-10">
             <p
-              className="text-sm text-slate-500"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-sm text-slate-500 font-pretendard"
             >
               이미 계정이 있으신가요?{' '}
               <button
                 type="button"
                 onClick={() => navigate('/login')}
-                className="text-sky-500 hover:text-sky-600 font-bold transition-colors"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="text-sky-500 hover:text-sky-600 font-bold transition-colors font-pretendard"
               >
                 로그인
               </button>
@@ -1355,8 +1318,7 @@ export default function Register() {
         {/* 하단 브랜드 텍스트 */}
         <div className="text-center mt-6">
           <p
-            className="text-xs text-slate-400"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-xs text-slate-400 font-pretendard"
           >
             HONDI - 혼자여서 더 자유로운 제주 여행
           </p>
@@ -1388,8 +1350,7 @@ export default function Register() {
                   )}
                 </div>
                 <h2
-                  className="text-lg font-bold text-slate-800"
-                  style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                  className="text-lg font-bold text-slate-800 font-gmarket"
                 >
                   {TERMS_CONTENT[termsModal.type]?.title}
                 </h2>
@@ -1406,8 +1367,7 @@ export default function Register() {
             {/* 모달 본문 */}
             <div className="flex-1 overflow-y-auto px-8 py-6">
               <pre
-                className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap break-words"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap break-words font-pretendard"
               >
                 {TERMS_CONTENT[termsModal.type]?.content}
               </pre>
@@ -1416,8 +1376,7 @@ export default function Register() {
             {/* 모달 하단 */}
             <div className="px-8 py-4 border-t border-sky-100/60 bg-gradient-to-r from-sky-50/50 to-cyan-50/50 flex items-center justify-between shrink-0">
               <p
-                className="text-xs text-slate-400"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="text-xs text-slate-400 font-pretendard"
               >
                 끝까지 읽어주셔서 감사합니다
               </p>
@@ -1432,8 +1391,7 @@ export default function Register() {
                     }
                     setTermsModal({ open: false, type: null });
                   }}
-                  className="h-10 px-5 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-semibold text-sm rounded-xl shadow-md shadow-sky-200/50 transition-all duration-300 hover:shadow-lg"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="h-10 px-5 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-semibold text-sm rounded-xl shadow-md shadow-sky-200/50 transition-all duration-300 hover:shadow-lg font-pretendard"
                 >
                   동의하고 닫기
                 </Button>
@@ -1441,8 +1399,7 @@ export default function Register() {
                   type="button"
                   variant="outline"
                   onClick={() => setTermsModal({ open: false, type: null })}
-                  className="h-10 px-5 border-sky-200 text-slate-500 hover:bg-sky-50 font-semibold text-sm rounded-xl transition-all duration-300"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="h-10 px-5 border-sky-200 text-slate-500 hover:bg-sky-50 font-semibold text-sm rounded-xl transition-all duration-300 font-pretendard"
                 >
                   닫기
                 </Button>

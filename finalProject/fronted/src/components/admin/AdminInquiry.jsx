@@ -59,8 +59,7 @@ function AnswerModal({ inquiryNo, onClose }) {
       >
         <div className="flex items-center justify-between mb-6">
           <h2
-            className="text-xl font-black text-slate-800"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-xl font-black text-slate-800 font-pretendard"
           >
             문의 상세 / 답변
           </h2>
@@ -76,7 +75,7 @@ function AnswerModal({ inquiryNo, onClose }) {
         ) : inquiry ? (
           <div className="space-y-5">
             {/* 문의 정보 */}
-            <div className="grid grid-cols-2 gap-3 text-sm" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <div className="grid grid-cols-2 gap-3 text-sm font-pretendard">
               <div>
                 <span className="text-slate-400">작성자: </span>
                 <span className="font-semibold text-slate-700">{inquiry.memberNickname}</span>
@@ -97,14 +96,14 @@ function AnswerModal({ inquiryNo, onClose }) {
 
             {/* 제목 */}
             <div>
-              <p className="text-xs font-semibold text-slate-400 mb-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>제목</p>
-              <p className="text-sm font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>{inquiry.title}</p>
+              <p className="text-xs font-semibold text-slate-400 mb-1 font-pretendard">제목</p>
+              <p className="text-sm font-bold text-slate-800 font-pretendard">{inquiry.title}</p>
             </div>
 
             {/* 내용 */}
             <div className="bg-sky-50/80 rounded-xl p-4">
-              <p className="text-xs font-semibold text-slate-500 mb-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>문의 내용</p>
-              <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <p className="text-xs font-semibold text-slate-500 mb-1 font-pretendard">문의 내용</p>
+              <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed font-pretendard">
                 {inquiry.content}
               </p>
             </div>
@@ -112,18 +111,18 @@ function AnswerModal({ inquiryNo, onClose }) {
             {/* 기존 답변 or 답변 폼 */}
             {inquiry.status === 'A' ? (
               <div className="bg-emerald-50/80 rounded-xl p-4 border border-emerald-100">
-                <p className="text-xs font-semibold text-emerald-600 mb-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>등록된 답변</p>
-                <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <p className="text-xs font-semibold text-emerald-600 mb-1 font-pretendard">등록된 답변</p>
+                <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed font-pretendard">
                   {inquiry.answer}
                 </p>
-                <p className="text-[11px] text-slate-400 mt-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <p className="text-[11px] text-slate-400 mt-2 font-pretendard">
                   답변일: {inquiry.answeredAt}
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                     답변 작성
                   </label>
                   <textarea
@@ -132,24 +131,21 @@ function AnswerModal({ inquiryNo, onClose }) {
                     required
                     rows={5}
                     placeholder="답변 내용을 입력하세요"
-                    className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none font-pretendard"
                   />
                 </div>
                 <div className="flex justify-end gap-3">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="px-6 py-2.5 rounded-full text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="px-6 py-2.5 rounded-full text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 transition-colors font-pretendard"
                   >
                     취소
                   </button>
                   <button
                     type="submit"
                     disabled={answerMutation.isPending}
-                    className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 font-pretendard"
                   >
                     <Send className="w-4 h-4" />
                     {answerMutation.isPending ? '등록중...' : '답변 등록'}
@@ -159,7 +155,7 @@ function AnswerModal({ inquiryNo, onClose }) {
             )}
           </div>
         ) : (
-          <p className="text-center text-slate-400 py-8" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <p className="text-center text-slate-400 py-8 font-pretendard">
             문의를 찾을 수 없습니다.
           </p>
         )}
@@ -213,13 +209,13 @@ export default function AdminInquiry() {
                   ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-200/60'
                   : 'bg-slate-100 text-slate-500 hover:bg-sky-50 hover:text-sky-500'
               }`}
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="font-pretendard"
             >
               {opt.label}
             </button>
           ))}
         </div>
-        <span className="text-sm text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+        <span className="text-sm text-slate-400 font-pretendard">
           총 {totalCount}건
         </span>
       </div>
@@ -232,13 +228,13 @@ export default function AdminInquiry() {
           <table className="w-full">
             <thead>
               <tr className="bg-sky-50/80">
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>번호</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>카테고리</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>제목</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>작성자</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>상태</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>등록일</th>
-                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600" style={{ fontFamily: "'Pretendard', sans-serif" }}>관리</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600 font-pretendard">번호</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600 font-pretendard">카테고리</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600 font-pretendard">제목</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600 font-pretendard">작성자</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600 font-pretendard">상태</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600 font-pretendard">등록일</th>
+                <th className="text-left px-6 py-3 text-sm font-semibold text-slate-600 font-pretendard">관리</th>
               </tr>
             </thead>
             <tbody>
@@ -254,10 +250,10 @@ export default function AdminInquiry() {
                       {CATEGORIES[item.category] || item.category}
                     </span>
                   </td>
-                  <td className="px-6 py-3 text-sm font-semibold text-slate-700 max-w-[200px] truncate" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <td className="px-6 py-3 text-sm font-semibold text-slate-700 max-w-[200px] truncate font-pretendard">
                     {item.title}
                   </td>
-                  <td className="px-6 py-3 text-sm text-slate-500" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <td className="px-6 py-3 text-sm text-slate-500 font-pretendard">
                     {item.memberNickname}
                   </td>
                   <td className="px-6 py-3">
@@ -265,7 +261,7 @@ export default function AdminInquiry() {
                       {item.status === 'W' ? '대기' : '답변완료'}
                     </span>
                   </td>
-                  <td className="px-6 py-3 text-sm text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <td className="px-6 py-3 text-sm text-slate-400 font-pretendard">
                     {item.createdAt}
                   </td>
                   <td className="px-6 py-3">
@@ -290,7 +286,7 @@ export default function AdminInquiry() {
               ))}
               {list.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-slate-400 text-sm" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <td colSpan={7} className="text-center py-12 text-slate-400 text-sm font-pretendard">
                     등록된 문의가 없습니다.
                   </td>
                 </tr>

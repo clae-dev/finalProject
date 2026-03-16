@@ -17,6 +17,7 @@ export const useNotifications = (page = 1, size = 20) => {
     queryKey: ['notifications', page, size],
     queryFn: () => getNotifications(page, size),
     enabled: !!getToken('accessToken'),
+    staleTime: 1000 * 60,
   });
 };
 
@@ -28,6 +29,7 @@ export const useUnreadCount = () => {
     queryKey: ['notifications', 'unreadCount'],
     queryFn: () => getUnreadCount(),
     enabled: !!getToken('accessToken'),
+    staleTime: 1000 * 60,
   });
 };
 

@@ -95,8 +95,8 @@ export default function AdminDashboard() {
               <div className={`w-12 h-12 ${colors.bg} rounded-2xl flex items-center justify-center mb-4 shadow-md ${colors.shadow} group-hover:scale-110 transition-transform duration-300`}>
                 <Icon className="w-6 h-6 text-white" />
               </div>
-              <p className="text-sm font-semibold text-slate-400 mb-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>{card.label}</p>
-              <p className={`text-3xl font-black ${colors.text}`} style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+              <p className="text-sm font-semibold text-slate-400 mb-1 font-pretendard">{card.label}</p>
+              <p className={`text-3xl font-black ${colors.text}`} className="font-gmarket">
                 <CountUp end={value} />
               </p>
             </motion.div>
@@ -116,8 +116,8 @@ export default function AdminDashboard() {
             <UserPlus className="w-5 h-5 text-white" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>오늘 가입</p>
-            <p className="text-2xl font-black text-sky-600" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+            <p className="text-sm font-semibold text-slate-400 font-pretendard">오늘 가입</p>
+            <p className="text-2xl font-black text-sky-600 font-gmarket">
               <CountUp end={stats.todaySignupCount || 0} />
               <span className="text-sm font-semibold text-slate-400 ml-1">명</span>
             </p>
@@ -133,7 +133,7 @@ export default function AdminDashboard() {
         className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg shadow-sky-100 border border-sky-50 overflow-hidden"
       >
         <div className="p-6 pb-4">
-          <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>최근 가입 회원</h3>
+          <h3 className="text-lg font-bold text-slate-800 font-gmarket">최근 가입 회원</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">

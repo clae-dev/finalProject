@@ -11,6 +11,7 @@ export const useAccommodations = (page = 1, size = 9, region: string | null = nu
   return useQuery({
     queryKey: ['accommodations', page, size, region],
     queryFn: () => getAccommodationList(page, size, region),
+    staleTime: 1000 * 60 * 10,
   });
 };
 
@@ -23,5 +24,6 @@ export const useAccommodationDetail = (accommodationNo: number | string | undefi
     queryKey: ['accommodation', accommodationNo],
     queryFn: () => getAccommodationDetail(accommodationNo!),
     enabled: !!accommodationNo,
+    staleTime: 1000 * 60 * 10,
   });
 };

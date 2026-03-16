@@ -17,6 +17,7 @@ export const useActivityList = (page = 1, size = 9, search = '') => {
   return useQuery({
     queryKey: ['activities', page, size, search],
     queryFn: () => getActivityList(page, size, search),
+    staleTime: 1000 * 60 * 3,
   });
 };
 
@@ -26,6 +27,7 @@ export const useActivityDetail = (boardNo: number | string | undefined) => {
     queryKey: ['activity', boardNo],
     queryFn: () => getActivityDetail(boardNo!),
     enabled: !!boardNo,
+    staleTime: 1000 * 60 * 3,
   });
 };
 
@@ -70,6 +72,7 @@ export const useActivityCommentList = (boardNo: number | string | undefined) => 
     queryKey: ['activity-comments', boardNo],
     queryFn: () => getActivityCommentList(boardNo!),
     enabled: !!boardNo,
+    staleTime: 1000 * 60 * 3,
   });
 };
 

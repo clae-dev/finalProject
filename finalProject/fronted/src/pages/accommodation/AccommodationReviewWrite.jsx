@@ -141,8 +141,7 @@ export default function AccommodationReviewWrite() {
 
         <div className="bg-white rounded-2xl p-6 md:p-8 border border-slate-100 shadow-sm">
           <h1
-            className="text-2xl font-black text-slate-800 mb-8"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-2xl font-black text-slate-800 mb-8 font-gmarket"
           >
             숙소 후기 작성
           </h1>
