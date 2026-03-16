@@ -9,7 +9,7 @@ import {
   useDeleteFaq,
 } from '../../api/faq/useFaq';
 
-export default function AdminFaq() {
+function AdminFaq() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -343,3 +343,5 @@ function FaqModal({ categories, editingFaq, onClose, onSubmit, isPending }) {
     </motion.div>
   );
 }
+
+export default React.memo(AdminFaq);

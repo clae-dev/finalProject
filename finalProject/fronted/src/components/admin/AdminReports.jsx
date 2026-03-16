@@ -51,7 +51,7 @@ const TARGET_TYPE_LABEL = {
   COMMENT: '댓글',
 };
 
-export default function AdminReports() {
+function AdminReports() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
   const [targetTypeFilter, setTargetTypeFilter] = useState('');
@@ -396,3 +396,5 @@ export default function AdminReports() {
     </div>
   );
 }
+
+export default React.memo(AdminReports);

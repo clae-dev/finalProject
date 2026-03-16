@@ -164,7 +164,7 @@ function AnswerModal({ inquiryNo, onClose }) {
   );
 }
 
-export default function AdminInquiry() {
+function AdminInquiry() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedNo, setSelectedNo] = useState(null);
@@ -353,3 +353,5 @@ export default function AdminInquiry() {
     </div>
   );
 }
+
+export default React.memo(AdminInquiry);

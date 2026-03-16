@@ -10,7 +10,7 @@ const STATUS_TABS = [
   { key: 'R', label: '거부' },
 ];
 
-export default function AdminVerifications() {
+function AdminVerifications() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
   const [viewImage, setViewImage] = useState(null);
@@ -309,3 +309,5 @@ export default function AdminVerifications() {
     </div>
   );
 }
+
+export default React.memo(AdminVerifications);

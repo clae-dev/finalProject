@@ -290,7 +290,7 @@ function SpotFormModal({ isOpen, onClose, editTarget, isPending, onSubmit }) {
   );
 }
 
-export default function AdminSpots() {
+function AdminSpots() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
 
@@ -498,3 +498,5 @@ export default function AdminSpots() {
     </div>
   );
 }
+
+export default React.memo(AdminSpots);
