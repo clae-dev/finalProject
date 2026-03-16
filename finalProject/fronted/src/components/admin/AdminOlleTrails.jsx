@@ -31,7 +31,7 @@ function Toast({ message, type }) {
   );
 }
 
-export default function AdminOlleTrails() {
+function AdminOlleTrails() {
   const [editTrail, setEditTrail] = useState(null);
   const [form, setForm]           = useState({});
   const [toast, setToast]         = useState(null);
@@ -378,3 +378,5 @@ export default function AdminOlleTrails() {
     </div>
   );
 }
+
+export default React.memo(AdminOlleTrails);

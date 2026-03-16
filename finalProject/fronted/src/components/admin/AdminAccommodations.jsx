@@ -10,7 +10,7 @@ import {
 } from '../../api/admin/useAdmin';
 import AccommodationFormModal from '../accommodation/AccommodationFormModal';
 
-export default function AdminAccommodations() {
+function AdminAccommodations() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -255,3 +255,5 @@ export default function AdminAccommodations() {
     </div>
   );
 }
+
+export default React.memo(AdminAccommodations);
