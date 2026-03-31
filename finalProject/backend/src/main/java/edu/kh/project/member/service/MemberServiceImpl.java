@@ -136,11 +136,29 @@ public class MemberServiceImpl implements MemberService {
     }
 
     /**
-     * 회원 번호로 회원 조회
+     * 회원 번호로 회원 조회 (경량 — 통계 미포함)
      */
     @Override
     public MemberDTO getMemberByNo(int memberNo) {
         return memberMapper.selectMemberByNo(memberNo);
+    }
+
+    /**
+     * 회원 번호로 회원 조회 (통계 포함 — 프로필 페이지용)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public MemberDTO getMemberWithStats(int memberNo) {
+        return memberMapper.selectMemberWithStats(memberNo);
+    }
+
+    /**
+     * 닉네임만 조회 (채팅 알림용 경량 쿼리)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String getNicknameByNo(int memberNo) {
+        return memberMapper.selectNicknameByNo(memberNo);
     }
 
     /**
