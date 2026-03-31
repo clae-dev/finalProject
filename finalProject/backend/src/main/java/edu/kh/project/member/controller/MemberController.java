@@ -270,8 +270,8 @@ public class MemberController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            MemberDTO member = memberService.getMemberByNo(memberNo);
-            
+            MemberDTO member = memberService.getMemberWithStats(memberNo);
+
             if (member != null) {
                 response.put("success", true);
                 response.put("data", member);

@@ -48,11 +48,25 @@ public interface MemberService {
     LoginResponseDTO login(LoginRequestDTO loginRequest);
     
     /**
-     * 회원 번호로 회원 조회
+     * 회원 번호로 회원 조회 (경량 — 통계 미포함)
      * @param memberNo
      * @return MemberDTO
      */
     MemberDTO getMemberByNo(int memberNo);
+
+    /**
+     * 회원 번호로 회원 조회 (통계 포함 — 프로필 페이지용)
+     * @param memberNo
+     * @return MemberDTO + 활동 통계
+     */
+    MemberDTO getMemberWithStats(int memberNo);
+
+    /**
+     * 닉네임만 조회 (채팅 알림용 경량 쿼리)
+     * @param memberNo
+     * @return 닉네임
+     */
+    String getNicknameByNo(int memberNo);
     
     /**
      * 아이디 찾기 (이름 + 이메일)

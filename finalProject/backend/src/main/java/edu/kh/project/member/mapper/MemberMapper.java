@@ -28,11 +28,25 @@ public interface MemberMapper {
     MemberDTO selectMemberByEmail(@Param("memberEmail") String memberEmail);
     
     /**
-     * 회원 번호로 회원 조회
+     * 회원 번호로 회원 조회 (경량 — 통계 미포함)
      * @param memberNo 회원 번호
      * @return 회원 정보
      */
     MemberDTO selectMemberByNo(@Param("memberNo") int memberNo);
+
+    /**
+     * 회원 번호로 회원 조회 (통계 포함 — 프로필 페이지용)
+     * @param memberNo 회원 번호
+     * @return 회원 정보 + 활동 통계
+     */
+    MemberDTO selectMemberWithStats(@Param("memberNo") int memberNo);
+
+    /**
+     * 닉네임만 조회 (채팅 알림용 경량 쿼리)
+     * @param memberNo 회원 번호
+     * @return 닉네임
+     */
+    String selectNicknameByNo(@Param("memberNo") int memberNo);
     
     /**
      * 이메일 중복 확인
