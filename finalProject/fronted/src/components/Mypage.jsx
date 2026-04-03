@@ -30,7 +30,7 @@ export default function MyPage() {
       <div className="min-h-screen bg-gradient-to-b from-sky-50 to-cyan-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-sky-300 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-500" style={{ fontFamily: "'Pretendard', sans-serif" }}>로딩 중...</p>
+          <p className="text-slate-500 font-pretendard">로딩 중...</p>
         </div>
       </div>
     );
@@ -40,7 +40,7 @@ export default function MyPage() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-sky-50 to-cyan-50 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-slate-500 text-lg" style={{ fontFamily: "'Pretendard', sans-serif" }}>회원 정보를 불러오는데 실패했습니다.</p>
+          <p className="text-slate-500 text-lg font-pretendard">회원 정보를 불러오는데 실패했습니다.</p>
           <button
             onClick={() => window.location.reload()}
             className="mt-4 px-6 py-2 bg-sky-500 text-white rounded-xl hover:bg-sky-600 transition-colors text-sm font-semibold"

@@ -144,7 +144,7 @@ function SiteCard({ site, index }) {
           >
             <span
               className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold ${site.tagColor}`}
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="font-pretendard"
             >
               <Sparkles className="w-3 h-3" />
               {site.tag}
@@ -166,14 +166,13 @@ function SiteCard({ site, index }) {
             </motion.div>
             <div>
               <h3
-                className="text-xl font-black text-slate-800"
-                style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                className="text-xl font-black text-slate-800 font-gmarket"
               >
                 {site.name}
               </h3>
               <div className="flex items-center gap-1.5 text-xs text-slate-400 mt-0.5">
                 <Globe className="w-3 h-3" />
-                <span style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <span className="font-pretendard">
                   {site.url.replace('https://', '').replace('http://', '')}
                 </span>
               </div>
@@ -182,8 +181,7 @@ function SiteCard({ site, index }) {
 
           {/* 설명 */}
           <p
-            className="text-sm text-slate-500 leading-relaxed mb-6"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-sm text-slate-500 leading-relaxed mb-6 font-pretendard"
           >
             {site.description}
           </p>
@@ -191,7 +189,7 @@ function SiteCard({ site, index }) {
           {/* 바로가기 버튼 */}
           <motion.div
             className={`relative inline-flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold overflow-hidden transition-all duration-500 ${site.bgLight} ${site.textColor} ${site.hoverBg} group-hover:text-white group-hover:shadow-lg`}
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="font-pretendard"
           >
             <span className="relative z-10">바로가기</span>
             <motion.div
@@ -304,8 +302,7 @@ export default function Flights() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="text-white/40 text-sm tracking-[0.3em] uppercase mb-5"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-white/40 text-sm tracking-[0.3em] uppercase mb-5 font-pretendard"
           >
             Flight Booking
           </motion.p>
@@ -317,7 +314,7 @@ export default function Flights() {
           >
             <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-sky-200 shadow-lg shadow-sky-500/10">
               <Plane className="w-4 h-4 text-sky-300" />
-              <span style={{ fontFamily: "'Pretendard', sans-serif" }}>제주행 항공권 예약</span>
+              <span className="font-pretendard">제주행 항공권 예약</span>
             </div>
           </motion.div>
 
@@ -325,8 +322,7 @@ export default function Flights() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-4xl md:text-6xl font-black mb-5 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-4xl md:text-6xl font-black mb-5 text-center leading-tight drop-shadow-lg font-gmarket"
           >
             <span className="text-white">제주 </span>
             <span className="bg-gradient-to-r from-sky-300 via-cyan-300 to-blue-300 bg-clip-text text-transparent">항공권 예약</span>
@@ -336,8 +332,7 @@ export default function Flights() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="text-lg text-white/70 text-center max-w-lg leading-relaxed"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-lg text-white/70 text-center max-w-lg leading-relaxed font-pretendard"
           >
             다양한 항공권 예약 사이트에서 최저가를 비교하고
             <br className="hidden sm:block" />
@@ -372,14 +367,12 @@ export default function Flights() {
           </motion.div>
           <div>
             <h3
-              className="text-lg font-bold text-slate-800 mb-1"
-              style={{ fontFamily: "'GmarketSans', sans-serif" }}
+              className="text-lg font-bold text-slate-800 mb-1 font-gmarket"
             >
               항공권 비교 예약
             </h3>
             <p
-              className="text-sm text-slate-500"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-sm text-slate-500 font-pretendard"
             >
               아래 사이트들을 통해 제주행 항공권 가격을 비교하고 예약할 수 있습니다. 각 사이트의 특가와 프로모션을 확인해보세요!
             </p>
@@ -387,15 +380,15 @@ export default function Flights() {
           <div className="hidden sm:flex items-center gap-6 ml-auto flex-shrink-0">
             <div className="flex items-center gap-2 text-slate-400">
               <TrendingUp className="w-4 h-4 text-emerald-500" />
-              <span className="text-xs font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>실시간 비교</span>
+              <span className="text-xs font-medium font-pretendard">실시간 비교</span>
             </div>
             <div className="flex items-center gap-2 text-slate-400">
               <Clock className="w-4 h-4 text-sky-500" />
-              <span className="text-xs font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>빠른 예약</span>
+              <span className="text-xs font-medium font-pretendard">빠른 예약</span>
             </div>
             <div className="flex items-center gap-2 text-slate-400">
               <Star className="w-4 h-4 text-amber-500" />
-              <span className="text-xs font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>최저가 보장</span>
+              <span className="text-xs font-medium font-pretendard">최저가 보장</span>
             </div>
           </div>
         </motion.div>
@@ -429,8 +422,7 @@ export default function Flights() {
               <Plane className="w-5 h-5 text-sky-500" />
             </motion.div>
             <span
-              className="text-sm text-sky-700 font-semibold"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-sm text-sky-700 font-semibold font-pretendard"
             >
               TIP: 여러 사이트를 비교하면 더 저렴한 항공권을 찾을 수 있어요!
             </span>

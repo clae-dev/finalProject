@@ -41,20 +41,20 @@ function InquiryDetailView({ inquiryNo, onClose }) {
     >
       <div className="px-6 pb-5 space-y-4">
         <div className="bg-sky-50/80 rounded-xl p-4">
-          <p className="text-xs font-semibold text-slate-500 mb-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>문의 내용</p>
-          <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <p className="text-xs font-semibold text-slate-500 mb-1 font-pretendard">문의 내용</p>
+          <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed font-pretendard">
             {inquiry.content}
           </p>
         </div>
 
         {inquiry.answer ? (
           <div className="bg-emerald-50/80 rounded-xl p-4 border border-emerald-100">
-            <p className="text-xs font-semibold text-emerald-600 mb-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>관리자 답변</p>
-            <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <p className="text-xs font-semibold text-emerald-600 mb-1 font-pretendard">관리자 답변</p>
+            <p className="text-sm text-slate-700 whitespace-pre-wrap leading-relaxed font-pretendard">
               {inquiry.answer}
             </p>
             {inquiry.answeredAt && (
-              <p className="text-[11px] text-slate-400 mt-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <p className="text-[11px] text-slate-400 mt-2 font-pretendard">
                 답변일: {inquiry.answeredAt}
               </p>
             )}
@@ -62,7 +62,7 @@ function InquiryDetailView({ inquiryNo, onClose }) {
         ) : (
           <div className="bg-slate-50 rounded-xl p-4 text-center">
             <Clock className="w-5 h-5 text-slate-300 mx-auto mb-1" />
-            <p className="text-sm text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <p className="text-sm text-slate-400 font-pretendard">
               답변 대기중입니다
             </p>
           </div>
@@ -142,14 +142,13 @@ export default function InquiryPage() {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-cyan-100 shadow-lg"
           >
             <MessageSquare className="w-4 h-4 text-cyan-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>1:1 Support</span>
+            <span className="font-pretendard">1:1 Support</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
-            className="text-4xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-4xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg font-gmarket"
           >
             <span className="text-white">1:1 </span>
             <span className="bg-gradient-to-r from-cyan-200 via-sky-200 to-teal-200 bg-clip-text text-transparent">문의하기</span>
@@ -158,8 +157,7 @@ export default function InquiryPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-lg text-white/70 text-center"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-lg text-white/70 text-center font-pretendard"
           >
             궁금한 점이 있으시면 편하게 문의해 주세요
           </motion.p>
@@ -181,14 +179,13 @@ export default function InquiryPage() {
             className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg shadow-sky-100 border border-sky-50 p-6 md:p-8 space-y-5"
           >
             <h2
-              className="text-lg font-black text-slate-800"
-              style={{ fontFamily: "'GmarketSans', sans-serif" }}
+              className="text-lg font-black text-slate-800 font-gmarket"
             >
               문의 작성
             </h2>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                 카테고리
               </label>
               <div className="flex flex-wrap gap-2">
@@ -202,7 +199,7 @@ export default function InquiryPage() {
                         ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-200/60'
                         : 'bg-slate-100 text-slate-500 hover:bg-sky-50 hover:text-sky-500'
                     }`}
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="font-pretendard"
                   >
                     {cat.label}
                   </button>
@@ -211,7 +208,7 @@ export default function InquiryPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                 제목
               </label>
               <input
@@ -221,13 +218,12 @@ export default function InquiryPage() {
                 required
                 maxLength={200}
                 placeholder="문의 제목을 입력하세요"
-                className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-600 mb-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <label className="block text-sm font-semibold text-slate-600 mb-1.5 font-pretendard">
                 내용
               </label>
               <textarea
@@ -236,8 +232,7 @@ export default function InquiryPage() {
                 required
                 rows={6}
                 placeholder="문의 내용을 자세히 적어주세요"
-                className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="w-full px-4 py-2.5 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none font-pretendard"
               />
             </div>
 
@@ -245,8 +240,7 @@ export default function InquiryPage() {
               <button
                 type="submit"
                 disabled={createMutation.isPending}
-                className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 font-pretendard"
               >
                 <Send className="w-4 h-4" />
                 {createMutation.isPending ? '등록중...' : '문의 등록'}
@@ -261,15 +255,13 @@ export default function InquiryPage() {
           >
             <MessageSquare className="w-10 h-10 text-slate-300 mx-auto mb-3" />
             <p
-              className="text-slate-500 text-sm mb-4"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-slate-500 text-sm mb-4 font-pretendard"
             >
               문의를 등록하려면 로그인이 필요합니다
             </p>
             <a
               href="/login"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-sky-500 to-cyan-500 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 font-pretendard"
             >
               로그인하기
             </a>
@@ -284,8 +276,7 @@ export default function InquiryPage() {
             transition={{ delay: 0.1 }}
           >
             <h2
-              className="text-lg font-black text-slate-800 mb-5"
-              style={{ fontFamily: "'GmarketSans', sans-serif" }}
+              className="text-lg font-black text-slate-800 mb-5 font-gmarket"
             >
               내 문의 내역
               {totalCount > 0 && (
@@ -302,7 +293,7 @@ export default function InquiryPage() {
             ) : list.length === 0 ? (
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-lg shadow-sky-100 border border-sky-50 py-16 text-center">
                 <MessageSquare className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-                <p className="text-sm text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <p className="text-sm text-slate-400 font-pretendard">
                   등록된 문의가 없습니다
                 </p>
               </div>
@@ -327,12 +318,11 @@ export default function InquiryPage() {
                           </span>
                         </div>
                         <p
-                          className="text-sm font-semibold text-slate-700 truncate"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="text-sm font-semibold text-slate-700 truncate font-pretendard"
                         >
                           {item.title}
                         </p>
-                        <p className="text-[11px] text-slate-400 mt-0.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                        <p className="text-[11px] text-slate-400 mt-0.5 font-pretendard">
                           {item.createdAt}
                         </p>
                       </div>

@@ -101,7 +101,7 @@ export default function AdminPage() {
     );
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+    <div className="flex h-screen bg-slate-50 overflow-hidden font-pretendard">
 
       {/* ════════════════════════════════
           사이드바
@@ -123,7 +123,7 @@ export default function AdminPage() {
                   <Shield className="w-4 h-4 text-white" />
                 </div>
                 <div>
-                  <p className="text-white font-black text-sm leading-none" style={{ fontFamily: "'GmarketSans', sans-serif" }}>HONDI</p>
+                  <p className="text-white font-black text-sm leading-none font-gmarket">HONDI</p>
                   <p className="text-slate-400 text-[10px] mt-0.5">Admin Console</p>
                 </div>
               </div>
@@ -226,7 +226,7 @@ export default function AdminPage() {
           <div className="max-w-6xl mx-auto px-6 py-8">
             {/* 페이지 타이틀 */}
             <div className="mb-6">
-              <h1 className="text-xl font-black text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+              <h1 className="text-xl font-black text-slate-800 font-gmarket">
                 {PAGE_LABEL[active]}
               </h1>
               <p className="text-slate-400 text-sm mt-0.5">HONDI 플랫폼을 관리하고 모니터링하세요</p>

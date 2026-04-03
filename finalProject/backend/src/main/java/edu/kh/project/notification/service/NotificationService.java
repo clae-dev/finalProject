@@ -17,6 +17,9 @@ public interface NotificationService {
     /** 알림 생성 + WebSocket push */
     void createNotification(NotificationDTO notification);
 
+    /** 모든 관리자에게 알림 일괄 전송 */
+    void notifyAllAdmins(NotificationDTO template);
+
     /** 알림 목록 조회 (페이징) */
     List<NotificationDTO> getNotifications(int recipientNo, int page, int size);
 

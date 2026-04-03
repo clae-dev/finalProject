@@ -146,14 +146,13 @@ export default function ActivityWrite() {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 backdrop-blur-xl rounded-full text-sm font-semibold mb-6 border border-white/20 text-orange-100 shadow-lg"
           >
             <CalendarDays className="w-4 h-4 text-orange-300" />
-            <span style={{ fontFamily: "'Pretendard', sans-serif" }}>{isEdit ? 'Edit Event' : 'New Event'}</span>
+            <span className="font-pretendard">{isEdit ? 'Edit Event' : 'New Event'}</span>
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
-            className="text-4xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-4xl md:text-5xl font-black mb-4 text-center leading-tight drop-shadow-lg font-gmarket"
           >
             <span className="bg-gradient-to-r from-orange-200 via-amber-200 to-yellow-200 bg-clip-text text-transparent">
               {isEdit ? '행사 수정' : '행사 등록'}
@@ -163,8 +162,7 @@ export default function ActivityWrite() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="text-lg text-white/70 text-center"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-lg text-white/70 text-center font-pretendard"
           >
             {isEdit ? '행사 정보를 수정합니다' : '제주의 멋진 행사와 액티비티를 공유해보세요'}
           </motion.p>
@@ -209,8 +207,7 @@ export default function ActivityWrite() {
                   onChange={(e) => setTitle(e.target.value)}
                   maxLength={100}
                   placeholder="행사/액티비티 제목을 입력하세요"
-                  className="w-full px-4 py-3.5 rounded-xl bg-orange-50/50 border border-orange-100 focus:bg-white focus:border-orange-400 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-sm font-medium placeholder-slate-300"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="w-full px-4 py-3.5 rounded-xl bg-orange-50/50 border border-orange-100 focus:bg-white focus:border-orange-400 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-sm font-medium placeholder-slate-300 font-pretendard"
                 />
                 <p className="text-right text-xs text-slate-400 mt-1">{title.length}/100</p>
               </div>
@@ -222,8 +219,7 @@ export default function ActivityWrite() {
                   rows={10}
                   maxLength={4000}
                   placeholder="행사 일시, 장소, 내용 등을 자유롭게 작성해주세요"
-                  className="w-full px-4 py-3.5 rounded-xl bg-orange-50/50 border border-orange-100 focus:bg-white focus:border-orange-400 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-sm font-medium placeholder-slate-300 resize-none leading-relaxed"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="w-full px-4 py-3.5 rounded-xl bg-orange-50/50 border border-orange-100 focus:bg-white focus:border-orange-400 focus:ring-2 focus:ring-orange-100 outline-none transition-all text-sm font-medium placeholder-slate-300 resize-none leading-relaxed font-pretendard"
                 />
                 <p className="text-right text-xs text-slate-400 mt-1">{content.length}/4000</p>
               </div>
@@ -285,8 +281,7 @@ export default function ActivityWrite() {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => navigate(isEdit ? `/activities/${editBoardNo}` : '/activities')}
-              className="flex-1 py-5 bg-white text-slate-500 font-bold text-lg rounded-2xl shadow-md border border-slate-200 hover:bg-slate-50 transition-all"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="flex-1 py-5 bg-white text-slate-500 font-bold text-lg rounded-2xl shadow-md border border-slate-200 hover:bg-slate-50 transition-all font-pretendard"
             >
               취소
             </motion.button>
@@ -295,8 +290,7 @@ export default function ActivityWrite() {
               disabled={isPending}
               whileHover={{ scale: 1.01, boxShadow: '0 20px 40px -10px rgba(249, 115, 22, 0.35)' }}
               whileTap={{ scale: 0.98 }}
-              className="flex-[2] py-5 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 text-white font-bold text-lg rounded-2xl shadow-lg shadow-orange-200/50 transition-all disabled:opacity-50"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="flex-[2] py-5 bg-gradient-to-r from-orange-500 via-amber-500 to-yellow-400 text-white font-bold text-lg rounded-2xl shadow-lg shadow-orange-200/50 transition-all disabled:opacity-50 font-pretendard"
             >
               {isPending ? (
                 <span className="inline-flex items-center gap-2">

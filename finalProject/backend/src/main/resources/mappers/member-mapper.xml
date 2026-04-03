@@ -48,23 +48,22 @@
           AND STATUS = 'A'
     </select>
 
-    <!-- 회원 번호로 회원 조회 (통계 포함) -->
+    <!-- 회원 번호로 회원 조회 (경량 — 통계 미포함) -->
     <select id="selectMemberByNo" resultMap="memberResultMap">
         SELECT
-            M.MEMBER_NO,
-            M.EMAIL,
-            M.NICKNAME,
-            M.NAME,
-            M.PHONE,
-            M.GENDER,
-            M.AGE_RANGE,
-            M.PROFILE_IMAGE,
-            M.INTRO,
-            M.MEMBER_TYPE,
-            M.STATUS,
-            M.EMAIL_VERIFIED,
-            M.VERIFIED_REVIEWER,
-            M.CREATED_AT,
+            M.MEMBER_NO, M.EMAIL, M.PASSWORD, M.NICKNAME, M.NAME, M.PHONE,
+            M.GENDER, M.AGE_RANGE, M.PROFILE_IMAGE, M.INTRO,
+            M.MEMBER_TYPE, M.STATUS, M.EMAIL_VERIFIED, M.VERIFIED_REVIEWER, M.CREATED_AT
+        FROM MEMBER M
+        WHERE M.MEMBER_NO = #{memberNo}
+    </select>
+
+    <!-- 회원 번호로 회원 조회 (통계 포함 — 프로필 페이지용) -->
+    <select id="selectMemberWithStats" resultMap="memberResultMap">
+        SELECT
+            M.MEMBER_NO, M.EMAIL, M.NICKNAME, M.NAME, M.PHONE,
+            M.GENDER, M.AGE_RANGE, M.PROFILE_IMAGE, M.INTRO,
+            M.MEMBER_TYPE, M.STATUS, M.EMAIL_VERIFIED, M.VERIFIED_REVIEWER, M.CREATED_AT,
             (SELECT COUNT(*) FROM BOARD B WHERE B.MEMBER_NO = M.MEMBER_NO AND B.STATUS = 'A') AS POST_COUNT,
             (SELECT COUNT(*) FROM COMPANION_REVIEW R WHERE R.MEMBER_NO = M.MEMBER_NO AND R.STATUS = 'Y') AS REVIEW_COUNT,
             (SELECT COUNT(*) FROM COMPANION_JOIN J WHERE J.MEMBER_NO = M.MEMBER_NO AND J.STATUS IN ('W', 'A')) AS COMPANION_COUNT,
@@ -72,6 +71,11 @@
             (SELECT COUNT(*) FROM ACCOMMODATION_REVIEW AR WHERE AR.MEMBER_NO = M.MEMBER_NO AND AR.STATUS = 'A') AS ACCOMM_REVIEW_COUNT
         FROM MEMBER M
         WHERE M.MEMBER_NO = #{memberNo}
+    </select>
+
+    <!-- 닉네임만 조회 (채팅 알림용 경량 쿼리) -->
+    <select id="selectNicknameByNo" resultType="string">
+        SELECT NICKNAME FROM MEMBER WHERE MEMBER_NO = #{memberNo}
     </select>
 
     <!-- 이메일 중복 확인 -->

@@ -1,5 +1,6 @@
 package edu.kh.project.websocket.handler;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,6 @@ import edu.kh.project.chatting.dto.GroupMessageDTO;
 import edu.kh.project.chatting.dto.MessageDTO;
 import edu.kh.project.chatting.service.ChattingService;
 import edu.kh.project.chatting.service.GroupChatService;
-import edu.kh.project.member.dto.MemberDTO;
 import edu.kh.project.member.service.MemberService;
 import edu.kh.project.notification.dto.NotificationDTO;
 import edu.kh.project.notification.service.NotificationService;
@@ -50,6 +50,14 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
 
     /** memberNo → 해당 멤버의 활성 세션 집합 (멀티탭 지원) */
     private final Map<Integer, Set<WebSocketSession>> sessionMap = new ConcurrentHashMap<>();
+
+    /** 그룹 멤버 캐시: groupRoomNo → {memberNos, expireTimeMillis} */
+    private final Map<Integer, CachedMembers> groupMemberCache = new ConcurrentHashMap<>();
+    private static final long GROUP_MEMBER_CACHE_TTL = 5 * 60 * 1000L; // 5분
+
+    private record CachedMembers(List<Integer> memberNos, long expireAt) {
+        boolean isExpired() { return System.currentTimeMillis() > expireAt; }
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -97,8 +105,8 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
         // DB 저장 (selectKey로 groupMsgNo 채워짐)
         groupChatService.insertGroupMessage(msg);
 
-        // 방 멤버 목록 조회
-        List<Integer> memberNos = groupChatService.selectGroupMemberNos(msg.getGroupRoomNo());
+        // 방 멤버 목록 조회 (캐시 활용 — TTL 5분)
+        List<Integer> memberNos = getGroupMembersWithCache(msg.getGroupRoomNo());
 
         String jsonMsg = objectMapper.writeValueAsString(msg);
         TextMessage textMsg = new TextMessage(jsonMsg);
@@ -140,7 +148,7 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
 
             // 수신자에게 알림 전송
             try {
-                MemberDTO sender = memberService.getMemberByNo(senderNo);
+                String senderNickname = memberService.getNicknameByNo(senderNo);
                 String preview = msg.getMessageContent();
                 if (preview.length() > 30) {
                     preview = preview.substring(0, 30) + "...";
@@ -153,13 +161,35 @@ public class ChattingWebSocketHandler extends TextWebSocketHandler {
                         .targetType("CHAT")
                         .targetNo(senderNo)
                         .title("새 메시지")
-                        .content(sender.getMemberNickname() + ": " + preview)
+                        .content(senderNickname + ": " + preview)
                         .build()
                 );
             } catch (Exception e) {
                 log.warn("채팅 알림 전송 실패 - senderNo: {}, targetNo: {}", senderNo, targetNo, e);
             }
         }
+    }
+
+    /**
+     * 그룹 멤버 목록 캐시 조회 (TTL 5분, 만료 시 DB 재조회)
+     */
+    private List<Integer> getGroupMembersWithCache(int groupRoomNo) {
+        CachedMembers cached = groupMemberCache.get(groupRoomNo);
+        if (cached != null && !cached.isExpired()) {
+            return cached.memberNos();
+        }
+        List<Integer> memberNos = Collections.unmodifiableList(
+                groupChatService.selectGroupMemberNos(groupRoomNo));
+        groupMemberCache.put(groupRoomNo,
+                new CachedMembers(memberNos, System.currentTimeMillis() + GROUP_MEMBER_CACHE_TTL));
+        return memberNos;
+    }
+
+    /**
+     * 그룹 멤버 변경 시 캐시 무효화 (외부에서 호출)
+     */
+    public void invalidateGroupMemberCache(int groupRoomNo) {
+        groupMemberCache.remove(groupRoomNo);
     }
 
     @Override

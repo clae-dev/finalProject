@@ -33,13 +33,12 @@ export default function NoticeDetail() {
       <div className="min-h-screen bg-gradient-to-b from-sky-50 via-white to-cyan-50">
         <Header />
         <div className="flex flex-col items-center justify-center py-40 gap-4">
-          <p className="text-slate-400 text-lg font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <p className="text-slate-400 text-lg font-medium font-pretendard">
             존재하지 않는 공지사항입니다.
           </p>
           <button
             onClick={() => navigate('/notices')}
-            className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg font-pretendard"
           >
             목록으로 돌아가기
           </button>
@@ -62,7 +61,7 @@ export default function NoticeDetail() {
           className="flex items-center gap-2 text-slate-500 hover:text-sky-600 transition-colors mb-8 group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          <span className="text-sm font-semibold" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <span className="text-sm font-semibold font-pretendard">
             목록으로 돌아가기
           </span>
         </motion.button>
@@ -76,27 +75,26 @@ export default function NoticeDetail() {
           {/* 헤더 */}
           <div className="px-8 py-8 border-b border-sky-50">
             <h1
-              className="text-2xl font-black text-slate-800 mb-4"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-2xl font-black text-slate-800 mb-4 font-pretendard"
             >
               {notice.boardTitle}
             </h1>
             <div className="flex flex-wrap items-center gap-5 text-sm text-slate-400">
               <span className="flex items-center gap-1.5">
                 <User className="w-4 h-4" />
-                <span style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <span className="font-pretendard">
                   {notice.memberNickname || '관리자'}
                 </span>
               </span>
               <span className="flex items-center gap-1.5">
                 <Calendar className="w-4 h-4" />
-                <span style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <span className="font-pretendard">
                   {notice.createdAt}
                 </span>
               </span>
               <span className="flex items-center gap-1.5">
                 <Eye className="w-4 h-4" />
-                <span style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <span className="font-pretendard">
                   {notice.readCount}
                 </span>
               </span>
@@ -106,8 +104,7 @@ export default function NoticeDetail() {
           {/* 본문 */}
           <div className="px-8 py-8">
             <p
-              className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap font-pretendard"
             >
               {notice.boardContent}
             </p>

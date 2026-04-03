@@ -114,13 +114,12 @@ export default function ActivityDetail() {
       <div className="min-h-screen bg-gradient-to-b from-orange-50 via-white to-amber-50">
         <Header />
         <div className="flex flex-col items-center justify-center py-40 gap-4">
-          <p className="text-slate-400 text-lg font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <p className="text-slate-400 text-lg font-medium font-pretendard">
             존재하지 않는 게시글입니다.
           </p>
           <button
             onClick={() => navigate('/activities')}
-            className="px-6 py-2.5 bg-gradient-to-r from-orange-400 to-amber-400 text-white text-sm font-bold rounded-full shadow-lg"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="px-6 py-2.5 bg-gradient-to-r from-orange-400 to-amber-400 text-white text-sm font-bold rounded-full shadow-lg font-pretendard"
           >
             목록으로 돌아가기
           </button>
@@ -145,7 +144,7 @@ export default function ActivityDetail() {
           className="flex items-center gap-2 text-slate-500 hover:text-orange-600 transition-colors mb-8 group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          <span className="text-sm font-semibold" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <span className="text-sm font-semibold font-pretendard">
             목록으로 돌아가기
           </span>
         </motion.button>
@@ -158,8 +157,7 @@ export default function ActivityDetail() {
           {/* 헤더 */}
           <div className="px-8 py-8 border-b border-orange-50">
             <h1
-              className="text-2xl font-black text-slate-800 mb-4"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-2xl font-black text-slate-800 mb-4 font-pretendard"
             >
               {board.boardTitle}
             </h1>
@@ -173,7 +171,7 @@ export default function ActivityDetail() {
                   )}
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-700" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <p className="text-sm font-bold text-slate-700 font-pretendard">
                     {board.memberNickname}
                   </p>
                   <div className="flex items-center gap-3 text-xs text-slate-400">
@@ -219,8 +217,7 @@ export default function ActivityDetail() {
           {/* 본문 */}
           <div className="px-8 py-8">
             <p
-              className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap mb-6"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap mb-6 font-pretendard"
             >
               {board.boardContent}
             </p>
@@ -298,7 +295,7 @@ export default function ActivityDetail() {
           <div className="px-8 py-6 border-b border-orange-50">
             <div className="flex items-center gap-2">
               <MessageCircle className="w-5 h-5 text-orange-500" />
-              <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <h3 className="text-lg font-bold text-slate-800 font-pretendard">
                 댓글
               </h3>
               <span className="px-2.5 py-0.5 bg-orange-100 text-orange-600 rounded-full text-xs font-bold">
@@ -317,8 +314,7 @@ export default function ActivityDetail() {
                 placeholder={user ? '댓글을 입력하세요' : '로그인 후 댓글을 작성할 수 있습니다'}
                 maxLength={500}
                 disabled={!user}
-                className="flex-1 px-4 py-3 rounded-xl border border-orange-100 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 disabled:bg-slate-50 disabled:text-slate-300"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="flex-1 px-4 py-3 rounded-xl border border-orange-100 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 disabled:bg-slate-50 disabled:text-slate-300 font-pretendard"
               />
               <motion.button
                 whileHover={{ scale: 1.05 }}
@@ -335,7 +331,7 @@ export default function ActivityDetail() {
           {/* 댓글 리스트 */}
           <div className="px-8 py-4">
             {comments.length === 0 ? (
-              <p className="text-center text-slate-400 text-sm py-8" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+              <p className="text-center text-slate-400 text-sm py-8 font-pretendard">
                 첫 번째 댓글을 남겨보세요!
               </p>
             ) : (
@@ -356,7 +352,7 @@ export default function ActivityDetail() {
                           <span className="text-sm font-bold text-slate-700">{comment.memberNickname}</span>
                           <span className="text-xs text-slate-400">{comment.createdAt}</span>
                         </div>
-                        <p className="text-sm text-slate-600 leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                        <p className="text-sm text-slate-600 leading-relaxed font-pretendard">
                           {comment.content}
                         </p>
                         <div className="flex items-center gap-3 mt-2">
@@ -392,8 +388,7 @@ export default function ActivityDetail() {
                               onChange={(e) => setReplyInput(e.target.value)}
                               placeholder="답글을 입력하세요"
                               maxLength={500}
-                              className="flex-1 px-3 py-2 rounded-lg border border-orange-100 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300"
-                              style={{ fontFamily: "'Pretendard', sans-serif" }}
+                              className="flex-1 px-3 py-2 rounded-lg border border-orange-100 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 font-pretendard"
                               onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleReplySubmit(comment.commentNo); } }}
                             />
                             <motion.button
@@ -425,7 +420,7 @@ export default function ActivityDetail() {
                                 <span className="text-xs font-bold text-slate-600">{reply.memberNickname}</span>
                                 <span className="text-[10px] text-slate-400">{reply.createdAt}</span>
                               </div>
-                              <p className="text-xs text-slate-500 leading-relaxed" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                              <p className="text-xs text-slate-500 leading-relaxed font-pretendard">
                                 {reply.content}
                               </p>
                               {user && Number(user.memberNo) === Number(reply.memberNo) && (
@@ -496,7 +491,7 @@ export default function ActivityDetail() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Flag className="w-5 h-5 text-orange-500" />
-                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>게시글 신고</h3>
+                  <h3 className="text-lg font-bold text-slate-800 font-pretendard">게시글 신고</h3>
                 </div>
                 <button onClick={() => setShowReportModal(false)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                   <X className="w-5 h-5 text-slate-400" />
@@ -524,8 +519,7 @@ export default function ActivityDetail() {
                 placeholder="상세 사유를 입력해주세요 (선택)"
                 maxLength={500}
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none mb-5"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none mb-5 font-pretendard"
               />
 
               <div className="flex gap-3">

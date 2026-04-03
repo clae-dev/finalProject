@@ -227,8 +227,7 @@ export default function FindPassword() {
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 text-sm text-white/80 hover:text-white font-medium transition-colors duration-300 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-full border border-white/20"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="flex items-center gap-2 text-sm text-white/80 hover:text-white font-medium transition-colors duration-300 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-full border border-white/20 font-pretendard"
           >
             <ArrowLeft className="w-4 h-4" />
             홈으로
@@ -236,8 +235,7 @@ export default function FindPassword() {
           <button
             type="button"
             onClick={() => navigate('/login')}
-            className="text-sm text-white/80 hover:text-white font-medium transition-colors duration-300 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-full border border-white/20"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-sm text-white/80 hover:text-white font-medium transition-colors duration-300 backdrop-blur-sm bg-white/10 px-4 py-2 rounded-full border border-white/20 font-pretendard"
           >
             로그인
           </button>
@@ -250,28 +248,24 @@ export default function FindPassword() {
           <img src={logo} alt="혼디" className="h-14 drop-shadow-lg" />
           <div className="flex flex-col leading-tight text-left">
             <span
-              className="text-3xl font-black text-white tracking-wider drop-shadow-lg"
-              style={{ fontFamily: "'GmarketSans', sans-serif" }}
+              className="text-3xl font-black text-white tracking-wider drop-shadow-lg font-gmarket"
             >
               HONDI
             </span>
             <span
-              className="text-[11px] font-semibold text-white/70 tracking-widest"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-[11px] font-semibold text-white/70 tracking-widest font-pretendard"
             >
               혼디
             </span>
           </div>
         </div>
         <h1
-          className="text-2xl font-bold text-white drop-shadow-md mb-2"
-          style={{ fontFamily: "'GmarketSans', sans-serif" }}
+          className="text-2xl font-bold text-white drop-shadow-md mb-2 font-gmarket"
         >
           비밀번호 찾기
         </h1>
         <p
-          className="text-white/70 text-sm"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
+          className="text-white/70 text-sm font-pretendard"
         >
           이메일 인증을 통해 비밀번호를 재설정할 수 있습니다
         </p>
@@ -315,7 +309,7 @@ export default function FindPassword() {
                         className={`text-xs font-semibold hidden sm:block transition-colors duration-300 ${
                           isCurrent ? 'text-sky-600' : isActive ? 'text-sky-400' : 'text-slate-400'
                         }`}
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-pretendard"
                       >
                         {label}
                       </span>
@@ -341,16 +335,14 @@ export default function FindPassword() {
                 {step === 3 && <KeyRound className="w-8 h-8 text-sky-500" />}
               </div>
               <h2
-                className="text-xl font-bold text-slate-800 mb-1.5"
-                style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                className="text-xl font-bold text-slate-800 mb-1.5 font-gmarket"
               >
                 {step === 1 && '본인 확인'}
                 {step === 2 && '인증코드 입력'}
                 {step === 3 && '새 비밀번호 설정'}
               </h2>
               <p
-                className="text-slate-400 text-sm"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="text-slate-400 text-sm font-pretendard"
               >
                 {step === 1 && '가입 시 등록한 이름과 이메일을 입력해주세요'}
                 {step === 2 && '이메일로 발송된 6자리 인증코드를 입력해주세요'}
@@ -363,8 +355,7 @@ export default function FindPassword() {
               <div className="space-y-4">
                 <div>
                   <label
-                    className="block text-sm font-semibold text-slate-600 mb-2"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                   >
                     이름
                   </label>
@@ -376,16 +367,15 @@ export default function FindPassword() {
                       value={formData.name}
                       onChange={(e) => handleChange('name', e.target.value)}
                       className={`h-12 pl-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.name ? 'border-red-400' : ''}`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     />
                   </div>
-                  {errors.name && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.name}</p>}
+                  {errors.name && <p className="text-red-500 text-xs mt-1.5 font-pretendard">{errors.name}</p>}
                 </div>
 
                 <div>
                   <label
-                    className="block text-sm font-semibold text-slate-600 mb-2"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                   >
                     이메일
                   </label>
@@ -397,17 +387,16 @@ export default function FindPassword() {
                       value={formData.email}
                       onChange={(e) => handleChange('email', e.target.value)}
                       className={`h-12 pl-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.email ? 'border-red-400' : ''}`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     />
                   </div>
-                  {errors.email && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.email}</p>}
+                  {errors.email && <p className="text-red-500 text-xs mt-1.5 font-pretendard">{errors.email}</p>}
                 </div>
 
                 <Button
                   onClick={handleSendVerificationCode}
                   disabled={loading}
-                  className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 mt-2"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 mt-2 font-pretendard"
                 >
                   {loading ? (
                     <>
@@ -429,8 +418,7 @@ export default function FindPassword() {
               <div className="space-y-4">
                 <div className="bg-gradient-to-br from-sky-50 to-cyan-50/50 rounded-2xl p-4 border border-sky-100/60 mb-2">
                   <p
-                    className="text-xs text-sky-600 font-medium flex items-center gap-1.5"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="text-xs text-sky-600 font-medium flex items-center gap-1.5 font-pretendard"
                   >
                     <Mail className="w-3.5 h-3.5" />
                     <span className="font-bold">{formData.email}</span> 으로 인증코드가 발송되었습니다
@@ -439,8 +427,7 @@ export default function FindPassword() {
 
                 <div>
                   <label
-                    className="block text-sm font-semibold text-slate-600 mb-2"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                   >
                     인증코드
                   </label>
@@ -453,12 +440,11 @@ export default function FindPassword() {
                         onChange={(e) => handleChange('verificationCode', e.target.value)}
                         maxLength={6}
                         className={`h-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm text-center tracking-[0.3em] font-semibold ${errors.verificationCode ? 'border-red-400' : ''}`}
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-pretendard"
                       />
                       {timer > 0 && (
                         <span
-                          className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-red-500 tabular-nums"
-                          style={{ fontFamily: "'Pretendard', sans-serif" }}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-red-500 tabular-nums font-pretendard"
                         >
                           {formatTime(timer)}
                         </span>
@@ -469,19 +455,18 @@ export default function FindPassword() {
                       variant="outline"
                       className="h-12 px-4 border-sky-200 text-sky-500 hover:bg-sky-50 rounded-xl text-sm font-semibold"
                       disabled={timer > 0 || loading}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     >
                       재발송
                     </Button>
                   </div>
-                  {errors.verificationCode && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.verificationCode}</p>}
+                  {errors.verificationCode && <p className="text-red-500 text-xs mt-1.5 font-pretendard">{errors.verificationCode}</p>}
                 </div>
 
                 <Button
                   onClick={handleVerifyCode}
                   disabled={loading}
-                  className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 mt-2"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 mt-2 font-pretendard"
                 >
                   {loading ? (
                     <>
@@ -500,8 +485,7 @@ export default function FindPassword() {
                   <button
                     type="button"
                     onClick={() => { setStep(1); setCodeSent(false); setTimer(0); }}
-                    className="text-slate-400 hover:text-sky-500 text-xs font-medium transition-colors"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="text-slate-400 hover:text-sky-500 text-xs font-medium transition-colors font-pretendard"
                   >
                     이름/이메일 다시 입력
                   </button>
@@ -515,8 +499,7 @@ export default function FindPassword() {
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200/60 rounded-2xl p-4 flex items-center gap-2.5 mb-2">
                   <CheckCircle2 className="w-5 h-5 text-green-500 shrink-0" />
                   <p
-                    className="text-sm text-green-700 font-medium"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="text-sm text-green-700 font-medium font-pretendard"
                   >
                     이메일 인증이 완료되었습니다
                   </p>
@@ -524,8 +507,7 @@ export default function FindPassword() {
 
                 <div>
                   <label
-                    className="block text-sm font-semibold text-slate-600 mb-2"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                   >
                     새 비밀번호
                   </label>
@@ -537,7 +519,7 @@ export default function FindPassword() {
                       value={formData.newPassword}
                       onChange={(e) => handleChange('newPassword', e.target.value)}
                       className={`h-12 pl-12 pr-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.newPassword ? 'border-red-400' : ''}`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     />
                     <button
                       type="button"
@@ -547,13 +529,12 @@ export default function FindPassword() {
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                  {errors.newPassword && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.newPassword}</p>}
+                  {errors.newPassword && <p className="text-red-500 text-xs mt-1.5 font-pretendard">{errors.newPassword}</p>}
                 </div>
 
                 <div>
                   <label
-                    className="block text-sm font-semibold text-slate-600 mb-2"
-                    style={{ fontFamily: "'Pretendard', sans-serif" }}
+                    className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard"
                   >
                     비밀번호 확인
                   </label>
@@ -565,7 +546,7 @@ export default function FindPassword() {
                       value={formData.confirmPassword}
                       onChange={(e) => handleChange('confirmPassword', e.target.value)}
                       className={`h-12 pl-12 pr-12 bg-white border-sky-100 focus:border-sky-400 focus:ring-sky-400 rounded-xl text-sm hover:border-sky-200 transition-colors ${errors.confirmPassword ? 'border-red-400' : ''}`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     />
                     <button
                       type="button"
@@ -575,14 +556,13 @@ export default function FindPassword() {
                       {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                  {errors.confirmPassword && <p className="text-red-500 text-xs mt-1.5" style={{ fontFamily: "'Pretendard', sans-serif" }}>{errors.confirmPassword}</p>}
+                  {errors.confirmPassword && <p className="text-red-500 text-xs mt-1.5 font-pretendard">{errors.confirmPassword}</p>}
                 </div>
 
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 mt-2"
-                  style={{ fontFamily: "'GmarketSans', sans-serif" }}
+                  className="w-full h-12 bg-gradient-to-r from-sky-400 to-cyan-400 hover:from-sky-500 hover:to-cyan-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-sky-200/50 hover:shadow-xl hover:shadow-sky-300/50 hover:scale-[1.01] transition-all duration-300 mt-2 font-gmarket"
                 >
                   {loading ? (
                     <>
@@ -600,15 +580,13 @@ export default function FindPassword() {
           {/* 로그인 링크 */}
           <div className="text-center pb-7 px-8">
             <p
-              className="text-sm text-slate-500"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-sm text-slate-500 font-pretendard"
             >
               비밀번호가 기억나셨나요?{' '}
               <button
                 type="button"
                 onClick={() => navigate('/login')}
-                className="text-sky-500 hover:text-sky-600 font-bold transition-colors"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="text-sky-500 hover:text-sky-600 font-bold transition-colors font-pretendard"
               >
                 로그인
               </button>
@@ -619,8 +597,7 @@ export default function FindPassword() {
         {/* 하단 브랜드 텍스트 */}
         <div className="text-center mt-6">
           <p
-            className="text-xs text-slate-400"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="text-xs text-slate-400 font-pretendard"
           >
             HONDI - 혼자여서 더 자유로운 제주 여행
           </p>

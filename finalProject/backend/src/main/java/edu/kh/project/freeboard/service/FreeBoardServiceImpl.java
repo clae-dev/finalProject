@@ -3,6 +3,7 @@ package edu.kh.project.freeboard.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -136,14 +137,28 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     @Override
     @Transactional(readOnly = true)
     public List<CommentDTO> getCommentList(int boardNo) {
-        List<CommentDTO> parents = freeBoardMapper.selectParentComments(boardNo);
+        List<CommentDTO> allComments = freeBoardMapper.selectAllComments(boardNo);
 
-        for (CommentDTO parent : parents) {
-            List<CommentDTO> replies = freeBoardMapper.selectChildComments(parent.getCommentNo());
-            parent.setReplies(replies);
+        Map<Integer, CommentDTO> parentMap = new LinkedHashMap<>();
+        List<CommentDTO> children = new ArrayList<>();
+
+        for (CommentDTO c : allComments) {
+            if (c.getParentCommentNo() == null) {
+                c.setReplies(new ArrayList<>());
+                parentMap.put(c.getCommentNo(), c);
+            } else {
+                children.add(c);
+            }
         }
 
-        return parents;
+        for (CommentDTO child : children) {
+            CommentDTO parent = parentMap.get(child.getParentCommentNo());
+            if (parent != null) {
+                parent.getReplies().add(child);
+            }
+        }
+
+        return new ArrayList<>(parentMap.values());
     }
 
     @Override

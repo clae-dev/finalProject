@@ -170,7 +170,7 @@ function SearchResultCard({ place, selected, onClick }) {
       <div className="flex-1 min-w-0">
         <h3
           className={`font-black text-sm truncate transition-colors ${selected ? 'text-sky-700' : 'text-slate-800'}`}
-          style={{ fontFamily: "'GmarketSans', sans-serif" }}
+          className="font-gmarket"
         >
           {place.place_name}
         </h3>
@@ -230,7 +230,7 @@ function PlaceDetailPanel({ place, onClose }) {
               <div className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
               <span className="text-[10px] font-bold text-sky-600">장소 상세정보</span>
             </div>
-            <h4 className="font-black text-base text-slate-800 leading-tight" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+            <h4 className="font-black text-base text-slate-800 leading-tight font-gmarket">
               {place.place_name}
             </h4>
             {category && (
@@ -635,18 +635,17 @@ export default function SpotsMapSection() {
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/90 backdrop-blur-sm rounded-full text-sm font-bold text-sky-600 mb-5 shadow-md shadow-sky-200/40 border border-white/80"
           >
             <span>✨</span>
-            <span style={{ fontFamily: "'GmarketSans', sans-serif", letterSpacing: '0.05em' }}>HOT PLACE · JEJU MAP</span>
+            <span className="font-gmarket" style={{ letterSpacing: '0.05em' }}>HOT PLACE · JEJU MAP</span>
           </motion.span>
           <h2
-            className="text-3xl md:text-5xl font-black text-slate-800"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-3xl md:text-5xl font-black text-slate-800 font-gmarket"
           >
             혼행러들이 궁금해하는{' '}
             <span className="bg-gradient-to-r from-sky-500 to-cyan-500 bg-clip-text text-transparent">
               제주도
             </span>
           </h2>
-          <p className="text-slate-500 mt-3 text-base" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <p className="text-slate-500 mt-3 text-base font-pretendard">
             제주도의 맛집, 카페, 관광지를 자유롭게 검색해보세요
           </p>
         </motion.div>
@@ -672,8 +671,7 @@ export default function SpotsMapSection() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="맛집, 카페, 관광지, 주소 검색..."
-                  className="w-full pl-10 pr-10 py-3 text-sm bg-slate-50/80 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent transition-all"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="w-full pl-10 pr-10 py-3 text-sm bg-slate-50/80 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent transition-all font-pretendard"
                 />
                 {searchQuery && (
                   <button
@@ -722,7 +720,7 @@ export default function SpotsMapSection() {
                       ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
                       : 'bg-white text-slate-600 border-slate-200 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-200'
                   }`}
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="font-pretendard"
                 >
                   <span>{emoji}</span>
                   {label}
@@ -763,7 +761,7 @@ export default function SpotsMapSection() {
                       <Search className="w-5 h-5 text-sky-400" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-slate-700" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+                      <p className="text-sm font-bold text-slate-700 font-gmarket">
                         제주도 어디든 검색해보세요
                       </p>
                       <p className="text-[11px] text-slate-400 mt-0.5">위 검색창에 장소를 입력하거나 카테고리를 선택하세요</p>

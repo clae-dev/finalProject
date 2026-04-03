@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
 import { useAdminMembers, useUpdateMemberStatus } from '../../api/admin/useAdmin';
 
-export default function AdminMembers() {
+function AdminMembers() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -53,8 +53,7 @@ export default function AdminMembers() {
         <select
           value={searchType}
           onChange={(e) => setSearchType(e.target.value)}
-          className="px-4 py-2.5 rounded-xl border border-sky-100 text-sm font-semibold text-slate-600 bg-sky-50/50 focus:outline-none focus:ring-2 focus:ring-sky-300"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
+          className="px-4 py-2.5 rounded-xl border border-sky-100 text-sm font-semibold text-slate-600 bg-sky-50/50 focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
         >
           <option value="nickname">닉네임</option>
           <option value="email">이메일</option>
@@ -66,15 +65,13 @@ export default function AdminMembers() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="검색어를 입력하세요"
-            className="w-full px-4 py-2.5 pr-10 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="w-full px-4 py-2.5 pr-10 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
           />
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         </div>
         <button
           type="submit"
-          className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
+          className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 font-pretendard"
         >
           검색
         </button>
@@ -215,3 +212,5 @@ export default function AdminMembers() {
     </div>
   );
 }
+
+export default React.memo(AdminMembers);

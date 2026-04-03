@@ -124,7 +124,7 @@ export default function PasswordChangeModal({ isOpen, onClose, memberNo }) {
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+              <h2 className="text-xl font-bold text-slate-800 font-gmarket">
                 비밀번호 변경
               </h2>
               <button onClick={handleClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
@@ -135,7 +135,7 @@ export default function PasswordChangeModal({ isOpen, onClose, memberNo }) {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* 현재 비밀번호 */}
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard">
                   현재 비밀번호
                 </label>
                 <div className="relative">
@@ -158,7 +158,7 @@ export default function PasswordChangeModal({ isOpen, onClose, memberNo }) {
 
               {/* 새 비밀번호 */}
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard">
                   새 비밀번호
                 </label>
                 <div className="relative">
@@ -184,7 +184,7 @@ export default function PasswordChangeModal({ isOpen, onClose, memberNo }) {
 
               {/* 비밀번호 확인 */}
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard">
                   새 비밀번호 확인
                 </label>
                 <div className="relative">

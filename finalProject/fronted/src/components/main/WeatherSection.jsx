@@ -105,7 +105,7 @@ function WeatherWidget() {
                       <div className="flex items-center gap-3">
                         <span className="text-4xl">{weather.emoji}</span>
                         <div>
-                          <p className="text-2xl font-black text-white leading-none" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+                          <p className="text-2xl font-black text-white leading-none font-gmarket">
                             {w.temp}°
                           </p>
                           <p className="text-xs text-white/70 font-medium mt-1">{weather.text}</p>
