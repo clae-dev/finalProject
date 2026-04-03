@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.kh.project.admin.mapper.AdminMapper;
 import edu.kh.project.common.util.JwtUtil;
 import edu.kh.project.member.dto.LoginRequestDTO;
 import edu.kh.project.member.dto.LoginResponseDTO;
@@ -38,7 +37,6 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final NotificationService notificationService;
-    private final AdminMapper adminMapper;
 
     /**
      * 이메일 중복 확인
@@ -72,16 +70,13 @@ public class MemberServiceImpl implements MemberService {
         if (result > 0) {
             log.info("회원가입 성공: {}", signupRequest.getMemberEmail());
 
-            for (int adminNo : adminMapper.selectAdminMemberNos()) {
-                notificationService.createNotification(NotificationDTO.builder()
-                        .recipientNo(adminNo)
-                        .notificationType("NEW_MEMBER")
-                        .targetType("ADMIN_MEMBER")
-                        .targetNo(0)
-                        .title("새 회원 가입")
-                        .content(signupRequest.getMemberNickname() + " 님이 가입했습니다.")
-                        .build());
-            }
+            notificationService.notifyAllAdmins(NotificationDTO.builder()
+                    .notificationType("NEW_MEMBER")
+                    .targetType("ADMIN_MEMBER")
+                    .targetNo(0)
+                    .title("새 회원 가입")
+                    .content(signupRequest.getMemberNickname() + " 님이 가입했습니다.")
+                    .build());
         }
 
         return result;

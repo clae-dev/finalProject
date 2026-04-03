@@ -3,7 +3,6 @@ package edu.kh.project.accommodation.service;
 import edu.kh.project.accommodation.dto.AccommodationReviewDTO;
 import edu.kh.project.accommodation.dto.ReviewImageDTO;
 import edu.kh.project.accommodation.mapper.AccommodationReviewMapper;
-import edu.kh.project.admin.mapper.AdminMapper;
 import edu.kh.project.member.dto.MemberVerificationDTO;
 import edu.kh.project.member.mapper.MemberVerificationMapper;
 import edu.kh.project.notification.dto.NotificationDTO;
@@ -37,18 +36,12 @@ public class AccommodationReviewServiceImpl implements AccommodationReviewServic
     private final AccommodationReviewMapper reviewMapper;
     private final MemberVerificationMapper verificationMapper;
     private final NotificationService notificationService;
-    private final AdminMapper adminMapper;
 
     @Override
     @Transactional(readOnly = true)
     public Map<String, Object> getReviewList(int accommodationNo, int page, int size) {
         int offset = (page - 1) * size;
-        List<AccommodationReviewDTO> list = reviewMapper.selectReviewList(accommodationNo, offset, size);
-
-        // 각 후기에 이미지 목록 추가
-        for (AccommodationReviewDTO review : list) {
-            review.setImages(reviewMapper.selectReviewImages(review.getReviewNo()));
-        }
+        List<AccommodationReviewDTO> list = reviewMapper.selectReviewListWithImages(accommodationNo, offset, size);
 
         int totalCount = reviewMapper.selectReviewCount(accommodationNo);
 
@@ -133,17 +126,14 @@ public class AccommodationReviewServiceImpl implements AccommodationReviewServic
                 verificationMapper.insertVerification(vDto);
 
                 // 인증서류가 있을 때만 관리자에게 알림 발송
-                for (int adminNo : adminMapper.selectAdminMemberNos()) {
-                    notificationService.createNotification(NotificationDTO.builder()
-                            .recipientNo(adminNo)
-                            .senderNo(dto.getMemberNo())
-                            .notificationType("ACCOM_REVIEW_SUBMITTED")
-                            .targetType("ADMIN_ACCOM_REVIEW")
-                            .targetNo(dto.getReviewNo())
-                            .title("숙소 후기 인증 요청")
-                            .content("인증서류가 접수되었습니다.")
-                            .build());
-                }
+                notificationService.notifyAllAdmins(NotificationDTO.builder()
+                        .senderNo(dto.getMemberNo())
+                        .notificationType("ACCOM_REVIEW_SUBMITTED")
+                        .targetType("ADMIN_ACCOM_REVIEW")
+                        .targetNo(dto.getReviewNo())
+                        .title("숙소 후기 인증 요청")
+                        .content("인증서류가 접수되었습니다.")
+                        .build());
             } catch (Exception e) {
                 log.error("인증서류 저장 실패", e);
             }
