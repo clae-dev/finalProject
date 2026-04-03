@@ -3,7 +3,6 @@ package edu.kh.project.report.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.kh.project.admin.mapper.AdminMapper;
 import edu.kh.project.notification.dto.NotificationDTO;
 import edu.kh.project.notification.service.NotificationService;
 import edu.kh.project.report.dto.ReportDTO;
@@ -27,24 +26,20 @@ public class ReportServiceImpl implements ReportService {
 
     private final ReportMapper reportMapper;
     private final NotificationService notificationService;
-    private final AdminMapper adminMapper;
 
     @Override
     public int submitReport(ReportDTO report) {
         int result = reportMapper.insertReport(report);
 
         if (result > 0) {
-            for (int adminNo : adminMapper.selectAdminMemberNos()) {
-                notificationService.createNotification(NotificationDTO.builder()
-                        .recipientNo(adminNo)
-                        .senderNo(report.getMemberNo())
-                        .notificationType("REPORT_SUBMITTED")
-                        .targetType("ADMIN_REPORT")
-                        .targetNo(0)
-                        .title("신고 접수")
-                        .content("새 신고가 접수되었습니다.")
-                        .build());
-            }
+            notificationService.notifyAllAdmins(NotificationDTO.builder()
+                    .senderNo(report.getMemberNo())
+                    .notificationType("REPORT_SUBMITTED")
+                    .targetType("ADMIN_REPORT")
+                    .targetNo(0)
+                    .title("신고 접수")
+                    .content("새 신고가 접수되었습니다.")
+                    .build());
         }
 
         return result;
