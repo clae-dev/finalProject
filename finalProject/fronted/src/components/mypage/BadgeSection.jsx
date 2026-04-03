@@ -150,15 +150,13 @@ export default function BadgeSection({ memberData }) {
           <div className="flex items-center gap-2.5">
             <span className="text-2xl">🎖️</span>
             <h2
-              className="text-xl font-extrabold text-slate-800"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="text-xl font-extrabold text-slate-800 font-pretendard"
             >
               나의 배지 컬렉션
             </h2>
           </div>
           <div
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-full"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 rounded-full font-pretendard"
           >
             <span className="text-sm">✨</span>
             <span className="text-xs font-bold text-amber-600">
@@ -189,14 +187,12 @@ export default function BadgeSection({ memberData }) {
                   <div className="text-center">
                     <span className="text-3xl block mb-2">{badge.emoji}</span>
                     <p
-                      className="text-[13px] font-bold text-white leading-tight"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-[13px] font-bold text-white leading-tight font-pretendard"
                     >
                       {badge.label}
                     </p>
                     <p
-                      className="text-[10px] text-white/70 mt-0.5"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="text-[10px] text-white/70 mt-0.5 font-pretendard"
                     >
                       {badge.condition}
                     </p>
@@ -258,7 +254,7 @@ export default function BadgeSection({ memberData }) {
                       className={`text-[13px] font-bold leading-tight ${
                         earned ? 'text-slate-700' : 'text-slate-400'
                       }`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     >
                       {badge.label}
                     </h4>
@@ -266,7 +262,7 @@ export default function BadgeSection({ memberData }) {
                       className={`text-[11px] mt-0.5 ${
                         earned ? 'text-slate-400' : 'text-slate-300'
                       }`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     >
                       {badge.condition}
                     </p>
@@ -287,8 +283,7 @@ export default function BadgeSection({ memberData }) {
                         />
                       </div>
                       <span
-                        className="text-[10px] font-bold text-slate-400 tabular-nums flex-shrink-0"
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="text-[10px] font-bold text-slate-400 tabular-nums flex-shrink-0 font-pretendard"
                       >
                         {current}/{badge.goal}
                       </span>

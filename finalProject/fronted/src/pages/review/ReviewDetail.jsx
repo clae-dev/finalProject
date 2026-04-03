@@ -160,7 +160,7 @@ export default function ReviewDetail() {
               <StarRating rating={review.rating} size="w-6 h-6" />
               <span className="text-white/80 text-sm font-semibold">{review.rating}.0</span>
             </div>
-            <h1 className="text-2xl md:text-4xl font-black text-white drop-shadow-lg" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+            <h1 className="text-2xl md:text-4xl font-black text-white drop-shadow-lg font-gmarket">
               {review.title}
             </h1>
           </motion.div>
@@ -275,7 +275,7 @@ export default function ReviewDetail() {
         {/* 본문 내용 */}
         <motion.div variants={fadeUp} initial="hidden" animate="visible" custom={3}
           className="bg-white rounded-3xl shadow-xl shadow-sky-100/40 p-7 mb-6 border border-sky-50">
-          <h3 className="text-sm font-bold text-sky-500 uppercase tracking-wider mb-4" style={{ fontFamily: "'Pretendard', sans-serif" }}>후기 내용</h3>
+          <h3 className="text-sm font-bold text-sky-500 uppercase tracking-wider mb-4 font-pretendard">후기 내용</h3>
           <p className="text-slate-600 leading-[1.9] whitespace-pre-wrap text-[15px]">{review.content}</p>
         </motion.div>
 
@@ -345,7 +345,7 @@ export default function ReviewDetail() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Flag className="w-5 h-5 text-orange-500" />
-                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>후기 신고</h3>
+                  <h3 className="text-lg font-bold text-slate-800 font-pretendard">후기 신고</h3>
                 </div>
                 <button onClick={() => setShowReportModal(false)} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                   <X className="w-5 h-5 text-slate-400" />
@@ -373,8 +373,7 @@ export default function ReviewDetail() {
                 placeholder="상세 사유를 입력해주세요 (선택)"
                 maxLength={500}
                 rows={3}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none mb-5"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-300 resize-none mb-5 font-pretendard"
               />
 
               <div className="flex gap-3">

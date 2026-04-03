@@ -12,7 +12,6 @@ import {
 } from '../../api/olletrail/useOlleTrail';
 
 const DIFFICULTY_OPTIONS = ['하', '중', '상'];
-const FIELD_FONT = { fontFamily: "'Pretendard', sans-serif" };
 
 function Toast({ message, type }) {
   return (
@@ -20,10 +19,9 @@ function Toast({ message, type }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-2xl shadow-xl text-sm font-semibold text-white ${
+      className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-2xl shadow-xl text-sm font-semibold text-white font-pretendard ${
         type === 'success' ? 'bg-emerald-500' : 'bg-red-500'
       }`}
-      style={FIELD_FONT}
     >
       {type === 'success'
         ? <CheckCircle2 className="w-4 h-4" />
@@ -33,7 +31,7 @@ function Toast({ message, type }) {
   );
 }
 
-export default function AdminOlleTrails() {
+function AdminOlleTrails() {
   const [editTrail, setEditTrail] = useState(null);
   const [form, setForm]           = useState({});
   const [toast, setToast]         = useState(null);
@@ -117,20 +115,20 @@ export default function AdminOlleTrails() {
         <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}>
           <Loader2 className="w-6 h-6" />
         </motion.div>
-        <span style={FIELD_FONT}>올레길 데이터 불러오는 중...</span>
+        <span className="font-pretendard">올레길 데이터 불러오는 중...</span>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-pretendard">
       {/* 헤더 */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-black text-slate-800" style={FIELD_FONT}>올레길 코스 관리</h2>
-          <p className="text-sm text-slate-400 mt-0.5" style={FIELD_FONT}>
+          <h2 className="text-lg font-black text-slate-800 font-pretendard">올레길 코스 관리</h2>
+          <p className="text-sm text-slate-400 mt-0.5 font-pretendard">
             총 {staticTrails.length}개 코스 &nbsp;·&nbsp;
-            <span className="text-amber-500 font-semibold">{modifiedCount}개 수정됨</span>
+            <span className="text-amber-500 font-semibold font-pretendard">{modifiedCount}개 수정됨</span>
           </p>
         </div>
         <input
@@ -138,20 +136,19 @@ export default function AdminOlleTrails() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="코스명 또는 구간 검색"
-          className="px-4 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 focus:outline-none focus:border-teal-400 w-full sm:w-56"
-          style={FIELD_FONT}
+          className="px-4 py-2 rounded-xl border border-slate-200 text-sm text-slate-700 focus:outline-none focus:border-teal-400 w-full sm:w-56 font-pretendard"
         />
       </div>
 
       {/* 안내 배너 */}
-      <div className="flex items-start gap-3 bg-teal-50 border border-teal-200 rounded-2xl px-4 py-3 text-sm text-teal-700" style={FIELD_FONT}>
+      <div className="flex items-start gap-3 bg-teal-50 border border-teal-200 rounded-2xl px-4 py-3 text-sm text-teal-700 font-pretendard">
         <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0 text-teal-500" />
         <span>수정 내용은 서버 DB에 영구 저장됩니다. GPS 경로·스탬프 좌표는 수정 불가합니다.</span>
       </div>
 
       {/* 코스 테이블 */}
       <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <div className="hidden sm:grid grid-cols-[60px_1fr_90px_80px_110px_100px] px-5 py-3 bg-slate-50 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wide" style={FIELD_FONT}>
+        <div className="hidden sm:grid grid-cols-[60px_1fr_90px_80px_110px_100px] px-5 py-3 bg-slate-50 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wide font-pretendard">
           <span>코스</span>
           <span>구간 / 소개</span>
           <span className="text-center">거리</span>
@@ -188,37 +185,36 @@ export default function AdminOlleTrails() {
 
                 <div className="min-w-0 pr-4">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-[13px] font-bold text-slate-800 truncate" style={FIELD_FONT}>
+                    <span className="text-[13px] font-bold text-slate-800 truncate">
                       {displaySubtitle}
                     </span>
                     {isModified && (
-                      <span className="flex-shrink-0 text-[10px] font-black px-1.5 py-0.5 bg-amber-100 text-amber-600 rounded-full border border-amber-200">
+                      <span className="flex-shrink-0 text-[10px] font-black px-1.5 py-0.5 bg-amber-100 text-amber-600 rounded-full border border-amber-200 font-pretendard">
                         수정됨
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-slate-400 line-clamp-1" style={FIELD_FONT}>
+                  <p className="text-[11px] text-slate-400 line-clamp-1">
                     {displayDescription}
                   </p>
                 </div>
 
-                <div className="hidden sm:flex justify-center">
-                  <span className="text-sm font-bold text-slate-700" style={FIELD_FONT}>{displayDistance} km</span>
+                <div className="hidden sm:flex justify-center font-pretendard">
+                  <span className="text-sm font-bold text-slate-700">{displayDistance} km</span>
                 </div>
-                <div className="hidden sm:flex justify-center">
-                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${diffColor}`} style={FIELD_FONT}>
+                <div className="hidden sm:flex justify-center font-pretendard">
+                  <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${diffColor}`}>
                     {displayDifficulty}
                   </span>
                 </div>
-                <div className="hidden sm:flex justify-center">
-                  <span className="text-xs font-medium text-slate-500" style={FIELD_FONT}>{displayDuration}</span>
+                <div className="hidden sm:flex justify-center font-pretendard">
+                  <span className="text-xs font-medium text-slate-500">{displayDuration}</span>
                 </div>
 
-                <div className="flex items-center justify-end sm:justify-center gap-2 mt-2 sm:mt-0">
+                <div className="flex items-center justify-end sm:justify-center gap-2 mt-2 sm:mt-0 font-pretendard">
                   <button
                     onClick={() => openEdit(trail)}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold rounded-xl transition-colors"
-                    style={FIELD_FONT}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-teal-500 hover:bg-teal-600 text-white text-xs font-bold rounded-xl transition-colors font-pretendard"
                   >
                     <Pencil className="w-3 h-3" />
                     수정
@@ -227,8 +223,7 @@ export default function AdminOlleTrails() {
                     <button
                       onClick={(e) => handleReset(trail, e)}
                       disabled={deleteOverride.isPending}
-                      className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-100 hover:bg-red-50 text-slate-500 hover:text-red-500 text-xs font-bold rounded-xl transition-colors disabled:opacity-50"
-                      style={FIELD_FONT}
+                      className="flex items-center gap-1 px-2.5 py-1.5 bg-slate-100 hover:bg-red-50 text-slate-500 hover:text-red-500 text-xs font-bold rounded-xl transition-colors disabled:opacity-50 font-pretendard"
                       title="원본 복원"
                     >
                       <RotateCcw className="w-3 h-3" />
@@ -259,10 +254,10 @@ export default function AdminOlleTrails() {
             >
               <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-gradient-to-r from-teal-50 to-emerald-50">
                 <div>
-                  <h3 className="text-base font-black text-slate-800" style={FIELD_FONT}>
+                  <h3 className="text-base font-black text-slate-800 font-pretendard">
                     {editTrail.name} 수정
                   </h3>
-                  <p className="text-xs text-slate-400 mt-0.5" style={FIELD_FONT}>
+                  <p className="text-xs text-slate-400 mt-0.5 font-pretendard">
                     {editTrail.subtitle}
                   </p>
                 </div>
@@ -276,34 +271,32 @@ export default function AdminOlleTrails() {
 
               <div className="px-6 py-5 space-y-4 max-h-[70vh] overflow-y-auto">
                 <label className="block">
-                  <span className="text-xs font-bold text-slate-500 mb-1.5 flex items-center gap-1" style={FIELD_FONT}>
+                  <span className="text-xs font-bold text-slate-500 mb-1.5 flex items-center gap-1 font-pretendard">
                     <MapPin className="w-3.5 h-3.5" /> 구간 (출발 → 도착)
                   </span>
                   <input
                     type="text"
                     value={form.subtitle}
                     onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100"
-                    style={FIELD_FONT}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 font-pretendard"
                   />
                 </label>
 
-                <label className="block">
-                  <span className="text-xs font-bold text-slate-500 mb-1.5 block" style={FIELD_FONT}>
+                <label className="block font-pretendard">
+                  <span className="text-xs font-bold text-slate-500 mb-1.5 block">
                     📝 코스 소개
                   </span>
                   <textarea
                     value={form.description}
                     onChange={(e) => setForm({ ...form, description: e.target.value })}
                     rows={5}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 resize-none leading-relaxed"
-                    style={FIELD_FONT}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400 focus:ring-2 focus:ring-teal-100 resize-none leading-relaxed font-pretendard"
                   />
                 </label>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-3 font-pretendard">
                   <label className="block">
-                    <span className="text-xs font-bold text-slate-500 mb-1.5 flex items-center gap-1" style={FIELD_FONT}>
+                    <span className="text-xs font-bold text-slate-500 mb-1.5 flex items-center gap-1 font-pretendard">
                       <Route className="w-3 h-3" /> 거리 (km)
                     </span>
                     <input
@@ -311,19 +304,17 @@ export default function AdminOlleTrails() {
                       step="0.1"
                       value={form.distance}
                       onChange={(e) => setForm({ ...form, distance: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400"
-                      style={FIELD_FONT}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400 font-pretendard"
                     />
                   </label>
                   <label className="block">
-                    <span className="text-xs font-bold text-slate-500 mb-1.5 flex items-center gap-1" style={FIELD_FONT}>
+                    <span className="text-xs font-bold text-slate-500 mb-1.5 flex items-center gap-1 font-pretendard">
                       <Mountain className="w-3 h-3" /> 난이도
                     </span>
                     <select
                       value={form.difficulty}
                       onChange={(e) => setForm({ ...form, difficulty: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400 bg-white"
-                      style={FIELD_FONT}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400 bg-white font-pretendard"
                     >
                       {DIFFICULTY_OPTIONS.map((d) => (
                         <option key={d} value={d}>{d}</option>
@@ -331,48 +322,44 @@ export default function AdminOlleTrails() {
                     </select>
                   </label>
                   <label className="block">
-                    <span className="text-xs font-bold text-slate-500 mb-1.5 flex items-center gap-1" style={FIELD_FONT}>
+                    <span className="text-xs font-bold text-slate-500 mb-1.5 flex items-center gap-1 font-pretendard">
                       <Clock className="w-3 h-3" /> 소요시간
                     </span>
                     <input
                       type="text"
                       value={form.duration}
                       onChange={(e) => setForm({ ...form, duration: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400"
-                      style={FIELD_FONT}
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400 font-pretendard"
                       placeholder="예) 5~6시간"
                     />
                   </label>
                 </div>
 
                 <label className="block">
-                  <span className="text-xs font-bold text-slate-500 mb-1.5 flex items-center gap-1" style={FIELD_FONT}>
+                  <span className="text-xs font-bold text-slate-500 mb-1.5 flex items-center gap-1 font-pretendard">
                     <Footprints className="w-3 h-3" /> 지형
                   </span>
                   <input
                     type="text"
                     value={form.terrain}
                     onChange={(e) => setForm({ ...form, terrain: e.target.value })}
-                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400"
-                    style={FIELD_FONT}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-teal-400 font-pretendard"
                     placeholder="예) 해안·오름"
                   />
                 </label>
               </div>
 
-              <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-2">
+              <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-2 font-pretendard">
                 <button
                   onClick={() => setEditTrail(null)}
                   className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-bold transition-colors"
-                  style={FIELD_FONT}
                 >
                   취소
                 </button>
                 <button
                   onClick={handleSave}
                   disabled={saveOverride.isPending}
-                  className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white text-sm font-bold shadow-md transition-all disabled:opacity-60"
-                  style={FIELD_FONT}
+                  className="flex items-center gap-2 px-5 py-2 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white text-sm font-bold shadow-md transition-all disabled:opacity-60 font-pretendard"
                 >
                   {saveOverride.isPending
                     ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -391,3 +378,5 @@ export default function AdminOlleTrails() {
     </div>
   );
 }
+
+export default React.memo(AdminOlleTrails);

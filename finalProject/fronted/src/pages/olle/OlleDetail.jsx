@@ -137,8 +137,7 @@ export default function OlleDetail() {
           {/* 뒤로가기 */}
           <button
             onClick={() => navigate('/olle')}
-            className="flex items-center gap-1.5 text-white/75 hover:text-white text-sm font-medium mb-6 transition-colors"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="flex items-center gap-1.5 text-white/75 hover:text-white text-sm font-medium mb-6 transition-colors font-pretendard"
           >
             <ArrowLeft className="w-4 h-4" />
             올레길 목록으로
@@ -147,21 +146,18 @@ export default function OlleDetail() {
           {/* 배지 행 */}
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <span
-              className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-xl bg-white/25 backdrop-blur-sm text-white text-sm font-black border border-white/30"
-              style={{ fontFamily: "'GmarketSans', sans-serif" }}
+              className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-xl bg-white/25 backdrop-blur-sm text-white text-sm font-black border border-white/30 font-gmarket"
             >
               {trail.name}
             </span>
             <span
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/20 backdrop-blur-sm text-white/90 text-xs font-semibold border border-white/25"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/20 backdrop-blur-sm text-white/90 text-xs font-semibold border border-white/25 font-pretendard"
             >
               <MapPin className="w-3.5 h-3.5" />
               {trail.region}
             </span>
             <span
-              className="px-3 py-1.5 rounded-xl bg-white/20 backdrop-blur-sm text-white/90 text-xs font-semibold border border-white/25"
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="px-3 py-1.5 rounded-xl bg-white/20 backdrop-blur-sm text-white/90 text-xs font-semibold border border-white/25 font-pretendard"
             >
               난이도 {trail.difficulty}
             </span>
@@ -169,8 +165,7 @@ export default function OlleDetail() {
 
           {/* 코스 부제 */}
           <h1
-            className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-2xl sm:text-3xl font-black text-white drop-shadow-sm font-gmarket"
           >
             {trail.subtitle}
           </h1>
@@ -207,10 +202,10 @@ export default function OlleDetail() {
                 <div className={`w-10 h-10 rounded-2xl bg-gradient-to-br ${color} flex items-center justify-center shadow-sm`}>
                   <Icon className="w-5 h-5 text-white" strokeWidth={2.5} />
                 </div>
-                <p className="text-[11px] text-slate-400 font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <p className="text-[11px] text-slate-400 font-medium font-pretendard">
                   {label}
                 </p>
-                <p className="text-sm font-black text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <p className="text-sm font-black text-slate-800 font-pretendard">
                   {value}
                 </p>
               </div>
@@ -229,7 +224,7 @@ export default function OlleDetail() {
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-sky-400 to-cyan-500 flex items-center justify-center shadow-sm">
               <Navigation2 className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
-            <h2 className="text-base font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <h2 className="text-base font-bold text-slate-800 font-pretendard">
               코스 경로
             </h2>
           </div>
@@ -243,7 +238,7 @@ export default function OlleDetail() {
               height="400px"
             />
           </div>
-          <div className="px-6 py-3 flex flex-wrap gap-4 text-xs text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <div className="px-6 py-3 flex flex-wrap gap-4 text-xs text-slate-400 font-pretendard">
             <span className="flex items-center gap-1.5">
               <span className="w-5 h-0.5 bg-sky-400 rounded-full inline-block" />
               올레길 경로
@@ -266,7 +261,7 @@ export default function OlleDetail() {
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-sm flex-shrink-0">
               <Flag className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
-            <h2 className="text-base font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <h2 className="text-base font-bold text-slate-800 font-pretendard">
               코스 소개
             </h2>
           </div>
@@ -279,8 +274,7 @@ export default function OlleDetail() {
               >
                 <span className="text-xl leading-none mt-0.5 flex-shrink-0">{getEmoji(sentence, i)}</span>
                 <p
-                  className="text-[13px] text-slate-700 leading-6 font-medium"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-[13px] text-slate-700 leading-6 font-medium font-pretendard"
                 >
                   {sentence}
                 </p>
@@ -300,7 +294,7 @@ export default function OlleDetail() {
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-400 to-purple-500 flex items-center justify-center shadow-sm flex-shrink-0">
               <Stamp className="w-4 h-4 text-white" strokeWidth={2.5} />
             </div>
-            <h2 className="text-base font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+            <h2 className="text-base font-bold text-slate-800 font-pretendard">
               스탬프 포인트
             </h2>
           </div>
@@ -333,7 +327,7 @@ export default function OlleDetail() {
                         className={`text-sm font-bold ${
                           isFirst ? 'text-emerald-600' : isLast ? 'text-rose-500' : 'text-slate-700'
                         }`}
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-pretendard"
                       >
                         {stamp}
                       </p>
@@ -343,7 +337,7 @@ export default function OlleDetail() {
                           : isLast  ? 'bg-rose-50 text-rose-400'
                           :           'bg-slate-50 text-slate-400'
                         }`}
-                        style={{ fontFamily: "'Pretendard', sans-serif" }}
+                        className="font-pretendard"
                       >
                         {isFirst ? '출발 스탬프' : isLast ? '도착 스탬프' : `경유 ${idx}번째`}
                       </span>

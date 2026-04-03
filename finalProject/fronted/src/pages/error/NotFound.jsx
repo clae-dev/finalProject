@@ -48,8 +48,7 @@ export default function NotFound() {
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5, type: 'spring', stiffness: 200 }}
-            className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600"
-            style={{ fontFamily: 'GmarketSans, sans-serif' }}
+            className="text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600 font-gmarket"
           >
             404
           </motion.h1>
@@ -58,8 +57,7 @@ export default function NotFound() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="mt-4 text-2xl font-bold text-gray-800"
-            style={{ fontFamily: 'GmarketSans, sans-serif' }}
+            className="mt-4 text-2xl font-bold text-gray-800 font-gmarket"
           >
             페이지를 찾을 수 없어요
           </motion.h2>

@@ -70,7 +70,7 @@ export default function WithdrawModal({ isOpen, onClose, memberNo }) {
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+              <h2 className="text-xl font-bold text-slate-800 font-gmarket">
                 회원 탈퇴
               </h2>
               <button onClick={handleClose} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
@@ -83,10 +83,10 @@ export default function WithdrawModal({ isOpen, onClose, memberNo }) {
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-semibold text-rose-700 mb-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <p className="text-sm font-semibold text-rose-700 mb-1 font-pretendard">
                     탈퇴 시 아래 정보가 모두 삭제됩니다
                   </p>
-                  <ul className="text-xs text-rose-600 space-y-1" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                  <ul className="text-xs text-rose-600 space-y-1 font-pretendard">
                     <li>- 작성한 게시글 및 댓글</li>
                     <li>- 후기 및 스크랩 데이터</li>
                     <li>- 프로필 정보 및 활동 내역</li>
@@ -101,7 +101,7 @@ export default function WithdrawModal({ isOpen, onClose, memberNo }) {
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* 비밀번호 확인 */}
               <div>
-                <label className="block text-sm font-semibold text-slate-600 mb-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                <label className="block text-sm font-semibold text-slate-600 mb-2 font-pretendard">
                   비밀번호 확인
                 </label>
                 <input

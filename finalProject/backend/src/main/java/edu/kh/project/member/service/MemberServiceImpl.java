@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.kh.project.admin.mapper.AdminMapper;
 import edu.kh.project.common.util.JwtUtil;
 import edu.kh.project.member.dto.LoginRequestDTO;
 import edu.kh.project.member.dto.LoginResponseDTO;
@@ -38,7 +37,6 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final NotificationService notificationService;
-    private final AdminMapper adminMapper;
 
     /**
      * 이메일 중복 확인
@@ -72,16 +70,13 @@ public class MemberServiceImpl implements MemberService {
         if (result > 0) {
             log.info("회원가입 성공: {}", signupRequest.getMemberEmail());
 
-            for (int adminNo : adminMapper.selectAdminMemberNos()) {
-                notificationService.createNotification(NotificationDTO.builder()
-                        .recipientNo(adminNo)
-                        .notificationType("NEW_MEMBER")
-                        .targetType("ADMIN_MEMBER")
-                        .targetNo(0)
-                        .title("새 회원 가입")
-                        .content(signupRequest.getMemberNickname() + " 님이 가입했습니다.")
-                        .build());
-            }
+            notificationService.notifyAllAdmins(NotificationDTO.builder()
+                    .notificationType("NEW_MEMBER")
+                    .targetType("ADMIN_MEMBER")
+                    .targetNo(0)
+                    .title("새 회원 가입")
+                    .content(signupRequest.getMemberNickname() + " 님이 가입했습니다.")
+                    .build());
         }
 
         return result;
@@ -136,11 +131,29 @@ public class MemberServiceImpl implements MemberService {
     }
 
     /**
-     * 회원 번호로 회원 조회
+     * 회원 번호로 회원 조회 (경량 — 통계 미포함)
      */
     @Override
     public MemberDTO getMemberByNo(int memberNo) {
         return memberMapper.selectMemberByNo(memberNo);
+    }
+
+    /**
+     * 회원 번호로 회원 조회 (통계 포함 — 프로필 페이지용)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public MemberDTO getMemberWithStats(int memberNo) {
+        return memberMapper.selectMemberWithStats(memberNo);
+    }
+
+    /**
+     * 닉네임만 조회 (채팅 알림용 경량 쿼리)
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String getNicknameByNo(int memberNo) {
+        return memberMapper.selectNicknameByNo(memberNo);
     }
 
     /**

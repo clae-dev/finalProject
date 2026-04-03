@@ -10,7 +10,7 @@ import {
 } from '../../api/admin/useAdmin';
 import AccommodationFormModal from '../accommodation/AccommodationFormModal';
 
-export default function AdminAccommodations() {
+function AdminAccommodations() {
   const [page, setPage] = useState(1);
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -104,23 +104,20 @@ export default function AdminAccommodations() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="숙소명 또는 지역으로 검색"
-            className="w-full px-4 py-2.5 pr-10 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="w-full px-4 py-2.5 pr-10 rounded-xl border border-sky-100 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
           />
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         </div>
         <button
           type="submit"
-          className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
+          className="px-6 py-2.5 bg-gradient-to-r from-sky-400 to-cyan-400 text-white text-sm font-bold rounded-full shadow-lg shadow-sky-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 font-pretendard"
         >
           검색
         </button>
         <button
           type="button"
           onClick={openAddModal}
-          className="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-emerald-400 to-teal-400 text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300"
-          style={{ fontFamily: "'Pretendard', sans-serif" }}
+          className="flex items-center gap-1.5 px-5 py-2.5 bg-gradient-to-r from-emerald-400 to-teal-400 text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:scale-105 transition-all duration-300 font-pretendard"
         >
           <Plus className="w-4 h-4" />
           숙소 추가
@@ -258,3 +255,5 @@ export default function AdminAccommodations() {
     </div>
   );
 }
+
+export default React.memo(AdminAccommodations);

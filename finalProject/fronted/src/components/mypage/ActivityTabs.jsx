@@ -71,12 +71,11 @@ export default function ActivityTabs() {
           className="mb-8"
         >
           <h2
-            className="text-2xl sm:text-3xl font-bold text-slate-800"
-            style={{ fontFamily: "'GmarketSans', sans-serif" }}
+            className="text-2xl sm:text-3xl font-bold text-slate-800 font-gmarket"
           >
             내 활동
           </h2>
-          <p className="text-slate-500 mt-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+          <p className="text-slate-500 mt-2 font-pretendard">
             작성한 글과 활동 내역을 확인하세요
           </p>
         </motion.div>
@@ -95,7 +94,7 @@ export default function ActivityTabs() {
                     ? 'bg-gradient-to-r from-sky-400 to-cyan-400 text-white shadow-lg shadow-sky-200/50'
                     : 'bg-white text-slate-500 hover:text-sky-600 hover:bg-sky-50 border border-sky-100'
                 }`}
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="font-pretendard"
               >
                 <Icon className="w-4 h-4" />
                 {tab.label}
@@ -131,7 +130,7 @@ export default function ActivityTabs() {
                           ? 'bg-rose-500 text-white shadow-md shadow-rose-200/50'
                           : 'bg-white text-slate-500 hover:text-rose-500 hover:bg-rose-50 border border-rose-100'
                       }`}
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="font-pretendard"
                     >
                       <Icon className="w-3.5 h-3.5" />
                       {label}
@@ -145,14 +144,14 @@ export default function ActivityTabs() {
                 {wishlistLoading ? (
                   <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-12 shadow-lg shadow-sky-100 border border-sky-50 text-center">
                     <div className="w-10 h-10 border-4 border-rose-300 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                    <p className="text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>로딩 중...</p>
+                    <p className="text-slate-400 font-pretendard">로딩 중...</p>
                   </div>
                 ) : wishlistItems.length === 0 ? (
                   <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-12 shadow-lg shadow-sky-100 border border-sky-50 text-center">
                     <div className="w-20 h-20 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-5">
                       <Bookmark className="w-10 h-10 text-rose-300" />
                     </div>
-                    <p className="text-lg text-slate-400 font-medium" style={{ fontFamily: "'Pretendard', sans-serif" }}>
+                    <p className="text-lg text-slate-400 font-medium font-pretendard">
                       저장한 항목이 없어요
                     </p>
                     <p className="text-sm text-slate-300 mt-2">♡ 버튼으로 마음에 드는 항목을 저장해보세요</p>
@@ -185,8 +184,7 @@ export default function ActivityTabs() {
                             )}
                             <div className="flex-1 min-w-0">
                               <h4
-                                className="text-base font-semibold text-slate-700 truncate group-hover:text-rose-500 transition-colors"
-                                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                                className="text-base font-semibold text-slate-700 truncate group-hover:text-rose-500 transition-colors font-pretendard"
                               >
                                 {item.name || item.title}
                               </h4>
@@ -218,7 +216,7 @@ export default function ActivityTabs() {
             ) : isLoading ? (
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-12 shadow-lg shadow-sky-100 border border-sky-50 text-center">
                 <div className="w-10 h-10 border-4 border-sky-300 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-slate-400" style={{ fontFamily: "'Pretendard', sans-serif" }}>로딩 중...</p>
+                <p className="text-slate-400 font-pretendard">로딩 중...</p>
               </div>
             ) : items.length === 0 ? (
               <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-12 shadow-lg shadow-sky-100 border border-sky-50 text-center">
@@ -226,8 +224,7 @@ export default function ActivityTabs() {
                   <Inbox className="w-10 h-10 text-sky-300" />
                 </div>
                 <p
-                  className="text-lg text-slate-400 font-medium"
-                  style={{ fontFamily: "'Pretendard', sans-serif" }}
+                  className="text-lg text-slate-400 font-medium font-pretendard"
                 >
                   {emptyMessages[activeTab]}
                 </p>
@@ -265,8 +262,7 @@ export default function ActivityTabs() {
                         )}
                         <div className="flex-1 min-w-0">
                           <h4
-                            className="text-base font-semibold text-slate-700 truncate group-hover:text-sky-600 transition-colors"
-                            style={{ fontFamily: "'Pretendard', sans-serif" }}
+                            className="text-base font-semibold text-slate-700 truncate group-hover:text-sky-600 transition-colors font-pretendard"
                           >
                             {item.title}
                           </h4>
@@ -300,8 +296,7 @@ export default function ActivityTabs() {
                       <div className="flex items-center justify-between">
                         <div className="flex-1 min-w-0">
                           <h4
-                            className="text-base font-semibold text-slate-700 truncate group-hover:text-sky-600 transition-colors"
-                            style={{ fontFamily: "'Pretendard', sans-serif" }}
+                            className="text-base font-semibold text-slate-700 truncate group-hover:text-sky-600 transition-colors font-pretendard"
                           >
                             {item.title}
                           </h4>

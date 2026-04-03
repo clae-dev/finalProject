@@ -25,12 +25,12 @@
         <result property="sendTime"        column="SEND_TIME" />
     </resultMap>
 
-    <!-- 채팅방 목록 조회 -->
+    <!-- 채팅방 목록 조회 (인라인 뷰로 MESSAGE 접근 통합) -->
     <select id="selectRoomList" resultMap="chattingRoomResultMap">
         SELECT
             R.CHATTING_ROOM_NO,
 
-            /* 상대방 번호: 내가 OPEN_MEMBER면 PARTICIPANT, 아니면 OPEN_MEMBER */
+            /* 상대방 번호 */
             CASE
                 WHEN R.OPEN_MEMBER = #{memberNo} THEN R.PARTICIPANT
                 ELSE R.OPEN_MEMBER
@@ -48,43 +48,41 @@
                 ELSE M1.PROFILE_IMAGE
             END AS TARGET_PROFILE,
 
-            /* 마지막 메시지 */
-            (SELECT MESSAGE_CONTENT
-             FROM MESSAGE
-             WHERE CHATTING_ROOM_NO = R.CHATTING_ROOM_NO
-             ORDER BY MESSAGE_NO DESC
-             FETCH FIRST 1 ROWS ONLY
-            ) AS LAST_MESSAGE,
+            /* 마지막 메시지 (인라인 뷰 재사용) */
+            lastMsg.MESSAGE_CONTENT AS LAST_MESSAGE,
 
             /* 마지막 메시지 시간 */
-            (SELECT TO_CHAR(SEND_TIME, 'YYYY-MM-DD HH24:MI')
-             FROM MESSAGE
-             WHERE CHATTING_ROOM_NO = R.CHATTING_ROOM_NO
-             ORDER BY MESSAGE_NO DESC
-             FETCH FIRST 1 ROWS ONLY
-            ) AS SEND_TIME,
+            TO_CHAR(lastMsg.SEND_TIME, 'YYYY-MM-DD HH24:MI') AS SEND_TIME,
 
             /* 읽지 않은 메시지 수 */
-            (SELECT COUNT(*)
-             FROM MESSAGE
-             WHERE CHATTING_ROOM_NO = R.CHATTING_ROOM_NO
-               AND SENDER_NO != #{memberNo}
-               AND READ_FL = 'N'
-            ) AS NOT_READ_COUNT
+            NVL(unread.NOT_READ_COUNT, 0) AS NOT_READ_COUNT
 
         FROM CHATTING_ROOM R
         JOIN MEMBER M1 ON R.OPEN_MEMBER  = M1.MEMBER_NO
         JOIN MEMBER M2 ON R.PARTICIPANT  = M2.MEMBER_NO
 
+        /* 방별 마지막 메시지 번호 집계 (1회 스캔) */
+        LEFT JOIN (
+            SELECT CHATTING_ROOM_NO, MAX(MESSAGE_NO) AS LAST_MSG_NO
+            FROM MESSAGE
+            GROUP BY CHATTING_ROOM_NO
+        ) lm ON lm.CHATTING_ROOM_NO = R.CHATTING_ROOM_NO
+
+        /* 마지막 메시지 본문·시간 조회 */
+        LEFT JOIN MESSAGE lastMsg ON lastMsg.MESSAGE_NO = lm.LAST_MSG_NO
+
+        /* 읽지 않은 메시지 수 집계 (1회 스캔) */
+        LEFT JOIN (
+            SELECT CHATTING_ROOM_NO, COUNT(*) AS NOT_READ_COUNT
+            FROM MESSAGE
+            WHERE SENDER_NO != #{memberNo}
+              AND READ_FL = 'N'
+            GROUP BY CHATTING_ROOM_NO
+        ) unread ON unread.CHATTING_ROOM_NO = R.CHATTING_ROOM_NO
+
         WHERE (R.OPEN_MEMBER = #{memberNo} OR R.PARTICIPANT = #{memberNo})
 
-        ORDER BY
-            (SELECT SEND_TIME
-             FROM MESSAGE
-             WHERE CHATTING_ROOM_NO = R.CHATTING_ROOM_NO
-             ORDER BY MESSAGE_NO DESC
-             FETCH FIRST 1 ROWS ONLY
-            ) DESC NULLS LAST
+        ORDER BY lastMsg.SEND_TIME DESC NULLS LAST
     </select>
 
     <!-- 대화 상대 검색 -->

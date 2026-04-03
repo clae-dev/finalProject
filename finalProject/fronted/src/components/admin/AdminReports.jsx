@@ -51,7 +51,7 @@ const TARGET_TYPE_LABEL = {
   COMMENT: '댓글',
 };
 
-export default function AdminReports() {
+function AdminReports() {
   const [page, setPage] = useState(1);
   const [statusFilter, setStatusFilter] = useState('');
   const [targetTypeFilter, setTargetTypeFilter] = useState('');
@@ -130,7 +130,7 @@ export default function AdminReports() {
       >
         {/* 대상 유형 필터 */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-bold text-slate-500 mr-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>대상:</span>
+          <span className="text-xs font-bold text-slate-500 mr-2 font-pretendard">대상:</span>
           {TARGET_TYPE_TABS.map((tab) => (
             <button
               key={tab.key}
@@ -140,7 +140,7 @@ export default function AdminReports() {
                   ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md shadow-sky-200/50'
                   : 'bg-sky-50 text-slate-500 hover:bg-sky-100'
               }`}
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="font-pretendard"
             >
               {tab.label}
             </button>
@@ -148,7 +148,7 @@ export default function AdminReports() {
         </div>
         {/* 상태 필터 */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-bold text-slate-500 mr-2" style={{ fontFamily: "'Pretendard', sans-serif" }}>상태:</span>
+          <span className="text-xs font-bold text-slate-500 mr-2 font-pretendard">상태:</span>
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.key}
@@ -158,7 +158,7 @@ export default function AdminReports() {
                   ? 'bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-md shadow-sky-200/50'
                   : 'bg-sky-50 text-slate-500 hover:bg-sky-100'
               }`}
-              style={{ fontFamily: "'Pretendard', sans-serif" }}
+              className="font-pretendard"
             >
               {f.label}
             </button>
@@ -296,7 +296,7 @@ export default function AdminReports() {
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-2">
                   <Flag className="w-5 h-5 text-orange-500" />
-                  <h3 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Pretendard', sans-serif" }}>신고 상세</h3>
+                  <h3 className="text-lg font-bold text-slate-800 font-pretendard">신고 상세</h3>
                 </div>
                 <button onClick={handleCloseDetail} className="w-8 h-8 rounded-lg hover:bg-slate-100 flex items-center justify-center transition-colors">
                   <X className="w-5 h-5 text-slate-400" />
@@ -345,12 +345,11 @@ export default function AdminReports() {
 
                   {/* 처리 */}
                   <div className="space-y-3">
-                    <label className="text-sm font-bold text-slate-700 block" style={{ fontFamily: "'Pretendard', sans-serif" }}>상태 변경</label>
+                    <label className="text-sm font-bold text-slate-700 block font-pretendard">상태 변경</label>
                     <select
                       value={editStatus}
                       onChange={(e) => setEditStatus(e.target.value)}
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-300"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-600 focus:outline-none focus:ring-2 focus:ring-sky-300 font-pretendard"
                     >
                       <option value="P">대기</option>
                       <option value="I">검토중</option>
@@ -358,15 +357,14 @@ export default function AdminReports() {
                       <option value="R">반려</option>
                     </select>
 
-                    <label className="text-sm font-bold text-slate-700 block" style={{ fontFamily: "'Pretendard', sans-serif" }}>처리 결과</label>
+                    <label className="text-sm font-bold text-slate-700 block font-pretendard">처리 결과</label>
                     <textarea
                       value={editResult}
                       onChange={(e) => setEditResult(e.target.value)}
                       placeholder="처리 결과를 입력하세요 (선택)"
                       maxLength={1000}
                       rows={3}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none"
-                      style={{ fontFamily: "'Pretendard', sans-serif" }}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-sky-300 resize-none font-pretendard"
                     />
                   </div>
 
@@ -398,3 +396,5 @@ export default function AdminReports() {
     </div>
   );
 }
+
+export default React.memo(AdminReports);

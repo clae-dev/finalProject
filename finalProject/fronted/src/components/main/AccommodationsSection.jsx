@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { useAccommodations } from '../../api/accommodation/useAccommodation';
 import { useCreateAccommodation } from '../../api/admin/useAdmin';
 import AccommodationFormModal from '../accommodation/AccommodationFormModal';
@@ -19,7 +19,7 @@ function formatPrice(priceMin, priceMax) {
 /* ─── 시골 풍경 SVG 캐릭터 ─── */
 
 // 초가집 / 펜션
-function Cottage() {
+function Cottage({ isInView = true }) {
   return (
     <g>
       {/* 지붕 */}
@@ -40,8 +40,9 @@ function Cottage() {
       <line x1="38" y1="52.5" x2="43" y2="52.5" stroke="#d97706" strokeWidth="0.4" />
       {/* 굴뚝 */}
       <rect x="40" y="22" width="6" height="16" fill="#78716c" />
-      <motion.g animate={{ y: [0, -6, -12], opacity: [0.4, 0.2, 0] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeOut' }}>
+      <motion.g
+        animate={isInView ? { y: [0, -6, -12], opacity: [0.4, 0.2, 0] } : { y: 0, opacity: 0.4 }}
+        transition={{ duration: 3, repeat: isInView ? Infinity : 0, ease: 'easeOut' }}>
         <circle cx="43" cy="20" r="3" fill="#d1d5db" opacity="0.5" />
         <circle cx="46" cy="16" r="2" fill="#d1d5db" opacity="0.3" />
       </motion.g>
@@ -50,12 +51,13 @@ function Cottage() {
 }
 
 // 큰 나무
-function BigTree({ flip = false }) {
+function BigTree({ flip = false, isInView = true }) {
   return (
     <g transform={flip ? 'scale(-1,1) translate(-40,0)' : ''}>
       <rect x="17" y="40" width="6" height="40" rx="3" fill="#92400e" />
-      <motion.g animate={{ rotate: [0, 1.5, -1, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+      <motion.g
+        animate={isInView ? { rotate: [0, 1.5, -1, 0] } : { rotate: 0 }}
+        transition={{ duration: 5, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
         style={{ transformOrigin: '20px 40px' }}>
         <ellipse cx="20" cy="28" rx="18" ry="20" fill="#22c55e" />
         <ellipse cx="14" cy="24" rx="10" ry="12" fill="#16a34a" opacity="0.6" />
@@ -83,11 +85,13 @@ function Fence({ width = 80 }) {
 }
 
 // 산책하는 가족 (엄마 + 아이)
-function FamilyWalk() {
+function FamilyWalk({ isInView = true }) {
   return (
     <g>
       {/* 엄마 */}
-      <motion.g animate={{ y: [0, -2, 0] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}>
+      <motion.g
+        animate={isInView ? { y: [0, -2, 0] } : { y: 0 }}
+        transition={{ duration: 1.5, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}>
         <circle cx="15" cy="12" r="7" fill="#fcd34d" />
         <circle cx="13" cy="10.5" r="1.1" fill="#1e293b" />
         <circle cx="17" cy="10.5" r="1.1" fill="#1e293b" />
@@ -98,8 +102,8 @@ function FamilyWalk() {
         <motion.line x1="21" y1="24" x2="30" y2="28"
           stroke="#fcd34d" strokeWidth="3" strokeLinecap="round"
           initial={{ x2: 30, y2: 28 }}
-          animate={{ x2: [30, 32, 30], y2: [28, 26, 28] }}
-          transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut' }}
+          animate={isInView ? { x2: [30, 32, 30], y2: [28, 26, 28] } : { x2: 30, y2: 28 }}
+          transition={{ duration: 1, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
         />
         <line x1="11" y1="40" x2="9" y2="52" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
         <line x1="19" y1="40" x2="21" y2="52" stroke="#1e293b" strokeWidth="3" strokeLinecap="round" />
@@ -107,7 +111,9 @@ function FamilyWalk() {
         <ellipse cx="21.5" cy="54" rx="4" ry="2" fill="#ec4899" />
       </motion.g>
       {/* 아이 (손잡고) */}
-      <motion.g animate={{ y: [0, -3, 0] }} transition={{ duration: 1, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }}>
+      <motion.g
+        animate={isInView ? { y: [0, -3, 0] } : { y: 0 }}
+        transition={{ duration: 1, repeat: isInView ? Infinity : 0, ease: 'easeInOut', delay: 0.2 }}>
         <circle cx="38" cy="22" r="5.5" fill="#fcd34d" />
         <circle cx="36.5" cy="21" r="1" fill="#1e293b" />
         <circle cx="39.5" cy="21" r="1" fill="#1e293b" />
@@ -127,14 +133,14 @@ function FamilyWalk() {
 }
 
 // 꽃밭
-function Flowers({ count = 5 }) {
+function Flowers({ count = 5, isInView = true }) {
   const colors = ['#f472b6', '#fb923c', '#facc15', '#a78bfa', '#f87171'];
   return (
     <g>
       {Array.from({ length: count }).map((_, i) => (
         <motion.g key={i} transform={`translate(${i * 14}, 0)`}
-          animate={{ rotate: [0, 3, -3, 0] }}
-          transition={{ duration: 2 + i * 0.3, repeat: Infinity, ease: 'easeInOut', delay: i * 0.2 }}
+          animate={isInView ? { rotate: [0, 3, -3, 0] } : { rotate: 0 }}
+          transition={{ duration: 2 + i * 0.3, repeat: isInView ? Infinity : 0, ease: 'easeInOut', delay: i * 0.2 }}
           style={{ transformOrigin: `${i * 14 + 5}px 16px` }}
         >
           <line x1="5" y1="8" x2="5" y2="18" stroke="#16a34a" strokeWidth="1.5" strokeLinecap="round" />
@@ -147,14 +153,15 @@ function Flowers({ count = 5 }) {
 }
 
 // 나비
-function Butterfly({ delay = 0 }) {
+function Butterfly({ delay = 0, isInView = true }) {
   return (
     <motion.g
-      animate={{ x: [0, 20, 5, 25, 0], y: [0, -10, -5, -15, 0] }}
-      transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut', delay }}
+      animate={isInView ? { x: [0, 20, 5, 25, 0], y: [0, -10, -5, -15, 0] } : { x: 0, y: 0 }}
+      transition={{ duration: 6, repeat: isInView ? Infinity : 0, ease: 'easeInOut', delay }}
     >
-      <motion.g animate={{ scaleX: [1, 0.3, 1] }}
-        transition={{ duration: 0.4, repeat: Infinity, ease: 'easeInOut' }}
+      <motion.g
+        animate={isInView ? { scaleX: [1, 0.3, 1] } : { scaleX: 1 }}
+        transition={{ duration: 0.4, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
         style={{ transformOrigin: '8px 5px' }}
       >
         <ellipse cx="4" cy="3" rx="4" ry="3" fill="#c084fc" opacity="0.7" />
@@ -168,11 +175,11 @@ function Butterfly({ delay = 0 }) {
 }
 
 // 구름
-function Cloud({ className, delay = 0, direction = 1 }) {
+function Cloud({ className, delay = 0, direction = 1, isInView = true }) {
   return (
     <motion.svg className={className} viewBox="0 0 160 60" fill="white"
-      animate={{ x: [0, 20 * direction, 0] }}
-      transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut', delay }}>
+      animate={isInView ? { x: [0, 20 * direction, 0] } : { x: 0 }}
+      transition={{ duration: 16, repeat: isInView ? Infinity : 0, ease: 'easeInOut', delay }}>
       <ellipse cx="55" cy="38" rx="42" ry="18" />
       <ellipse cx="90" cy="32" rx="34" ry="16" />
       <ellipse cx="70" cy="26" rx="28" ry="16" />
@@ -195,6 +202,8 @@ function AccommodationsSection() {
   const navigate = useNavigate();
   const [slide, setSlide] = useState(0);
   const [addModalOpen, setAddModalOpen] = useState(false);
+  const sectionRef = useRef(null);
+  const isInView = useInView(sectionRef, { margin: '100px' });
 
   const { user } = useContext(AuthContext);
   const isAdmin = user && user.memberRole === 'A';
@@ -208,7 +217,7 @@ function AccommodationsSection() {
   const prevSlide = () => setSlide(prev => Math.max(prev - 1, 0));
 
   return (
-    <section className="relative pt-24 pb-56 overflow-hidden">
+    <section ref={sectionRef} className="relative pt-24 pb-56 overflow-hidden">
       {/* 상단 페이드 - CompanionsSection 잔디에서 자연스럽게 녹아듦 */}
       <div className="absolute top-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-b from-[#bbf7d0]/40 via-[#fef3c7]/50 to-transparent z-[1]" />
 
@@ -217,19 +226,19 @@ function AccommodationsSection() {
 
       {/* 구름 */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <Cloud className="absolute top-3 left-[5%] w-32 md:w-40 opacity-70" delay={0} direction={1} />
-        <Cloud className="absolute top-8 right-[10%] w-24 md:w-32 opacity-50" delay={3} direction={-1} />
-        <Cloud className="absolute top-1 left-[50%] w-20 md:w-24 opacity-40" delay={6} direction={1} />
+        <Cloud className="absolute top-3 left-[5%] w-32 md:w-40 opacity-70" delay={0} direction={1} isInView={isInView} />
+        <Cloud className="absolute top-8 right-[10%] w-24 md:w-32 opacity-50" delay={3} direction={-1} isInView={isInView} />
+        <Cloud className="absolute top-1 left-[50%] w-20 md:w-24 opacity-40" delay={6} direction={1} isInView={isInView} />
       </div>
 
       {/* 블러 장식 */}
       <motion.div className="absolute top-16 left-[8%] w-40 h-40 bg-amber-200/30 rounded-full blur-3xl"
-        animate={{ y: [0, -12, 0], opacity: [0.2, 0.35, 0.2] }}
-        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { y: [0, -12, 0], opacity: [0.2, 0.35, 0.2] } : { y: 0, opacity: 0.2 }}
+        transition={{ duration: 7, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
       <motion.div className="absolute bottom-40 right-[8%] w-48 h-48 bg-green-200/25 rounded-full blur-3xl"
-        animate={{ y: [0, 12, 0], opacity: [0.15, 0.3, 0.15] }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+        animate={isInView ? { y: [0, 12, 0], opacity: [0.15, 0.3, 0.15] } : { y: 0, opacity: 0.15 }}
+        transition={{ duration: 9, repeat: isInView ? Infinity : 0, ease: 'easeInOut' }}
       />
 
       <div className="max-w-6xl mx-auto px-5 relative z-10">
@@ -263,17 +272,16 @@ function AccommodationsSection() {
               </svg>
               STAY
             </motion.span>
-            <h2 className="text-3xl md:text-5xl font-black text-slate-800" style={{ fontFamily: "'GmarketSans', sans-serif" }}>
+            <h2 className="text-3xl md:text-5xl font-black text-slate-800 font-gmarket">
               혼행에 딱 맞는 <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">숙소</span>
             </h2>
-            <p className="text-slate-400 mt-4 text-lg" style={{ fontFamily: "'Pretendard', sans-serif" }}>파도 소리와 함께,<br />나만의 시간</p>
+            <p className="text-slate-400 mt-4 text-lg font-pretendard">파도 소리와 함께,<br />나만의 시간</p>
           </div>
           <div className="flex items-center gap-3">
             {isAdmin && (
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => setAddModalOpen(true)}
-                className="flex items-center gap-1.5 px-5 py-3 bg-gradient-to-r from-emerald-400 to-teal-400 text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all border border-white/30"
-                style={{ fontFamily: "'Pretendard', sans-serif" }}
+                className="flex items-center gap-1.5 px-5 py-3 bg-gradient-to-r from-emerald-400 to-teal-400 text-white text-sm font-bold rounded-full shadow-lg shadow-emerald-200/50 hover:shadow-xl transition-all border border-white/30 font-pretendard"
               >
                 <Plus className="w-4 h-4" />
                 숙소 추가
@@ -369,8 +377,7 @@ function AccommodationsSection() {
         >
           <motion.button whileHover={{ scale: 1.03, y: -2 }} whileTap={{ scale: 0.97 }}
             onClick={() => navigate('/accommodations')}
-            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/90 backdrop-blur-sm text-amber-600 font-bold rounded-full shadow-lg shadow-amber-100/50 hover:shadow-xl border border-white/80 transition-all"
-            style={{ fontFamily: "'Pretendard', sans-serif" }}
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white/90 backdrop-blur-sm text-amber-600 font-bold rounded-full shadow-lg shadow-amber-100/50 hover:shadow-xl border border-white/80 transition-all font-pretendard"
           >
             숙소 더보기
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
@@ -406,7 +413,7 @@ function AccommodationsSection() {
         <svg className="absolute bottom-0 left-0 w-full h-full" viewBox="0 0 1200 140" preserveAspectRatio="xMidYMax meet">
           {/* 큰 나무 왼쪽 */}
           <g transform="translate(30, 40)" opacity="0.6">
-            <BigTree />
+            <BigTree isInView={isInView} />
           </g>
 
           {/* 울타리 */}
@@ -416,32 +423,32 @@ function AccommodationsSection() {
 
           {/* 초가집 */}
           <g transform="translate(220, 55)" opacity="0.65">
-            <Cottage />
+            <Cottage isInView={isInView} />
           </g>
 
           {/* 꽃밭 */}
           <g transform="translate(310, 108)" opacity="0.6">
-            <Flowers count={5} />
+            <Flowers count={5} isInView={isInView} />
           </g>
 
           {/* 나비 1 */}
           <g transform="translate(340, 80)" opacity="0.6">
-            <Butterfly delay={0} />
+            <Butterfly delay={0} isInView={isInView} />
           </g>
 
           {/* 산책하는 가족 */}
           <g transform="translate(460, 72)" opacity="0.75">
-            <FamilyWalk />
+            <FamilyWalk isInView={isInView} />
           </g>
 
           {/* 꽃밭 2 */}
           <g transform="translate(560, 110)" opacity="0.55">
-            <Flowers count={4} />
+            <Flowers count={4} isInView={isInView} />
           </g>
 
           {/* 나비 2 */}
           <g transform="translate(620, 75)" opacity="0.5">
-            <Butterfly delay={2} />
+            <Butterfly delay={2} isInView={isInView} />
           </g>
 
           {/* 울타리 2 */}
@@ -451,27 +458,27 @@ function AccommodationsSection() {
 
           {/* 큰 나무 중간 */}
           <g transform="translate(810, 42)" opacity="0.55">
-            <BigTree flip />
+            <BigTree flip isInView={isInView} />
           </g>
 
           {/* 초가집 2 */}
           <g transform="translate(890, 58)" opacity="0.6">
-            <Cottage />
+            <Cottage isInView={isInView} />
           </g>
 
           {/* 꽃밭 3 */}
           <g transform="translate(980, 112)" opacity="0.5">
-            <Flowers count={4} />
+            <Flowers count={4} isInView={isInView} />
           </g>
 
           {/* 큰 나무 오른쪽 */}
           <g transform="translate(1080, 38)" opacity="0.5">
-            <BigTree />
+            <BigTree isInView={isInView} />
           </g>
 
           {/* 나비 3 */}
           <g transform="translate(1020, 70)" opacity="0.45">
-            <Butterfly delay={4} />
+            <Butterfly delay={4} isInView={isInView} />
           </g>
 
           {/* 잔디 포인트 */}
