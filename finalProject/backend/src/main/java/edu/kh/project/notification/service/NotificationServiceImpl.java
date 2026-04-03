@@ -1,5 +1,6 @@
 package edu.kh.project.notification.service;
 
+import edu.kh.project.admin.mapper.AdminMapper;
 import edu.kh.project.notification.dto.NotificationDTO;
 import edu.kh.project.notification.mapper.NotificationMapper;
 import edu.kh.project.websocket.handler.NotificationWebSocketHandler;
@@ -26,6 +27,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationMapper notificationMapper;
     private final NotificationWebSocketHandler notificationWebSocketHandler;
+    private final AdminMapper adminMapper;
 
     @Override
     public void createNotification(NotificationDTO notification) {
@@ -40,6 +42,24 @@ public class NotificationServiceImpl implements NotificationService {
         } catch (Exception e) {
             log.warn("알림 WebSocket push 실패 (DB 저장은 완료) - recipientNo: {}",
                 notification.getRecipientNo(), e);
+        }
+    }
+
+    @Override
+    public void notifyAllAdmins(NotificationDTO template) {
+        List<Integer> adminNos = adminMapper.selectAdminMemberNos();
+
+        for (int adminNo : adminNos) {
+            NotificationDTO notification = NotificationDTO.builder()
+                    .recipientNo(adminNo)
+                    .senderNo(template.getSenderNo())
+                    .notificationType(template.getNotificationType())
+                    .targetType(template.getTargetType())
+                    .targetNo(template.getTargetNo())
+                    .title(template.getTitle())
+                    .content(template.getContent())
+                    .build();
+            createNotification(notification);
         }
     }
 
