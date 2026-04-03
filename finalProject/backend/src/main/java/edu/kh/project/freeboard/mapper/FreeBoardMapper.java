@@ -60,6 +60,9 @@ public interface FreeBoardMapper {
     /** 대댓글 목록 */
     List<CommentDTO> selectChildComments(@Param("parentCommentNo") int parentCommentNo);
 
+    /** 게시글의 모든 댓글 한번에 조회 (N+1 제거) */
+    List<CommentDTO> selectAllComments(@Param("boardNo") int boardNo);
+
     /** 댓글 작성 */
     int insertComment(CommentDTO comment);
 

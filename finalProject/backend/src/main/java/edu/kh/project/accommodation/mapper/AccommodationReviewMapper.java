@@ -25,6 +25,12 @@ public interface AccommodationReviewMapper {
             @Param("offset") int offset,
             @Param("limit") int limit);
 
+    /** 후기 목록 + 이미지 통합 조회 (N+1 제거) */
+    List<AccommodationReviewDTO> selectReviewListWithImages(
+            @Param("accommodationNo") int accommodationNo,
+            @Param("offset") int offset,
+            @Param("limit") int limit);
+
     /** 후기 총 개수 */
     int selectReviewCount(@Param("accommodationNo") int accommodationNo);
 
