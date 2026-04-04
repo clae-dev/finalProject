@@ -15,12 +15,12 @@ export const useGroupRoomList = (enabled = true) => {
 };
 
 /**
- * 그룹 메시지 목록 조회 훅
+ * 그룹 메시지 목록 조회 훅 (최근 50건)
  */
 export const useGroupMessages = (groupRoomNo: number | string | undefined) => {
   return useQuery({
     queryKey: ['groupMessages', groupRoomNo],
-    queryFn: () => getGroupMessages(groupRoomNo!),
+    queryFn: () => getGroupMessages(groupRoomNo!, undefined, 50),
     enabled: !!groupRoomNo,
   });
 };
