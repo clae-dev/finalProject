@@ -147,21 +147,28 @@
         VALUES (#{groupMsgNo}, #{groupRoomNo}, #{senderNo}, #{msgContent})
     </insert>
 
-    <!-- 그룹 메시지 목록 조회 (발신자 정보 JOIN) -->
+    <!-- 그룹 메시지 목록 조회 (최근 N건, 커서 기반 페이징) -->
     <select id="selectGroupMessageList" resultMap="groupMessageResultMap">
-        SELECT
-            gm.GROUP_MSG_NO,
-            gm.GROUP_ROOM_NO,
-            gm.SENDER_NO,
-            m.NICKNAME      AS SENDER_NICKNAME,
-            m.PROFILE_IMAGE AS SENDER_PROFILE,
-            gm.MSG_CONTENT,
-            TO_CHAR(gm.SEND_TIME, 'YYYY-MM-DD HH24:MI') AS SEND_TIME,
-            1 AS IS_GROUP_MESSAGE
-        FROM GROUP_MESSAGE gm
-        JOIN MEMBER m ON gm.SENDER_NO = m.MEMBER_NO
-        WHERE gm.GROUP_ROOM_NO = #{groupRoomNo}
-        ORDER BY gm.GROUP_MSG_NO ASC
+        SELECT * FROM (
+            SELECT
+                gm.GROUP_MSG_NO,
+                gm.GROUP_ROOM_NO,
+                gm.SENDER_NO,
+                m.NICKNAME      AS SENDER_NICKNAME,
+                m.PROFILE_IMAGE AS SENDER_PROFILE,
+                gm.MSG_CONTENT,
+                TO_CHAR(gm.SEND_TIME, 'YYYY-MM-DD HH24:MI') AS SEND_TIME,
+                1 AS IS_GROUP_MESSAGE
+            FROM GROUP_MESSAGE gm
+            JOIN MEMBER m ON gm.SENDER_NO = m.MEMBER_NO
+            WHERE gm.GROUP_ROOM_NO = #{groupRoomNo}
+            <if test="beforeMsgNo != null and beforeMsgNo > 0">
+                AND gm.GROUP_MSG_NO &lt; #{beforeMsgNo}
+            </if>
+            ORDER BY gm.GROUP_MSG_NO DESC
+            FETCH FIRST #{limit} ROWS ONLY
+        ) sub
+        ORDER BY sub.GROUP_MSG_NO ASC
     </select>
 
     <!-- 읽음 워터마크 UPSERT

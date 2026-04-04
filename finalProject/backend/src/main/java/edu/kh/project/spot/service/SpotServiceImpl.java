@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,6 +35,7 @@ public class SpotServiceImpl implements SpotService {
      * 활성화된 명소 목록 조회 (메인페이지용)
      */
     @Override
+    @Cacheable("activeSpots")
     public List<SpotDTO> getActiveSpots() {
         return spotMapper.selectActiveSpots();
     }
@@ -57,6 +60,7 @@ public class SpotServiceImpl implements SpotService {
      * 명소 등록
      */
     @Override
+    @CacheEvict(value = "activeSpots", allEntries = true)
     public int createSpot(SpotDTO spot) {
         int result = spotMapper.insertSpot(spot);
 
@@ -89,6 +93,7 @@ public class SpotServiceImpl implements SpotService {
      * 명소 수정
      */
     @Override
+    @CacheEvict(value = "activeSpots", allEntries = true)
     public int updateSpot(SpotDTO spot) {
         int result = spotMapper.updateSpot(spot);
 
@@ -127,6 +132,7 @@ public class SpotServiceImpl implements SpotService {
      * 명소 삭제
      */
     @Override
+    @CacheEvict(value = "activeSpots", allEntries = true)
     public int deleteSpot(int spotNo) {
         int result = spotMapper.deleteSpot(spotNo);
 
@@ -141,6 +147,7 @@ public class SpotServiceImpl implements SpotService {
      * 명소 상태 변경
      */
     @Override
+    @CacheEvict(value = "activeSpots", allEntries = true)
     public int updateSpotStatus(int spotNo, String status) {
         int result = spotMapper.updateSpotStatus(spotNo, status);
 

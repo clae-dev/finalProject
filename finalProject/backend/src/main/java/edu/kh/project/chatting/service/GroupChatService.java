@@ -56,12 +56,14 @@ public interface GroupChatService {
     void insertGroupMessage(GroupMessageDTO msg);
 
     /**
-     * 그룹 메시지 목록 조회
+     * 그룹 메시지 목록 조회 (커서 기반 페이징)
      *
      * @param groupRoomNo 그룹 채팅방 번호
+     * @param beforeMsgNo 이 메시지 번호 이전의 메시지를 조회 (null이면 최신부터)
+     * @param limit       조회할 메시지 수
      * @return 메시지 목록 (발신자 닉네임/프로필 포함)
      */
-    List<GroupMessageDTO> selectGroupMessageList(int groupRoomNo);
+    List<GroupMessageDTO> selectGroupMessageList(int groupRoomNo, Integer beforeMsgNo, int limit);
 
     /**
      * 읽음 워터마크 갱신
