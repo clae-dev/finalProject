@@ -7,12 +7,15 @@ import edu.kh.project.notification.dto.NotificationDTO;
 import edu.kh.project.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +42,7 @@ public class AdminServiceImpl implements AdminService {
     private final NotificationService notificationService;
 
     @Override
+    @Cacheable("dashboardStats")
     public Map<String, Object> getDashboardStats() {
         Map<String, Object> stats = new HashMap<>();
         stats.put("memberCount", adminMapper.selectMemberCount(null, null));
@@ -338,13 +342,21 @@ public class AdminServiceImpl implements AdminService {
                                           String webPath, String folderPath) {
         if (images == null || images.isEmpty()) return;
 
+        List<Map<String, Object>> imageList = new ArrayList<>();
         int order = 1;
         for (MultipartFile img : images) {
             if (img == null || img.isEmpty()) continue;
             String savedUrl = saveFile(img, webPath, folderPath);
             if (savedUrl != null) {
-                accommodationMapper.insertAccommodationImage(accommodationNo, savedUrl, order++);
+                Map<String, Object> imgMap = new HashMap<>();
+                imgMap.put("imageUrl", savedUrl);
+                imgMap.put("imageOrder", order++);
+                imageList.add(imgMap);
             }
+        }
+
+        if (!imageList.isEmpty()) {
+            accommodationMapper.insertAccommodationImageBatch(accommodationNo, imageList);
         }
     }
 }

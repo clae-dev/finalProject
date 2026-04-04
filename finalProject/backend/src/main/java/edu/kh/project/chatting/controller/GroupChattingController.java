@@ -82,12 +82,14 @@ public class GroupChattingController {
     @GetMapping("/messages")
     public ResponseEntity<Map<String, Object>> getGroupMessages(
             @RequestHeader("Authorization") String authHeader,
-            @RequestParam int groupRoomNo) {
+            @RequestParam int groupRoomNo,
+            @RequestParam(required = false) Integer beforeMsgNo,
+            @RequestParam(defaultValue = "50") int limit) {
 
         Map<String, Object> response = new HashMap<>();
         try {
             extractMemberNo(authHeader); // JWT 검증만
-            List<GroupMessageDTO> messages = groupChatService.selectGroupMessageList(groupRoomNo);
+            List<GroupMessageDTO> messages = groupChatService.selectGroupMessageList(groupRoomNo, beforeMsgNo, limit);
             response.put("success", true);
             response.put("data", messages);
             return ResponseEntity.ok(response);
