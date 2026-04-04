@@ -152,13 +152,23 @@
         WHERE ACCOMMODATION_NO = #{accommodationNo}
     </update>
 
-    <!-- 숙소 이미지 추가 -->
+    <!-- 숙소 이미지 추가 (단건) -->
     <insert id="insertAccommodationImage">
         INSERT INTO ACCOMMODATION_IMAGE (
             IMAGE_NO, ACCOMMODATION_NO, IMAGE_URL, IMAGE_ORDER, CREATED_AT
         ) VALUES (
             SEQ_ACCOM_IMG_NO.NEXTVAL, #{accommodationNo}, #{imageUrl}, #{imageOrder}, SYSDATE
         )
+    </insert>
+
+    <!-- 숙소 이미지 배치 추가 -->
+    <insert id="insertAccommodationImageBatch">
+        INSERT ALL
+        <foreach collection="images" item="img">
+            INTO ACCOMMODATION_IMAGE (IMAGE_NO, ACCOMMODATION_NO, IMAGE_URL, IMAGE_ORDER, CREATED_AT)
+            VALUES (SEQ_ACCOM_IMG_NO.NEXTVAL, #{accommodationNo}, #{img.imageUrl}, #{img.imageOrder}, SYSDATE)
+        </foreach>
+        SELECT 1 FROM DUAL
     </insert>
 
     <!-- 숙소 이미지 전체 삭제 -->

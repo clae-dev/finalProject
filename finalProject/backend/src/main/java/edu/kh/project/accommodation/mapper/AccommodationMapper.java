@@ -1,6 +1,7 @@
 package edu.kh.project.accommodation.mapper;
 
 import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import edu.kh.project.accommodation.dto.AccommodationDTO;
@@ -53,10 +54,14 @@ public interface AccommodationMapper {
     /** 조회수 증가 */
     int incrementViewCount(@Param("accommodationNo") long accommodationNo);
 
-    /** 숙소 이미지 등록 */
+    /** 숙소 이미지 등록 (단건) */
     int insertAccommodationImage(@Param("accommodationNo") long accommodationNo,
                                  @Param("imageUrl") String imageUrl,
                                  @Param("imageOrder") int imageOrder);
+
+    /** 숙소 이미지 배치 등록 */
+    int insertAccommodationImageBatch(@Param("accommodationNo") long accommodationNo,
+                                      @Param("images") List<Map<String, Object>> images);
 
     /** 숙소 이미지 전체 삭제 */
     int deleteAccommodationImages(@Param("accommodationNo") long accommodationNo);

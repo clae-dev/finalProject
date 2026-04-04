@@ -84,8 +84,8 @@ public class GroupChatServiceImpl implements GroupChatService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GroupMessageDTO> selectGroupMessageList(int groupRoomNo) {
-        return groupChatMapper.selectGroupMessageList(groupRoomNo);
+    public List<GroupMessageDTO> selectGroupMessageList(int groupRoomNo, Integer beforeMsgNo, int limit) {
+        return groupChatMapper.selectGroupMessageList(groupRoomNo, beforeMsgNo, limit);
     }
 
     @Override
