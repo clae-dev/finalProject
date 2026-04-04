@@ -11,9 +11,15 @@ export const getGroupRoomList = async (): Promise<ApiResponse<GroupChatRoom[]>> 
   return response.data;
 };
 
-// 그룹 메시지 목록 조회
-export const getGroupMessages = async (groupRoomNo: number | string): Promise<ApiResponse<GroupMessage[]>> => {
-  const response = await axiosApi.get("/api/group-chatting/messages", { params: { groupRoomNo } });
+// 그룹 메시지 목록 조회 (커서 기반 페이징)
+export const getGroupMessages = async (
+  groupRoomNo: number | string,
+  beforeMsgNo?: number,
+  limit = 50
+): Promise<ApiResponse<GroupMessage[]>> => {
+  const params: Record<string, unknown> = { groupRoomNo, limit };
+  if (beforeMsgNo) params.beforeMsgNo = beforeMsgNo;
+  const response = await axiosApi.get("/api/group-chatting/messages", { params });
   return response.data;
 };
 
