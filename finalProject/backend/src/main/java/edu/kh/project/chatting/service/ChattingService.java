@@ -25,8 +25,8 @@ public interface ChattingService {
     /** 채팅방 입장/생성 (기존 방이 있으면 해당 방 번호 반환, 없으면 새로 생성) */
     int enterChatRoom(int memberNo, int targetNo);
 
-    /** 메시지 목록 조회 */
-    List<MessageDTO> selectMessageList(int chattingRoomNo);
+    /** 메시지 목록 조회 (커서 기반 페이징) */
+    List<MessageDTO> selectMessageList(int chattingRoomNo, Integer beforeMessageNo, int limit);
 
     /** 메시지 저장 (WebSocket 핸들러에서 호출) */
     int insertMessage(MessageDTO msg);

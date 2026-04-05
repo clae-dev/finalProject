@@ -43,6 +43,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Cacheable("dashboardStats")
+    @Transactional(readOnly = true)
     public Map<String, Object> getDashboardStats() {
         Map<String, Object> stats = new HashMap<>();
         stats.put("memberCount", adminMapper.selectMemberCount(null, null));
@@ -55,12 +56,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getMemberList(int page, int size, String search, String searchType) {
         int offset = (page - 1) * size;
         return adminMapper.selectMemberList(offset, size, search, searchType);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public int getMemberCount(String search, String searchType) {
         return adminMapper.selectMemberCount(search, searchType);
     }
@@ -71,12 +74,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getCompanionList(int page, int size, String search) {
         int offset = (page - 1) * size;
         return adminMapper.selectAdminCompanionList(offset, size, search);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public int getCompanionCount(String search) {
         return adminMapper.selectCompanionCount(search);
     }
@@ -87,12 +92,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getReviewList(int page, int size, String search) {
         int offset = (page - 1) * size;
         return adminMapper.selectAdminReviewList(offset, size, search);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public int getReviewCount(String search) {
         return adminMapper.selectReviewCount(search);
     }
@@ -103,12 +110,14 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getAccommodationList(int page, int size, String search) {
         int offset = (page - 1) * size;
         return adminMapper.selectAdminAccommodationList(offset, size, search);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public int getAccommodationCount(String search) {
         return adminMapper.selectAccommodationCount(search);
     }
