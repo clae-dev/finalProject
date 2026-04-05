@@ -23,9 +23,15 @@ export const enterRoom = async (targetNo: number | string): Promise<ApiResponse<
   return response.data;
 };
 
-// 메시지 목록 조회
-export const getMessages = async (chattingRoomNo: number | string): Promise<ApiResponse<Message[]>> => {
-  const response = await axiosApi.get("/api/chatting/messages", { params: { chattingRoomNo } });
+// 메시지 목록 조회 (커서 기반 페이징)
+export const getMessages = async (
+  chattingRoomNo: number | string,
+  beforeMessageNo?: number,
+  limit = 50
+): Promise<ApiResponse<Message[]>> => {
+  const params: Record<string, unknown> = { chattingRoomNo, limit };
+  if (beforeMessageNo) params.beforeMessageNo = beforeMessageNo;
+  const response = await axiosApi.get("/api/chatting/messages", { params });
   return response.data;
 };
 

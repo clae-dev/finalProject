@@ -158,13 +158,15 @@ public class ChattingController {
     @GetMapping("/messages")
     public ResponseEntity<Map<String, Object>> getMessages(
             @RequestHeader("Authorization") String authHeader,
-            @RequestParam int chattingRoomNo) {
+            @RequestParam int chattingRoomNo,
+            @RequestParam(required = false) Integer beforeMessageNo,
+            @RequestParam(defaultValue = "50") int limit) {
 
         Map<String, Object> response = new HashMap<>();
 
         try {
             extractMemberNo(authHeader); // JWT 인증 검증
-            List<MessageDTO> messages = chattingService.selectMessageList(chattingRoomNo);
+            List<MessageDTO> messages = chattingService.selectMessageList(chattingRoomNo, beforeMessageNo, limit);
 
             response.put("success", true);
             response.put("data", messages);
