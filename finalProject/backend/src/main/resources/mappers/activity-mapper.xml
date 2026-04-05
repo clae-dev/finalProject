@@ -164,8 +164,8 @@
         WHERE BOARD_NO = #{boardNo}
     </update>
 
-    <!-- 부모 댓글 목록 -->
-    <select id="selectParentComments" resultMap="commentResultMap">
+    <!-- 게시글의 전체 댓글 조회 (부모 + 대댓글 한번에 — N+1 제거) -->
+    <select id="selectAllCommentsByBoardNo" resultMap="commentResultMap">
         SELECT
             C.COMMENT_NO,
             C.BOARD_NO,
@@ -179,28 +179,8 @@
         FROM COMMENT_TBL C
         JOIN MEMBER M ON C.MEMBER_NO = M.MEMBER_NO
         WHERE C.BOARD_NO = #{boardNo}
-          AND C.PARENT_COMMENT_NO IS NULL
           AND C.STATUS = 'A'
-        ORDER BY C.COMMENT_NO ASC
-    </select>
-
-    <!-- 대댓글 목록 -->
-    <select id="selectChildComments" resultMap="commentResultMap">
-        SELECT
-            C.COMMENT_NO,
-            C.BOARD_NO,
-            C.MEMBER_NO,
-            C.PARENT_COMMENT_NO,
-            C.CONTENT,
-            C.STATUS,
-            TO_CHAR(C.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
-            M.NICKNAME AS MEMBER_NICKNAME,
-            M.PROFILE_IMAGE AS MEMBER_PROFILE
-        FROM COMMENT_TBL C
-        JOIN MEMBER M ON C.MEMBER_NO = M.MEMBER_NO
-        WHERE C.PARENT_COMMENT_NO = #{parentCommentNo}
-          AND C.STATUS = 'A'
-        ORDER BY C.COMMENT_NO ASC
+        ORDER BY NVL(C.PARENT_COMMENT_NO, C.COMMENT_NO), C.COMMENT_NO ASC
     </select>
 
     <!-- 댓글 작성 -->

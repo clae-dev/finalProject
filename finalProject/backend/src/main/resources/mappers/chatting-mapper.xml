@@ -116,18 +116,25 @@
         VALUES (SEQ_CHATTING_ROOM_NO.NEXTVAL, #{memberNo}, #{targetNo})
     </insert>
 
-    <!-- 메시지 목록 조회 -->
+    <!-- 메시지 목록 조회 (커서 기반 페이징) -->
     <select id="selectMessageList" resultMap="messageResultMap">
-        SELECT
-            MESSAGE_NO,
-            MESSAGE_CONTENT,
-            READ_FL,
-            SENDER_NO,
-            CHATTING_ROOM_NO,
-            TO_CHAR(SEND_TIME, 'YYYY-MM-DD HH24:MI') AS SEND_TIME
-        FROM MESSAGE
-        WHERE CHATTING_ROOM_NO = #{chattingRoomNo}
-        ORDER BY MESSAGE_NO ASC
+        SELECT * FROM (
+            SELECT
+                MESSAGE_NO,
+                MESSAGE_CONTENT,
+                READ_FL,
+                SENDER_NO,
+                CHATTING_ROOM_NO,
+                TO_CHAR(SEND_TIME, 'YYYY-MM-DD HH24:MI') AS SEND_TIME
+            FROM MESSAGE
+            WHERE CHATTING_ROOM_NO = #{chattingRoomNo}
+            <if test="beforeMessageNo != null and beforeMessageNo > 0">
+                AND MESSAGE_NO &lt; #{beforeMessageNo}
+            </if>
+            ORDER BY MESSAGE_NO DESC
+            FETCH FIRST #{limit} ROWS ONLY
+        ) sub
+        ORDER BY sub.MESSAGE_NO ASC
     </select>
 
     <!-- 메시지 저장 -->

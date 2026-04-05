@@ -54,10 +54,10 @@ public interface ActivityMapper {
     /** 게시글 소프트 삭제 (관리자) */
     int adminSoftDeleteActivity(@Param("boardNo") int boardNo);
 
-    /** 부모 댓글 목록 */
-    List<CommentDTO> selectParentComments(@Param("boardNo") int boardNo);
+    /** 게시글의 전체 댓글 조회 (부모 + 대댓글 한번에) */
+    List<CommentDTO> selectAllCommentsByBoardNo(@Param("boardNo") int boardNo);
 
-    /** 대댓글 목록 */
+    /** 대댓글 목록 (하위 호환) */
     List<CommentDTO> selectChildComments(@Param("parentCommentNo") int parentCommentNo);
 
     /** 댓글 작성 */
