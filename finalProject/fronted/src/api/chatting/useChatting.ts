@@ -36,7 +36,7 @@ export const useSearchTarget = (query: string) => {
 export const useMessages = (chattingRoomNo: number | string | undefined) => {
   return useQuery({
     queryKey: ['messages', chattingRoomNo],
-    queryFn: () => getMessages(chattingRoomNo!),
+    queryFn: () => getMessages(chattingRoomNo!, undefined, 50),
     enabled: !!chattingRoomNo,
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
