@@ -144,14 +144,29 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     @Transactional(readOnly = true)
     public List<CommentDTO> getCommentList(int boardNo) {
-        List<CommentDTO> parents = activityMapper.selectParentComments(boardNo);
+        List<CommentDTO> allComments = activityMapper.selectAllCommentsByBoardNo(boardNo);
 
-        for (CommentDTO parent : parents) {
-            List<CommentDTO> replies = activityMapper.selectChildComments(parent.getCommentNo());
-            parent.setReplies(replies);
+        Map<Integer, CommentDTO> parentMap = new HashMap<>();
+        List<CommentDTO> roots = new ArrayList<>();
+
+        for (CommentDTO c : allComments) {
+            if (c.getParentCommentNo() == null || c.getParentCommentNo() == 0) {
+                c.setReplies(new ArrayList<>());
+                parentMap.put(c.getCommentNo(), c);
+                roots.add(c);
+            }
         }
 
-        return parents;
+        for (CommentDTO c : allComments) {
+            if (c.getParentCommentNo() != null && c.getParentCommentNo() != 0) {
+                CommentDTO parent = parentMap.get(c.getParentCommentNo());
+                if (parent != null) {
+                    parent.getReplies().add(c);
+                }
+            }
+        }
+
+        return roots;
     }
 
     @Override

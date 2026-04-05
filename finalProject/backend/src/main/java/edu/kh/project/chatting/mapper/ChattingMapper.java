@@ -35,8 +35,10 @@ public interface ChattingMapper {
     int insertChattingRoom(@Param("memberNo") int memberNo,
                            @Param("targetNo") int targetNo);
 
-    /** 메시지 목록 조회 */
-    List<MessageDTO> selectMessageList(@Param("chattingRoomNo") int chattingRoomNo);
+    /** 메시지 목록 조회 (커서 기반 페이징) */
+    List<MessageDTO> selectMessageList(@Param("chattingRoomNo") int chattingRoomNo,
+                                       @Param("beforeMessageNo") Integer beforeMessageNo,
+                                       @Param("limit") int limit);
 
     /** 메시지 저장 */
     int insertMessage(MessageDTO msg);
