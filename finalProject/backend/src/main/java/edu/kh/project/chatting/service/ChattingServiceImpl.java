@@ -63,8 +63,8 @@ public class ChattingServiceImpl implements ChattingService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<MessageDTO> selectMessageList(int chattingRoomNo) {
-        return chattingMapper.selectMessageList(chattingRoomNo);
+    public List<MessageDTO> selectMessageList(int chattingRoomNo, Integer beforeMessageNo, int limit) {
+        return chattingMapper.selectMessageList(chattingRoomNo, beforeMessageNo, limit);
     }
 
     @Override
