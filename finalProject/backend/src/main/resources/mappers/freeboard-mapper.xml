@@ -100,18 +100,35 @@
             TO_CHAR(B.UPDATED_AT, 'YYYY-MM-DD HH24:MI') AS UPDATED_AT,
             M.NICKNAME AS MEMBER_NICKNAME,
             M.PROFILE_IMAGE AS MEMBER_PROFILE,
-            (SELECT COUNT(*) FROM COMMENT_TBL C WHERE C.BOARD_NO = B.BOARD_NO AND C.STATUS = 'A') AS COMMENT_COUNT,
-            (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.BOARD_NO = B.BOARD_NO) AS LIKE_COUNT,
+            NVL(cc.COMMENT_COUNT, 0) AS COMMENT_COUNT,
+            NVL(lc.LIKE_COUNT, 0)   AS LIKE_COUNT,
             <if test="memberNo != 0">
-                (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.BOARD_NO = B.BOARD_NO AND BL.MEMBER_NO = #{memberNo}) AS IS_LIKED,
+                NVL(ml.IS_LIKED, 0) AS IS_LIKED,
             </if>
             <if test="memberNo == 0">
                 0 AS IS_LIKED,
             </if>
-            (SELECT LISTAGG(BI.IMAGE_URL, ',') WITHIN GROUP (ORDER BY BI.IMAGE_ORDER)
-             FROM BOARD_IMAGE BI WHERE BI.BOARD_NO = B.BOARD_NO) AS IMAGE_URLS
+            img.IMAGE_URLS
         FROM BOARD B
         JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
+        LEFT JOIN (
+            SELECT BOARD_NO, COUNT(*) AS COMMENT_COUNT
+            FROM COMMENT_TBL WHERE STATUS = 'A' GROUP BY BOARD_NO
+        ) cc ON cc.BOARD_NO = B.BOARD_NO
+        LEFT JOIN (
+            SELECT BOARD_NO, COUNT(*) AS LIKE_COUNT
+            FROM BOARD_LIKE GROUP BY BOARD_NO
+        ) lc ON lc.BOARD_NO = B.BOARD_NO
+        <if test="memberNo != 0">
+        LEFT JOIN (
+            SELECT BOARD_NO, COUNT(*) AS IS_LIKED
+            FROM BOARD_LIKE WHERE MEMBER_NO = #{memberNo} GROUP BY BOARD_NO
+        ) ml ON ml.BOARD_NO = B.BOARD_NO
+        </if>
+        LEFT JOIN (
+            SELECT BOARD_NO, LISTAGG(IMAGE_URL, ',') WITHIN GROUP (ORDER BY IMAGE_ORDER) AS IMAGE_URLS
+            FROM BOARD_IMAGE GROUP BY BOARD_NO
+        ) img ON img.BOARD_NO = B.BOARD_NO
         WHERE B.BOARD_NO = #{boardNo}
           AND B.BOARD_CODE = 'FREE'
           AND B.STATUS = 'A'
