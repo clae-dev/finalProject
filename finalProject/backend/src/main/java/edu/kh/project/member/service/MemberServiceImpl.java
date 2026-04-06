@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,7 @@ public class MemberServiceImpl implements MemberService {
      * 이메일 중복 확인
      */
     @Override
+    @Transactional(readOnly = true)
     public int checkEmail(String memberEmail) {
         return memberMapper.checkEmailDuplicate(memberEmail);
     }
@@ -50,6 +52,7 @@ public class MemberServiceImpl implements MemberService {
      * 닉네임 중복 확인 (memberNo 전달 시 본인 제외)
      */
     @Override
+    @Transactional(readOnly = true)
     public int checkNickname(String memberNickname, Integer memberNo) {
         return memberMapper.checkNicknameDuplicate(memberNickname, memberNo);
     }
@@ -134,6 +137,7 @@ public class MemberServiceImpl implements MemberService {
      * 회원 번호로 회원 조회 (경량 — 통계 미포함)
      */
     @Override
+    @Transactional(readOnly = true)
     public MemberDTO getMemberByNo(int memberNo) {
         return memberMapper.selectMemberByNo(memberNo);
     }
@@ -142,6 +146,7 @@ public class MemberServiceImpl implements MemberService {
      * 회원 번호로 회원 조회 (통계 포함 — 프로필 페이지용)
      */
     @Override
+    @Cacheable(value = "memberStats", key = "#memberNo")
     @Transactional(readOnly = true)
     public MemberDTO getMemberWithStats(int memberNo) {
         return memberMapper.selectMemberWithStats(memberNo);
@@ -160,6 +165,7 @@ public class MemberServiceImpl implements MemberService {
      * 아이디 찾기 (이름 + 이메일)
      */
     @Override
+    @Transactional(readOnly = true)
     public MemberDTO findId(String memberName, String memberEmail) {
         return memberMapper.findId(memberName, memberEmail);
     }
@@ -168,6 +174,7 @@ public class MemberServiceImpl implements MemberService {
      * 비밀번호 찾기
      */
     @Override
+    @Transactional(readOnly = true)
     public MemberDTO findPw(String memberEmail, String memberName, String memberEmail2) {
         
         // 이메일 일치 확인
