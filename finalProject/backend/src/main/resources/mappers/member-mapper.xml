@@ -202,10 +202,16 @@
                 B.BOARD_NO AS "boardNo",
                 B.TITLE AS "title",
                 TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
-                (SELECT COUNT(*) FROM COMMENT_TBL C WHERE C.BOARD_NO = B.BOARD_NO AND C.STATUS = 'A') AS "commentCount",
-                (SELECT COUNT(*) FROM BOARD_LIKE BL WHERE BL.BOARD_NO = B.BOARD_NO) AS "likeCount",
+                NVL(cc.CNT, 0) AS "commentCount",
+                NVL(lc.CNT, 0) AS "likeCount",
                 ROW_NUMBER() OVER (ORDER BY B.CREATED_AT DESC) AS RN
             FROM BOARD B
+            LEFT JOIN (
+                SELECT BOARD_NO, COUNT(*) AS CNT FROM COMMENT_TBL WHERE STATUS = 'A' GROUP BY BOARD_NO
+            ) cc ON cc.BOARD_NO = B.BOARD_NO
+            LEFT JOIN (
+                SELECT BOARD_NO, COUNT(*) AS CNT FROM BOARD_LIKE GROUP BY BOARD_NO
+            ) lc ON lc.BOARD_NO = B.BOARD_NO
             WHERE B.MEMBER_NO = #{memberNo}
               AND B.STATUS = 'A'
         )
@@ -259,11 +265,13 @@
                 TO_CHAR(CB.TRAVEL_DATE, 'YYYY-MM-DD') AS "travelDate",
                 TO_CHAR(CB.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
                 CB.IMAGE_URL AS "imageUrl",
-                (SELECT COUNT(*) FROM COMPANION_JOIN J
-                 WHERE J.COMPANION_NO = CB.COMPANION_NO
-                   AND J.STATUS IN ('W', 'A')) AS "currentMembers",
+                NVL(jc.CNT, 0) AS "currentMembers",
                 ROW_NUMBER() OVER (ORDER BY CB.CREATED_AT DESC) AS RN
             FROM COMPANION_BOARD CB
+            LEFT JOIN (
+                SELECT COMPANION_NO, COUNT(*) AS CNT
+                FROM COMPANION_JOIN WHERE STATUS IN ('W', 'A') GROUP BY COMPANION_NO
+            ) jc ON jc.COMPANION_NO = CB.COMPANION_NO
             WHERE CB.MEMBER_NO = #{memberNo}
               AND CB.STATUS != 'D'
         )
