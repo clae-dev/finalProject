@@ -14,6 +14,8 @@ export default defineConfig(({ command }) => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   esbuild: { drop: command === 'build' ? ['console', 'debugger'] : [] } as any,
   build: {
+    target: 'es2020',
+    cssMinify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks(id: string) {
@@ -24,6 +26,8 @@ export default defineConfig(({ command }) => ({
             if (id.includes('@tanstack/react-query')) return 'vendor-query';
             if (id.includes('react-router-dom') || id.includes('react-router')) return 'vendor-router';
             if (id.includes('react-dom') || id.includes('/react/')) return 'vendor-react';
+            if (id.includes('sockjs-client')) return 'vendor-sockjs';
+            if (id.includes('date-fns')) return 'vendor-datefns';
           }
         },
       },
