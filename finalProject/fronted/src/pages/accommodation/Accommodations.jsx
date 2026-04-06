@@ -69,7 +69,7 @@ export default function Accommodations() {
   // 클라이언트 필터 없을 때 → 서버 페이지네이션 (size=9)
   // 클라이언트 필터 있을 때 → 전체 로드 후 프론트 필터링 (size=200)
   const serverPage = hasClientFilters ? 1 : currentPage;
-  const serverSize = hasClientFilters ? 200 : pageSize;
+  const serverSize = hasClientFilters ? 50 : pageSize;
 
   const { data, isLoading, isError, error, refetch } = useAccommodations(serverPage, serverSize, regionParam);
 
