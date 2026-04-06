@@ -44,6 +44,7 @@ public class SpotServiceImpl implements SpotService {
      * 전체 명소 목록 조회 (관리자용)
      */
     @Override
+    @Transactional(readOnly = true)
     public List<SpotDTO> getAllSpots() {
         return spotMapper.selectAllSpots();
     }
@@ -52,6 +53,7 @@ public class SpotServiceImpl implements SpotService {
      * 명소 상세 조회
      */
     @Override
+    @Transactional(readOnly = true)
     public SpotDTO getSpotByNo(int spotNo) {
         return spotMapper.selectSpotByNo(spotNo);
     }
