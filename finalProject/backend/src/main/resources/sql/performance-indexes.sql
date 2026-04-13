@@ -26,3 +26,21 @@ CREATE INDEX IDX_COMMENT_BOARD ON COMMENT_TBL(BOARD_NO);
 
 -- 알림 조회 (수신자별 미읽음 알림 조회)
 CREATE INDEX IDX_NOTIFICATION_RECIP ON NOTIFICATION(RECIPIENT_NO, IS_READ);
+
+-- ============================================================
+-- 관리자 목록 페이징 정렬 최적화
+-- ROW_NUMBER() OVER (ORDER BY CREATED_AT DESC) 쿼리의 정렬 비용 제거
+-- ============================================================
+
+CREATE INDEX IDX_COMPANION_CREATED ON COMPANION_BOARD(CREATED_AT DESC);
+CREATE INDEX IDX_COMP_REVIEW_CREATED ON COMPANION_REVIEW(CREATED_AT DESC);
+CREATE INDEX IDX_ACCOM_CREATED ON ACCOMMODATION(CREATED_AT DESC);
+
+-- ============================================================
+-- 검색/필터 컬럼 인덱스
+-- 관리자 목록 WHERE STATUS 조건, 닉네임 검색 등
+-- ============================================================
+
+CREATE INDEX IDX_MEMBER_NICKNAME ON MEMBER(NICKNAME);
+CREATE INDEX IDX_ACCOM_STATUS ON ACCOMMODATION(STATUS);
+CREATE INDEX IDX_COMPANION_STATUS ON COMPANION_BOARD(STATUS);
