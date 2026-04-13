@@ -1,11 +1,15 @@
 package edu.kh.project.accommodation.service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +35,9 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     private final AccommodationMapper accommodationMapper;
     private final RuralApiService ruralApiService;
+
+    @Qualifier("tourApiExecutor")
+    private final Executor tourApiExecutor;
 
     @Override
     public int syncAccommodationsFromApi() {
@@ -93,21 +100,38 @@ public class AccommodationServiceImpl implements AccommodationService {
             int reclassified = accommodationMapper.reclassifyAccommodationTypes();
             log.info("숙소 유형 재분류 완료: {}건", reclassified);
 
-            // 5) 상세정보 수집 (detailIntro2 + detailInfo2 + detailCommon2)
-            log.info("===== 상세정보 수집 시작 =====");
+            // 5) 상세정보 수집 (detailIntro2 + detailInfo2 + detailCommon2) - 병렬 호출
+            log.info("===== 상세정보 수집 시작 (병렬) =====");
             List<AccommodationDTO> allAccom = accommodationMapper.selectAllActiveAccommodations();
-            int detailCount = 0;
 
+            List<CompletableFuture<AccommodationDTO>> futures = new ArrayList<>(allAccom.size());
             for (AccommodationDTO acc : allAccom) {
+                CompletableFuture<AccommodationDTO> f = CompletableFuture.supplyAsync(() -> {
+                    try {
+                        fillDetailInfo(acc);
+                        return acc;
+                    } catch (Exception e) {
+                        log.warn("상세정보 수집 실패: {} - {}", acc.getName(), e.getMessage());
+                        return null;
+                    }
+                }, tourApiExecutor);
+                futures.add(f);
+            }
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+            // DB 업데이트는 순차 수행 (JDBC 커넥션풀 보호)
+            int detailCount = 0;
+            for (CompletableFuture<AccommodationDTO> f : futures) {
+                AccommodationDTO acc = f.join();
+                if (acc == null) continue;
                 try {
-                    fillDetailInfo(acc);
                     accommodationMapper.updateAccommodationDetail(acc);
                     detailCount++;
-                    if (detailCount % 20 == 0) {
-                        log.info("상세정보 수집 진행: {}/{}", detailCount, allAccom.size());
+                    if (detailCount % 50 == 0) {
+                        log.info("상세정보 DB 반영: {}/{}", detailCount, allAccom.size());
                     }
                 } catch (Exception e) {
-                    log.warn("상세정보 수집 실패: {} - {}", acc.getName(), e.getMessage());
+                    log.warn("상세정보 업데이트 실패: {} - {}", acc.getName(), e.getMessage());
                 }
             }
             log.info("상세정보 수집 완료: {}/{}건", detailCount, allAccom.size());
