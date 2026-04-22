@@ -5,25 +5,32 @@
     <link rel="icon" type="image/svg+xml" href="/HONDI.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>혼디</title>
-    <!-- 한글 폰트 -->
+    <!-- 외부 리소스 사전 연결 (DNS/TLS 핸드셰이크 선행) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Gothic+A1:wght@700;900&display=swap" rel="stylesheet">
-    <!-- Pretendard & Gmarket Sans -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonts-archive/GmarketSans/GmarketSans.css">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://dapi.kakao.com">
+    <link rel="preconnect" href="https://t1.kakaocdn.net" crossorigin>
+    <!-- 한글 폰트 (display=swap으로 FOUT 방지, 렌더 블로킹 회피) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Gothic+A1:wght@700;900&display=swap" media="print" onload="this.media='all'">
+    <!-- Pretendard & Gmarket Sans (비동기 로드) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fonts-archive/GmarketSans/GmarketSans.css" media="print" onload="this.media='all'">
   </head>
   <body>
     <div id="root"></div>
     <script>var global = globalThis;</script>
-    <!-- Kakao Maps SDK -->
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=d9dd19e9fb95ab8245e1a46f41ba4b5a&autoload=false&libraries=services"></script>
+    <!-- Kakao Maps SDK (defer: HTML 파싱 비블로킹) -->
+    <script defer src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d9dd19e9fb95ab8245e1a46f41ba4b5a&autoload=false&libraries=services"></script>
     <!-- Kakao JS SDK (공유 기능) -->
-    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
+    <script defer src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
     <script>
-      if (window.Kakao && !window.Kakao.isInitialized()) {
-        window.Kakao.init('d9dd19e9fb95ab8245e1a46f41ba4b5a');
-      }
+      // defer 스크립트는 DOMContentLoaded 직전에 실행되므로 해당 이벤트에서 초기화
+      window.addEventListener('DOMContentLoaded', function () {
+        if (window.Kakao && !window.Kakao.isInitialized()) {
+          window.Kakao.init('d9dd19e9fb95ab8245e1a46f41ba4b5a');
+        }
+      });
     </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
