@@ -20,6 +20,9 @@ public interface NotificationMapper {
     /** 알림 등록 */
     int insert(NotificationDTO notification);
 
+    /** 알림 일괄 등록 (브로드캐스트) */
+    int insertBatch(@Param("list") List<NotificationDTO> list);
+
     /** 알림 목록 조회 (페이징) */
     List<NotificationDTO> selectList(
         @Param("recipientNo") int recipientNo,

@@ -1,8 +1,7 @@
-import { createContext, useState, useEffect, useCallback, useRef, ReactNode } from "react";
-import axios from "axios";
+import { createContext, useState, useEffect, useCallback, useMemo, useRef, ReactNode } from "react";
 import { axiosApi } from "../api/core/axiosAPI";
 import { getToken, saveToken, clearAllAuth } from "../api/core/tokenStorage";
-import type { Member, LoginResponse, RefreshResponse } from "../types";
+import type { Member, LoginResponse } from "../types";
 
 /**
  * 인증 Context
@@ -38,7 +37,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // ── 미활동 제한 시간 (30분) ──
   const INACTIVITY_LIMIT = 30 * 60 * 1000;
 
-  // 앱 시작 시 토큰 유효성 검증 및 만료된 accessToken 능동적 갱신
+  // 앱 시작 시 세션 유효성 체크 (미활동 타임아웃, 리프레시 토큰 부재 시 로그아웃)
+  // 만료된 accessToken 갱신은 axios 응답 인터셉터(401 → refresh)에 위임하여 중복 호출 제거.
   useEffect(() => {
     const token = getToken("accessToken");
     const refreshToken = getToken("refreshToken");
@@ -57,60 +57,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
 
-    // accessToken 만료 여부 확인
-    let isExpired = false;
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        isExpired = payload.exp * 1000 < Date.now();
-      } catch {
-        isExpired = true;
-      }
-    } else {
-      isExpired = true; // 토큰 자체가 없으면 만료 취급
-    }
-
-    if (isExpired) {
-      if (!refreshToken) {
-        // 리프레시 토큰도 없으면 → 완전 로그아웃
-        clearAllAuth();
-        setUser(null);
-        return;
-      }
-
-      // 리프레시 토큰으로 능동적 갱신 시도 (plain axios로 interceptor 순환 방지)
-      axios.post<{ success: boolean; data: RefreshResponse }>("/api/member/refresh", { refreshToken })
-        .then((response) => {
-          if (response.data.success) {
-            const { accessToken, refreshToken: newRefreshToken } = response.data.data;
-            saveToken("accessToken", accessToken);
-            saveToken("refreshToken", newRefreshToken);
-            // userData도 갱신
-            const data = response.data.data;
-            const parsed = JSON.parse(storedUser);
-            const updated: Member = {
-              ...parsed,
-              memberNo: data.memberNo ?? parsed.memberNo,
-              memberName: data.memberName ?? parsed.memberName,
-              memberNickname: data.memberNickname ?? parsed.memberNickname,
-              memberEmail: data.memberEmail ?? parsed.memberEmail,
-              memberProfileImg: data.memberProfileImg || parsed.memberProfileImg,
-              memberPhone: data.memberPhone || parsed.memberPhone || '',
-              memberIntro: data.memberIntro || parsed.memberIntro || '',
-            };
-            setUser(updated);
-            saveToken("userData", JSON.stringify(updated));
-          } else {
-            clearAllAuth();
-            setUser(null);
-            alert("인증이 만료되어 자동 로그아웃 되었습니다. 다시 로그인해 주세요.");
-          }
-        })
-        .catch(() => {
-          clearAllAuth();
-          setUser(null);
-          alert("인증이 만료되어 자동 로그아웃 되었습니다. 다시 로그인해 주세요.");
-        });
+    // accessToken도 refreshToken도 없으면 즉시 로그아웃 처리
+    if (!token && !refreshToken) {
+      clearAllAuth();
+      setUser(null);
     }
   }, []);
 
@@ -291,7 +241,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // 자식 컴포넌트에게 전달할 데이터를 하나로 묶기
-  const globalState: AuthContextType = {
+  // 불필요한 context 소비자 리렌더 방지를 위해 useMemo로 식별성 유지
+  const globalState: AuthContextType = useMemo(() => ({
     user,
     setUser,
     email,
@@ -301,7 +252,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     handleLogin,
     handleOAuthCallback,
     handleLogout
-  };
+  }), [user, email, password]);
 
   return (
     <AuthContext.Provider value={globalState}>
