@@ -6,9 +6,12 @@ import edu.kh.project.notification.mapper.NotificationMapper;
 import edu.kh.project.websocket.handler.NotificationWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +33,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final AdminMapper adminMapper;
 
     @Override
+    @CacheEvict(value = "notificationCount", key = "#notification.recipientNo")
     public void createNotification(NotificationDTO notification) {
         // DB 저장
         notificationMapper.insert(notification);
@@ -46,11 +50,15 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    @CacheEvict(value = "notificationCount", allEntries = true)
     public void notifyAllAdmins(NotificationDTO template) {
         List<Integer> adminNos = adminMapper.selectAdminMemberNos();
+        if (adminNos == null || adminNos.isEmpty()) return;
 
+        // 1. 관리자별 NotificationDTO 구성
+        List<NotificationDTO> notifications = new ArrayList<>(adminNos.size());
         for (int adminNo : adminNos) {
-            NotificationDTO notification = NotificationDTO.builder()
+            notifications.add(NotificationDTO.builder()
                     .recipientNo(adminNo)
                     .senderNo(template.getSenderNo())
                     .notificationType(template.getNotificationType())
@@ -58,8 +66,19 @@ public class NotificationServiceImpl implements NotificationService {
                     .targetNo(template.getTargetNo())
                     .title(template.getTitle())
                     .content(template.getContent())
-                    .build();
-            createNotification(notification);
+                    .build());
+        }
+
+        // 2. 단일 INSERT ALL로 DB 일괄 저장
+        notificationMapper.insertBatch(notifications);
+
+        // 3. WebSocket 브로드캐스트 (개별 실패가 전체를 막지 않도록 try/catch)
+        for (NotificationDTO n : notifications) {
+            try {
+                notificationWebSocketHandler.sendToUser(n.getRecipientNo(), n);
+            } catch (Exception e) {
+                log.warn("알림 WebSocket push 실패 - recipientNo: {}", n.getRecipientNo(), e);
+            }
         }
     }
 
@@ -72,6 +91,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "notificationCount", key = "#recipientNo")
     public int getNotificationCount(int recipientNo) {
         return notificationMapper.selectCount(recipientNo);
     }
@@ -93,11 +113,13 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
+    @CacheEvict(value = "notificationCount", key = "#recipientNo")
     public int deleteNotification(int notificationNo, int recipientNo) {
         return notificationMapper.deleteNotification(notificationNo, recipientNo);
     }
 
     @Override
+    @CacheEvict(value = "notificationCount", key = "#recipientNo")
     public int deleteAllNotifications(int recipientNo) {
         return notificationMapper.deleteAllNotifications(recipientNo);
     }
