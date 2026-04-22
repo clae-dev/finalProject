@@ -36,6 +36,8 @@
         <result property="createdAt" column="CREATED_AT" />
         <result property="memberNickname" column="MEMBER_NICKNAME" />
         <result property="memberProfile" column="MEMBER_PROFILE" />
+        <result property="companionTitle" column="COMPANION_TITLE" />
+        <result property="companionAuthorNo" column="COMPANION_AUTHOR_NO" />
     </resultMap>
 
     <!-- 목록 조회 (페이징 + 태그 필터) -->
@@ -217,7 +219,7 @@
           AND STATUS IN ('W', 'A')
     </select>
 
-    <!-- 참여 신청 단건 조회 (알림용) -->
+    <!-- 참여 신청 단건 조회 (알림용 - 동행 게시글 제목/작성자까지 LEFT JOIN으로 1쿼리 처리) -->
     <select id="selectJoinByJoinNo" resultMap="joinResultMap">
         SELECT
             J.JOIN_NO,
@@ -226,9 +228,12 @@
             J.STATUS,
             TO_CHAR(J.CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT,
             M.NICKNAME AS MEMBER_NICKNAME,
-            M.PROFILE_IMAGE AS MEMBER_PROFILE
+            M.PROFILE_IMAGE AS MEMBER_PROFILE,
+            C.TITLE AS COMPANION_TITLE,
+            C.MEMBER_NO AS COMPANION_AUTHOR_NO
         FROM COMPANION_JOIN J
         JOIN MEMBER M ON J.MEMBER_NO = M.MEMBER_NO
+        LEFT JOIN COMPANION_BOARD C ON J.COMPANION_NO = C.COMPANION_NO
         WHERE J.JOIN_NO = #{joinNo}
     </select>
 

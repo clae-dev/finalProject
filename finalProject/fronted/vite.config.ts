@@ -15,19 +15,22 @@ export default defineConfig(({ command }) => ({
   esbuild: { drop: command === 'build' ? ['console', 'debugger'] : [] } as any,
   build: {
     target: 'es2020',
-    cssMinify: 'esbuild',
+    reportCompressedSize: false, // gzip 크기 리포트 생략 → 빌드 시간 단축
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks(id: string) {
           if (id.includes('node_modules')) {
             if (id.includes('framer-motion')) return 'vendor-motion';
             if (id.includes('@radix-ui')) return 'vendor-radix';
-            if (id.includes('lucide-react')) return 'vendor-icons';
+            if (id.includes('lucide-react') || id.includes('react-icons')) return 'vendor-icons';
             if (id.includes('@tanstack/react-query')) return 'vendor-query';
             if (id.includes('react-router-dom') || id.includes('react-router')) return 'vendor-router';
             if (id.includes('react-dom') || id.includes('/react/')) return 'vendor-react';
             if (id.includes('sockjs-client')) return 'vendor-sockjs';
             if (id.includes('date-fns')) return 'vendor-datefns';
+            if (id.includes('embla-carousel')) return 'vendor-embla';
+            if (id.includes('axios')) return 'vendor-axios';
           }
         },
       },

@@ -34,6 +34,24 @@
         )
     </insert>
 
+    <!-- 알림 일괄 삽입 (Oracle INSERT ALL) -->
+    <insert id="insertBatch">
+        INSERT ALL
+        <foreach collection="list" item="n">
+            INTO NOTIFICATION (
+                NOTIFICATION_NO, RECIPIENT_NO, SENDER_NO,
+                NOTIFICATION_TYPE, TARGET_TYPE, TARGET_NO,
+                TITLE, CONTENT
+            ) VALUES (
+                SEQ_NOTIFICATION_NO.NEXTVAL,
+                #{n.recipientNo}, #{n.senderNo},
+                #{n.notificationType}, #{n.targetType}, #{n.targetNo},
+                #{n.title}, #{n.content}
+            )
+        </foreach>
+        SELECT 1 FROM DUAL
+    </insert>
+
     <!-- 알림 목록 조회 (페이징 + sender JOIN) -->
     <select id="selectList" resultMap="notificationResultMap">
         SELECT * FROM (

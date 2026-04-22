@@ -242,38 +242,39 @@ public class CompanionServiceImpl implements CompanionService {
         // 승인/거절 시 신청자에게 알림 전송
         if (result > 0 && ("A".equals(status) || "R".equals(status))) {
             try {
+                // LEFT JOIN으로 동행 제목/작성자까지 한 번에 조회 (이전 2쿼리 → 1쿼리)
                 CompanionJoinDTO join = companionMapper.selectJoinByJoinNo(joinNo);
-                if (join != null) {
-                    CompanionDTO companion = companionMapper.selectCompanionDetail(join.getCompanionNo());
-                    if (companion != null) {
-                        String type = "A".equals(status) ? "COMPANION_ACCEPTED" : "COMPANION_REJECTED";
-                        String title = "A".equals(status) ? "동행 신청 승인" : "동행 신청 거절";
-                        String content = "A".equals(status)
-                                ? "'" + companion.getTitle() + "' 동행 신청이 승인되었습니다."
-                                : "'" + companion.getTitle() + "' 동행 신청이 거절되었습니다.";
+                if (join != null && join.getCompanionTitle() != null) {
+                    String companionTitle = join.getCompanionTitle();
+                    Integer companionAuthorNo = join.getCompanionAuthorNo();
 
-                        NotificationDTO notification = NotificationDTO.builder()
-                                .recipientNo(join.getMemberNo())
-                                .senderNo(memberNo)
-                                .notificationType(type)
-                                .targetType("COMPANION")
-                                .targetNo(join.getCompanionNo())
-                                .title(title)
-                                .content(content)
-                                .build();
-                        notificationService.createNotification(notification);
+                    String type = "A".equals(status) ? "COMPANION_ACCEPTED" : "COMPANION_REJECTED";
+                    String title = "A".equals(status) ? "동행 신청 승인" : "동행 신청 거절";
+                    String content = "A".equals(status)
+                            ? "'" + companionTitle + "' 동행 신청이 승인되었습니다."
+                            : "'" + companionTitle + "' 동행 신청이 거절되었습니다.";
 
-                        // 승인 시 그룹 채팅방 자동 생성 (실패해도 수락 트랜잭션 롤백 안 함)
-                        if ("A".equals(status)) {
-                            try {
-                                groupChatService.createGroupRoom(
-                                    join.getCompanionNo(),
-                                    companion.getTitle(),
-                                    List.of(companion.getMemberNo(), join.getMemberNo())
-                                );
-                            } catch (Exception e) {
-                                log.warn("그룹 채팅방 생성 실패 - joinNo: {}", joinNo, e);
-                            }
+                    NotificationDTO notification = NotificationDTO.builder()
+                            .recipientNo(join.getMemberNo())
+                            .senderNo(memberNo)
+                            .notificationType(type)
+                            .targetType("COMPANION")
+                            .targetNo(join.getCompanionNo())
+                            .title(title)
+                            .content(content)
+                            .build();
+                    notificationService.createNotification(notification);
+
+                    // 승인 시 그룹 채팅방 자동 생성 (실패해도 수락 트랜잭션 롤백 안 함)
+                    if ("A".equals(status) && companionAuthorNo != null) {
+                        try {
+                            groupChatService.createGroupRoom(
+                                join.getCompanionNo(),
+                                companionTitle,
+                                List.of(companionAuthorNo, join.getMemberNo())
+                            );
+                        } catch (Exception e) {
+                            log.warn("그룹 채팅방 생성 실패 - joinNo: {}", joinNo, e);
                         }
                     }
                 }

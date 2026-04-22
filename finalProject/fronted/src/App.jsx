@@ -5,8 +5,11 @@ import { lazy, Suspense } from 'react';
 import { AuthProvider } from './components/AuthContext';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { queryClientInstance } from './lib/query-client';
+// DevTools는 개발 환경에서만 동적 로드 → 프로덕션 번들에서 완전 제거
+const ReactQueryDevtools = import.meta.env.DEV
+  ? lazy(() => import('@tanstack/react-query-devtools').then(m => ({ default: m.ReactQueryDevtools })))
+  : null;
 import { AnimatePresence } from 'framer-motion';
 import PageTransition from './components/common/PageTransition';
 const ChatBubble    = lazy(() => import('./components/chatting/ChatBubble'));
@@ -125,7 +128,11 @@ function App() {
           </div>
         </BrowserRouter>
       </AuthProvider>
-      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+      {import.meta.env.DEV && ReactQueryDevtools && (
+        <Suspense fallback={null}>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </Suspense>
+      )}
     </QueryClientProvider>
   );
 }
