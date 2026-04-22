@@ -27,4 +27,8 @@ public class CompanionJoinDTO {
     // JOIN 파생 필드 (신청자 정보)
     private String memberNickname; // 신청자 닉네임
     private String memberProfile;  // 신청자 프로필 이미지
+
+    // JOIN 파생 필드 (동행 게시글 정보 - 알림 생성용)
+    private String companionTitle;   // 동행 게시글 제목
+    private Integer companionAuthorNo; // 동행 게시글 작성자 번호
 }

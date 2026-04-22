@@ -3,7 +3,6 @@ package edu.kh.project.freeboard.service;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -137,28 +136,27 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     @Override
     @Transactional(readOnly = true)
     public List<CommentDTO> getCommentList(int boardNo) {
+        // SQL이 NVL(PARENT_COMMENT_NO, COMMENT_NO)로 정렬해 부모 다음에 해당 자식들이 연속되므로
+        // 단일 패스 O(n)으로 트리 구성 가능 (기존 2-pass + 2개 컬렉션 → 1-pass + 1개 Map)
         List<CommentDTO> allComments = freeBoardMapper.selectAllComments(boardNo);
 
-        Map<Integer, CommentDTO> parentMap = new LinkedHashMap<>();
-        List<CommentDTO> children = new ArrayList<>();
+        List<CommentDTO> parents = new ArrayList<>();
+        Map<Integer, CommentDTO> parentMap = new HashMap<>();
 
         for (CommentDTO c : allComments) {
             if (c.getParentCommentNo() == null) {
                 c.setReplies(new ArrayList<>());
+                parents.add(c);
                 parentMap.put(c.getCommentNo(), c);
             } else {
-                children.add(c);
+                CommentDTO parent = parentMap.get(c.getParentCommentNo());
+                if (parent != null) {
+                    parent.getReplies().add(c);
+                }
             }
         }
 
-        for (CommentDTO child : children) {
-            CommentDTO parent = parentMap.get(child.getParentCommentNo());
-            if (parent != null) {
-                parent.getReplies().add(child);
-            }
-        }
-
-        return new ArrayList<>(parentMap.values());
+        return parents;
     }
 
     @Override
