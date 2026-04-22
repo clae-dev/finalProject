@@ -17,7 +17,7 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager manager = new CaffeineCacheManager(
-                "dashboardStats", "activeSpots", "memberStats"
+                "dashboardStats", "activeSpots", "memberStats", "notificationCount"
         );
         manager.setCaffeine(Caffeine.newBuilder()
                 .expireAfterAccess(10, TimeUnit.MINUTES)
@@ -25,7 +25,3 @@ public class CacheConfig {
         return manager;
     }
 }
-
-
-
-
