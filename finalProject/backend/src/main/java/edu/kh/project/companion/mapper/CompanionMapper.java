@@ -73,4 +73,10 @@ public interface CompanionMapper {
 
     /** 참여 신청 단건 조회 (알림용) */
     CompanionJoinDTO selectJoinByJoinNo(@Param("joinNo") int joinNo);
+
+    /** 현재 인원 +1 (참여 신청 시) */
+    int incrementCurrentMembers(@Param("companionNo") int companionNo);
+
+    /** 현재 인원 -1 (취소/거절 시, 0 미만으로는 떨어지지 않음) */
+    int decrementCurrentMembers(@Param("companionNo") int companionNo);
 }

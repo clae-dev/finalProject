@@ -113,9 +113,7 @@
                 TO_CHAR(C.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
                 M.NICKNAME AS "authorNickname",
                 M.MEMBER_NO AS "memberNo",
-                (SELECT COUNT(*) FROM COMPANION_JOIN J
-                 WHERE J.COMPANION_NO = C.COMPANION_NO AND J.STATUS IN ('W','A')
-                ) AS "currentMembers",
+                C.CURRENT_MEMBERS AS "currentMembers",
                 ROW_NUMBER() OVER (ORDER BY C.CREATED_AT DESC) AS RN
             FROM COMPANION_BOARD C
             JOIN MEMBER M ON C.MEMBER_NO = M.MEMBER_NO
