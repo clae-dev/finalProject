@@ -36,7 +36,7 @@
         <result property="memberProfile"  column="MEMBER_PROFILE" />
     </resultMap>
 
-    <!-- 게시글 목록 (페이징 + 검색) -->
+    <!-- 게시글 목록 (페이징 + 검색) — 댓글/좋아요 카운트는 BOARD 비정규화 컬럼 직접 사용 -->
     <select id="selectFreeBoardList" resultMap="freeBoardResultMap">
         SELECT * FROM (
             SELECT
@@ -47,20 +47,12 @@
                 TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
                 M.NICKNAME AS MEMBER_NICKNAME,
                 M.PROFILE_IMAGE AS MEMBER_PROFILE,
-                NVL(cc.COMMENT_COUNT, 0) AS COMMENT_COUNT,
-                NVL(lc.LIKE_COUNT, 0)   AS LIKE_COUNT,
+                B.COMMENT_COUNT AS COMMENT_COUNT,
+                B.LIKE_COUNT    AS LIKE_COUNT,
                 bi.IMAGE_URLS,
                 ROW_NUMBER() OVER (ORDER BY B.BOARD_NO DESC) AS RN
             FROM BOARD B
             JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
-            LEFT JOIN (
-                SELECT BOARD_NO, COUNT(*) AS COMMENT_COUNT
-                FROM COMMENT_TBL WHERE STATUS = 'A' GROUP BY BOARD_NO
-            ) cc ON cc.BOARD_NO = B.BOARD_NO
-            LEFT JOIN (
-                SELECT BOARD_NO, COUNT(*) AS LIKE_COUNT
-                FROM BOARD_LIKE GROUP BY BOARD_NO
-            ) lc ON lc.BOARD_NO = B.BOARD_NO
             LEFT JOIN (
                 SELECT BOARD_NO, MIN(IMAGE_URL) AS IMAGE_URLS
                 FROM BOARD_IMAGE WHERE IMAGE_ORDER = 0 GROUP BY BOARD_NO
@@ -87,7 +79,7 @@
         </if>
     </select>
 
-    <!-- 게시글 상세 조회 -->
+    <!-- 게시글 상세 조회 — 카운트는 BOARD 비정규화 컬럼 직접 사용 -->
     <select id="selectFreeBoardDetail" resultMap="freeBoardResultMap">
         SELECT
             B.BOARD_NO,
@@ -100,8 +92,8 @@
             TO_CHAR(B.UPDATED_AT, 'YYYY-MM-DD HH24:MI') AS UPDATED_AT,
             M.NICKNAME AS MEMBER_NICKNAME,
             M.PROFILE_IMAGE AS MEMBER_PROFILE,
-            NVL(cc.COMMENT_COUNT, 0) AS COMMENT_COUNT,
-            NVL(lc.LIKE_COUNT, 0)   AS LIKE_COUNT,
+            B.COMMENT_COUNT AS COMMENT_COUNT,
+            B.LIKE_COUNT    AS LIKE_COUNT,
             <if test="memberNo != 0">
                 NVL(ml.IS_LIKED, 0) AS IS_LIKED,
             </if>
@@ -111,14 +103,6 @@
             img.IMAGE_URLS
         FROM BOARD B
         JOIN MEMBER M ON B.MEMBER_NO = M.MEMBER_NO
-        LEFT JOIN (
-            SELECT BOARD_NO, COUNT(*) AS COMMENT_COUNT
-            FROM COMMENT_TBL WHERE STATUS = 'A' GROUP BY BOARD_NO
-        ) cc ON cc.BOARD_NO = B.BOARD_NO
-        LEFT JOIN (
-            SELECT BOARD_NO, COUNT(*) AS LIKE_COUNT
-            FROM BOARD_LIKE GROUP BY BOARD_NO
-        ) lc ON lc.BOARD_NO = B.BOARD_NO
         <if test="memberNo != 0">
         LEFT JOIN (
             SELECT BOARD_NO, COUNT(*) AS IS_LIKED
@@ -296,11 +280,46 @@
           AND MEMBER_NO = #{memberNo}
     </delete>
 
-    <!-- 좋아요 총 수 -->
+    <!-- 좋아요 총 수 — BOARD.LIKE_COUNT 비정규화 컬럼 직접 조회 -->
     <select id="selectLikeCount" resultType="int">
-        SELECT COUNT(*)
-        FROM BOARD_LIKE
+        SELECT LIKE_COUNT
+        FROM BOARD
         WHERE BOARD_NO = #{boardNo}
+    </select>
+
+    <!-- 댓글 수 +1 -->
+    <update id="incrementCommentCount">
+        UPDATE BOARD
+        SET COMMENT_COUNT = COMMENT_COUNT + 1
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
+    <!-- 댓글 수 -1 (0 미만 클램프) -->
+    <update id="decrementCommentCount">
+        UPDATE BOARD
+        SET COMMENT_COUNT = GREATEST(COMMENT_COUNT - 1, 0)
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
+    <!-- 좋아요 수 +1 -->
+    <update id="incrementLikeCount">
+        UPDATE BOARD
+        SET LIKE_COUNT = LIKE_COUNT + 1
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
+    <!-- 좋아요 수 -1 (0 미만 클램프) -->
+    <update id="decrementLikeCount">
+        UPDATE BOARD
+        SET LIKE_COUNT = GREATEST(LIKE_COUNT - 1, 0)
+        WHERE BOARD_NO = #{boardNo}
+    </update>
+
+    <!-- 댓글 번호로 게시글 번호 조회 (댓글 삭제 시 카운트 감소용) -->
+    <select id="selectBoardNoByCommentNo" resultType="java.lang.Integer">
+        SELECT BOARD_NO
+        FROM COMMENT_TBL
+        WHERE COMMENT_NO = #{commentNo}
     </select>
 
 </mapper>

@@ -161,12 +161,21 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
     @Override
     public int createComment(CommentDTO comment) {
-        return freeBoardMapper.insertComment(comment);
+        int result = freeBoardMapper.insertComment(comment);
+        if (result > 0) {
+            freeBoardMapper.incrementCommentCount(comment.getBoardNo());
+        }
+        return result;
     }
 
     @Override
     public int deleteComment(int commentNo, int memberNo) {
-        return freeBoardMapper.deleteComment(commentNo, memberNo);
+        Integer boardNo = freeBoardMapper.selectBoardNoByCommentNo(commentNo);
+        int result = freeBoardMapper.deleteComment(commentNo, memberNo);
+        if (result > 0 && boardNo != null) {
+            freeBoardMapper.decrementCommentCount(boardNo);
+        }
+        return result;
     }
 
     @Override
@@ -177,9 +186,11 @@ public class FreeBoardServiceImpl implements FreeBoardService {
 
         if (exists > 0) {
             freeBoardMapper.deleteLike(boardNo, memberNo);
+            freeBoardMapper.decrementLikeCount(boardNo);
             result.put("liked", false);
         } else {
             freeBoardMapper.insertLike(boardNo, memberNo);
+            freeBoardMapper.incrementLikeCount(boardNo);
             result.put("liked", true);
         }
 

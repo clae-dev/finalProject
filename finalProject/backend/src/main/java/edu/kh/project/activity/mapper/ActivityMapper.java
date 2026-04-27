@@ -79,6 +79,21 @@ public interface ActivityMapper {
     int deleteLike(@Param("boardNo") int boardNo,
                    @Param("memberNo") int memberNo);
 
-    /** 좋아요 총 수 */
+    /** 좋아요 총 수 (BOARD.LIKE_COUNT 비정규화 컬럼에서 조회) */
     int selectLikeCount(@Param("boardNo") int boardNo);
+
+    /** 댓글 수 +1 */
+    int incrementCommentCount(@Param("boardNo") int boardNo);
+
+    /** 댓글 수 -1 (0 미만 클램프) */
+    int decrementCommentCount(@Param("boardNo") int boardNo);
+
+    /** 좋아요 수 +1 */
+    int incrementLikeCount(@Param("boardNo") int boardNo);
+
+    /** 좋아요 수 -1 (0 미만 클램프) */
+    int decrementLikeCount(@Param("boardNo") int boardNo);
+
+    /** 댓글 번호로 게시글 번호 조회 (댓글 삭제 시 카운트 감소용) */
+    Integer selectBoardNoByCommentNo(@Param("commentNo") int commentNo);
 }
