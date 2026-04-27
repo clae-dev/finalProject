@@ -202,6 +202,9 @@ public class CompanionServiceImpl implements CompanionService {
 
         // 게시글 작성자에게 참여 신청 알림 전송
         if (result > 0) {
+            // 현재 인원 카운터 +1 (목록/상세에서 비정규화 컬럼 직접 사용)
+            companionMapper.incrementCurrentMembers(companionNo);
+
             try {
                 CompanionDTO companion = companionMapper.selectCompanionDetail(companionNo);
                 if (companion != null && companion.getMemberNo() != memberNo) {
@@ -227,7 +230,12 @@ public class CompanionServiceImpl implements CompanionService {
     /** {@inheritDoc} */
     @Override
     public int cancelJoin(int companionNo, int memberNo) {
-        return companionMapper.deleteJoin(companionNo, memberNo);
+        int result = companionMapper.deleteJoin(companionNo, memberNo);
+        if (result > 0) {
+            // 실제 W/A → C 전환이 일어난 경우만 카운터 -1
+            companionMapper.decrementCurrentMembers(companionNo);
+        }
+        return result;
     }
 
     /**
@@ -247,6 +255,11 @@ public class CompanionServiceImpl implements CompanionService {
                 if (join != null && join.getCompanionTitle() != null) {
                     String companionTitle = join.getCompanionTitle();
                     Integer companionAuthorNo = join.getCompanionAuthorNo();
+
+                    // 거절(W → R)만 카운터 -1. 승인(W → A)은 둘 다 카운트 집합이라 변화 없음
+                    if ("R".equals(status)) {
+                        companionMapper.decrementCurrentMembers(join.getCompanionNo());
+                    }
 
                     String type = "A".equals(status) ? "COMPANION_ACCEPTED" : "COMPANION_REJECTED";
                     String title = "A".equals(status) ? "동행 신청 승인" : "동행 신청 거절";

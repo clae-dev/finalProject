@@ -171,12 +171,21 @@ public class ActivityServiceImpl implements ActivityService {
 
     @Override
     public int createComment(CommentDTO comment) {
-        return activityMapper.insertComment(comment);
+        int result = activityMapper.insertComment(comment);
+        if (result > 0) {
+            activityMapper.incrementCommentCount(comment.getBoardNo());
+        }
+        return result;
     }
 
     @Override
     public int deleteComment(int commentNo, int memberNo) {
-        return activityMapper.deleteComment(commentNo, memberNo);
+        Integer boardNo = activityMapper.selectBoardNoByCommentNo(commentNo);
+        int result = activityMapper.deleteComment(commentNo, memberNo);
+        if (result > 0 && boardNo != null) {
+            activityMapper.decrementCommentCount(boardNo);
+        }
+        return result;
     }
 
     @Override
@@ -187,9 +196,11 @@ public class ActivityServiceImpl implements ActivityService {
 
         if (exists > 0) {
             activityMapper.deleteLike(boardNo, memberNo);
+            activityMapper.decrementLikeCount(boardNo);
             result.put("liked", false);
         } else {
             activityMapper.insertLike(boardNo, memberNo);
+            activityMapper.incrementLikeCount(boardNo);
             result.put("liked", true);
         }
 
