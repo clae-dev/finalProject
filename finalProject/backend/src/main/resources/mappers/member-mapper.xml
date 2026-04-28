@@ -195,23 +195,17 @@
         WHERE EMAIL = #{memberEmail}
     </update>
 
-    <!-- 내가 작성한 자유게시판 글 (최근 10개) -->
+    <!-- 내가 작성한 자유게시판 글 (최근 10개) — 비정규화 컬럼 직접 사용 -->
     <select id="selectMyPosts" resultType="java.util.HashMap">
         SELECT * FROM (
             SELECT
                 B.BOARD_NO AS "boardNo",
                 B.TITLE AS "title",
                 TO_CHAR(B.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
-                NVL(cc.CNT, 0) AS "commentCount",
-                NVL(lc.CNT, 0) AS "likeCount",
+                B.COMMENT_COUNT AS "commentCount",
+                B.LIKE_COUNT    AS "likeCount",
                 ROW_NUMBER() OVER (ORDER BY B.CREATED_AT DESC) AS RN
             FROM BOARD B
-            LEFT JOIN (
-                SELECT BOARD_NO, COUNT(*) AS CNT FROM COMMENT_TBL WHERE STATUS = 'A' GROUP BY BOARD_NO
-            ) cc ON cc.BOARD_NO = B.BOARD_NO
-            LEFT JOIN (
-                SELECT BOARD_NO, COUNT(*) AS CNT FROM BOARD_LIKE GROUP BY BOARD_NO
-            ) lc ON lc.BOARD_NO = B.BOARD_NO
             WHERE B.MEMBER_NO = #{memberNo}
               AND B.STATUS = 'A'
         )
@@ -254,7 +248,7 @@
         WHERE RN &lt;= 10
     </select>
 
-    <!-- 내가 작성한 동행 글 (최근 10개) -->
+    <!-- 내가 작성한 동행 글 (최근 10개) — 비정규화 컬럼 직접 사용 -->
     <select id="selectMyCompanions" resultType="java.util.HashMap">
         SELECT * FROM (
             SELECT
@@ -265,13 +259,9 @@
                 TO_CHAR(CB.TRAVEL_DATE, 'YYYY-MM-DD') AS "travelDate",
                 TO_CHAR(CB.CREATED_AT, 'YYYY-MM-DD') AS "createdAt",
                 CB.IMAGE_URL AS "imageUrl",
-                NVL(jc.CNT, 0) AS "currentMembers",
+                CB.CURRENT_MEMBERS AS "currentMembers",
                 ROW_NUMBER() OVER (ORDER BY CB.CREATED_AT DESC) AS RN
             FROM COMPANION_BOARD CB
-            LEFT JOIN (
-                SELECT COMPANION_NO, COUNT(*) AS CNT
-                FROM COMPANION_JOIN WHERE STATUS IN ('W', 'A') GROUP BY COMPANION_NO
-            ) jc ON jc.COMPANION_NO = CB.COMPANION_NO
             WHERE CB.MEMBER_NO = #{memberNo}
               AND CB.STATUS != 'D'
         )
