@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import edu.kh.project.common.service.ViewCountAsyncService;
 import edu.kh.project.notice.dto.NoticeDTO;
 import edu.kh.project.notice.mapper.NoticeMapper;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NoticeServiceImpl implements NoticeService {
 
     private final NoticeMapper noticeMapper;
+    private final ViewCountAsyncService viewCountAsyncService;
 
     @Override
     @Transactional(readOnly = true)
@@ -40,9 +42,10 @@ public class NoticeServiceImpl implements NoticeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public NoticeDTO getNoticeDetail(int boardNo) {
-        // 조회수 증가
-        noticeMapper.updateReadCount(boardNo);
+        // 조회수 증가는 별도 트랜잭션/스레드에서 비동기 처리
+        viewCountAsyncService.incrementNoticeViewCount(boardNo);
         return noticeMapper.selectNoticeDetail(boardNo);
     }
 
