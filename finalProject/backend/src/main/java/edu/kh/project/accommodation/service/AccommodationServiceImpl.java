@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.kh.project.accommodation.dto.AccommodationDTO;
 import edu.kh.project.accommodation.mapper.AccommodationMapper;
+import edu.kh.project.common.service.ViewCountAsyncService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +36,7 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     private final AccommodationMapper accommodationMapper;
     private final RuralApiService ruralApiService;
+    private final ViewCountAsyncService viewCountAsyncService;
 
     @Qualifier("tourApiExecutor")
     private final Executor tourApiExecutor;
@@ -320,10 +322,10 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public AccommodationDTO getAccommodationDetail(long accommodationNo) {
-        // 조회수 증가
-        accommodationMapper.incrementViewCount(accommodationNo);
+        // 조회수 증가는 별도 트랜잭션/스레드에서 비동기 처리 (응답 시간에서 제외)
+        viewCountAsyncService.incrementAccommodationViewCount(accommodationNo);
 
         AccommodationDTO dto = accommodationMapper.selectAccommodationByNo(accommodationNo);
         if (dto != null && dto.getImageUrlsRaw() != null && !dto.getImageUrlsRaw().isEmpty()) {

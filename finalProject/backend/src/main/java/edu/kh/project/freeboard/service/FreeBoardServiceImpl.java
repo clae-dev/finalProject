@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import edu.kh.project.common.service.ViewCountAsyncService;
 import edu.kh.project.freeboard.dto.CommentDTO;
 import edu.kh.project.freeboard.dto.FreeBoardDTO;
 import edu.kh.project.freeboard.mapper.FreeBoardMapper;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FreeBoardServiceImpl implements FreeBoardService {
 
     private final FreeBoardMapper freeBoardMapper;
+    private final ViewCountAsyncService viewCountAsyncService;
 
     @Override
     @Transactional(readOnly = true)
@@ -47,8 +49,10 @@ public class FreeBoardServiceImpl implements FreeBoardService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public FreeBoardDTO getFreeBoardDetail(int boardNo, int memberNo) {
-        freeBoardMapper.updateReadCount(boardNo);
+        // 조회수 증가는 별도 트랜잭션/스레드에서 비동기 처리
+        viewCountAsyncService.incrementFreeBoardViewCount(boardNo);
 
         FreeBoardDTO board = freeBoardMapper.selectFreeBoardDetail(boardNo, memberNo);
 
