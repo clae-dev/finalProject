@@ -2,22 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="edu.kh.project.accommodation.mapper.AccommodationReviewMapper">
 
-    <resultMap id="reviewResultMap" type="edu.kh.project.accommodation.dto.AccommodationReviewDTO">
-        <id property="reviewNo" column="REVIEW_NO" />
-        <result property="accommodationNo" column="ACCOMMODATION_NO" />
-        <result property="memberNo" column="MEMBER_NO" />
-        <result property="rating" column="RATING" />
-        <result property="content" column="CONTENT" />
-        <result property="checkInDate" column="CHECK_IN_DATE" />
-        <result property="checkOutDate" column="CHECK_OUT_DATE" />
-        <result property="recommendedFor" column="RECOMMENDED_FOR" />
-        <result property="status" column="STATUS" />
-        <result property="createdAt" column="CREATED_AT" />
-        <result property="authorNickname" column="NICKNAME" />
-        <result property="authorProfileImg" column="PROFILE_IMAGE" />
-        <result property="verifiedReviewer" column="VERIFIED_REVIEWER" />
-    </resultMap>
-
     <!-- 후기 + 이미지 통합 ResultMap (N+1 제거) -->
     <resultMap id="reviewWithImagesResultMap" type="edu.kh.project.accommodation.dto.AccommodationReviewDTO">
         <id property="reviewNo" column="REVIEW_NO" />
@@ -41,15 +25,6 @@
             <result property="renamedName" column="RENAMED_NAME" />
             <result property="imageOrder" column="IMAGE_ORDER" />
         </collection>
-    </resultMap>
-
-    <resultMap id="reviewImageResultMap" type="edu.kh.project.accommodation.dto.ReviewImageDTO">
-        <id property="imageNo" column="IMAGE_NO" />
-        <result property="reviewNo" column="REVIEW_NO" />
-        <result property="imageUrl" column="IMAGE_URL" />
-        <result property="originalName" column="ORIGINAL_NAME" />
-        <result property="renamedName" column="RENAMED_NAME" />
-        <result property="imageOrder" column="IMAGE_ORDER" />
     </resultMap>
 
     <!-- 후기 목록 + 이미지 통합 조회 (N+1 제거) -->
@@ -102,32 +77,6 @@
         ORDER BY P.RN, I.IMAGE_ORDER
     </select>
 
-    <!-- 후기 목록 (숙소별, 페이징) - 기존 호환용 -->
-    <select id="selectReviewList" resultMap="reviewResultMap">
-        SELECT * FROM (
-            SELECT
-                R.REVIEW_NO,
-                R.ACCOMMODATION_NO,
-                R.MEMBER_NO,
-                R.RATING,
-                R.CONTENT,
-                TO_CHAR(R.CHECK_IN_DATE, 'YYYY-MM-DD') AS CHECK_IN_DATE,
-                TO_CHAR(R.CHECK_OUT_DATE, 'YYYY-MM-DD') AS CHECK_OUT_DATE,
-                R.RECOMMENDED_FOR,
-                R.STATUS,
-                TO_CHAR(R.CREATED_AT, 'YYYY-MM-DD') AS CREATED_AT,
-                M.NICKNAME,
-                M.PROFILE_IMAGE,
-                M.VERIFIED_REVIEWER,
-                ROW_NUMBER() OVER (ORDER BY R.CREATED_AT DESC) AS RN
-            FROM ACCOMMODATION_REVIEW R
-            JOIN MEMBER M ON R.MEMBER_NO = M.MEMBER_NO
-            WHERE R.ACCOMMODATION_NO = #{accommodationNo}
-              AND R.STATUS = 'A'
-        )
-        WHERE RN BETWEEN #{offset} + 1 AND #{offset} + #{limit}
-    </select>
-
     <!-- 후기 건수 -->
     <select id="selectReviewCount" resultType="int">
         SELECT COUNT(*)
@@ -169,14 +118,6 @@
             SEQ_REVIEW_IMG_NO.NEXTVAL, #{reviewNo}, #{imageUrl}, #{originalName}, #{renamedName}, #{imageOrder}
         )
     </insert>
-
-    <!-- 후기 이미지 목록 -->
-    <select id="selectReviewImages" resultMap="reviewImageResultMap">
-        SELECT IMAGE_NO, REVIEW_NO, IMAGE_URL, ORIGINAL_NAME, RENAMED_NAME, IMAGE_ORDER
-        FROM REVIEW_IMAGE
-        WHERE REVIEW_NO = #{reviewNo}
-        ORDER BY IMAGE_ORDER
-    </select>
 
     <!-- 후기 삭제 (본인) -->
     <update id="deleteReview">
