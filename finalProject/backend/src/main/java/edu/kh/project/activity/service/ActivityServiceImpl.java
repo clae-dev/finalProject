@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import edu.kh.project.freeboard.dto.CommentDTO;
 import edu.kh.project.activity.dto.ActivityDTO;
 import edu.kh.project.activity.mapper.ActivityMapper;
+import edu.kh.project.common.service.ViewCountAsyncService;
+import edu.kh.project.freeboard.dto.CommentDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ActivityServiceImpl implements ActivityService {
 
     private final ActivityMapper activityMapper;
+    private final ViewCountAsyncService viewCountAsyncService;
 
     @Override
     @Transactional(readOnly = true)
@@ -47,8 +49,10 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ActivityDTO getActivityDetail(int boardNo, int memberNo) {
-        activityMapper.updateReadCount(boardNo);
+        // 조회수 증가는 별도 트랜잭션/스레드에서 비동기 처리
+        viewCountAsyncService.incrementActivityViewCount(boardNo);
 
         ActivityDTO board = activityMapper.selectActivityDetail(boardNo, memberNo);
 

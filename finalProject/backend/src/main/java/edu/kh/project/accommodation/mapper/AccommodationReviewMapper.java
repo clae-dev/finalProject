@@ -19,12 +19,6 @@ import java.util.Map;
 @Mapper
 public interface AccommodationReviewMapper {
 
-    /** 후기 목록 조회 (페이징) */
-    List<AccommodationReviewDTO> selectReviewList(
-            @Param("accommodationNo") int accommodationNo,
-            @Param("offset") int offset,
-            @Param("limit") int limit);
-
     /** 후기 목록 + 이미지 통합 조회 (N+1 제거) */
     List<AccommodationReviewDTO> selectReviewListWithImages(
             @Param("accommodationNo") int accommodationNo,
@@ -42,9 +36,6 @@ public interface AccommodationReviewMapper {
 
     /** 후기 이미지 등록 */
     int insertReviewImage(ReviewImageDTO dto);
-
-    /** 후기 이미지 목록 조회 */
-    List<ReviewImageDTO> selectReviewImages(@Param("reviewNo") int reviewNo);
 
     /** 후기 삭제 (본인) */
     int deleteReview(@Param("reviewNo") int reviewNo, @Param("memberNo") int memberNo);
