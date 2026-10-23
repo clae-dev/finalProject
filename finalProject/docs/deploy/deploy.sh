@@ -8,9 +8,9 @@
 #   ./deploy.sh front  → 프론트만 배포
 # =============================================
 
-PEM="/c/Users/User/OneDrive - 한양사이버대학교/바탕 화면/내 문서/KH수업자료/파이널프로젝트/changsik.pem"
-EC2="ec2-user@52.78.65.4"
-PROJECT_ROOT="/c/workspace/final_project/finalProject"
+PEM="${HONDI_PEM:?HONDI_PEM 환경변수에 .pem 경로를 넣으세요}"
+EC2="${HONDI_EC2:?HONDI_EC2 환경변수에 user@서버주소를 넣으세요}"
+PROJECT_ROOT="${HONDI_ROOT:-$(cd "$(dirname "$0")/../.." \&\& pwd)}"
 MODE=${1:-all}  # 인자 없으면 전체 배포
 
 echo "=========================================="
