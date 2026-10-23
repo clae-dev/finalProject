@@ -10,7 +10,7 @@
 
 PEM="${HONDI_PEM:?HONDI_PEM 환경변수에 .pem 경로를 넣으세요}"
 EC2="${HONDI_EC2:?HONDI_EC2 환경변수에 user@서버주소를 넣으세요}"
-PROJECT_ROOT="${HONDI_ROOT:-$(cd "$(dirname "$0")/../.." \&\& pwd)}"
+PROJECT_ROOT="${HONDI_ROOT:-$(cd "$(dirname "$0")/../.." && pwd)}"
 MODE=${1:-all}  # 인자 없으면 전체 배포
 
 echo "=========================================="
